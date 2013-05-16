@@ -1,0 +1,22 @@
+{
+    "name": "cundd/rest",
+    "description": "REST API for TYPO3 CMS",
+    "keywords": ["typo3cms"],
+    "require": {
+        "vlucas/bulletphp": "*",
+        "predis/predis": "*"
+    },
+    "authors": [
+        {
+            "name": "Daniel Corn",
+            "email": "info@cundd.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "autoload": {
+        "psr-0": {
+            "Cundd\\Rest": "Classes/"
+        }
+    }
+}
