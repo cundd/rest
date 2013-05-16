@@ -21,10 +21,6 @@ spl_autoload_register(function ($className) {
 	}
 });
 
-
-
-
-
 $bootstrap = new \Cundd\Rest\Bootstrap;
 $bootstrap->init();
 new \Cundd\Rest\App;

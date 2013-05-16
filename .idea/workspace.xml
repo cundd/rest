@@ -50,10 +50,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="App.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.40789473">
+            <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="-11.625">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/index.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="22" column="0" selection-start="654" selection-end="654" vertical-scroll-proportion="0.48245615">
               <folding />
             </state>
           </provider>
@@ -122,15 +131,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ObjectManagerInterface.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Object/ObjectManagerInterface.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="70" column="20" selection-start="2671" selection-end="2671" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Bootstrap.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -154,7 +154,6 @@
         <option value="$PROJECT_DIR$/ext_localconf.php" />
         <option value="$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/App.php" />
         <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/Mapper/DataMapFactory.php" />
-        <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Repository.php" />
         <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/QueryFactory.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic/RestQuerySettings.php" />
@@ -166,6 +165,7 @@
         <option value="/private/var/folders/8c/d0b16drs1p9dy1bg7x2nzm000000gn/T/tmpRestClientResponse6849327133101254066.html" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/index.php" />
       </list>
     </option>
   </component>
@@ -661,72 +661,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="vendor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vendor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vlucas" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bulletphp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vendor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vlucas" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bulletphp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bullet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="Classes" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -943,11 +877,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///private/var/folders/8c/d0b16drs1p9dy1bg7x2nzm000000gn/T/tmpRestClientResponse1742633876139261036.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="1" selection-start="627" selection-end="627" vertical-scroll-proportion="0.63596493" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Domain/Model/BackendUser.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="17" selection-start="1330" selection-end="1341" vertical-scroll-proportion="0.0">
@@ -1046,7 +975,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.40789473">
+        <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="-11.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="0" selection-start="654" selection-end="654" vertical-scroll-proportion="0.48245615">
           <folding />
         </state>
       </provider>
