@@ -3,8 +3,7 @@
     "description": "REST API for TYPO3 CMS",
     "keywords": ["typo3cms"],
     "require": {
-        "vlucas/bulletphp": "*",
-        "predis/predis": "*"
+        "vlucas/bulletphp": "*"
     },
     "authors": [
         {
