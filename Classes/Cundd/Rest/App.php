@@ -45,7 +45,6 @@ class App {
 		$this->propertyMapper = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Property\\PropertyMapper');
 		$this->app = new \Bullet\App();
 		$this->request = new \Bullet\Request(NULL, $this->getUri());
-		$this->dispatch();
 	}
 
 	/**
@@ -212,6 +211,21 @@ class App {
 	}
 
 	/**
+	 * Returns the domain model repository class name for the given API path
+	 *
+	 * @param string $path API path to get the repository for
+	 * @return string
+	 */
+	public function getRepositoryClassForPath($path) {
+		list($vendor, $extension, $model) = $this->getClassNamePartsForPath($path);
+		$repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
+		if (!class_exists($repositoryClass)) {
+			$repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+		}
+		return $repositoryClass;
+	}
+
+	/**
 	 * Returns the domain model repository for the current API path
 	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
@@ -227,14 +241,25 @@ class App {
 	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
 	public function getRepositoryForPath($path) {
-		list($extension, $model) = explode('_', $path);
-		$repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
-		if (!class_exists($repositoryClass)) {
-			$repositoryClass = $extension . '\\Domain\\Repository\\' . $model . 'Repository';
-		}
+		$repositoryClass = $this->getRepositoryClassForPath($path);
 		$repository = $this->objectManager->get($repositoryClass);
 		$repository->setDefaultQuerySettings($this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings'));
 		return $repository;
+	}
+
+	/**
+	 * Returns the domain model class name for the given API path
+	 *
+	 * @param string $path API path to get the repository for
+	 * @return string
+	 */
+	public function getModelClassForPath($path) {
+		list($vendor, $extension, $model) = $this->getClassNamePartsForPath($path);
+		$modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
+		if (!class_exists($modelClass)) {
+			$modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
+		}
+		return $modelClass;
 	}
 
 	/**
@@ -255,12 +280,32 @@ class App {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithDataForPath($data, $path) {
-		list($extension, $model) = explode('_', $path);
-		$modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
-		if (!class_exists($modelClass)) {
-			$modelClass = $extension . '\\Domain\\' . $model;
+		$modelClass = $this->getModelClassForPath($path);
+		if (!$data) {
+			return $this->getEmptyModelForPath($path);
 		}
 		return $this->propertyMapper->convert($data, $modelClass);
+	}
+
+	/**
+	 * Returns an array of class name parts including vendor, extension
+	 * and domain model
+	 *
+	 * Example:
+	 *   array(
+	 *     Vendor
+	 *     MyExt
+	 *     MyModel
+	 *   )
+	 * @param $path
+	 * @return array
+	 */
+	public function getClassNamePartsForPath($path) {
+		$parts = explode('_', $path);
+		if (count($parts) < 3) {
+			array_unshift($parts, '');
+		}
+		return $parts;
 	}
 
 	/**
@@ -292,11 +337,7 @@ class App {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getEmptyModelForPath($path) {
-		list($extension, $model) = explode('_', $path);
-		$modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
-		if (!class_exists($modelClass)) {
-			$modelClass = $extension . '\\Domain\\' . $model;
-		}
+		$modelClass = $this->getModelClassForPath($path);
 		return $this->objectManager->create($modelClass);
 	}
 

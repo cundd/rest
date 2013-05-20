@@ -2,18 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_emconf.php" afterPath="$PROJECT_DIR$/ext_emconf.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368734735305" ignored="false" />
-    <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384240680" ignored="false" />
-    <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368647629078" ignored="false" />
+    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369042296455" ignored="false" />
+    <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368874639821" ignored="false" />
+    <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368954973230" ignored="false" />
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384206554" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
@@ -36,8 +35,8 @@
     <file path="$APPLICATION_HOME_DIR$/lib/openapi.jar!/standardSchemas/html5/xhtml5.xsd" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368728133042" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/lib/openapi.jar!/standardSchemas/xhtml1-transitional.xsd" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368728133043" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/lib/openapi.jar!/standardSchemas/xhtml1-strict.xsd" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368728133043" ignored="false" />
-    <file path="$PROJECT_DIR$/../sourcero/Classes/Domain/Repository/RepositoryRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368729227090" ignored="false" />
     <file path="/RepositoryRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368729225732" ignored="false" />
+    <file path="/AppTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369042513654" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +59,36 @@
       <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="-11.625">
+            <state line="222" column="65" selection-start="6041" selection-end="6041" vertical-scroll-proportion="-6.125">
+              <folding>
+                <marker date="1369042330000" expanded="true" signature="8693:9697" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AppTest.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="142" column="32" selection-start="3814" selection-end="3814" vertical-scroll-proportion="0.74885845">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Asset.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../cundd_assetic/Classes/Domain/Model/Asset.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1" column="41" selection-start="16" selection-end="47" vertical-scroll-proportion="-0.625">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RepositoryRepository.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../sourcero/Classes/Domain/Repository/RepositoryRepository.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="98" selection-start="1226" selection-end="1259" vertical-scroll-proportion="-6.875">
               <folding />
             </state>
           </provider>
@@ -69,16 +97,25 @@
       <file leaf-file-name="index.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="2" selection-start="819" selection-end="819" vertical-scroll-proportion="-17.5">
+            <state line="2" column="40" selection-start="54" selection-end="94" vertical-scroll-proportion="-1.25">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="composer.json" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="composer.json" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/composer.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="31" selection-start="151" selection-end="151" vertical-scroll-proportion="0.07260407">
+            <state line="20" column="1" selection-start="422" selection-end="422" vertical-scroll-proportion="-12.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Bootstrap.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="75" column="0" selection-start="2380" selection-end="2380" vertical-scroll-proportion="-46.25">
               <folding />
             </state>
           </provider>
@@ -93,10 +130,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PersistenceManager.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/PersistenceManager.php">
+      <file leaf-file-name="RestQuerySettings.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic/RestQuerySettings.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="94" selection-start="1327" selection-end="1385" vertical-scroll-proportion="-21.25">
+            <state line="9" column="41" selection-start="163" selection-end="204" vertical-scroll-proportion="-1.875">
               <folding />
             </state>
           </provider>
@@ -106,42 +143,6 @@
         <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Property/Mapper.php">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="10.625">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PropertyMapper.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Property/PropertyMapper.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="122" column="52" selection-start="5740" selection-end="5742" vertical-scroll-proportion="37.02041">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ActionController.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Mvc/Controller/ActionController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="190" column="39" selection-start="6763" selection-end="6763" vertical-scroll-proportion="-9.285714">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Arguments.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Mvc/Controller/Arguments.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="169" column="20" selection-start="5925" selection-end="5925" vertical-scroll-proportion="-26.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Argument.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Mvc/Controller/Argument.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="469" column="62" selection-start="13382" selection-end="13382" vertical-scroll-proportion="-8.061225">
               <folding />
             </state>
           </provider>
@@ -165,8 +166,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/App.php" />
-        <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/Mapper/DataMapFactory.php" />
         <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Repository.php" />
         <option value="$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/QueryFactory.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic/RestQuerySettings.php" />
@@ -177,10 +176,12 @@
         <option value="/private/var/folders/8c/d0b16drs1p9dy1bg7x2nzm000000gn/T/tmpRestClientResponse1742633876139261036.json" />
         <option value="/private/var/folders/8c/d0b16drs1p9dy1bg7x2nzm000000gn/T/tmpRestClientResponse6849327133101254066.html" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/ext_emconf.php" />
-        <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/composer.json" />
+        <option value="$PROJECT_DIR$/Tests/Unit/Autoloader.php" />
+        <option value="$PROJECT_DIR$/index.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
       </list>
     </option>
   </component>
@@ -188,11 +189,12 @@
     <include_path>
       <path value="$PROJECT_DIR$/../../../typo3/sysext/" />
       <path value="$PROJECT_DIR$/../cundd_composer/vendor" />
+      <path value="$PROJECT_DIR$/../phpunit" />
     </include_path>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="1856" />
+    <option name="width" value="1654" />
     <option name="height" value="1178" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -240,6 +242,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Tests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Unit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -303,9 +327,10 @@
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="preferences.externalTools" />
     <property name="recentsLimit" value="5" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../cundd_composer/vendor" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../phpunit" />
     <property name="FullScreen" value="false" />
     <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
@@ -322,6 +347,9 @@
     </servers>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Tests/Unit/Core" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic" />
     </key>
@@ -329,14 +357,20 @@
   <component name="RestClientSettings">
     <option name="LAST_HOST" value="http://localhost:8888/" />
   </component>
-  <component name="RunManager" selected="PHP Script.RestQuerySettings.php">
+  <component name="RunManager" selected="PHPUnit.rest">
     <configuration default="false" name="RestQuerySettings.php" type="PhpLocalRunConfigurationType" factoryName="PHP Console" temporary="true" path="$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic/RestQuerySettings.php">
       <RunnerSettings RunnerId="PhpRunner" />
       <ConfigurationWrapper RunnerId="PhpRunner" />
       <method />
     </configuration>
+    <configuration default="false" name="rest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner directory="$PROJECT_DIR$" />
+      <RunnerSettings RunnerId="PhpUnitDebugRunner" />
+      <ConfigurationWrapper RunnerId="PhpUnitDebugRunner" />
+      <method />
+    </configuration>
     <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <TestRunner />
+      <TestRunner directory="$PROJECT_DIR$/Tests/Unit" />
       <method />
     </configuration>
     <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
@@ -345,12 +379,14 @@
     <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
       <method />
     </configuration>
-    <list size="1">
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="PHP Script.RestQuerySettings.php" />
+      <item index="1" class="java.lang.String" itemvalue="PHPUnit.rest" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="PHP Script.RestQuerySettings.php" />
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="PHPUnit.rest" />
+        <item index="1" class="java.lang.String" itemvalue="PHP Script.RestQuerySettings.php" />
       </list>
     </recent_temporary>
   </component>
@@ -384,7 +420,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1856" height="1178" extended-state="0" />
+    <frame x="0" y="22" width="1654" height="1178" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -393,12 +429,12 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.162575" sideWeight="0.67013234" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19447514" sideWeight="0.67013234" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15609452" sideWeight="0.67013234" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -469,34 +505,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///private/var/folders/8c/d0b16drs1p9dy1bg7x2nzm000000gn/T/tmpRestClientResponse6849327133101254066.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Property/MappingResults.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="0" selection-start="2380" selection-end="2380" vertical-scroll-proportion="-40.625">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/Typo3QuerySettings.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="100" column="36" selection-start="3119" selection-end="3135" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Mvc/Controller/Argument.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="469" column="62" selection-start="13382" selection-end="13382" vertical-scroll-proportion="-8.061225">
@@ -525,13 +533,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Property/Mapper.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="10.625">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Generic/PersistenceManager.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="94" selection-start="1327" selection-end="1385" vertical-scroll-proportion="-21.25">
@@ -539,9 +540,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Persistence/Generic/RestQuerySettings.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="32" selection-start="2096" selection-end="2096" vertical-scroll-proportion="-11.625">
+        <state line="9" column="41" selection-start="163" selection-end="204" vertical-scroll-proportion="-1.875">
           <folding />
         </state>
       </provider>
@@ -553,16 +554,67 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
+    <entry file="file://$PROJECT_DIR$/composer.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="2" selection-start="819" selection-end="819" vertical-scroll-proportion="-17.5">
+        <state line="20" column="1" selection-start="422" selection-end="422" vertical-scroll-proportion="-12.5">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/composer.json">
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="31" selection-start="151" selection-end="151" vertical-scroll-proportion="0.07260407">
+        <state line="75" column="0" selection-start="2380" selection-end="2380" vertical-scroll-proportion="-46.25">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="40" selection-start="54" selection-end="94" vertical-scroll-proportion="-1.25">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../sourcero/Tests/Unit/Controller/RepositoryControllerTest.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="96" selection-start="1489" selection-end="1523" vertical-scroll-proportion="0.25347912">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../sourcero/Classes/Domain/Repository/RepositoryRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="98" selection-start="1226" selection-end="1259" vertical-scroll-proportion="-6.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Property/Mapper.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="10.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../cundd_assetic/Classes/Domain/Model/Asset.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="41" selection-start="16" selection-end="47" vertical-scroll-proportion="-0.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="222" column="65" selection-start="6041" selection-end="6041" vertical-scroll-proportion="-6.125">
+          <folding>
+            <marker date="1369042330000" expanded="true" signature="8693:9697" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="142" column="32" selection-start="3814" selection-end="3814" vertical-scroll-proportion="0.74885845">
           <folding />
         </state>
       </provider>

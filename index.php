@@ -24,6 +24,6 @@ Tx_CunddComposer_Autoloader::register();
 
 $bootstrap = new \Cundd\Rest\Bootstrap;
 $bootstrap->init();
-new \Cundd\Rest\App;
-
+$app = new \Cundd\Rest\App;
+$app->dispatch();
 ?>
