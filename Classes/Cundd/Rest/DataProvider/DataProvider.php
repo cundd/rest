@@ -33,15 +33,6 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
-	 * Returns the domain model repository for the current API path
-	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
-	 */
-	public function getRepository() {
-		$repository = $this->getRepositoryForPath($this->getPath());
-		return $repository;
-	}
-
-	/**
 	 * Returns the domain model repository for the models the given API path points to
 	 *
 	 * @param string $path API path to get the repository for
@@ -70,13 +61,13 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
-	 * Returns a new domain model for the current API path and data
+	 * Returns a new domain model for the given API path
 	 *
 	 * @param array $data Data of the new model
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
-	public function getModelWithData($data) {
-		return $this->getModelWithDataForPath($data, $this->getPath());
+	public function getModelForPath($path) {
+		return $this->getModelWithDataForPath(array(), $path);
 	}
 
 	/**
@@ -91,7 +82,12 @@ class DataProvider implements DataProviderInterface {
 		if (!$data) {
 			return $this->getEmptyModelForPath($path);
 		}
-		return $this->propertyMapper->convert($data, $modelClass);
+		try {
+			$model = $this->propertyMapper->convert($data, $modelClass);
+		} catch (\TYPO3\CMS\Extbase\Property\Exception $e) {
+			$model = NULL;
+		}
+		return $model;
 	}
 
 	/**
@@ -113,28 +109,6 @@ class DataProvider implements DataProviderInterface {
 			array_unshift($parts, '');
 		}
 		return $parts;
-	}
-
-	/**
-	 * Returns the properties of the domain model
-	 * @return array<string>
-	 */
-	protected function _getDomainModelsProperties() {
-		static $properties;
-		if (!$properties) {
-			// Get the Repository domain object properties
-			$properties = $this->getEmptyModel();
-			$properties = array_keys($properties->_getProperties());
-		}
-		return $properties;
-	}
-
-	/**
-	 * Returns a new domain model for the current API path
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getEmptyModel() {
-		return $this->getEmptyModelForPath($this->getPath());
 	}
 
 	/**
@@ -162,6 +136,40 @@ class DataProvider implements DataProviderInterface {
 			$properties = $model;
 		}
 		return $properties;
+	}
+
+	/**
+	 * Adds or updates the given model in the repository for the
+	 * given API path
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function saveModelForPath($model, $path) {
+		$repository = $this->getRepositoryForPath($path);
+		if ($repository) {
+			if ($model->_isNew()) {
+				$repository->add($model);
+			} else {
+				$repository->update($model);
+			}
+			$this->persistAllChanges();
+		}
+	}
+
+	/**
+	 * Adds or updates the given model in the repository for the
+	 * given API path
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function removeModelForPath($model, $path) {
+		$repository = $this->getRepositoryForPath($path);
+		if ($repository) {
+			$repository->remove($model);
+			$this->persistAllChanges();
+		}
 	}
 
 	/**

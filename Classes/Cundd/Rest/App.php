@@ -3,7 +3,7 @@ namespace Cundd\Rest;
 
 use Bullet\View\Exception;
 
-class App {
+class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * API path
 	 * @var string
@@ -39,10 +39,11 @@ class App {
 	 * Initialize
 	 */
 	public function __construct() {
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$this->dataProvider = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProviderInterface');
 		$this->app = new \Bullet\App();
 		$this->request = new \Bullet\Request(NULL, $this->getUri());
+
+		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$this->dataProvider = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProviderInterface');
 	}
 
 	/**
@@ -69,6 +70,9 @@ class App {
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$this->app->get(function($request) use($uid) {
 						$model = $this->getRepository()->findByUid($uid);
+						if (!$model) {
+							return 404;
+						}
 						return $this->getModelData($model);
 					});
 
@@ -81,13 +85,9 @@ class App {
 
 						$model = $this->getModelWithData($data);
 						if ($model) {
-							if ($model->_isNew()) {
-								$this->getRepository()->add($model);
-							} else {
-								$this->getRepository()->update($model);
-							}
-
-							$this->persistAllChanges();
+							$this->saveModel($model);
+						} else {
+							return 404;
 						}
 						return $this->getModelData($model);
 					});
@@ -98,15 +98,11 @@ class App {
 					$this->app->delete(function($request) use($uid) {
 						$model = $this->getRepository()->findByUid($uid);
 						if ($model) {
-							$this->getRepository()->remove($model);
-							$this->persistAllChanges();
+							$this->removeModel($model);
 						}
 						return 200;
 					});
-
-
 				});
-
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* CREATE																	 */
@@ -119,15 +115,11 @@ class App {
 					 */
 					$model = $this->getModelWithData($data);
 					if ($model) {
-						if ($model->_isNew()) {
-							$this->getRepository()->add($model);
-						} else {
-							$this->getRepository()->update($model);
-						}
-
-						$this->persistAllChanges();
+						$this->saveModel($model);
+					} else {
+						return 404;
 					}
-					return $this->getModelData($model);
+					return $this->dataProvider->getModelData($model);
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -137,7 +129,7 @@ class App {
 					$repository = $this->getRepository();
 					$allModels = $repository->findAll();
 					$allModels = iterator_to_array($allModels);
-					return array_map(array($this, 'getModelData'), $allModels);
+					return array_map(array($this->dataProvider, 'getModelData'), $allModels);
 				});
 			});
 		}
@@ -185,16 +177,53 @@ class App {
 		if (!$this->path) {
 			$uri = $this->getUri();
 			$this->path = strtok($uri, '/');
-//			$this->path = substr($uri, 0, strpos($uri, '/'));
 		}
 		return $this->path;
 	}
 
 	/**
-	 * Persist all changes of the data provider
+	 * Returns the domain model repository for the current API path
+	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
-	public function persistAllChanges() {
-		$this->dataProvider->persistAllChanges();
+	public function getRepository() {
+		return $this->dataProvider->getRepositoryForPath($this->getPath());
+	}
+
+	/**
+	 * Returns a new domain model for the given API path and data
+	 *
+	 * @param array $data Data of the new model
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getModelWithData($data) {
+		return $this->dataProvider->getModelWithDataForPath($data, $this->getPath());
+	}
+
+	/**
+	 * Returns the data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 */
+	public function getModelData($model) {
+		return $this->dataProvider->getModelData($model);
+	}
+
+	/**
+	 * Tells the Data Provider to save the given model
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return void
+	 */
+	public function saveModel($model) {
+		$this->dataProvider->saveModelForPath($model, $this->getPath());
+	}
+
+	/**
+	 * Tells the Data Provider to remove the given model
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return void
+	 */
+	public function removeModel($model) {
+		$this->dataProvider->removeModelForPath($model, $this->getPath());
 	}
 
 	/**

@@ -35,11 +35,11 @@ class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {}
  */
 class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Cundd\Rest\App
+	 * @var \Cundd\Rest\DataProvider\DataProviderInterface
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	static public function setUpBeforeClass() {
 		\Tx_CunddComposer_Autoloader::register();
 
 		class_alias('\\Cundd\\Rest\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
@@ -50,7 +50,9 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+	}
 
+	public function setUp() {
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
 	}
 

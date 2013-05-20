@@ -44,6 +44,24 @@ interface DataProviderInterface extends \TYPO3\CMS\Core\SingletonInterface {
 	public function getModelData($model);
 
 	/**
+	 * Adds or updates the given model in the repository for the
+	 * given API path
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function saveModelForPath($model, $path);
+
+	/**
+	 * Adds or updates the given model in the repository for the
+	 * given API path
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function removeModelForPath($model, $path);
+
+	/**
 	 * Persist all changes to the database
 	 */
 	public function persistAllChanges();
