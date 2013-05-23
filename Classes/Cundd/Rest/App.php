@@ -2,6 +2,7 @@
 namespace Cundd\Rest;
 
 use Bullet\View\Exception;
+use Cundd\Rest\DataProvider\Utility;
 
 class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
@@ -43,7 +44,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		$this->request = new \Bullet\Request(NULL, $this->getUri());
 
 		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$this->dataProvider = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProviderInterface');
 	}
 
 	/**
@@ -52,6 +52,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function dispatch() {
 		$request = $this->request;
+		$this->dataProvider = $this->getDataProvider();
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -224,6 +225,27 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function removeModel($model) {
 		$this->dataProvider->removeModelForPath($model, $this->getPath());
+	}
+
+	/**
+	 * Returns the data provider
+	 *
+	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
+	 */
+	public function getDataProvider() {
+		if (!$this->dataProvider) {
+			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getPath());
+
+			$dataProviderClass  = 'Tx_' . $extension . '_Rest_DataProvider';
+			if (!class_exists($dataProviderClass)) {
+				$dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
+			}
+			if (!class_exists($dataProviderClass)) {
+				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
+			}
+			$this->dataProvider = $this->objectManager->get($dataProviderClass);
+		}
+		return $this->dataProvider;
 	}
 
 	/**

@@ -66,6 +66,9 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function getRepositoryForPathTest() {
 		$repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
 		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+
+		$repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
+		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
 	}
 
 	/**
@@ -73,6 +76,9 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function getNamespacedRepositoryForPathTest() {
 		$repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
+		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+
+		$repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
 		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
 	}
 
@@ -82,13 +88,19 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function getNamespacedRepositoryForPathWithVendorTest() {
 		$repository = $this->fixture->getRepositoryForPath('Vendor-MyExt-MyModel');
 		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
+
+		$repository = $this->fixture->getRepositoryForPath('vendor-my_ext-my_model');
+		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 	}
 
 	/**
 	 * @test
 	 */
 	public function getModelForPathTest() {
-		$model = $this->fixture->getEmptyModelForPath('MyExt-MyModel');
+		$model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
+		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+
+		$model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
 		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
 	}
 
@@ -96,7 +108,10 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function getNamespacedModelForPathTest() {
-		$model = $this->fixture->getEmptyModelForPath('MyExt-MySecondModel');
+		$model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
+		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+
+		$model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
 		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
 	}
 
@@ -104,7 +119,10 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function getNamespacedModelForPathWithVendorTest() {
-		$model = $this->fixture->getEmptyModelForPath('Vendor-MyExt-MyModel');
+		$model = $this->fixture->getModelWithDataForPath(array(), 'Vendor-MyExt-MyModel');
+		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
+
+		$model = $this->fixture->getModelWithDataForPath(array(), 'vendor-my_ext-my_model');
 		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 	}
 

@@ -24,7 +24,7 @@ class DataProvider implements DataProviderInterface {
 	 * @return string
 	 */
 	public function getRepositoryClassForPath($path) {
-		list($vendor, $extension, $model) = $this->getClassNamePartsForPath($path);
+		list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
 		$repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
 		if (!class_exists($repositoryClass)) {
 			$repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
@@ -52,22 +52,12 @@ class DataProvider implements DataProviderInterface {
 	 * @return string
 	 */
 	public function getModelClassForPath($path) {
-		list($vendor, $extension, $model) = $this->getClassNamePartsForPath($path);
+		list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
 		$modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
 		if (!class_exists($modelClass)) {
 			$modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
 		}
 		return $modelClass;
-	}
-
-	/**
-	 * Returns a new domain model for the given API path
-	 *
-	 * @param array $data Data of the new model
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getModelForPath($path) {
-		return $this->getModelWithDataForPath(array(), $path);
 	}
 
 	/**
@@ -91,28 +81,13 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
-	 * Returns an array of class name parts including vendor, extension
-	 * and domain model
+	 * Returns a new domain model for the given API path
 	 *
-	 * Example:
-	 *   array(
-	 *     Vendor
-	 *     MyExt
-	 *     MyModel
-	 *   )
-	 * @param $path
-	 * @return array
+	 * @param array $data Data of the new model
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
-	public function getClassNamePartsForPath($path) {
-		if (strpos($path, '_') !== FALSE) {
-			$path = \TYPO3\CMS\Core\Utility\GeneralUtility::underscoredToUpperCamelCase($path);
-		}
-		$parts = explode('-', $path);
-		if (count($parts) < 3) {
-			array_unshift($parts, '');
-		}
-		$parts = array_map(function($part) {return ucfirst($part);}, $parts);
-		return $parts;
+	public function getModelForPath($path) {
+		return $this->getModelWithDataForPath(array(), $path);
 	}
 
 	/**
