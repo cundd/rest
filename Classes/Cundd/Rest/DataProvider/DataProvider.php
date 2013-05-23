@@ -104,10 +104,14 @@ class DataProvider implements DataProviderInterface {
 	 * @return array
 	 */
 	public function getClassNamePartsForPath($path) {
-		$parts = explode('_', $path);
+		if (strpos($path, '_') !== FALSE) {
+			$path = \TYPO3\CMS\Core\Utility\GeneralUtility::underscoredToUpperCamelCase($path);
+		}
+		$parts = explode('-', $path);
 		if (count($parts) < 3) {
 			array_unshift($parts, '');
 		}
+		$parts = array_map(function($part) {return ucfirst($part);}, $parts);
 		return $parts;
 	}
 
