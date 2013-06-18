@@ -72,6 +72,8 @@ class DataProvider implements DataProviderInterface {
 		if (!$data) {
 			return $this->getEmptyModelForPath($path);
 		}
+
+		$data = $this->prepareModelData($data);
 		try {
 			$model = $this->propertyMapper->convert($data, $modelClass);
 		} catch (\TYPO3\CMS\Extbase\Property\Exception $e) {
@@ -83,7 +85,7 @@ class DataProvider implements DataProviderInterface {
 	/**
 	 * Returns a new domain model for the given API path
 	 *
-	 * @param array $data Data of the new model
+	 * @param string $path
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelForPath($path) {
@@ -98,13 +100,14 @@ class DataProvider implements DataProviderInterface {
 	 */
 	public function getEmptyModelForPath($path) {
 		$modelClass = $this->getModelClassForPath($path);
-		return $this->objectManager->create($modelClass);
+		return $this->objectManager->get($modelClass);
 	}
 
 	/**
 	 * Returns the data from the given model
 	 *
 	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return array<mixed>
 	 */
 	public function getModelData($model) {
 		$properties = NULL;
@@ -157,5 +160,15 @@ class DataProvider implements DataProviderInterface {
 	public function persistAllChanges() {
 		$persistenceManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
 		$persistenceManager->persistAll();
+	}
+
+	/**
+	 * Prepares the given data before transforming it to a model
+	 *
+	 * @param $data
+	 * @return array
+	 */
+	protected function prepareModelData($data) {
+		return $data;
 	}
 }

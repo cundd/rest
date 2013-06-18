@@ -1,5 +1,6 @@
 <?php
 #require_once __DIR__ . '/vendor/autoload.php';
+//if (TYPO3_version) {}
 Tx_CunddComposer_Autoloader::register();
 
 //spl_autoload_register(function ($className) {
