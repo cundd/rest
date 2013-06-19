@@ -111,8 +111,21 @@ class DataProvider implements DataProviderInterface {
 	 */
 	public function getModelData($model) {
 		$properties = NULL;
-		if (is_object($model) && $model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
-			$properties = $model->_getProperties();
+		if (is_object($model)) {
+			// Get the data from the
+			if (method_exists($model, 'jsonSerialize')) {
+				$properties = $model->jsonSerialize();
+			} else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+				$properties = $model->_getProperties();
+			}
+
+			// Transform objects recursive
+			foreach ($properties as $propertyKey => $propertyValue) {
+				if (is_object($propertyValue)) {
+					$properties[$propertyKey] = $this->getModelData($propertyValue);
+				}
+			}
+
 			$properties['__class'] = get_class($model);
 		} else {
 			$properties = $model;
