@@ -2,23 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/legacy.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/magicento.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571514729" ignored="false" />
     <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371570768120" ignored="false" />
-    <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571967931" ignored="false" />
+    <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632583772" ignored="false" />
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384206554" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371570187181" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632187093" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -39,23 +35,45 @@
     <file path="$APPLICATION_HOME_DIR$/lib/openapi.jar!/standardSchemas/xhtml1-strict.xsd" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368728133043" ignored="false" />
     <file path="/RepositoryRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368729225732" ignored="false" />
     <file path="/AppTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369338017490" ignored="false" />
-    <file path="/DataProviderTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369338690592" ignored="false" />
+    <file path="/DataProviderTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632576879" ignored="false" />
     <file path="/ExtbaseDataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369060061062" ignored="false" />
     <file path="/DataProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369059651773" ignored="false" />
-    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573200440" ignored="false" />
+    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632450083" ignored="false" />
     <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369335522245" ignored="false" />
     <file path="/legacy.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371219541396" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Competition.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571993831" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Game.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573320279" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Competition.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Game.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/ext_tables.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571860975" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/League.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571993831" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Season.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571993831" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Team.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571993831" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Rest/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573203501" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/League.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Season.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Team.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Rest/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/ExtensionBuilder.json" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573266532" ignored="false" />
     <file path="/ExtensionBuilder.json" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573264649" ignored="false" />
     <file path="/Game.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573311142" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Configuration/TCA/Game.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573364041" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Controller/SeasonController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Controller/GameController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Controller/LeagueController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Controller/CompetitionController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Controller/TeamController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Repository/TeamRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Repository/GameRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Repository/SeasonRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Repository/LeagueRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Repository/CompetitionRepository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628360369" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Enum/GameStatus.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Controller/GameControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Controller/LeagueControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Controller/CompetitionControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Controller/TeamControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Controller/SeasonControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Domain/Model/CompetitionTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Domain/Model/LeagueTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Domain/Model/GameTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Domain/Model/TeamTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Tests/Unit/Domain/Model/SeasonTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351345" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Configuration/ExtensionBuilder/settings.yaml" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371629283890" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +96,7 @@
       <file leaf-file-name="AppTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="-46.0">
+            <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -87,7 +105,7 @@
       <file leaf-file-name="DataProviderTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="5" selection-start="272" selection-end="272" vertical-scroll-proportion="-0.6666667">
+            <state line="227" column="23" selection-start="5966" selection-end="5966" vertical-scroll-proportion="-6.6666665">
               <folding />
             </state>
           </provider>
@@ -105,7 +123,7 @@
       <file leaf-file-name="index.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="17" selection-start="521" selection-end="521" vertical-scroll-proportion="-12.0">
+            <state line="18" column="17" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -123,25 +141,25 @@
       <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="-13.041667">
+            <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DataProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="33" selection-start="16" selection-end="39" vertical-scroll-proportion="0.012708499">
+            <state line="122" column="13" selection-start="3877" selection-end="3877" vertical-scroll-proportion="-22.666666">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Utility.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Utility.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="24" selection-start="595" selection-end="602" vertical-scroll-proportion="-14.375">
+            <state line="29" column="9" selection-start="676" selection-end="676" vertical-scroll-proportion="0.549763">
               <folding />
             </state>
           </provider>
@@ -150,7 +168,7 @@
       <file leaf-file-name="DataProviderInterface.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="-3.0416667">
+            <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -192,13 +210,13 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DefaultDataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/StandardDataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
-        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
         <option value="$PROJECT_DIR$/legacy.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
       </list>
     </option>
   </component>
@@ -242,7 +260,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -371,6 +388,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -451,7 +469,7 @@
     <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
       <method />
     </configuration>
-    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
+    <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server" server_id="9f090c1b-f5bc-4ca7-8d9f-d28fb2eda40f" server_name="results.iresults.me">
       <method />
     </configuration>
     <list size="2">
@@ -492,29 +510,34 @@
       <created>1368279175818</created>
       <updated>1368279175818</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added support for nested model data and jsonSerialize()">
+      <created>1371626901923</created>
+      <updated>1371626901923</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="325" y="22" width="1602" height="1415" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299923" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3299923" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32845026" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.155527" sideWeight="0.67154974" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16231343" sideWeight="0.67013234" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16773778" sideWeight="0.67154974" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.155527" sideWeight="0.6700077" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17159383" sideWeight="0.6700077" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32986766" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32845026" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32972974" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -563,7 +586,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added support for adding custom Data Providers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added support for nested model data and jsonSerialize()" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -578,6 +601,7 @@
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="Added support for adding custom Data Providers" />
+    <MESSAGE value="Added support for nested model data and jsonSerialize()" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -621,9 +645,9 @@
         <state line="1" column="41" selection-start="16" selection-end="47" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/frontend/Classes/Utility/EidUtility.php">
+    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="6" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0">
+        <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -635,6 +659,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="17" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/frontend/Classes/Utility/EidUtility.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="6" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="63" column="0" selection-start="1932" selection-end="1932" vertical-scroll-proportion="0.0">
@@ -642,51 +694,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="-46.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="17" selection-start="521" selection-end="521" vertical-scroll-proportion="-12.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="24" selection-start="595" selection-end="602" vertical-scroll-proportion="-14.375">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="-3.0416667">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="5" selection-start="272" selection-end="272" vertical-scroll-proportion="-0.6666667">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="-13.041667">
+        <state line="227" column="23" selection-start="5966" selection-end="5966" vertical-scroll-proportion="-6.6666665">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="33" selection-start="16" selection-end="39" vertical-scroll-proportion="0.012708499">
+        <state line="122" column="13" selection-start="3877" selection-end="3877" vertical-scroll-proportion="-22.666666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="9" selection-start="676" selection-end="676" vertical-scroll-proportion="0.549763">
           <folding />
         </state>
       </provider>

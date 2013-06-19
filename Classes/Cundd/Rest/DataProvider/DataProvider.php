@@ -112,11 +112,14 @@ class DataProvider implements DataProviderInterface {
 	public function getModelData($model) {
 		$properties = NULL;
 		if (is_object($model)) {
-			// Get the data from the
+			// Get the data from the model
 			if (method_exists($model, 'jsonSerialize')) {
 				$properties = $model->jsonSerialize();
 			} else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
 				$properties = $model->_getProperties();
+			} else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+				// TODO: handle the lazy object storage
+				$properties = array();
 			}
 
 			// Transform objects recursive
@@ -126,8 +129,12 @@ class DataProvider implements DataProviderInterface {
 				}
 			}
 
-			$properties['__class'] = get_class($model);
-		} else {
+			if ($properties) {
+				$properties['__class'] = get_class($model);
+			}
+		}
+
+		if (!$properties) {
 			$properties = $model;
 		}
 		return $properties;

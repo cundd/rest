@@ -30,12 +30,18 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
 	protected $base = 'Base';
 
 	/**
+	 * @var \DateTime
+	 */
+	protected $date = NULL;
+
+	/**
 	 * @var \Cundd\Rest\Test\Core\MyModel
 	 */
 	protected $child = NULL;
 
 	function __construct() {
 		$this->child = new MyModel();
+		$this->date = new \DateTime();
 	}
 
 
@@ -65,6 +71,20 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
 	 */
 	public function getChild() {
 		return $this->child;
+	}
+
+	/**
+	 * @param \DateTime $date
+	 */
+	public function setDate($date) {
+		$this->date = $date;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDate() {
+		return $this->date;
 	}
 }
 
@@ -220,11 +240,15 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function getNestedModelDataTest() {
+		$testDate = new \DateTime();
 		$model = new MyNestedModel();
+		$model->setDate($testDate);
+
 		$properties = $this->fixture->getModelData($model);
 		$this->assertEquals(
 			array(
 				'base' 		=> 'Base',
+				'date' 		=> $testDate,
 				'uid' 		=> NULL,
 				'pid' 		=> NULL,
 				'child' 	=> array(
