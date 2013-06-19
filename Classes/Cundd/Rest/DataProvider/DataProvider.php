@@ -121,23 +121,6 @@ class DataProvider implements DataProviderInterface {
 				$properties = $model->jsonSerialize();
 			} else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
 				$properties = $model->_getProperties();
-//			} else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
-//				// TODO: handle the lazy object storage
-//
-//				/** @var \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage */
-//				$lazyObjectStorage = $model;
-////				$lazyObjectStorage->count();
-////
-////
-////				$properties = array(
-////					'uri' => Utility::getPathForClassName(get_class(reset(iterator_to_array($model)))),
-////					'path' => Utility::getPathForClassName(get_class(reset(iterator_to_array($model)))),
-////					'__class' => (get_class(reset(iterator_to_array($model))))
-////				);
-//				$properties = array(
-//					'__info' 	=> 'Lazy loaded',
-//					'__class' 	=> ''
-//				);
 			}
 
 			// Transform objects recursive

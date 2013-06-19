@@ -4,8 +4,6 @@
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
@@ -16,7 +14,7 @@
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384206554" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371637080155" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371649130891" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -160,7 +158,7 @@
       <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="142" column="42" selection-start="4585" selection-end="4585" vertical-scroll-proportion="0.6361446">
+            <state line="122" column="55" selection-start="3836" selection-end="3836" vertical-scroll-proportion="-0.6361446">
               <folding>
                 <element signature="e#43#85#0" expanded="true" />
               </folding>
@@ -245,8 +243,8 @@
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
       </list>
     </option>
   </component>
@@ -566,7 +564,11 @@
       <created>1371637084875</created>
       <updated>1371637084875</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added feature to retrieve nested resources">
+      <created>1371649139022</created>
+      <updated>1371649139022</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -658,7 +660,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added feature to automatically try to convert plural resource names to singular" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added feature to retrieve nested resources" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -676,6 +678,7 @@
     <MESSAGE value="Added support for nested model data and jsonSerialize()" />
     <MESSAGE value="Detect lazy loaded domain objects" />
     <MESSAGE value="Added feature to automatically try to convert plural resource names to singular" />
+    <MESSAGE value="Added feature to retrieve nested resources" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -773,13 +776,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="24" selection-start="4964" selection-end="4964" vertical-scroll-proportion="-16.666666">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/core/Classes/Utility/HttpUtility.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="119" column="27" selection-start="4982" selection-end="4982" vertical-scroll-proportion="0.99759036">
@@ -787,9 +783,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="171" column="24" selection-start="4964" selection-end="4964" vertical-scroll-proportion="-16.666666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="142" column="42" selection-start="4585" selection-end="4585" vertical-scroll-proportion="0.6361446">
+        <state line="122" column="55" selection-start="3836" selection-end="3836" vertical-scroll-proportion="-0.6361446">
           <folding>
             <element signature="e#43#85#0" expanded="true" />
           </folding>

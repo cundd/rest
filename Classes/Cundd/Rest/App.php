@@ -169,7 +169,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param \Exception $exception
 	 */
 	public function exceptionToResponse($exception) {
-		echo $exception;
 		return new \Bullet\Response($exception->getMessage(), 501);
 	}
 
