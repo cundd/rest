@@ -44,6 +44,15 @@ interface DataProviderInterface extends \TYPO3\CMS\Core\SingletonInterface {
 	public function getModelData($model);
 
 	/**
+	 * Returns the property data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $propertyKey
+	 * @return mixed
+	 */
+	public function getModelProperty($model, $propertyKey);
+
+	/**
 	 * Adds or updates the given model in the repository for the
 	 * given API path
 	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model

@@ -69,6 +69,14 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* WITH UID 																 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->param('int', function($request, $uid) use($dispatcher, $app) {
+					$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
+						$model = $dispatcher->getRepository()->findByUid($uid);
+						if (!$model) {
+							return 404;
+						}
+						return $dispatcher->getModelProperty($model, $propertyKey);
+					});
+
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* SHOW
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -161,6 +169,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param \Exception $exception
 	 */
 	public function exceptionToResponse($exception) {
+		echo $exception;
 		return new \Bullet\Response($exception->getMessage(), 501);
 	}
 
@@ -210,6 +219,17 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function getModelData($model) {
 		return $this->dataProvider->getModelData($model);
+	}
+
+	/**
+	 * Returns the property data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $propertyKey
+	 * @return mixed
+	 */
+	public function getModelProperty($model, $propertyKey) {
+		return $this->dataProvider->getModelProperty($model, $propertyKey);
 	}
 
 	/**

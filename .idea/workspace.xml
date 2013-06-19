@@ -2,18 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571514729" ignored="false" />
+    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371647656501" ignored="false" />
     <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371570768120" ignored="false" />
     <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371633742344" ignored="false" />
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384206554" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371633102560" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371637080155" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -36,16 +39,16 @@
     <file path="/AppTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369338017490" ignored="false" />
     <file path="/DataProviderTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632576879" ignored="false" />
     <file path="/ExtbaseDataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369060061062" ignored="false" />
-    <file path="/DataProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369059651773" ignored="false" />
-    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371632450083" ignored="false" />
-    <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371633759309" ignored="false" />
+    <file path="/DataProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371647331742" ignored="false" />
+    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371648900980" ignored="false" />
+    <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371637585424" ignored="false" />
     <file path="/legacy.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371219541396" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Competition.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Game.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/ext_tables.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371571860975" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/League.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Season.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
-    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Team.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
+    <file path="$PROJECT_DIR$/../result/Classes/Domain/Model/Team.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371648051593" ignored="false" />
     <file path="$PROJECT_DIR$/../result/Classes/Rest/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371628351344" ignored="false" />
     <file path="$PROJECT_DIR$/../result/ExtensionBuilder.json" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573266532" ignored="false" />
     <file path="/ExtensionBuilder.json" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371573264649" ignored="false" />
@@ -103,7 +106,7 @@
       <file leaf-file-name="AppTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
+            <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="-0.6666667">
               <folding />
             </state>
           </provider>
@@ -148,7 +151,7 @@
       <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="-162.66667">
+            <state line="171" column="24" selection-start="4964" selection-end="4964" vertical-scroll-proportion="-16.666666">
               <folding />
             </state>
           </provider>
@@ -157,7 +160,27 @@
       <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="122" column="13" selection-start="3877" selection-end="3877" vertical-scroll-proportion="0.43277645">
+            <state line="142" column="42" selection-start="4585" selection-end="4585" vertical-scroll-proportion="0.6361446">
+              <folding>
+                <element signature="e#43#85#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LazyObjectStorage.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/extbase/Classes/Persistence/Generic/LazyObjectStorage.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="204" column="37" selection-start="6358" selection-end="6358" vertical-scroll-proportion="-2.8333333">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ObjectStorage.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/extbase/Classes/Persistence/ObjectStorage.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="6" selection-start="1536" selection-end="1536" vertical-scroll-proportion="-23.333334">
               <folding />
             </state>
           </provider>
@@ -166,7 +189,7 @@
       <file leaf-file-name="Utility.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="0" selection-start="1052" selection-end="1052" vertical-scroll-proportion="-17.333334">
+            <state line="75" column="14" selection-start="2034" selection-end="2034" vertical-scroll-proportion="-14.0">
               <folding />
             </state>
           </provider>
@@ -175,7 +198,7 @@
       <file leaf-file-name="DataProviderInterface.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0">
+            <state line="45" column="4" selection-start="1278" selection-end="1519" vertical-scroll-proportion="-12.0">
               <folding />
             </state>
           </provider>
@@ -216,14 +239,14 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/ExtbaseDataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DefaultDataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/StandardDataProvider.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
         <option value="$PROJECT_DIR$/legacy.php" />
         <option value="$PROJECT_DIR$/index.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
       </list>
     </option>
   </component>
@@ -290,6 +313,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -525,12 +562,36 @@
       <created>1371633112453</created>
       <updated>1371633112453</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added feature to automatically try to convert plural resource names to singular">
+      <created>1371637084875</created>
+      <updated>1371637084875</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="325" y="22" width="1602" height="1415" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299923" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -541,9 +602,9 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32972974" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32972974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16231343" sideWeight="0.67013234" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17159383" sideWeight="0.67027026" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17159383" sideWeight="0.67027026" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -597,7 +658,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Detect lazy loaded domain objects" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added feature to automatically try to convert plural resource names to singular" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -614,44 +675,12 @@
     <MESSAGE value="Added support for adding custom Data Providers" />
     <MESSAGE value="Added support for nested model data and jsonSerialize()" />
     <MESSAGE value="Detect lazy loaded domain objects" />
+    <MESSAGE value="Added feature to automatically try to convert plural resource names to singular" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="43" selection-start="2227" selection-end="2250" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="34" selection-start="542" selection-end="542" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="4" selection-start="1546" selection-end="1546" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="0" selection-start="1932" selection-end="1932" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../sourcero/Classes/Domain/Repository/RepositoryRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="98" selection-start="1226" selection-end="1259" vertical-scroll-proportion="-6.875" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../cundd_assetic/Classes/Domain/Model/Asset.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="41" selection-start="16" selection-end="47" vertical-scroll-proportion="0.0" />
@@ -659,7 +688,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0">
+        <state line="69" column="52" selection-start="1664" selection-end="1664" vertical-scroll-proportion="-0.6666667">
           <folding />
         </state>
       </provider>
@@ -685,13 +714,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="20" selection-start="867" selection-end="867" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="63" column="0" selection-start="1932" selection-end="1932" vertical-scroll-proportion="0.0">
@@ -706,24 +728,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+    <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/extbase/Classes/Persistence/ObjectStorage.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="245" column="28" selection-start="6855" selection-end="6855" vertical-scroll-proportion="-162.66667">
+        <state line="35" column="6" selection-start="1536" selection-end="1536" vertical-scroll-proportion="-23.333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.lock">
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.88996375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/extbase/Classes/Persistence/Generic/LazyObjectStorage.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="204" column="37" selection-start="6358" selection-end="6358" vertical-scroll-proportion="-2.8333333">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1052" selection-end="1052" vertical-scroll-proportion="-17.333334">
+        <state line="75" column="14" selection-start="2034" selection-end="2034" vertical-scroll-proportion="-14.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="4" selection-start="1278" selection-end="1519" vertical-scroll-proportion="-12.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="171" column="24" selection-start="4964" selection-end="4964" vertical-scroll-proportion="-16.666666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Resources/typo3_src-6.1.1/typo3/sysext/core/Classes/Utility/HttpUtility.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="119" column="27" selection-start="4982" selection-end="4982" vertical-scroll-proportion="0.99759036">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="122" column="13" selection-start="3877" selection-end="3877" vertical-scroll-proportion="0.43277645">
-          <folding />
+        <state line="142" column="42" selection-start="4585" selection-end="4585" vertical-scroll-proportion="0.6361446">
+          <folding>
+            <element signature="e#43#85#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -2,6 +2,10 @@
 namespace Cundd\Rest\DataProvider;
 
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Frontend\Utility\EidUtility;
+
 class DataProvider implements DataProviderInterface {
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
@@ -117,19 +121,37 @@ class DataProvider implements DataProviderInterface {
 				$properties = $model->jsonSerialize();
 			} else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
 				$properties = $model->_getProperties();
-			} else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
-				// TODO: handle the lazy object storage
-				$properties = array();
+//			} else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+//				// TODO: handle the lazy object storage
+//
+//				/** @var \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage */
+//				$lazyObjectStorage = $model;
+////				$lazyObjectStorage->count();
+////
+////
+////				$properties = array(
+////					'uri' => Utility::getPathForClassName(get_class(reset(iterator_to_array($model)))),
+////					'path' => Utility::getPathForClassName(get_class(reset(iterator_to_array($model)))),
+////					'__class' => (get_class(reset(iterator_to_array($model))))
+////				);
+//				$properties = array(
+//					'__info' 	=> 'Lazy loaded',
+//					'__class' 	=> ''
+//				);
 			}
 
 			// Transform objects recursive
 			foreach ($properties as $propertyKey => $propertyValue) {
 				if (is_object($propertyValue)) {
-					$properties[$propertyKey] = $this->getModelData($propertyValue);
+					if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+						$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey);
+					} else {
+						$properties[$propertyKey] = $this->getModelData($propertyValue);
+					}
 				}
 			}
 
-			if ($properties) {
+			if ($properties && !isset($properties['__class'])) {
 				$properties['__class'] = get_class($model);
 			}
 		}
@@ -138,6 +160,50 @@ class DataProvider implements DataProviderInterface {
 			$properties = $model;
 		}
 		return $properties;
+	}
+
+	/**
+	 * Returns the URI of a nested resource
+	 *
+	 * @param string $resourceKey
+	 * @return string
+	 */
+	public function getUriToNestedResource($resourceKey) {
+		// TODO: fix this
+		$currentUri = $_SERVER['REQUEST_URI'];
+		if (substr($currentUri, -1) !== '/') {
+			$currentUri .= '/';
+		}
+		return 'http://' . $_SERVER['HTTP_HOST'] . $currentUri . $resourceKey;
+	}
+
+	/**
+	 * Returns the property data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $propertyKey
+	 * @return mixed
+	 */
+	public function getModelProperty($model, $propertyKey) {
+		$propertyValue = $model->_getProperty($propertyKey);
+		if (is_object($propertyValue)) {
+			if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+				$propertyValue = iterator_to_array($propertyValue);
+
+				// Transform objects recursive
+				foreach ($propertyValue as $childPropertyKey => $childPropertyValue) {
+					if (is_object($childPropertyValue)) {
+						$propertyValue[$childPropertyKey] = $this->getModelData($childPropertyValue);
+					}
+				}
+				$propertyValue = array_values($propertyValue);
+			} else {
+				$propertyValue = $this->getModelData($propertyValue);
+			}
+		} else if (!$propertyValue) {
+			return NULL;
+		}
+		return $propertyValue;
 	}
 
 	/**

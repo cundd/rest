@@ -9,6 +9,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Utility {
 	/**
+	 * Separator between vendor, extension and model in the API path
+	 */
+	const API_PATH_PART_SEPARATOR = '-';
+
+	/**
 	 * Returns an array of class name parts including vendor, extension
 	 * and domain model
 	 *
@@ -27,7 +32,7 @@ class Utility {
 		if (strpos($path, '_') !== FALSE) {
 			$path = GeneralUtility::underscoredToUpperCamelCase($path);
 		}
-		$parts = explode('-', $path);
+		$parts = explode(self::API_PATH_PART_SEPARATOR, $path);
 		if (count($parts) < 3) {
 			array_unshift($parts, '');
 		}
@@ -41,6 +46,34 @@ class Utility {
 			return ucfirst($part);
 		}, $parts);
 		return $parts;
+	}
+
+	/**
+	 * Tries to generate the API path for the given class name
+	 *
+	 * @param string $className
+	 * @return string|FALSE Returns the path or FALSE if it couldn't be determined
+	 */
+	static public function getPathForClassName($className) {
+		$path = FALSE;
+		if (strpos($className, '\\')) {
+			if ($className[0] !== '\\') {
+				$className = '\\' . $className;
+			}
+			// \Iresults\Result\Domain\Model\Team
+			$classNameParts = explode('\\', $className);
+		} else {
+			$classNameParts = explode('_', $className);
+		}
+		array_shift($classNameParts);
+
+		$classNameParts = array_map(
+			array('TYPO3\\CMS\\Core\\Utility\\GeneralUtility', 'camelCaseToLowerCaseUnderscored'),
+			$classNameParts
+		);
+
+		$path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[1] . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
+		return $path;
 	}
 
 	/**
