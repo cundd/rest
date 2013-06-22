@@ -48,7 +48,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * Dispatch the request
-	 * @return void
+	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
 		$request = $this->request;
@@ -120,7 +120,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					} else {
 						return 404;
 					}
-					return $this->dataProvider->getModelData($model);
+					return $this->getDataProvider()->getModelData($model);
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -130,7 +130,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					$repository = $this->getRepository();
 					$allModels = $repository->findAll();
 					$allModels = iterator_to_array($allModels);
-					return array_map(array($this->dataProvider, 'getModelData'), $allModels);
+					return array_map(array($this->getDataProvider(), 'getModelData'), $allModels);
 				});
 			});
 		}
@@ -146,11 +146,14 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			return $greeting;
 		});
 
+		$success = TRUE;
 		$response = $this->app->run($request);
 		if ($response->content() instanceof \Exception) {
+			$success = FALSE;
 			$response = $this->exceptionToResponse($response->content());
 		}
 		echo $response;
+		return $success;
 	}
 
 	/**
@@ -187,7 +190,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
 	public function getRepository() {
-		return $this->dataProvider->getRepositoryForPath($this->getPath());
+		return $this->getDataProvider()->getRepositoryForPath($this->getPath());
 	}
 
 	/**
@@ -197,7 +200,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithData($data) {
-		return $this->dataProvider->getModelWithDataForPath($data, $this->getPath());
+		return $this->getDataProvider()->getModelWithDataForPath($data, $this->getPath());
 	}
 
 	/**
@@ -206,7 +209,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 	 */
 	public function getModelData($model) {
-		return $this->dataProvider->getModelData($model);
+		return $this->getDataProvider()->getModelData($model);
 	}
 
 	/**
@@ -215,7 +218,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return void
 	 */
 	public function saveModel($model) {
-		$this->dataProvider->saveModelForPath($model, $this->getPath());
+		$this->getDataProvider()->saveModelForPath($model, $this->getPath());
 	}
 
 	/**
@@ -224,7 +227,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return void
 	 */
 	public function removeModel($model) {
-		$this->dataProvider->removeModelForPath($model, $this->getPath());
+		$this->getDataProvider()->removeModelForPath($model, $this->getPath());
 	}
 
 	/**
@@ -236,12 +239,17 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		if (!$this->dataProvider) {
 			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getPath());
 
+			// Check if an extension provides a Data Provider
 			$dataProviderClass  = 'Tx_' . $extension . '_Rest_DataProvider';
 			if (!class_exists($dataProviderClass)) {
 				$dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
 			}
 			if (!class_exists($dataProviderClass)) {
-				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
+				// Get the specific builtin Data Provider
+				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
+				if (!class_exists($dataProviderClass)) {
+					$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
+				}
 			}
 			$this->dataProvider = $this->objectManager->get($dataProviderClass);
 		}
