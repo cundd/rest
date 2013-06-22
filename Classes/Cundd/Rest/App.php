@@ -65,6 +65,9 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			return FALSE;
 		}
 
+		$dispatcher = $this;
+		$app = $this->app;
+
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 		 */
@@ -72,45 +75,53 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
-			$this->app->path($this->getPath(), function($request) {
+			$app->path($this->getPath(), function($request) use($dispatcher, $app) {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* WITH UID 																 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$this->app->param('int', function($request, $uid) {
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* SHOW
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$this->app->get(function($request) use($uid) {
-						$model = $this->getRepository()->findByUid($uid);
+				$app->param('int', function($request, $uid) use($dispatcher, $app) {
+					$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
+						$model = $dispatcher->getRepository()->findByUid($uid);
 						if (!$model) {
 							return 404;
 						}
-						return $this->getModelData($model);
+						return $dispatcher->getModelProperty($model, $propertyKey);
+					});
+
+					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+					/* SHOW
+					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+					$app->get(function($request) use($uid, $dispatcher, $app) {
+						$model = $dispatcher->getRepository()->findByUid($uid);
+						if (!$model) {
+							return 404;
+						}
+						return $dispatcher->getModelData($model);
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* UPDATE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$this->app->post(function($request) use($uid) {
+					$app->post(function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
 						$data['__identity'] = $uid;
 
-						$model = $this->getModelWithData($data);
+						$model = $dispatcher->getModelWithData($data);
 						if ($model) {
-							$this->saveModel($model);
+							$dispatcher->saveModel($model);
 						} else {
 							return 404;
 						}
-						return $this->getModelData($model);
+						return $dispatcher->getModelData($model);
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* REMOVE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$this->app->delete(function($request) use($uid) {
-						$model = $this->getRepository()->findByUid($uid);
+					$app->delete(function($request) use($uid, $dispatcher, $app) {
+						$model = $dispatcher->getRepository()->findByUid($uid);
 						if ($model) {
-							$this->removeModel($model);
+							$dispatcher->removeModel($model);
 						}
 						return 200;
 					});
@@ -119,29 +130,29 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* CREATE																	 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$this->app->post(function($request) {
+				$app->post(function($request) use($dispatcher, $app) {
 					$data = $request->post();
 
 					/**
 					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 					 */
-					$model = $this->getModelWithData($data);
+					$model = $dispatcher->getModelWithData($data);
 					if ($model) {
-						$this->saveModel($model);
+						$dispatcher->saveModel($model);
 					} else {
 						return 404;
 					}
-					return $this->getDataProvider()->getModelData($model);
+					return $dispatcher->getDataProvider()->getModelData($model);
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* LIST 																	 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$this->app->get(function($request) {
-					$repository = $this->getRepository();
+				$app->get(function($request) use($dispatcher, $app) {
+					$repository = $dispatcher->getRepository();
 					$allModels = $repository->findAll();
 					$allModels = iterator_to_array($allModels);
-					return array_map(array($this->getDataProvider(), 'getModelData'), $allModels);
+					return array_map(array($dispatcher->getDataProvider(), 'getModelData'), $allModels);
 				});
 			});
 		}
@@ -221,6 +232,17 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function getModelData($model) {
 		return $this->getDataProvider()->getModelData($model);
+	}
+
+	/**
+	 * Returns the property data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @param string $propertyKey
+	 * @return mixed
+	 */
+	public function getModelProperty($model, $propertyKey) {
+		return $this->dataProvider->getModelProperty($model, $propertyKey);
 	}
 
 	/**

@@ -23,6 +23,80 @@ class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
 }
 class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {}
 
+class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
+	/**
+	 * @var string
+	 */
+	protected $base = 'Base';
+
+	/**
+	 * @var \DateTime
+	 */
+	protected $date = NULL;
+
+	/**
+	 * @var \Cundd\Rest\Test\Core\MyModel
+	 */
+	protected $child = NULL;
+
+	function __construct() {
+		$this->child = new MyModel();
+		$this->date = new \DateTime();
+	}
+
+
+	/**
+	 * @param string $base
+	 */
+	public function setBase($base) {
+		$this->base = $base;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getBase() {
+		return $this->base;
+	}
+
+	/**
+	 * @param \Cundd\Rest\Test\Core\MyModel $child
+	 */
+	public function setChild($child) {
+		$this->child = $child;
+	}
+
+	/**
+	 * @return \Cundd\Rest\Test\Core\MyModel
+	 */
+	public function getChild() {
+		return $this->child;
+	}
+
+	/**
+	 * @param \DateTime $date
+	 */
+	public function setDate($date) {
+		$this->date = $date;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDate() {
+		return $this->date;
+	}
+}
+
+class MyNestedJsonSerializeModel extends MyNestedModel {
+	public function jsonSerialize() {
+		return array(
+			'base' 	=> $this->base,
+			'child'	=> $this->child
+		);
+	}
+}
+
 /**
  * Test case for class new \Cundd\Rest\App
  *
@@ -145,6 +219,65 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$path = 'MyExt-MyModel';
 		#$model = $this->fixture->getModelWithDataForPath($data, $path);
 		#$this->assertEquals('Daniel Corn', $model->getName());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getModelDataTest() {
+		$model = new MyModel();
+		$properties = $this->fixture->getModelData($model);
+		$this->assertEquals(
+			array(
+				'name' 		=> 'Initial value',
+				'uid' 		=> NULL,
+				'pid' 		=> NULL,
+				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
+			), $properties);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getNestedModelDataTest() {
+		$testDate = new \DateTime();
+		$model = new MyNestedModel();
+		$model->setDate($testDate);
+
+		$properties = $this->fixture->getModelData($model);
+		$this->assertEquals(
+			array(
+				'base' 		=> 'Base',
+				'date' 		=> $testDate,
+				'uid' 		=> NULL,
+				'pid' 		=> NULL,
+				'child' 	=> array(
+					'name' 		=> 'Initial value',
+					'uid' 		=> NULL,
+					'pid' 		=> NULL,
+					'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
+				),
+				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyNestedModel'
+			), $properties);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getJsonSerializeNestedModelDataTest() {
+		$model = new MyNestedJsonSerializeModel();
+		$properties = $this->fixture->getModelData($model);
+		$this->assertEquals(
+			array(
+				'base' 		=> 'Base',
+				'child' 	=> array(
+					'name' 		=> 'Initial value',
+					'uid' 		=> NULL,
+					'pid' 		=> NULL,
+					'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
+				),
+				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyNestedJsonSerializeModel'
+			), $properties);
 	}
 
 }
