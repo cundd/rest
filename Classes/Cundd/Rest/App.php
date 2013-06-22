@@ -37,6 +37,11 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $request;
 
 	/**
+	 * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
+	 */
+	protected $authenticationProvider;
+
+	/**
 	 * Initialize
 	 */
 	public function __construct() {
@@ -52,7 +57,13 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function dispatch() {
 		$request = $this->request;
-		$this->dataProvider = $this->getDataProvider();
+
+		// Checks if the request needs authentication
+		if ($this->getAuthenticationProvider()->requestNeedsAuthentication($request)
+			&& $this->getAuthenticationProvider()->authenticate() === FALSE) {
+			echo new \Bullet\Response('Unauthorized', 401);
+			return FALSE;
+		}
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -254,6 +265,17 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			$this->dataProvider = $this->objectManager->get($dataProviderClass);
 		}
 		return $this->dataProvider;
+	}
+
+	/**
+	 * Returns the Authentication Provider
+	 * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
+	 */
+	public function getAuthenticationProvider() {
+		if (!$this->authenticationProvider) {
+			$this->authenticationProvider = $this->objectManager->get('Cundd\\Rest\\Authentication\\AuthenticationProviderInterface');
+		}
+		return $this->authenticationProvider;
 	}
 
 	/**
