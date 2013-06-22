@@ -65,16 +65,19 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
-	 * Returns a new domain model for the given API path and data
+	 * Returns a domain model for the given API path and data
 	 *
-	 * @param array $data Data of the new model
+	 * @param array|string|int $data Data of the new model or it's UID
 	 * @param string $path API path to get the repository for
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithDataForPath($data, $path) {
 		$modelClass = $this->getModelClassForPath($path);
+		// If no data is given return a new instance
 		if (!$data) {
 			return $this->getEmptyModelForPath($path);
+		} else if (is_scalar($data)) { // If it is a scalar treat it as identity
+			return $this->getRepositoryForPath($path)->findByUid($data);
 		}
 
 		$data = $this->prepareModelData($data);
@@ -124,12 +127,14 @@ class DataProvider implements DataProviderInterface {
 			}
 
 			// Transform objects recursive
-			foreach ($properties as $propertyKey => $propertyValue) {
-				if (is_object($propertyValue)) {
-					if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
-						$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey);
-					} else {
-						$properties[$propertyKey] = $this->getModelData($propertyValue);
+			if (is_array($properties)) {
+				foreach ($properties as $propertyKey => $propertyValue) {
+					if (is_object($propertyValue)) {
+						if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+							$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey);
+						} else {
+							$properties[$propertyKey] = $this->getModelData($propertyValue);
+						}
 					}
 				}
 			}

@@ -81,7 +81,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->param('int', function($request, $uid) use($dispatcher, $app) {
 					$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getRepository()->findByUid($uid);
+						$model = $dispatcher->getModelWithData($uid);
 						if (!$model) {
 							return 404;
 						}
@@ -92,7 +92,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* SHOW
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$app->get(function($request) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getRepository()->findByUid($uid);
+						$model = $dispatcher->getModelWithData($uid);
 						if (!$model) {
 							return 404;
 						}
@@ -119,7 +119,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* REMOVE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$app->delete(function($request) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getRepository()->findByUid($uid);
+						$model = $dispatcher->getModelWithData($uid);
 						if ($model) {
 							$dispatcher->removeModel($model);
 						}
@@ -170,6 +170,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		$success = TRUE;
 		$response = $this->app->run($request);
+
 		if ($response->content() instanceof \Exception) {
 			$success = FALSE;
 			$response = $this->exceptionToResponse($response->content());
@@ -295,7 +296,21 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function getAuthenticationProvider() {
 		if (!$this->authenticationProvider) {
-			$this->authenticationProvider = $this->objectManager->get('Cundd\\Rest\\Authentication\\AuthenticationProviderInterface');
+			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getPath());
+
+			// Check if an extension provides a Authentication Provider
+			$authenticationProviderClass  = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
+			if (!class_exists($authenticationProviderClass)) {
+				$authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
+			}
+			if (!class_exists($authenticationProviderClass)) {
+				// Get the specific builtin Authentication Provider
+				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\' . $extension . 'AuthenticationProvider';
+				if (!class_exists($authenticationProviderClass)) {
+					$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\AuthenticationProviderInterface';
+				}
+			}
+			$this->authenticationProvider = $this->objectManager->get($authenticationProviderClass);
 		}
 		return $this->authenticationProvider;
 	}

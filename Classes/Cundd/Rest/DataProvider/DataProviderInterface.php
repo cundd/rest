@@ -20,9 +20,9 @@ interface DataProviderInterface extends \TYPO3\CMS\Core\SingletonInterface {
 	public function getRepositoryClassForPath($path);
 
 	/**
-	 * Returns the domain model for the given API path and data
+	 * Returns a domain model for the given API path and data
 	 *
-	 * @param array $data Data of the new model
+	 * @param array|string|int $data Data of the new model or it's UID
 	 * @param string $path API path to get the repository for
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
