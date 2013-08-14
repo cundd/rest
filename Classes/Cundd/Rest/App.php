@@ -3,6 +3,8 @@ namespace Cundd\Rest;
 
 use Bullet\View\Exception;
 use Cundd\Rest\DataProvider\Utility;
+use Iresults\Core\Iresults;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
@@ -67,6 +69,20 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		$dispatcher = $this;
 		$app = $this->app;
+
+		/** @var ConfigurationManager $configurationManager */
+		$configurationManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
+
+//		header('Content-Type: text/html; charset=utf-8');
+//		echo '<html>';
+//		echo '<head><title></title></head>';
+//		echo '<body>';
+//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT));
+//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FRAMEWORK));
+//		echo '</body>';
+//		echo '</html>';
+//		die;
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model

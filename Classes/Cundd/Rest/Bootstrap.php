@@ -52,13 +52,16 @@ class Bootstrap {
 				'' 		// RDCT
 				);
 
+//			$start = microtime(TRUE);
+
 			// builds rootline
-			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+//			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+//			$rootline = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', 0, '', $this);
 //			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pageUid);
 //			$GLOBALS['TSFE']->rootLine = $rootLine;
 
-			// init template
-			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('t3lib_tsparser_ext');
+			// Init template
+			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
 			$GLOBALS['TSFE']->tmpl->tt_track = 0;// Do not log time-performance information
 			$GLOBALS['TSFE']->tmpl->init();
 
@@ -70,15 +73,16 @@ class Bootstrap {
 			$GLOBALS['TSFE']->tmpl->generateConfig();
 			$GLOBALS['TSFE']->tmpl->loaded = 1;
 
-			// get config array and other init from pagegen
-//			$GLOBALS['TSFE']->getConfigArray();
-//			$GLOBALS['TSFE']->linkVars = '' . $GLOBALS['TSFE']->config['config']['linkVars'];
-
 			// builds a cObj
 			$GLOBALS['TSFE']->newCObj();
 
 			// Add the FE user
 			$GLOBALS['TSFE']->fe_user = EidUtility::initFeUser();
+
+//			$start = microtime(TRUE);
+			$GLOBALS['TSFE']->determineId();
+			$GLOBALS['TSFE']->getConfigArray();
+//			echo 'Time: ' . (microtime(TRUE) - $start);
 		}
 	}
 }

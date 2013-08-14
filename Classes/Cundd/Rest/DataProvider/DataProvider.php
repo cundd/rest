@@ -131,7 +131,7 @@ class DataProvider implements DataProviderInterface {
 				foreach ($properties as $propertyKey => $propertyValue) {
 					if (is_object($propertyValue)) {
 						if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
-							$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey);
+							$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $model);
 						} else {
 							$properties[$propertyKey] = $this->getModelData($propertyValue);
 						}
@@ -154,14 +154,25 @@ class DataProvider implements DataProviderInterface {
 	 * Returns the URI of a nested resource
 	 *
 	 * @param string $resourceKey
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 	 * @return string
 	 */
-	public function getUriToNestedResource($resourceKey) {
+	public function getUriToNestedResource($resourceKey, $model) {
 		// TODO: fix this
 		$currentUri = $_SERVER['REQUEST_URI'];
+		$currentUri = strip_tags($currentUri);
 		if (substr($currentUri, -1) !== '/') {
 			$currentUri .= '/';
 		}
+
+		// Check if the current URI already contains the parent's UID
+		$uriParts = explode('/', $currentUri);
+		array_pop($uriParts);
+		$lastUriPart = end($uriParts);
+		if (!is_numeric($lastUriPart)) {
+			$currentUri .= $model->getUid() . '/';
+		}
+
 		return 'http://' . $_SERVER['HTTP_HOST'] . $currentUri . $resourceKey;
 	}
 
