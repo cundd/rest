@@ -10,6 +10,12 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
 	protected $isAuthenticated = FALSE;
 
 	/**
+	 * The current request
+	 * @var \Cundd\Rest\Request
+	 */
+	protected $request;
+
+	/**
 	 * Tries to authenticate the current request
 	 * @return bool Returns if the authentication was successful
 	 */
@@ -27,10 +33,24 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
 
 	/**
 	 * Returns if the given request needs authentication
-	 * @param \Bullet\Request $request
 	 * @return bool
 	 */
-	public function requestNeedsAuthentication(\Bullet\Request $request) {
+	public function requestNeedsAuthentication() {
 		return FALSE;
+	}
+
+	/**
+	 * @param \Bullet\Request|\Cundd\Rest\Request $request
+	 * @return mixed|void
+	 */
+	public function setRequest(\Cundd\Rest\Request $request) {
+		$this->request = $request;
+	}
+
+	/**
+	 * @return \Bullet\Request
+	 */
+	public function getRequest() {
+		return $this->request;
 	}
 }

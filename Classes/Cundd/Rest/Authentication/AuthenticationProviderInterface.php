@@ -17,8 +17,14 @@ interface AuthenticationProviderInterface {
 
 	/**
 	 * Returns if the given request needs authentication
-	 * @param \Bullet\Request $request
 	 * @return bool
 	 */
-	public function requestNeedsAuthentication(\Bullet\Request $request);
+	public function requestNeedsAuthentication();
+
+	/**
+	 * Sets the request to get the authentication requirements for
+	 * @param \Bullet\Request|\Cundd\Rest\Request $request
+	 * @return mixed
+	 */
+	public function setRequest(\Cundd\Rest\Request $request);
 }

@@ -4,7 +4,6 @@ namespace Cundd\Rest;
 use Bullet\View\Exception;
 use Cundd\Rest\DataProvider\Utility;
 use Iresults\Core\Iresults;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
@@ -12,11 +11,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var string
 	 */
 	protected $uri;
-
-	/**
-	 * @var string
-	 */
-	protected $path;
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
@@ -34,7 +28,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $app;
 
 	/**
-	 * @var \Bullet\Request
+	 * @var \Cundd\Rest\Request
 	 */
 	protected $request;
 
@@ -48,8 +42,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function __construct() {
 		$this->app = new \Bullet\App();
-		$this->request = new \Bullet\Request(NULL, $this->getUri());
-
 		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 	}
 
@@ -58,20 +50,25 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
-		$request = $this->request;
+		$request = $this->getRequest();
 
 		// Checks if the request needs authentication
-		if ($this->getAuthenticationProvider()->requestNeedsAuthentication($request)
-			&& $this->getAuthenticationProvider()->authenticate() === FALSE) {
-			echo new \Bullet\Response('Unauthorized', 401);
-			return FALSE;
+		if ($this->getAuthenticationProvider()->requestNeedsAuthentication()) {
+			try {
+				$isAuthenticated = $this->getAuthenticationProvider()->authenticate();
+			} catch (\Exception $exception) {
+				$this->logException($exception);
+				$isAuthenticated = FALSE;
+			}
+			if ($isAuthenticated === FALSE) {
+				echo new \Bullet\Response('Unauthorized', 401);
+				return FALSE;
+			}
 		}
 
 		$dispatcher = $this;
 		$app = $this->app;
 
-		/** @var ConfigurationManager $configurationManager */
-		$configurationManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
 
 //		header('Content-Type: text/html; charset=utf-8');
 //		echo '<html>';
@@ -204,24 +201,20 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
-	 * @return string
+	 * @return \Cundd\Rest\Request
 	 */
-	public function getUri() {
-		if (!$this->uri) {
-			$this->uri = $this->getArgument('u');
+	public function getRequest() {
+		if (!$this->request) {
+			$this->request = new Request(NULL, $this->getArgument('u'));
 		}
-		return $this->uri;
+		return $this->request;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getPath() {
-		if (!$this->path) {
-			$uri = $this->getUri();
-			$this->path = strtok($uri, '/');
-		}
-		return $this->path;
+		return $this->getRequest()->getPath();
 	}
 
 	/**
@@ -294,9 +287,10 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			if (!class_exists($dataProviderClass)) {
 				$dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
 			}
+			// Get the specific builtin Data Provider
 			if (!class_exists($dataProviderClass)) {
-				// Get the specific builtin Data Provider
 				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
+				// Get the default Data Provider
 				if (!class_exists($dataProviderClass)) {
 					$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
 				}
@@ -319,14 +313,20 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			if (!class_exists($authenticationProviderClass)) {
 				$authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
 			}
+
+			// Use the configuration based Authentication Provider
+			$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider';
+
+			// Get the specific builtin Authentication Provider
 			if (!class_exists($authenticationProviderClass)) {
-				// Get the specific builtin Authentication Provider
 				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\' . $extension . 'AuthenticationProvider';
+				// Get the default Authentication Provider
 				if (!class_exists($authenticationProviderClass)) {
 					$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\AuthenticationProviderInterface';
 				}
 			}
 			$this->authenticationProvider = $this->objectManager->get($authenticationProviderClass);
+			$this->authenticationProvider->setRequest($this->getRequest());
 		}
 		return $this->authenticationProvider;
 	}
@@ -345,5 +345,14 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 		return $argument;
 	}
+
+
+	/**
+	 * Logs the given exception
+	 *
+	 * @TODO: Implement
+	 * @param $exception
+	 */
+	protected function logException($exception) {}
 }
 ?>

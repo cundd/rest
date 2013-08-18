@@ -32,6 +32,7 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function tearDown() {
 		unset($this->fixture);
+		unset($_GET['u']);
 	}
 
 	/**
@@ -39,8 +40,8 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function getUriTest() {
 		$_GET['u'] = 'MyExt-MyModel/1';
-		$uri = $this->fixture->getUri();
-		$this->assertEquals('MyExt-MyModel/1', $uri);
+		$request = $this->fixture->getRequest();
+		$this->assertEquals('MyExt-MyModel/1', $request->url());
 	}
 
 	/**
