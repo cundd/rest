@@ -52,7 +52,7 @@ class Utility {
 	 * Tries to generate the API path for the given class name
 	 *
 	 * @param string $className
-	 * @return string|FALSE Returns the path or FALSE if it couldn't be determined
+	 * @return string|bool Returns the path or FALSE if it couldn't be determined
 	 */
 	static public function getPathForClassName($className) {
 		$path = FALSE;
@@ -101,7 +101,6 @@ class Utility {
 			'ies' => 'y',
 			'xes' => 'x',
 			'oes' => 'o',
-			'ies' => 'y',
 			'ves' => 'f',
 			's' => '');
 		// Loop through all the rules and do the replacement.

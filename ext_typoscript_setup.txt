@@ -1,0 +1,7 @@
+plugin.tx_rest.settings.paths {
+  1 {
+    path = all
+    read = allow
+    write = deny
+  }
+}

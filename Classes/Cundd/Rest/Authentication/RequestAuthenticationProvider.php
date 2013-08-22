@@ -20,10 +20,9 @@ class RequestAuthenticationProvider extends AbstractAuthenticationProvider {
 
 	/**
 	 * Returns if the given request needs authentication
-	 * @param \Bullet\Request $request
 	 * @return bool
 	 */
-	public function requestNeedsAuthentication(\Bullet\Request $request) {
+	public function requestNeedsAuthentication() {
 		return TRUE;
 	}
 }

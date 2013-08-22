@@ -54,6 +54,7 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	/**
 	 * Tries to authenticate the current request
 	 * @return bool Returns if the authentication was successful
+	 * @throws Exception\InvalidConfigurationException if the current configuration ('read' or 'write') is not set
 	 */
 	public function authenticate() {
 		$configurationKey = 'read';
@@ -88,7 +89,8 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	 */
 	public function isWrite() {
 		if ($this->write === -1) {
-			$this->write = in_array($this->request->method(), array('POST', 'PUT', 'DELETE', 'PATCH'));
+			$this->write = !in_array(strtoupper($this->request->method()), array('GET', 'HEAD'));
+//			$this->write = in_array(strtoupper($this->request->method()), array('POST', 'PUT', 'DELETE', 'PATCH'));
 		}
 		return $this->write;
 	}
@@ -96,12 +98,13 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	/**
 	 * Returns the configuration matching the current request's path
 	 * @return string
+	 * @throws \UnexpectedValueException if the request is not set
 	 */
 	public function getConfigurationForCurrentPath() {
 		if (!$this->request) {
 			throw new \UnexpectedValueException('The request isn\'t set', 1376816053);
 		}
-		return $this->getConfigurationForPath($this->request->getPath());
+		return $this->getConfigurationForPath($this->request->path());
 	}
 
 	/**

@@ -11,7 +11,7 @@ class Request extends BaseRequest {
 	/**
 	 * @return string
 	 */
-	public function getPath() {
+	public function path() {
 		if (!$this->path) {
 			$uri = $this->url();
 			$this->path = strtok($uri, '/');

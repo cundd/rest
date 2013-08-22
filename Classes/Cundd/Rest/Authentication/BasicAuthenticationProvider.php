@@ -37,7 +37,7 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
 //		$_GET['pid'] 		= '82';
 //
 //
-//		$userAuth = new FrontendUserAuthentication();
+		$userAuth = new FrontendUserAuthentication();
 //		$userAuth->start();
 //		$GLOBALS['TSFE']->fe_user = $userAuth;
 

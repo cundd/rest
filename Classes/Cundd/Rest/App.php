@@ -4,6 +4,9 @@ namespace Cundd\Rest;
 use Bullet\View\Exception;
 use Cundd\Rest\DataProvider\Utility;
 use Iresults\Core\Iresults;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogLevel;
+
 
 class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
@@ -36,6 +39,11 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
 	 */
 	protected $authenticationProvider;
+
+	/**
+	 * @var \TYPO3\CMS\Core\Log\Logger
+	 */
+	protected $logger;
 
 	/**
 	 * Initialize
@@ -88,6 +96,8 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
+			$this->log('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
+
 			$app->path($this->getPath(), function($request) use($dispatcher, $app) {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* WITH UID 																 */
@@ -115,9 +125,10 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* UPDATE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$app->post(function($request) use($uid, $dispatcher, $app) {
+					$updateCallback = function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
 						$data['__identity'] = $uid;
+						$dispatcher->log('update request', array('body' => $data));
 
 						$model = $dispatcher->getModelWithData($data);
 						if ($model) {
@@ -126,7 +137,9 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 							return 404;
 						}
 						return $dispatcher->getModelData($model);
-					});
+					};
+					$app->put($updateCallback);
+					$app->post($updateCallback);
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* REMOVE																	 */
@@ -145,6 +158,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->post(function($request) use($dispatcher, $app) {
 					$data = $request->post();
+					$dispatcher->log('create request', array('body' => $data));
 
 					/**
 					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -195,17 +209,19 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Catch and report the exception, that occurred during the request
 	 * @param \Exception $exception
+	 * @return \Bullet\Response
 	 */
 	public function exceptionToResponse($exception) {
 		return new \Bullet\Response($exception->getMessage(), 501);
 	}
 
 	/**
+	 * Returns the request
 	 * @return \Cundd\Rest\Request
 	 */
 	public function getRequest() {
 		if (!$this->request) {
-			$this->request = new Request(NULL, $this->getArgument('u'));
+			$this->request = new Request(NULL, $this->getUri());
 		}
 		return $this->request;
 	}
@@ -214,7 +230,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return string
 	 */
 	public function getPath() {
-		return $this->getRequest()->getPath();
+		return $this->getRequest()->path();
 	}
 
 	/**
@@ -275,7 +291,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * Returns the data provider
-	 *
 	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
 	 */
 	public function getDataProvider() {
@@ -315,20 +330,29 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			}
 
 			// Use the configuration based Authentication Provider
-			$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider';
-
-			// Get the specific builtin Authentication Provider
 			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\' . $extension . 'AuthenticationProvider';
-				// Get the default Authentication Provider
-				if (!class_exists($authenticationProviderClass)) {
-					$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\AuthenticationProviderInterface';
-				}
+				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider';
 			}
 			$this->authenticationProvider = $this->objectManager->get($authenticationProviderClass);
 			$this->authenticationProvider->setRequest($this->getRequest());
 		}
 		return $this->authenticationProvider;
+	}
+
+	/**
+	 * Returns the URI
+	 * @return string
+	 */
+	public function getUri() {
+		if (!$this->uri) {
+			$uri = $this->getArgument('u', FILTER_SANITIZE_URL);
+			if (!$uri) {
+				$uri = substr($_SERVER['REQUEST_URI'], 6);
+				$uri = filter_var($uri, FILTER_SANITIZE_URL);
+			}
+			$this->uri = $uri;
+		}
+		return $this->uri;
 	}
 
 	/**
@@ -346,13 +370,38 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		return $argument;
 	}
 
+	/**
+	 * Returns the logger
+	 * @return \TYPO3\CMS\Core\Log\Logger
+	 */
+	public function getLogger() {
+		if (!$this->logger) {
+			$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+		}
+		return $this->logger;
+	}
+
+	/**
+	 * Logs the given message and data
+	 * @param string $message
+	 * @param array $data
+	 */
+	protected function log($message, $data = NULL) {
+		if ($data) {
+			$this->getLogger()->log(LogLevel::DEBUG, $message, $data);
+		} else {
+			$this->getLogger()->log(LogLevel::DEBUG, $message);
+		}
+	}
+
 
 	/**
 	 * Logs the given exception
-	 *
-	 * @TODO: Implement
-	 * @param $exception
+	 * @param \Exception $exception
 	 */
-	protected function logException($exception) {}
+	protected function logException($exception) {
+		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+	}
 }
 ?>
