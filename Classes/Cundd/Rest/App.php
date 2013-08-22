@@ -123,20 +123,22 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* UPDATE																	 */
+					/* UPDATE OR CREATE															 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$updateCallback = function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
 						$data['__identity'] = $uid;
 						$dispatcher->log('update request', array('body' => $data));
 
-						$model = $dispatcher->getModelWithData($data);
-						if ($model) {
-							$dispatcher->saveModel($model);
+						$oldModel = $dispatcher->getModelWithData($uid);
+						$newModel = $dispatcher->getNewModelWithData($data);
+
+						if ($oldModel && $newModel) {
+							$dispatcher->replaceModel($oldModel, $newModel);
 						} else {
 							return 404;
 						}
-						return $dispatcher->getModelData($model);
+						return $dispatcher->getModelData($newModel);
 					};
 					$app->put($updateCallback);
 					$app->post($updateCallback);
@@ -242,13 +244,25 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
-	 * Returns a new domain model for the given API path and data
+	 * Returns a domain model for the given API path and data
+	 * This method will load existing models.
 	 *
 	 * @param array $data Data of the new model
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithData($data) {
 		return $this->getDataProvider()->getModelWithDataForPath($data, $this->getPath());
+	}
+
+	/**
+	 * Returns a new domain model for the given API path and data
+	 * Even if the data contains an identifier, the existing model will not be loaded.
+	 *
+	 * @param array $data Data of the new model
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getNewModelWithData($data) {
+		return $this->getDataProvider()->getNewModelWithDataForPath($data, $this->getPath());
 	}
 
 	/**
@@ -278,6 +292,16 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function saveModel($model) {
 		$this->getDataProvider()->saveModelForPath($model, $this->getPath());
+	}
+
+	/**
+	 * Tells the Data Provider to replace the given old model with the new one
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
+	 * @return void
+	 */
+	public function replaceModel($oldModel, $newModel) {
+		$this->getDataProvider()->replaceModelForPath($oldModel, $newModel, $this->getPath());
 	}
 
 	/**

@@ -66,6 +66,7 @@ class DataProvider implements DataProviderInterface {
 
 	/**
 	 * Returns a domain model for the given API path and data
+	 * This method will load existing models.
 	 *
 	 * @param array|string|int $data Data of the new model or it's UID
 	 * @param string $path API path to get the repository for
@@ -85,6 +86,42 @@ class DataProvider implements DataProviderInterface {
 			$model = $this->propertyMapper->convert($data, $modelClass);
 		} catch (\TYPO3\CMS\Extbase\Property\Exception $e) {
 			$model = NULL;
+		}
+		return $model;
+	}
+
+	/**
+	 * Returns a domain model for the given API path and data
+	 * Even if the data contains an identifier, the existing model will not be loaded.
+	 *
+	 * @param array|string|int $data Data of the new model or it's UID
+	 * @param string $path API path to get the repository for
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getNewModelWithDataForPath($data, $path) {
+		$uid = NULL;
+		// If no data is given return a new instance
+		if (!$data) {
+			return $this->getEmptyModelForPath($path);
+		}
+
+		// Save the identifier and remove it from the data array
+		if (isset($data['__identity']) && $data['__identity']) {
+			$uid = $data['__identity'];
+		} else if (isset($data['uid']) && $data['uid']) {
+			$uid = $data['uid'];
+		}
+		if ($uid) {
+			unset($data['__identity']);
+			unset($data['uid']);
+		}
+
+		// Get a fresh model
+		$model = $this->getModelWithDataForPath($data, $path);
+
+		if ($model) {
+			// Set the saved identifier
+			$model->_setProperty('uid', $uid);
 		}
 		return $model;
 	}
@@ -223,6 +260,23 @@ class DataProvider implements DataProviderInterface {
 			$this->persistAllChanges();
 		}
 	}
+
+	/**
+	 * Tells the Data Provider to replace the given old model with the new one
+	 * in the repository for the given API path
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function replaceModelForPath($oldModel, $newModel, $path) {
+		$repository = $this->getRepositoryForPath($path);
+		if ($repository) {
+			$repository->replace($oldModel, $newModel);
+			$this->persistAllChanges();
+		}
+	}
+
 
 	/**
 	 * Adds or updates the given model in the repository for the
