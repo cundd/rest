@@ -123,12 +123,12 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* UPDATE OR CREATE															 */
+					/* REPLACE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$updateCallback = function($request) use($uid, $dispatcher, $app) {
+					$replaceCallback = function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
 						$data['__identity'] = $uid;
-						$dispatcher->log('update request', array('body' => $data));
+						$dispatcher->log('replace request', array('body' => $data));
 
 						$oldModel = $dispatcher->getModelWithData($uid);
 						$newModel = $dispatcher->getNewModelWithData($data);
@@ -140,8 +140,30 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 						}
 						return $dispatcher->getModelData($newModel);
 					};
-					$app->put($updateCallback);
-					$app->post($updateCallback);
+					$app->put($replaceCallback);
+					$app->post($replaceCallback);
+
+					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+					/* UPDATE																	 */
+					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+					$updateCallback = function($request) use($uid, $dispatcher, $app) {
+						$data = $request->post();
+						parse_str($request->raw(), $data);
+						var_dump($request->raw());
+						var_dump($data);
+						$data['__identity'] = $uid;
+						$dispatcher->log('update request', array('body' => $data));
+
+						$model = $dispatcher->getModelWithData($data);
+
+						if ($model) {
+							$dispatcher->saveModel($model);
+						} else {
+							return 404;
+						}
+						return $dispatcher->getModelData($model);
+					};
+					$app->patch($updateCallback);
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					/* REMOVE																	 */
@@ -204,7 +226,10 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			$success = FALSE;
 			$response = $this->exceptionToResponse($response->content());
 		}
-		echo $response;
+
+		$responseString = $response . '';
+		$this->log('response: ' . $response->status(), array('response' => '' . $responseString));
+		echo $responseString;
 		return $success;
 	}
 
