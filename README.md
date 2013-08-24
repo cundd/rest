@@ -18,7 +18,7 @@ The default access is defined with the path `all`:
     plugin.tx_rest.settings.paths {
         1 {
             path = all
-            read = allow
+            read = deny
             write = deny
         }
     }
