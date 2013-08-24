@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ext_conf_template.txt" />
+    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="Removed debugging output from the update reoutine">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_localconf.php" afterPath="$PROJECT_DIR$/ext_localconf.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_typoscript_setup.txt" afterPath="$PROJECT_DIR$/ext_typoscript_setup.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377251420222" ignored="false" />
+    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377341812803" ignored="false" />
     <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376998417159" ignored="false" />
     <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377181572214" ignored="false" />
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376465072651" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377339885728" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377342105510" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -53,6 +52,7 @@
     <file path="/InvalidConfigurationException.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376826566584" ignored="false" />
     <file path="/ext_localconf.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377003573791" ignored="false" />
     <file path="/ext_conf_template.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377250422992" ignored="false" />
+    <file path="/ext_typoscript_setup.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377342001537" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,10 +76,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="App.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="12" selection-start="1666" selection-end="1666" vertical-scroll-proportion="0.8887172">
+            <state line="152" column="40" selection-start="4606" selection-end="4606" vertical-scroll-proportion="-3.9795918">
               <folding />
             </state>
           </provider>
@@ -89,6 +89,15 @@
         <entry file="file://$PROJECT_DIR$/ext_localconf.php">
           <provider selected="true" editor-type-id="text-editor">
             <state line="10" column="0" selection-start="365" selection-end="365" vertical-scroll-proportion="-6.25">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ext_typoscript_setup.txt" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ext_typoscript_setup.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="1" selection-start="91" selection-end="91" vertical-scroll-proportion="0.08514664">
               <folding />
             </state>
           </provider>
@@ -139,15 +148,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AppTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="77" column="46" selection-start="1852" selection-end="1852" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ConfigurationBasedAuthenticationProviderTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -190,7 +190,6 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/RequestAuthenticationProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/BasicAuthenticationProvider.php" />
-        <option value="$PROJECT_DIR$/ext_typoscript_setup.txt" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" />
@@ -200,6 +199,7 @@
         <option value="$PROJECT_DIR$/ext_conf_template.txt" />
         <option value="$PROJECT_DIR$/ext_localconf.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/ext_typoscript_setup.txt" />
       </list>
     </option>
   </component>
@@ -481,14 +481,18 @@
       <created>1377249842862</created>
       <updated>1377249842862</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixed a bug with the rewriting&#10;Added the ability to enable request and/or response logging">
+      <created>1377339917647</created>
+      <updated>1377339917647</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1791" height="1178" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3289225" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -580,11 +584,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/RepositoryInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="7" selection-start="2062" selection-end="2062" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Persistence/Repository.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="224" column="52" selection-start="8134" selection-end="8134" vertical-scroll-proportion="0.0" />
@@ -653,13 +652,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ext_emconf.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -674,6 +666,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="152" column="40" selection-start="4606" selection-end="4606" vertical-scroll-proportion="-3.9795918">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ext_emconf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ext_localconf.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="0" selection-start="365" selection-end="365" vertical-scroll-proportion="-6.25">
@@ -681,9 +687,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+    <entry file="file://$PROJECT_DIR$/ext_typoscript_setup.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="12" selection-start="1666" selection-end="1666" vertical-scroll-proportion="0.8887172">
+        <state line="6" column="1" selection-start="91" selection-end="91" vertical-scroll-proportion="0.08514664">
           <folding />
         </state>
       </provider>

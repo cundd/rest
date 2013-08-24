@@ -133,11 +133,13 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 						$oldModel = $dispatcher->getModelWithData($uid);
 						$newModel = $dispatcher->getNewModelWithData($data);
 
-						if ($oldModel && $newModel) {
-							$dispatcher->replaceModel($oldModel, $newModel);
-						} else {
+						if (!$oldModel) {
 							return 404;
 						}
+						if (!$newModel) {
+							return 400;
+						}
+						$dispatcher->replaceModel($oldModel, $newModel);
 						return $dispatcher->getModelData($newModel);
 					};
 					$app->put($replaceCallback);
@@ -148,19 +150,16 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$updateCallback = function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
-						parse_str($request->raw(), $data);
-						var_dump($request->raw());
-						var_dump($data);
 						$data['__identity'] = $uid;
 						$dispatcher->logRequest('update request', array('body' => $data));
 
 						$model = $dispatcher->getModelWithData($data);
 
-						if ($model) {
-							$dispatcher->saveModel($model);
-						} else {
+						if (!$model) {
 							return 404;
 						}
+
+						$dispatcher->saveModel($model);
 						return $dispatcher->getModelData($model);
 					};
 					$app->patch($updateCallback);
@@ -188,11 +187,11 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 					 */
 					$model = $dispatcher->getModelWithData($data);
-					if ($model) {
-						$dispatcher->saveModel($model);
-					} else {
-						return 404;
+					if (!$model) {
+						return 400;
 					}
+
+					$dispatcher->saveModel($model);
 					return $dispatcher->getDataProvider()->getModelData($model);
 				});
 
