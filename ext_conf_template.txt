@@ -1,0 +1,5 @@
+# cat=basic/configuration; type=boolean; label=Log requests (including POST body)
+logRequests = 1
+
+# cat=basic/configuration; type=boolean; label=Log response
+logResponse = 1

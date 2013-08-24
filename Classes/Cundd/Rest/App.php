@@ -96,7 +96,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
-			$this->log('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
+			$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
 
 			$app->path($this->getPath(), function($request) use($dispatcher, $app) {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -128,7 +128,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					$replaceCallback = function($request) use($uid, $dispatcher, $app) {
 						$data = $request->post();
 						$data['__identity'] = $uid;
-						$dispatcher->log('replace request', array('body' => $data));
+						$dispatcher->logRequest('replace request', array('body' => $data));
 
 						$oldModel = $dispatcher->getModelWithData($uid);
 						$newModel = $dispatcher->getNewModelWithData($data);
@@ -152,7 +152,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 						var_dump($request->raw());
 						var_dump($data);
 						$data['__identity'] = $uid;
-						$dispatcher->log('update request', array('body' => $data));
+						$dispatcher->logRequest('update request', array('body' => $data));
 
 						$model = $dispatcher->getModelWithData($data);
 
@@ -182,7 +182,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->post(function($request) use($dispatcher, $app) {
 					$data = $request->post();
-					$dispatcher->log('create request', array('body' => $data));
+					$dispatcher->logRequest('create request', array('body' => $data));
 
 					/**
 					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -228,7 +228,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 
 		$responseString = $response . '';
-		$this->log('response: ' . $response->status(), array('response' => '' . $responseString));
+		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
 	}
@@ -431,6 +431,28 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
+	 * Logs the given request message and data
+	 * @param string $message
+	 * @param array $data
+	 */
+	protected function logRequest($message, $data = NULL) {
+		if ($this->getExtensionConfiguration('logRequests')) {
+			$this->log($message, $data);
+		}
+	}
+
+	/**
+	 * Logs the given response message and data
+	 * @param string $message
+	 * @param array $data
+	 */
+	protected function logResponse($message, $data = NULL) {
+		if ($this->getExtensionConfiguration('logResponse')) {
+			$this->log($message, $data);
+		}
+	}
+
+	/**
 	 * Logs the given message and data
 	 * @param string $message
 	 * @param array $data
@@ -443,6 +465,29 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 	}
 
+	/**
+	 * Returns the extension configuration for the given key
+	 * @param $key
+	 * @return mixed
+	 */
+	protected function getExtensionConfiguration($key) {
+		// Read the configuration from the globals
+		static $configuration;
+		if (!$configuration) {
+			if (isset($GLOBALS['TYPO3_CONF_VARS'])
+				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT'])
+				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'])
+				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest'])
+			) {
+				$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest']);
+			}
+		}
+
+		if (isset($configuration[$key])) {
+			return $configuration[$key];
+		}
+		return NULL;
+	}
 
 	/**
 	 * Logs the given exception
