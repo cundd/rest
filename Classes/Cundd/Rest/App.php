@@ -223,7 +223,10 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		if ($response->content() instanceof \Exception) {
 			$success = FALSE;
-			$response = $this->exceptionToResponse($response->content());
+
+			$exception = $response->content();
+			$this->logException($exception);
+			$response = $this->exceptionToResponse($exception);
 		}
 
 		$responseString = $response . '';
@@ -452,6 +455,15 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
+	 * Logs the given exception
+	 * @param \Exception $exception
+	 */
+	protected function logException($exception) {
+		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+	}
+
+	/**
 	 * Logs the given message and data
 	 * @param string $message
 	 * @param array $data
@@ -486,15 +498,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			return $configuration[$key];
 		}
 		return NULL;
-	}
-
-	/**
-	 * Logs the given exception
-	 * @param \Exception $exception
-	 */
-	protected function logException($exception) {
-		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
 	}
 }
 ?>

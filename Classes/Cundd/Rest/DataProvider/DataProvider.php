@@ -5,6 +5,7 @@ namespace Cundd\Rest\DataProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
+use TYPO3\CMS\Core\Log\LogLevel;
 
 class DataProvider implements DataProviderInterface {
 	/**
@@ -20,6 +21,18 @@ class DataProvider implements DataProviderInterface {
 	 * @inject
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * The current depth when preparing model data for output
+	 * @var int
+	 */
+	protected $currentModelDataDepth = 0;
+
+	/**
+	 * Logger instance
+	 * @var \TYPO3\CMS\Core\Log\Logger
+	 */
+	protected $logger;
 
 	/**
 	 * Returns the domain model repository class name for the given API path
@@ -84,8 +97,11 @@ class DataProvider implements DataProviderInterface {
 		$data = $this->prepareModelData($data);
 		try {
 			$model = $this->propertyMapper->convert($data, $modelClass);
-		} catch (\TYPO3\CMS\Extbase\Property\Exception $e) {
+		} catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
 			$model = NULL;
+
+			$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+			$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
 		}
 		return $model;
 	}
@@ -168,7 +184,7 @@ class DataProvider implements DataProviderInterface {
 				foreach ($properties as $propertyKey => $propertyValue) {
 					if (is_object($propertyValue)) {
 						if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
-							$properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $model);
+							$properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
 						} else {
 							$properties[$propertyKey] = $this->getModelData($propertyValue);
 						}
@@ -185,6 +201,31 @@ class DataProvider implements DataProviderInterface {
 			$properties = $model;
 		}
 		return $properties;
+	}
+
+	/**
+	 * Returns the data for the given lazy object storage
+	 * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
+	 * @param string $propertyKey
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return array<mixed>
+	 */
+	public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model) {
+		$returnData = NULL;
+		// Get the first level of nested objects
+		if ($this->currentModelDataDepth < 1) {
+			$this->currentModelDataDepth++;
+			$returnData = array();
+
+			// Collect each object of the lazy object storage
+			foreach($lazyObjectStorage as $subObject) {
+				$returnData[] = $this->getModelData($subObject);
+			}
+			$this->currentModelDataDepth--;
+		} else {
+			$returnData = $this->getUriToNestedResource($propertyKey, $model);
+		}
+		return $returnData;
 	}
 
 	/**
@@ -309,5 +350,16 @@ class DataProvider implements DataProviderInterface {
 	 */
 	protected function prepareModelData($data) {
 		return $data;
+	}
+
+	/**
+	 * Returns the logger
+	 * @return \TYPO3\CMS\Core\Log\Logger
+	 */
+	protected function getLogger() {
+		if (!$this->logger) {
+			$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+		}
+		return $this->logger;
 	}
 }
