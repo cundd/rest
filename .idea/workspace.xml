@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" />
+    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="Fixed a bug in the DataProvider Utility where the wrong path was generated from class names">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -19,7 +13,7 @@
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376465072651" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377794631177" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872407133" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -44,7 +38,7 @@
     <file path="/ExtbaseDataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369060061062" ignored="false" />
     <file path="/DataProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377180272389" ignored="false" />
     <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872054235" ignored="false" />
-    <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377871600031" ignored="false" />
+    <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872366041" ignored="false" />
     <file path="/AuthenticationProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371912675657" ignored="false" />
     <file path="/AuthenticationProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376814782317" ignored="false" />
     <file path="/BasicAuthenticationProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371912690692" ignored="false" />
@@ -129,10 +123,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DataProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="0.5089021">
+            <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="-133.04167">
               <folding>
                 <element signature="e#43#85#0" expanded="true" />
               </folding>
@@ -152,16 +146,16 @@
       <file leaf-file-name="DataProviderUtilityTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="148" column="119" selection-start="3693" selection-end="3693" vertical-scroll-proportion="-25.75">
+            <state line="148" column="8" selection-start="3582" selection-end="3582" vertical-scroll-proportion="-25.75">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Utility.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Utility.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="41" selection-start="1680" selection-end="1680" vertical-scroll-proportion="-15.0">
+            <state line="64" column="40" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.5341246">
               <folding />
             </state>
           </provider>
@@ -198,9 +192,9 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
-        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php" />
       </list>
     </option>
   </component>
@@ -499,7 +493,11 @@
       <created>1377794643755</created>
       <updated>1377794643755</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Added detection of a requested format&#10;Fixed a bug with nested resources introduced in the last commit&#10;Fixed a bug in the DataProvider Utility where the wrong path was generated from class names">
+      <created>1377872232689</created>
+      <updated>1377872232689</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -571,7 +569,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added logging for exceptions&#10;Output first level of a lazy object storage's models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added detection of a requested format&#10;Fixed a bug with nested resources introduced in the last commit&#10;Fixed a bug in the DataProvider Utility where the wrong path was generated from class names" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -596,6 +594,7 @@
     <MESSAGE value="Removed debugging output from the update routine&#10;&#10;Breaking changes&#10;- Changed default access to deny read and write for security reasons" />
     <MESSAGE value="Updated the README to reflect the changed default access" />
     <MESSAGE value="Added logging for exceptions&#10;Output first level of a lazy object storage's models" />
+    <MESSAGE value="Added detection of a requested format&#10;Fixed a bug with nested resources introduced in the last commit&#10;Fixed a bug in the DataProvider Utility where the wrong path was generated from class names" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -657,20 +656,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="119" selection-start="3693" selection-end="3693" vertical-scroll-proportion="-25.75">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="41" selection-start="1680" selection-end="1680" vertical-scroll-proportion="-15.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="78" column="54" selection-start="1826" selection-end="1826" vertical-scroll-proportion="-13.125">
@@ -699,6 +684,15 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="-133.04167">
+          <folding>
+            <element signature="e#43#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="21" selection-start="297" selection-end="297" vertical-scroll-proportion="-10.625">
@@ -706,12 +700,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
+    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="0.5089021">
-          <folding>
-            <element signature="e#43#85#0" expanded="true" />
-          </folding>
+        <state line="148" column="8" selection-start="3582" selection-end="3582" vertical-scroll-proportion="-25.75">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="40" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.5341246">
+          <folding />
         </state>
       </provider>
     </entry>

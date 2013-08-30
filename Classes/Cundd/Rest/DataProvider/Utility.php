@@ -62,7 +62,7 @@ class Utility {
 			}
 			// \Iresults\Result\Domain\Model\Team
 			$classNameParts = explode('\\', $className);
-			if (strtolower($classNameParts[1]) === 'vendor') {
+			if (count($classNameParts) > 5) {
 				array_shift($classNameParts);
 			}
 		} else {
