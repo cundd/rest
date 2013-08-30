@@ -11,6 +11,7 @@ class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Te
 
 	public function setUp() {
 		\Tx_CunddComposer_Autoloader::register();
+		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider');
 
 		$settings = array(
@@ -36,7 +37,7 @@ class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Te
 				)
 			)
 		);
-		$this->fixture->setSettings($settings);
+		$configurationProvider->setSettings($settings);
 
 		$request = new Request(NULL, 'my_ext-my_model/4/usergroup');
 		$this->fixture->setRequest($request);
@@ -88,6 +89,7 @@ class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Te
 	 * @test
 	 */
 	public function throwBadConfigurationExceptionTest() {
+		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
 		$this->setExpectedException('Cundd\\Rest\\Authentication\\Exception\\InvalidConfigurationException');
 		$settings = array(
 			"paths" =>
@@ -100,7 +102,7 @@ class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Te
 				),
 			)
 		);
-		$this->fixture->setSettings($settings);
+		$configurationProvider->setSettings($settings);
 		$success = $this->fixture->authenticate();
 		$this->assertFalse($success);
 	}

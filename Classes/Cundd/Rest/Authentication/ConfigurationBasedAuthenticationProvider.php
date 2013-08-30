@@ -1,8 +1,6 @@
 <?php
 
 namespace Cundd\Rest\Authentication;
-use Iresults\Core\Iresults;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use Cundd\Rest\Authentication\Exception\InvalidConfigurationException;
 
 /**
@@ -34,22 +32,23 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	const ACCESS_METHOD_WRITE = 'write';
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManager
-	 * @inject
-	 */
-	protected $configurationManager;
-
-	/**
-	 * Settings read from the TypoScript
-	 * @var array
-	 */
-	protected $settings = NULL;
-
-	/**
 	 * Specifies if the request wants to write data
 	 * @var boolean
 	 */
 	protected $write = -1;
+
+	/**
+	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+	 */
+	protected $configurationProvider;
+
+	/**
+	 * Inject the configuration provider
+	 * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+	 */
+	public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
+		$this->configurationProvider = $configurationProvider;
+	}
 
 	/**
 	 * Tries to authenticate the current request
@@ -131,38 +130,11 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	}
 
 	/**
-	 * Returns the settings read from the TypoScript
-	 * @return array
-	 */
-	public function getSettings() {
-		if ($this->settings === NULL) {
-			$this->settings = array();
-
-			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-			if (isset($typoScript['plugin.'])
-				&& isset($typoScript['plugin.']['tx_rest.'])
-				&& isset($typoScript['plugin.']['tx_rest.']['settings.'])) {
-				$this->settings = $typoScript['plugin.']['tx_rest.']['settings.'];
-			}
-		}
-		return $this->settings;
-	}
-
-	/**
-	 * Overwrites the settings
-	 * @param array $settings
-	 * @internal
-	 */
-	public function setSettings($settings) {
-		$this->settings = $settings;
-	}
-
-	/**
 	 * Returns the paths configured in the settings
 	 * @return array
 	 */
 	public function getConfiguredPaths() {
-		$settings = $this->getSettings();
+		$settings = $this->configurationProvider->getSettings();
 		if (isset($settings['paths']) && is_array($settings['paths'])) {
 			return $settings['paths'];
 		}

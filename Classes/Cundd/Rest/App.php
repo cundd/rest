@@ -52,6 +52,12 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $format;
 
 	/**
+	 * Configuration provider
+	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+	 */
+	protected $configurationProvider;
+
+	/**
 	 * Initialize
 	 */
 	public function __construct() {
@@ -208,7 +214,14 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					$repository = $dispatcher->getRepository();
 					$allModels = $repository->findAll();
 					$allModels = iterator_to_array($allModels);
-					return array_map(array($dispatcher->getDataProvider(), 'getModelData'), $allModels);
+
+					$result = array_map(array($dispatcher->getDataProvider(), 'getModelData'), $allModels);
+					if ($dispatcher->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							$dispatcher->getOriginalPath() => $result
+						);
+					}
+					return $result;
 				});
 			});
 		}
@@ -261,9 +274,11 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			$format = '';
 			$uri = $this->getUri($format);
 			$this->request = new Request(NULL, $uri);
+			$this->request->injectConfigurationProvider($this->getConfigurationProvider());
 			if ($format) {
 				$this->request->format($format);
 			}
+
 		}
 		return $this->request;
 	}
@@ -273,6 +288,13 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function getPath() {
 		return $this->getRequest()->path();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOriginalPath() {
+		return $this->getRequest()->originalPath();
 	}
 
 	/**
@@ -447,6 +469,17 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			$argument = $default;
 		}
 		return $argument;
+	}
+
+	/**
+	 * Returns the configuration provider
+	 * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+	 */
+	public function getConfigurationProvider() {
+		if (!$this->configurationProvider) {
+			$this->configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+		}
+		return $this->configurationProvider;
 	}
 
 	/**

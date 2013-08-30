@@ -43,3 +43,52 @@ Allow read and write access for all models of the extension `MySecondext`:
         }
         ...
         
+
+Advanced configuration
+----------------------
+
+### Aliases
+
+Often the full path for a model doesn't fit the clients expectations. To make the paths looking better, path aliases can be defined:
+
+    plugin.tx_rest.settings.aliases {
+        my_model = my_ext-my_model
+    }
+
+
+### Root object for collection
+
+Some clients expect a returned data collection to have a root object, others don't. If an array output like the one below meets your demands no further configuration is required.
+
+    [
+        {
+            "uid": 9,
+            "name": "Daniel"
+        },
+        {
+            "uid": 10,
+            "name": "Paul"
+        }
+        ...
+    ]
+        
+If you require an output like the following you can enable `plugin.tx_rest.settings.addRootObjectForCollection = 1` 
+
+    {
+        "users": [
+            {
+                "uid": 9,
+                "name": "Daniel"
+            },
+            {
+                "uid": 10,
+                "name": "Paul"
+            }
+            ...
+        ]
+    }
+
+This wraps the whole response array into an object with the key read from the request path (i.e. `users`).
+
+Tip: The request path will be used as root key, so you may want to configure aliases.
+
