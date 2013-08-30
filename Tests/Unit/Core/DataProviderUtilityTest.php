@@ -1,0 +1,152 @@
+<?php
+namespace Cundd\Rest\Test\Core;
+
+use Cundd\Rest\DataProvider\Utility;
+
+class MyModel2 extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
+	/**
+	 * @var string
+	 */
+	protected $name = 'Initial value';
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name) {
+		$this->name = $name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+}
+class MyModelRepository2 extends \TYPO3\CMS\Extbase\Persistence\Repository {}
+
+class MyNestedModel2 extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
+	/**
+	 * @var string
+	 */
+	protected $base = 'Base';
+
+	/**
+	 * @var \DateTime
+	 */
+	protected $date = NULL;
+
+	/**
+	 * @var \Cundd\Rest\Test\Core\MyModel
+	 */
+	protected $child = NULL;
+
+	function __construct() {
+		$this->child = new MyModel();
+		$this->date = new \DateTime();
+	}
+
+
+	/**
+	 * @param string $base
+	 */
+	public function setBase($base) {
+		$this->base = $base;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getBase() {
+		return $this->base;
+	}
+
+	/**
+	 * @param \Cundd\Rest\Test\Core\MyModel $child
+	 */
+	public function setChild($child) {
+		$this->child = $child;
+	}
+
+	/**
+	 * @return \Cundd\Rest\Test\Core\MyModel
+	 */
+	public function getChild() {
+		return $this->child;
+	}
+
+	/**
+	 * @param \DateTime $date
+	 */
+	public function setDate($date) {
+		$this->date = $date;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDate() {
+		return $this->date;
+	}
+}
+
+class MyNestedJsonSerializeModel2 extends MyNestedModel {
+	public function jsonSerialize() {
+		return array(
+			'base' 	=> $this->base,
+			'child'	=> $this->child
+		);
+	}
+}
+
+/**
+ * Test case for class new \Cundd\Rest\App
+ *
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ *
+ *
+ * @author Daniel Corn <cod@iresults.li>
+ */
+class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+	static public function setUpBeforeClass() {
+		\Tx_CunddComposer_Autoloader::register();
+
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Tx_MyExt_Domain_Model_MyModel2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Tx_MyExt_Domain_Repository_MyModelRepository2');
+
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'MyExt\\Domain\\Model\\MySecondModel2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'MyExt\\Domain\\Repository\\MySecondModelRepository2');
+
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Vendor\\MyExt\\Domain\\Model\\MyModel2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository2');
+	}
+
+	public function setUp() {
+	}
+
+	public function tearDown() {
+	}
+
+	/**
+	 * @test
+	 */
+	public function getClassNamePartsForPathTest() {
+		$this->assertEquals(array('', 'MyExt', 'MyModel2'), Utility::getClassNamePartsForPath('my_ext-my_model2'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPathForClassNameTest() {
+		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel2'));
+		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel2'));
+		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel2'));
+
+		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel2'));
+		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel2'));
+		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel2'));
+	}
+}
+?>

@@ -236,22 +236,14 @@ class DataProvider implements DataProviderInterface {
 	 * @return string
 	 */
 	public function getUriToNestedResource($resourceKey, $model) {
-		// TODO: fix this
-		$currentUri = $_SERVER['REQUEST_URI'];
-		$currentUri = strip_tags($currentUri);
-		if (substr($currentUri, -1) !== '/') {
-			$currentUri .= '/';
-		}
+		$currentUri = '/rest/';
+		$currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/' . $resourceKey;
 
-		// Check if the current URI already contains the parent's UID
-		$uriParts = explode('/', $currentUri);
-		array_pop($uriParts);
-		$lastUriPart = end($uriParts);
-		if (!is_numeric($lastUriPart)) {
-			$currentUri .= $model->getUid() . '/';
-		}
+		$host = filter_var($_SERVER['HTTP_HOST'], FILTER_SANITIZE_URL);
 
-		return 'http://' . $_SERVER['HTTP_HOST'] . $currentUri . $resourceKey;
+		$protocol =  ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
+
+		return $protocol . '://' . $host . $currentUri;
 	}
 
 	/**

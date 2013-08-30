@@ -18,4 +18,23 @@ class Request extends BaseRequest {
 		}
 		return $this->path;
 	}
+
+	/**
+	 * Format getter/setter
+	 *
+	 * If no $format is passed, returns the current format
+	 *
+	 * @param string $format
+	 * @return string Format
+	 */
+	public function format($format = null) {
+		if ($format !== NULL) {
+			if (!isset($this->_mimeTypes[$format])) {
+				$format = NULL;
+			}
+		}
+		return parent::format($format);
+	}
+
+
 }

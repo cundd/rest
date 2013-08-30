@@ -118,6 +118,7 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 
 		foreach ($configuredPaths as $configuration) {
 			$currentPath = $configuration['path'];
+
 			$currentPathPattern = str_replace('*', '\w*', str_replace('?', '\w', $currentPath));
 			$currentPathPattern = "!$currentPathPattern!";
 			if ($currentPath === 'all' && !$matchingConfiguration) {

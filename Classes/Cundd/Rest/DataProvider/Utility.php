@@ -62,6 +62,9 @@ class Utility {
 			}
 			// \Iresults\Result\Domain\Model\Team
 			$classNameParts = explode('\\', $className);
+			if (strtolower($classNameParts[1]) === 'vendor') {
+				array_shift($classNameParts);
+			}
 		} else {
 			$classNameParts = explode('_', $className);
 		}
@@ -72,7 +75,7 @@ class Utility {
 			$classNameParts
 		);
 
-		$path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[1] . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
+		$path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[3]; //  . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
 		return $path;
 	}
 

@@ -42,6 +42,17 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$_GET['u'] = 'MyExt-MyModel/1';
 		$request = $this->fixture->getRequest();
 		$this->assertEquals('MyExt-MyModel/1', $request->url());
+		$this->assertEquals('html', $request->format());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getUriWithFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1.json';
+		$request = $this->fixture->getRequest();
+		$this->assertEquals('MyExt-MyModel/1', $request->url());
+		$this->assertEquals('json', $request->format());
 	}
 
 	/**
@@ -56,6 +67,33 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
+	public function getPathWithFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1.json';
+		$path = $this->fixture->getPath();
+		$this->assertEquals('MyExt-MyModel', $path);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getUnderscoredPathWithFormatAndIdTest() {
+		$_GET['u'] = 'my_ext-my_model/1.json';
+		$path = $this->fixture->getPath();
+		$this->assertEquals('my_ext-my_model', $path);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getUnderscoredPathWithFormatTest2() {
+		$_GET['u'] = 'my_ext-my_model.json';
+		$path = $this->fixture->getPath();
+		$this->assertEquals('my_ext-my_model', $path);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getDataProviderForPathTest() {
 		$_GET['u'] = 'my_ext-my_model/1';
 		$dataProvider = $this->fixture->getDataProvider();
@@ -65,8 +103,26 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
+	public function getDataProviderForPathWithFormatTest() {
+		$_GET['u'] = 'my_ext-my_model/1.json';
+		$dataProvider = $this->fixture->getDataProvider();
+		$this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+	}
+
+	/**
+	 * @test
+	 */
 	public function getDataProviderForPathUpperCamelCaseTest() {
 		$_GET['u'] = 'MyExt-MyModel/1';
+		$dataProvider = $this->fixture->getDataProvider();
+		$this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getDataProviderForPathUpperCamelCaseWithFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1.json';
 		$dataProvider = $this->fixture->getDataProvider();
 		$this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
 	}
@@ -93,9 +149,45 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function getDefaultDataProviderForPathTest() {
-		$_GET['u'] = 'Vendor-UnexistantExt-MyModel/1';
+		$_GET['u'] = 'Vendor-NotExistingExt-MyModel/1';
 		$dataProvider = $this->fixture->getDataProvider();
 		$this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getDefaultDataProviderForPathWithFormatTest() {
+		$_GET['u'] = 'Vendor-NotExistingExt-MyModel/1.json';
+		$dataProvider = $this->fixture->getDataProvider();
+		$this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFormatWithoutFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1';
+		$request = $this->fixture->getRequest();
+		$this->assertEquals('html', $request->format());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFormatWithFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1.json';
+		$request = $this->fixture->getRequest();
+		$this->assertEquals('json', $request->format());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getFormatWithNotExistingFormatTest() {
+		$_GET['u'] = 'MyExt-MyModel/1.blur';
+		$request = $this->fixture->getRequest();
+		$this->assertEquals('html', $request->format());
 	}
 
 

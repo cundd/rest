@@ -46,6 +46,12 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $logger;
 
 	/**
+	 * The response format
+	 * @var string
+	 */
+	protected $format;
+
+	/**
 	 * Initialize
 	 */
 	public function __construct() {
@@ -221,6 +227,8 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 		$success = TRUE;
 		$response = $this->app->run($request);
 
+		$response->content($response->content());
+
 		if ($response->content() instanceof \Exception) {
 			$success = FALSE;
 
@@ -250,7 +258,12 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 */
 	public function getRequest() {
 		if (!$this->request) {
-			$this->request = new Request(NULL, $this->getUri());
+			$format = '';
+			$uri = $this->getUri($format);
+			$this->request = new Request(NULL, $uri);
+			if ($format) {
+				$this->request->format($format);
+			}
 		}
 		return $this->request;
 	}
@@ -392,14 +405,29 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * Returns the URI
+	 * @param string $format Reference to be filled with the request format
 	 * @return string
 	 */
-	public function getUri() {
+	public function getUri(&$format = '') {
 		if (!$this->uri) {
 			$uri = $this->getArgument('u', FILTER_SANITIZE_URL);
 			if (!$uri) {
 				$uri = substr($_SERVER['REQUEST_URI'], 6);
 				$uri = filter_var($uri, FILTER_SANITIZE_URL);
+			}
+
+			// Strip the format from the URI
+			$resourceName = basename($uri);
+			$lastDotPosition = strrpos($resourceName, '.');
+			if ($lastDotPosition !== FALSE) {
+				$newUri = '';
+				if ($uri !== $resourceName) {
+					$newUri = dirname($uri) . '/';
+				}
+				$newUri .= substr($resourceName, 0, $lastDotPosition);
+				$uri = $newUri;
+
+				$format = substr($resourceName, $lastDotPosition + 1);
 			}
 			$this->uri = $uri;
 		}
