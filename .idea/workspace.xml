@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Configuration/TypoScriptConfigurationProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
@@ -18,7 +15,7 @@
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376465072651" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872520839" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1378549071386" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -42,7 +39,7 @@
     <file path="/DataProviderTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377180844516" ignored="false" />
     <file path="/ExtbaseDataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1369060061062" ignored="false" />
     <file path="/DataProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377180272389" ignored="false" />
-    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872054235" ignored="false" />
+    <file path="/DataProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1378551518474" ignored="false" />
     <file path="/Utility.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377872366041" ignored="false" />
     <file path="/AuthenticationProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1371912675657" ignored="false" />
     <file path="/AuthenticationProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376814782317" ignored="false" />
@@ -61,6 +58,7 @@
     <file path="/Main.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377788409298" ignored="false" />
     <file path="/DataProviderUtilityTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377870986612" ignored="false" />
     <file path="/TypoScriptConfigurationProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377876481736" ignored="false" />
+    <file path="/AbstractUser.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1378550172782" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,37 +82,66 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="App.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="218" column="103" selection-start="6788" selection-end="6814" vertical-scroll-proportion="0.62403697">
+            <state line="120" column="7" selection-start="3675" selection-end="3675" vertical-scroll-proportion="0.7338552">
+              <folding>
+                <element signature="e#43#70#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DataProviderTest.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="28" column="7" selection-start="545" selection-end="545" vertical-scroll-proportion="127.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractUser.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../ir_users/Classes/Domain/Model/AbstractUser.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="18" selection-start="1292" selection-end="1292" vertical-scroll-proportion="-9.375">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/App.php">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="161" column="41" selection-start="5091" selection-end="5091" vertical-scroll-proportion="-9.041667">
+            <state line="116" column="33" selection-start="2939" selection-end="2939" vertical-scroll-proportion="-10.625">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Request.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Request.php">
+      <file leaf-file-name="FeUser.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../ir_users/Classes/Domain/Model/FeUser.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="0" selection-start="470" selection-end="470" vertical-scroll-proportion="-11.25">
+            <state line="94" column="18" selection-start="1794" selection-end="1794" vertical-scroll-proportion="-38.125">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Request.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/Request.php">
+      <file leaf-file-name="ReflectionService.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Reflection/ReflectionService.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="147" column="31" selection-start="4330" selection-end="4334" vertical-scroll-proportion="-3.489796">
+            <state line="31" column="23" selection-start="1187" selection-end="1204" vertical-scroll-proportion="-9.489796">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClassSchema.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Reflection/ClassSchema.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="269" column="41" selection-start="7839" selection-end="7860" vertical-scroll-proportion="-35.708332">
               <folding />
             </state>
           </provider>
@@ -123,7 +150,7 @@
       <file leaf-file-name="ConfigurationBasedAuthenticationProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="20" selection-start="1615" selection-end="1615" vertical-scroll-proportion="-15.583333">
+            <state line="57" column="20" selection-start="1615" selection-end="1615" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -132,29 +159,7 @@
       <file leaf-file-name="TypoScriptConfigurationProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Configuration/TypoScriptConfigurationProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="12" selection-start="771" selection-end="771" vertical-scroll-proportion="-20.0">
-              <folding>
-                <element signature="e#42#80#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataProvider.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="-133.04167">
-              <folding>
-                <element signature="e#43#85#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConfigurationBasedAuthenticationProviderTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="37" selection-start="2664" selection-end="2664" vertical-scroll-proportion="-21.125">
+            <state line="32" column="12" selection-start="771" selection-end="771" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -163,7 +168,7 @@
       <file leaf-file-name="Utility.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="40" selection-start="1590" selection-end="1590" vertical-scroll-proportion="-29.375">
+            <state line="62" column="40" selection-start="1590" selection-end="1590" vertical-scroll-proportion="-0.625">
               <folding />
             </state>
           </provider>
@@ -187,14 +192,10 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/index.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
         <option value="$PROJECT_DIR$/ext_conf_template.txt" />
         <option value="$PROJECT_DIR$/ext_localconf.php" />
         <option value="$PROJECT_DIR$/ext_typoscript_setup.txt" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
-        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" />
@@ -202,7 +203,11 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Configuration/TypoScriptConfigurationProvider.php" />
         <option value="$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/App.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" />
+        <option value="$PROJECT_DIR$/../ir_users/Classes/Domain/Model/FeUser.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/../ir_users/Classes/Domain/Model/AbstractUser.php" />
+        <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
       </list>
     </option>
   </component>
@@ -244,12 +249,117 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="rest" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sysext" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sysext" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="extbase" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sysext" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="extbase" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedLibraryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sysext" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="extbase" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Reflection" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -386,19 +496,18 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="preferences.externalTools" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Tests/Unit/Core" />
+    <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Tests/Unit/Core" />
     <property name="FullScreen" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="PublishConfig">
     <servers>
@@ -535,31 +644,35 @@
       <created>1377872524769</created>
       <updated>1377872524769</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Added TypoScript configuration provider to read the configuration from TypoScript&#10;Added the ability to define path aliases&#10;Added the configuration plugin.tx_rest.settings.addRootObjectForCollection">
+      <created>1377879739360</created>
+      <updated>1377879739360</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1791" height="1178" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6716981" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22808023" sideWeight="0.67296785" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23094556" sideWeight="0.67296785" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21031518" sideWeight="0.2863894" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32703215" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32703215" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32830188" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -607,7 +720,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in the DataProvider Utility where the wrong path was generated for vendor prefixed Domain Models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added TypoScript configuration provider to read the configuration from TypoScript&#10;Added the ability to define path aliases&#10;Added the configuration plugin.tx_rest.settings.addRootObjectForCollection" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -634,110 +747,51 @@
     <MESSAGE value="Added logging for exceptions&#10;Output first level of a lazy object storage's models" />
     <MESSAGE value="Added detection of a requested format&#10;Fixed a bug with nested resources introduced in the last commit&#10;Fixed a bug in the DataProvider Utility where the wrong path was generated from class names" />
     <MESSAGE value="Fixed a bug in the DataProvider Utility where the wrong path was generated for vendor prefixed Domain Models" />
+    <MESSAGE value="Added TypoScript configuration provider to read the configuration from TypoScript&#10;Added the ability to define path aliases&#10;Added the configuration plugin.tx_rest.settings.addRootObjectForCollection" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/Response.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="40" selection-start="4650" selection-end="4650" vertical-scroll-proportion="43.833332">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/AppTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="54" selection-start="1826" selection-end="1826" vertical-scroll-proportion="-13.125">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="8" selection-start="3582" selection-end="3582" vertical-scroll-proportion="-25.75">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="21" selection-start="297" selection-end="297" vertical-scroll-proportion="-10.625">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="238" column="25" selection-start="7350" selection-end="7350" vertical-scroll-proportion="-133.04167">
-          <folding>
-            <element signature="e#43#85#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="37" selection-start="2664" selection-end="2664" vertical-scroll-proportion="-21.125">
+        <state line="104" column="37" selection-start="2664" selection-end="2664" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/Request.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="31" selection-start="4330" selection-end="4334" vertical-scroll-proportion="-3.489796">
+        <state line="147" column="31" selection-start="4330" selection-end="4334" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/App.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="161" column="41" selection-start="5091" selection-end="5091" vertical-scroll-proportion="-9.041667">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="40" selection-start="1590" selection-end="1590" vertical-scroll-proportion="-29.375">
+        <state line="161" column="41" selection-start="5091" selection-end="5091" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Request.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="470" selection-end="470" vertical-scroll-proportion="-11.25">
+        <state line="27" column="0" selection-start="470" selection-end="470" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="20" selection-start="1615" selection-end="1615" vertical-scroll-proportion="-15.583333">
+        <state line="57" column="20" selection-start="1615" selection-end="1615" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Configuration/TypoScriptConfigurationProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="12" selection-start="771" selection-end="771" vertical-scroll-proportion="-20.0">
-          <folding>
-            <element signature="e#42#80#0" expanded="true" />
-          </folding>
+        <state line="32" column="12" selection-start="771" selection-end="771" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -748,10 +802,68 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Reflection/ClassSchema.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="269" column="41" selection-start="7839" selection-end="7860" vertical-scroll-proportion="-35.708332">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Reflection/ReflectionService.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="23" selection-start="1187" selection-end="1204" vertical-scroll-proportion="-9.489796">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ir_users/Classes/Domain/Model/BeUser.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="7" selection-start="1404" selection-end="1404" vertical-scroll-proportion="0.36231884">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ir_users/Classes/Domain/Model/FeUser.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="94" column="18" selection-start="1794" selection-end="1794" vertical-scroll-proportion="-38.125">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/Utility.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="40" selection-start="1590" selection-end="1590" vertical-scroll-proportion="-0.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="218" column="103" selection-start="6788" selection-end="6814" vertical-scroll-proportion="0.62403697">
+        <state line="116" column="33" selection-start="2939" selection-end="2939" vertical-scroll-proportion="-10.625">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ir_users/Classes/Domain/Model/AbstractUser.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="18" selection-start="1292" selection-end="1292" vertical-scroll-proportion="-9.375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="7" selection-start="545" selection-end="545" vertical-scroll-proportion="127.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="7" selection-start="3675" selection-end="3675" vertical-scroll-proportion="0.7338552">
+          <folding>
+            <element signature="e#43#70#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

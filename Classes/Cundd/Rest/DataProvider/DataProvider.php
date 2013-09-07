@@ -2,6 +2,8 @@
 namespace Cundd\Rest\DataProvider;
 
 
+use Iresults\Core\Iresults;
+use TYPO3\CMS\Core\FormProtection\Exception;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
@@ -21,6 +23,14 @@ class DataProvider implements DataProviderInterface {
 	 * @inject
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * The reflection service
+	 *
+	 * @var \TYPO3\CMS\Extbase\Reflection\ReflectionService
+	 * @inject
+	 */
+	protected $reflectionService;
 
 	/**
 	 * The current depth when preparing model data for output
@@ -91,7 +101,7 @@ class DataProvider implements DataProviderInterface {
 		if (!$data) {
 			return $this->getEmptyModelForPath($path);
 		} else if (is_scalar($data)) { // If it is a scalar treat it as identity
-			return $this->getRepositoryForPath($path)->findByUid($data);
+			return $this->getModelWithIdentityForPath($data, $path);
 		}
 
 		$data = $this->prepareModelData($data);
@@ -104,6 +114,64 @@ class DataProvider implements DataProviderInterface {
 			$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
 		}
 		return $model;
+	}
+
+	/**
+	 * Loads the model with the given identifier
+	 *
+	 * @param mixed		$identifier The identifier
+	 * @param string	$path		The path
+	 * @return mixed|null|object
+	 */
+	protected function getModelWithIdentityForPath($identifier, $path) {
+		$repository = $this->getRepositoryForPath($path);
+
+		// Tries to fetch the object by UID
+		$object = $repository->findByUid($identifier);
+		if ($object) {
+			return $object;
+		}
+
+
+		// Fetch the first identity property and search the repository for it
+		$type = NULL;
+		$property = NULL;
+		try {
+			$classSchema = $this->reflectionService->getClassSchema($this->getModelClassForPath($path));
+			$identityProperties = $classSchema->getIdentityProperties();
+
+			$type = reset($identityProperties);
+			$property = key($identityProperties);
+		} catch (\Exception $exception) {
+		}
+
+		switch ($type) {
+			case 'string':
+				$typeMatching = is_string($identifier);
+				break;
+
+			case 'boolean':
+				$typeMatching = is_bool($identifier);
+				break;
+
+			case 'integer':
+				$typeMatching = is_int($identifier);
+				break;
+
+			case 'float':
+				$typeMatching = is_float($identifier);
+				break;
+
+			case 'array':
+			default:
+				$typeMatching = FALSE;
+		}
+
+		if ($typeMatching) {
+			$findMethod = 'findOneBy' . ucfirst($property);
+			return call_user_func(array($repository, $findMethod), $identifier);
+		}
+		return NULL;
 	}
 
 	/**

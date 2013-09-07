@@ -114,7 +114,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* WITH UID 																 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->param('int', function($request, $uid) use($dispatcher, $app) {
+				$app->param('slug', function($request, $uid) use($dispatcher, $app) {
 					$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
 						$model = $dispatcher->getModelWithData($uid);
 						if (!$model) {
