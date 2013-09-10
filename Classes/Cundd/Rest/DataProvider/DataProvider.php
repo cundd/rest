@@ -1,9 +1,6 @@
 <?php
 namespace Cundd\Rest\DataProvider;
 
-
-use Iresults\Core\Iresults;
-use TYPO3\CMS\Core\FormProtection\Exception;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
@@ -97,6 +94,7 @@ class DataProvider implements DataProviderInterface {
 	 */
 	public function getModelWithDataForPath($data, $path) {
 		$modelClass = $this->getModelClassForPath($path);
+
 		// If no data is given return a new instance
 		if (!$data) {
 			return $this->getEmptyModelForPath($path);
@@ -117,64 +115,6 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
-	 * Loads the model with the given identifier
-	 *
-	 * @param mixed		$identifier The identifier
-	 * @param string	$path		The path
-	 * @return mixed|null|object
-	 */
-	protected function getModelWithIdentityForPath($identifier, $path) {
-		$repository = $this->getRepositoryForPath($path);
-
-		// Tries to fetch the object by UID
-		$object = $repository->findByUid($identifier);
-		if ($object) {
-			return $object;
-		}
-
-
-		// Fetch the first identity property and search the repository for it
-		$type = NULL;
-		$property = NULL;
-		try {
-			$classSchema = $this->reflectionService->getClassSchema($this->getModelClassForPath($path));
-			$identityProperties = $classSchema->getIdentityProperties();
-
-			$type = reset($identityProperties);
-			$property = key($identityProperties);
-		} catch (\Exception $exception) {
-		}
-
-		switch ($type) {
-			case 'string':
-				$typeMatching = is_string($identifier);
-				break;
-
-			case 'boolean':
-				$typeMatching = is_bool($identifier);
-				break;
-
-			case 'integer':
-				$typeMatching = is_int($identifier);
-				break;
-
-			case 'float':
-				$typeMatching = is_float($identifier);
-				break;
-
-			case 'array':
-			default:
-				$typeMatching = FALSE;
-		}
-
-		if ($typeMatching) {
-			$findMethod = 'findOneBy' . ucfirst($property);
-			return call_user_func(array($repository, $findMethod), $identifier);
-		}
-		return NULL;
-	}
-
-	/**
 	 * Returns a domain model for the given API path and data
 	 * Even if the data contains an identifier, the existing model will not be loaded.
 	 *
@@ -191,7 +131,8 @@ class DataProvider implements DataProviderInterface {
 
 		// Save the identifier and remove it from the data array
 		if (isset($data['__identity']) && $data['__identity']) {
-			$uid = $data['__identity'];
+			// Load the UID of the existing model
+			$uid = $this->getUidOfModelWithIdentityForPath($data['__identity'], $path);
 		} else if (isset($data['uid']) && $data['uid']) {
 			$uid = $data['uid'];
 		}
@@ -378,7 +319,6 @@ class DataProvider implements DataProviderInterface {
 		}
 	}
 
-
 	/**
 	 * Adds or updates the given model in the repository for the
 	 * given API path
@@ -394,12 +334,86 @@ class DataProvider implements DataProviderInterface {
 		}
 	}
 
+
 	/**
 	 * Persist all changes to the database
 	 */
 	public function persistAllChanges() {
 		$persistenceManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
 		$persistenceManager->persistAll();
+	}
+
+	/**
+	 * Returns the UID of the model with the given identifier
+	 *
+	 * @param mixed  $identifier  The identifier
+	 * @param string $path        The path
+	 * @return integer|null    Returns the UID of NULL if the object couldn't be found
+	 */
+	protected function getUidOfModelWithIdentityForPath($identifier, $path) {
+		$model = $this->getModelWithIdentityForPath($identifier, $path);
+		if (!$model) {
+			return NULL;
+		}
+		return $model->getUid();
+	}
+
+	/**
+	 * Loads the model with the given identifier
+	 *
+	 * @param mixed		$identifier The identifier
+	 * @param string	$path		The path
+	 * @return mixed|null|object
+	 */
+	protected function getModelWithIdentityForPath($identifier, $path) {
+		$repository = $this->getRepositoryForPath($path);
+
+		// Tries to fetch the object by UID
+		$object = $repository->findByUid($identifier);
+		if ($object) {
+			return $object;
+		}
+
+
+		// Fetch the first identity property and search the repository for it
+		$type = NULL;
+		$property = NULL;
+		try {
+			$classSchema = $this->reflectionService->getClassSchema($this->getModelClassForPath($path));
+			$identityProperties = $classSchema->getIdentityProperties();
+
+			$type = reset($identityProperties);
+			$property = key($identityProperties);
+		} catch (\Exception $exception) {
+		}
+
+		switch ($type) {
+			case 'string':
+				$typeMatching = is_string($identifier);
+				break;
+
+			case 'boolean':
+				$typeMatching = is_bool($identifier);
+				break;
+
+			case 'integer':
+				$typeMatching = is_int($identifier);
+				break;
+
+			case 'float':
+				$typeMatching = is_float($identifier);
+				break;
+
+			case 'array':
+			default:
+				$typeMatching = FALSE;
+		}
+
+		if ($typeMatching) {
+			$findMethod = 'findOneBy' . ucfirst($property);
+			return call_user_func(array($repository, $findMethod), $identifier);
+		}
+		return NULL;
 	}
 
 	/**
