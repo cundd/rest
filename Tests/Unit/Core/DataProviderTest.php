@@ -1,6 +1,8 @@
 <?php
 namespace Cundd\Rest\Test\Core;
 
+\Tx_CunddComposer_Autoloader::register();
+
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
 	/**
 	 * @var string
@@ -114,8 +116,6 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	static public function setUpBeforeClass() {
-		\Tx_CunddComposer_Autoloader::register();
-
 		class_alias('\\Cundd\\Rest\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
 		class_alias('\\Cundd\\Rest\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
 
@@ -206,6 +206,8 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function getModelWithEmptyDataTest() {
 		$data = array();
 		$path = 'MyExt-MyModel';
+
+		/** @var \Cundd\Rest\Test\Core\MyModel $model */
 		$model = $this->fixture->getModelWithDataForPath($data, $path);
 		$this->assertEquals('Initial value', $model->getName());
 	}

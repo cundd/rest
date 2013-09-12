@@ -16,12 +16,6 @@ interface AuthenticationProviderInterface {
 	public function isAuthenticated();
 
 	/**
-	 * Returns if the given request needs authentication
-	 * @return bool
-	 */
-	public function requestNeedsAuthentication();
-
-	/**
 	 * Sets the request to get the authentication requirements for
 	 * @param \Bullet\Request|\Cundd\Rest\Request $request
 	 * @return mixed

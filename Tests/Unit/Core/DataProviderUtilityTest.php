@@ -1,6 +1,7 @@
 <?php
 namespace Cundd\Rest\Test\Core;
 
+\Tx_CunddComposer_Autoloader::register();
 use Cundd\Rest\DataProvider\Utility;
 
 class MyModel2 extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
@@ -111,8 +112,6 @@ class MyNestedJsonSerializeModel2 extends MyNestedModel {
  */
 class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	static public function setUpBeforeClass() {
-		\Tx_CunddComposer_Autoloader::register();
-
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Tx_MyExt_Domain_Model_MyModel2');
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Tx_MyExt_Domain_Repository_MyModelRepository2');
 

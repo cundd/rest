@@ -6,9 +6,10 @@ use Cundd\Rest\DataProvider\Utility;
 use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\SingletonInterface;
 
 
-class App implements \TYPO3\CMS\Core\SingletonInterface {
+class App implements SingletonInterface {
 	/**
 	 * API path
 	 * @var string
@@ -16,14 +17,9 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $uri;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var \Cundd\Rest\ObjectManager
 	 */
 	protected $objectManager;
-
-	/**
-	 * @var \Cundd\Rest\DataProvider\DataProviderInterface
-	 */
-	protected $dataProvider;
 
 	/**
 	 * @var \Bullet\App
@@ -34,11 +30,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var \Cundd\Rest\Request
 	 */
 	protected $request;
-
-	/**
-	 * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
-	 */
-	protected $authenticationProvider;
 
 	/**
 	 * @var \TYPO3\CMS\Core\Log\Logger
@@ -52,17 +43,12 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $format;
 
 	/**
-	 * Configuration provider
-	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	protected $configurationProvider;
-
-	/**
 	 * Initialize
 	 */
 	public function __construct() {
 		$this->app = new \Bullet\App();
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+		$this->objectManager->injectDispatcher($this);
 	}
 
 	/**
@@ -70,12 +56,13 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
+		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
 
 		// Checks if the request needs authentication
-		if ($this->getAuthenticationProvider()->requestNeedsAuthentication()) {
+		if ($this->objectManager->getAccessController()->requestNeedsAuthentication()) {
 			try {
-				$isAuthenticated = $this->getAuthenticationProvider()->authenticate();
+				$isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate();
 			} catch (\Exception $exception) {
 				$this->logException($exception);
 				$isAuthenticated = FALSE;
@@ -88,18 +75,6 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 
 		$dispatcher = $this;
 		$app = $this->app;
-
-
-//		header('Content-Type: text/html; charset=utf-8');
-//		echo '<html>';
-//		echo '<head><title></title></head>';
-//		echo '<body>';
-//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT));
-//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
-//		Iresults::pd($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FRAMEWORK));
-//		echo '</body>';
-//		echo '</html>';
-//		die;
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -138,6 +113,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* REPLACE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$replaceCallback = function($request) use($uid, $dispatcher, $app) {
+						/** @var \Cundd\Rest\Request $request */
 						$data = $request->post();
 						$data['__identity'] = $uid;
 						$dispatcher->logRequest('replace request', array('body' => $data));
@@ -161,6 +137,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					/* UPDATE																	 */
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$updateCallback = function($request) use($uid, $dispatcher, $app) {
+						/** @var \Cundd\Rest\Request $request */
 						$data = $request->post();
 						$data['__identity'] = $uid;
 						$dispatcher->logRequest('update request', array('body' => $data));
@@ -192,6 +169,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 				/* CREATE																	 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->post(function($request) use($dispatcher, $app) {
+					/** @var \Cundd\Rest\Request $request */
 					$data = $request->post();
 					$dispatcher->logRequest('create request', array('body' => $data));
 
@@ -204,7 +182,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					}
 
 					$dispatcher->saveModel($model);
-					return $dispatcher->getDataProvider()->getModelData($model);
+					return $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -215,8 +193,8 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 					$allModels = $repository->findAll();
 					$allModels = iterator_to_array($allModels);
 
-					$result = array_map(array($dispatcher->getDataProvider(), 'getModelData'), $allModels);
-					if ($dispatcher->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+					$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 						return array(
 							$dispatcher->getOriginalPath() => $result
 						);
@@ -274,7 +252,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 			$format = '';
 			$uri = $this->getUri($format);
 			$this->request = new Request(NULL, $uri);
-			$this->request->injectConfigurationProvider($this->getConfigurationProvider());
+			$this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
 			if ($format) {
 				$this->request->format($format);
 			}
@@ -302,7 +280,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
 	public function getRepository() {
-		return $this->getDataProvider()->getRepositoryForPath($this->getPath());
+		return $this->objectManager->getDataProvider()->getRepositoryForPath($this->getPath());
 	}
 
 	/**
@@ -313,7 +291,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithData($data) {
-		return $this->getDataProvider()->getModelWithDataForPath($data, $this->getPath());
+		return $this->objectManager->getDataProvider()->getModelWithDataForPath($data, $this->getPath());
 	}
 
 	/**
@@ -324,7 +302,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getNewModelWithData($data) {
-		return $this->getDataProvider()->getNewModelWithDataForPath($data, $this->getPath());
+		return $this->objectManager->getDataProvider()->getNewModelWithDataForPath($data, $this->getPath());
 	}
 
 	/**
@@ -333,7 +311,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 	 */
 	public function getModelData($model) {
-		return $this->getDataProvider()->getModelData($model);
+		return $this->objectManager->getDataProvider()->getModelData($model);
 	}
 
 	/**
@@ -344,7 +322,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return mixed
 	 */
 	public function getModelProperty($model, $propertyKey) {
-		return $this->dataProvider->getModelProperty($model, $propertyKey);
+		return $this->objectManager->getDataProvider()->getModelProperty($model, $propertyKey);
 	}
 
 	/**
@@ -353,7 +331,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return void
 	 */
 	public function saveModel($model) {
-		$this->getDataProvider()->saveModelForPath($model, $this->getPath());
+		$this->objectManager->getDataProvider()->saveModelForPath($model, $this->getPath());
 	}
 
 	/**
@@ -363,7 +341,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return void
 	 */
 	public function replaceModel($oldModel, $newModel) {
-		$this->getDataProvider()->replaceModelForPath($oldModel, $newModel, $this->getPath());
+		$this->objectManager->getDataProvider()->replaceModelForPath($oldModel, $newModel, $this->getPath());
 	}
 
 	/**
@@ -372,57 +350,7 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @return void
 	 */
 	public function removeModel($model) {
-		$this->getDataProvider()->removeModelForPath($model, $this->getPath());
-	}
-
-	/**
-	 * Returns the data provider
-	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
-	 */
-	public function getDataProvider() {
-		if (!$this->dataProvider) {
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getPath());
-
-			// Check if an extension provides a Data Provider
-			$dataProviderClass  = 'Tx_' . $extension . '_Rest_DataProvider';
-			if (!class_exists($dataProviderClass)) {
-				$dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
-			}
-			// Get the specific builtin Data Provider
-			if (!class_exists($dataProviderClass)) {
-				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
-				// Get the default Data Provider
-				if (!class_exists($dataProviderClass)) {
-					$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
-				}
-			}
-			$this->dataProvider = $this->objectManager->get($dataProviderClass);
-		}
-		return $this->dataProvider;
-	}
-
-	/**
-	 * Returns the Authentication Provider
-	 * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
-	 */
-	public function getAuthenticationProvider() {
-		if (!$this->authenticationProvider) {
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getPath());
-
-			// Check if an extension provides a Authentication Provider
-			$authenticationProviderClass  = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
-			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
-			}
-
-			// Use the configuration based Authentication Provider
-			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider';
-			}
-			$this->authenticationProvider = $this->objectManager->get($authenticationProviderClass);
-			$this->authenticationProvider->setRequest($this->getRequest());
-		}
-		return $this->authenticationProvider;
+		$this->objectManager->getDataProvider()->removeModelForPath($model, $this->getPath());
 	}
 
 	/**
@@ -472,14 +400,20 @@ class App implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
-	 * Returns the configuration provider
-	 * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+	 * Returns the object manager
+	 *
+	 * @return \Cundd\Rest\ObjectManager
 	 */
-	public function getConfigurationProvider() {
-		if (!$this->configurationProvider) {
-			$this->configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
-		}
-		return $this->configurationProvider;
+	public function getObjectManager() {
+		return $this->objectManager;
+	}
+
+	/**
+	 * Returns the data provider
+	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
+	 */
+	public function getDataProvider() {
+		return $this->objectManager->getDataProvider();
 	}
 
 	/**

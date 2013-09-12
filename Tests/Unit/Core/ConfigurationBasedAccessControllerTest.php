@@ -1,18 +1,18 @@
 <?php
-
 namespace Cundd\Rest\Test\Core;
+
+\Tx_CunddComposer_Autoloader::register();
 use Cundd\Rest\Request;
 
-class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Cundd\Rest\Authentication\ConfigurationBasedAuthenticationProvider
+	 * @var \Cundd\Rest\Access\ConfigurationBasedAccessController
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		\Tx_CunddComposer_Autoloader::register();
 		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
-		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Authentication\\ConfigurationBasedAuthenticationProvider');
+		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Access\\ConfigurationBasedAccessController');
 
 		$settings = array(
 			"paths" =>
@@ -83,28 +83,6 @@ class ConfigurationBasedAuthenticationProviderTest extends \TYPO3\CMS\Extbase\Te
 		);
 		$configuration = $this->fixture->getConfigurationForPath($path);
 		$this->assertEquals($testConfiguration, $configuration);
-	}
-
-	/**
-	 * @test
-	 */
-	public function throwBadConfigurationExceptionTest() {
-		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
-		$this->setExpectedException('Cundd\\Rest\\Authentication\\Exception\\InvalidConfigurationException');
-		$settings = array(
-			"paths" =>
-			array(
-				"1." =>
-				array(
-					"path" => "all",
-					// "read" => NULL,
-					"write" => "deny",
-				),
-			)
-		);
-		$configurationProvider->setSettings($settings);
-		$success = $this->fixture->authenticate();
-		$this->assertFalse($success);
 	}
 
 }

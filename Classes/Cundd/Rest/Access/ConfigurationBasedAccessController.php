@@ -1,16 +1,16 @@
 <?php
 
-namespace Cundd\Rest\Authentication;
-use Cundd\Rest\Authentication\Exception\InvalidConfigurationException;
+namespace Cundd\Rest\Access;
+use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 
 /**
- * The class expects an existing valid authenticated Frontend User or credentials passed through the request.
+ * The class determines the access for the current request
  *
  * Example URL: logintype=login&pid=PIDwhereTheFEUsersAreStored&user=MyUserName&pass=MyPassword
  *
- * @package Cundd\Rest\Authentication
+ * @package Cundd\Rest\Access
  */
-class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationProvider {
+class ConfigurationBasedAccessController extends AbstractAccessController {
 	/**
 	 * Keyword to allow access for the given access method
 	 */
@@ -20,6 +20,11 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	 * Keyword to deny access for the given access method
 	 */
 	const ACCESS_DENY = 'deny';
+
+	/**
+	 * Keyword to require a valid login for the given access method
+	 */
+	const ACCESS_REQUIRE_LOGIN = 'require';
 
 	/**
 	 * The request want's to read data
@@ -51,15 +56,16 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 	}
 
 	/**
-	 * Tries to authenticate the current request
-	 * @return bool Returns if the authentication was successful
-	 * @throws Exception\InvalidConfigurationException if the current configuration ('read' or 'write') is not set
+	 * Returns if the given request needs authentication
+	 *
+	 * @return bool
+	 * @throws Exception\InvalidConfigurationException
 	 */
-	public function authenticate() {
-		$configurationKey = 'read';
+	public function requestNeedsAuthentication() {
+		$configurationKey = self::ACCESS_METHOD_READ;
 		$configuration = $this->getConfigurationForCurrentPath();
 		if ($this->isWrite()) {
-			$configurationKey = 'write';
+			$configurationKey = self::ACCESS_METHOD_WRITE;
 		}
 
 		// Throw an exception if the configuration is not complete
@@ -68,18 +74,10 @@ class ConfigurationBasedAuthenticationProvider extends AbstractAuthenticationPro
 		}
 
 		$access = $configuration[$configurationKey];
-		if ($access === self::ACCESS_ALLOW) {
+		if ($access === self::ACCESS_REQUIRE_LOGIN) {
 			return TRUE;
 		}
 		return FALSE;
-	}
-
-	/**
-	 * Returns if the given request needs authentication
-	 * @return bool
-	 */
-	public function requestNeedsAuthentication() {
-		return TRUE;
 	}
 
 	/**

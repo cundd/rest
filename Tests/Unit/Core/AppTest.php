@@ -1,6 +1,7 @@
 <?php
 namespace Cundd\Rest\Test\Core;
 
+\Tx_CunddComposer_Autoloader::register();
 class DummyObject {}
 
 /**
@@ -20,13 +21,12 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	public static function setUpBeforeClass() {
-		class_alias('\\Cundd\\Rest\\Test\\Core\\DummyObject', 'Tx_MyExt_Rest_DataProvider');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\DummyObject', 'Vendor\\MySecondExt\\Rest\\DataProvider');
+		class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
+		class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
 	}
 
 
 	public function setUp() {
-		\Tx_CunddComposer_Autoloader::register();
 		$this->fixture = new \Cundd\Rest\App;
 	}
 

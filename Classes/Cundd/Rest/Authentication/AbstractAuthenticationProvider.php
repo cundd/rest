@@ -32,14 +32,6 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
 	}
 
 	/**
-	 * Returns if the given request needs authentication
-	 * @return bool
-	 */
-	public function requestNeedsAuthentication() {
-		return FALSE;
-	}
-
-	/**
 	 * @param \Bullet\Request|\Cundd\Rest\Request $request
 	 * @return mixed|void
 	 */
