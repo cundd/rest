@@ -7,6 +7,7 @@ use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
+use Cundd\Rest\Access\AccessControllerInterface;
 
 
 class App implements SingletonInterface {
@@ -43,12 +44,20 @@ class App implements SingletonInterface {
 	protected $format;
 
 	/**
+	 * The shared instance
+	 * @var \Cundd\Rest\App
+	 */
+	static protected $sharedDispatcher;
+
+	/**
 	 * Initialize
 	 */
 	public function __construct() {
 		$this->app = new \Bullet\App();
 		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
-		$this->objectManager->injectDispatcher($this);
+		$this->objectManager->setDispatcher($this);
+
+		self::$sharedDispatcher = $this;
 	}
 
 	/**
@@ -60,17 +69,18 @@ class App implements SingletonInterface {
 		$request = $this->getRequest();
 
 		// Checks if the request needs authentication
-		if ($this->objectManager->getAccessController()->requestNeedsAuthentication()) {
-			try {
-				$isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate();
-			} catch (\Exception $exception) {
-				$this->logException($exception);
-				$isAuthenticated = FALSE;
-			}
-			if ($isAuthenticated === FALSE) {
+		switch ($this->objectManager->getAccessController()->getAccess()) {
+			case AccessControllerInterface::ACCESS_ALLOW:
+				break;
+
+			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
 				echo new \Bullet\Response('Unauthorized', 401);
 				return FALSE;
-			}
+
+			case AccessControllerInterface::ACCESS_DENY:
+			default:
+				echo new \Bullet\Response('Forbidden', 403);
+				return FALSE;
 		}
 
 		$dispatcher = $this;
@@ -432,7 +442,7 @@ class App implements SingletonInterface {
 	 * @param string $message
 	 * @param array $data
 	 */
-	protected function logRequest($message, $data = NULL) {
+	public function logRequest($message, $data = NULL) {
 		if ($this->getExtensionConfiguration('logRequests')) {
 			$this->log($message, $data);
 		}
@@ -443,7 +453,7 @@ class App implements SingletonInterface {
 	 * @param string $message
 	 * @param array $data
 	 */
-	protected function logResponse($message, $data = NULL) {
+	public function logResponse($message, $data = NULL) {
 		if ($this->getExtensionConfiguration('logResponse')) {
 			$this->log($message, $data);
 		}
@@ -453,7 +463,7 @@ class App implements SingletonInterface {
 	 * Logs the given exception
 	 * @param \Exception $exception
 	 */
-	protected function logException($exception) {
+	public function logException($exception) {
 		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
 		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
 	}
@@ -463,7 +473,7 @@ class App implements SingletonInterface {
 	 * @param string $message
 	 * @param array $data
 	 */
-	protected function log($message, $data = NULL) {
+	public function log($message, $data = NULL) {
 		if ($data) {
 			$this->getLogger()->log(LogLevel::DEBUG, $message, $data);
 		} else {
@@ -494,5 +504,14 @@ class App implements SingletonInterface {
 		}
 		return NULL;
 	}
+
+	/**
+	 * Returns the shared dispatcher instance
+	 * @return \Cundd\Rest\App
+	 */
+	static public function getSharedDispatcher() {
+		return self::$sharedDispatcher;
+	}
+
 }
 ?>

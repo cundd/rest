@@ -47,7 +47,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 	 * Injects the dispatcher
 	 * @param \Cundd\Rest\App $dispatcher
 	 */
-	public function injectDispatcher($dispatcher) {
+	public function setDispatcher($dispatcher) {
 		$this->dispatcher = $dispatcher;
 	}
 

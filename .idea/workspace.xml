@@ -2,36 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/Exception/InvalidConfigurationException.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tests/Unit/Core/ObjectManagerTest.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/webResources.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/ConfigurationBasedAuthenticationProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAuthenticationProviderTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAccessControllerTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProviderInterface.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProviderInterface.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" afterPath="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/daniel.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/daniel.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379018192892" ignored="false" />
+    <file path="/App.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379053935684" ignored="false" />
     <file path="/index.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376998417159" ignored="false" />
     <file path="/a.dummy" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379017998936" ignored="false" />
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1376465072651" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379018483044" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379018495649" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -76,11 +63,13 @@
     <file path="/TypoScriptConfigurationProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1377876481736" ignored="false" />
     <file path="/AbstractUser.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1378550172782" ignored="false" />
     <file path="/a.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1378555699625" ignored="false" />
-    <file path="/ObjectManager.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379017918738" ignored="false" />
+    <file path="/ObjectManager.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379053899309" ignored="false" />
     <file path="/ObjectManagerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379016784287" ignored="false" />
     <file path="/AccessManager.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379017023888" ignored="false" />
-    <file path="/ConfigurationBasedAccessController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379017863978" ignored="false" />
+    <file path="/ConfigurationBasedAccessController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379053745255" ignored="false" />
     <file path="/ConfigurationBasedAccessControllerTest.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379017395473" ignored="false" />
+    <file path="/AbstractAccessController.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379053818267" ignored="false" />
+    <file path="/AccessControllerInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379053045214" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,10 +93,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DataProviderTest.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DataProviderTest.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="227" column="12" selection-start="6027" selection-end="6027" vertical-scroll-proportion="0.74018127">
+            <state line="204" column="7" selection-start="5336" selection-end="5336" vertical-scroll-proportion="-2.9591837">
               <folding />
             </state>
           </provider>
@@ -116,18 +105,47 @@
       <file leaf-file-name="ConfigurationBasedAccessController.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="73" selection-start="372" selection-end="372" vertical-scroll-proportion="-7.5">
+            <state line="61" column="0" selection-start="1734" selection-end="1734" vertical-scroll-proportion="-24.916666">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="App.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="74" column="0" selection-start="1574" selection-end="1574" vertical-scroll-proportion="173.125">
+            <state line="57" column="33" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.3167421">
               <folding>
                 <element signature="e#29#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RequestAuthenticationProvider.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/RequestAuthenticationProvider.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="95" selection-start="178" selection-end="257" vertical-scroll-proportion="-4.375">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AccessControllerInterface.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="49" column="20" selection-start="1002" selection-end="1002" vertical-scroll-proportion="-26.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ObjectManager.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="106" column="77" selection-start="3233" selection-end="3233" vertical-scroll-proportion="-7.4166665">
+              <folding>
+                <element signature="e#187#223#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -142,39 +160,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AccessControllerInterface.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="1" selection-start="361" selection-end="361" vertical-scroll-proportion="-7.5">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ObjectManager.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="77" selection-start="3236" selection-end="3236" vertical-scroll-proportion="-17.041666">
-              <folding>
-                <element signature="e#187#223#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConfigurationBasedAccessControllerTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAccessControllerTest.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="5" selection-start="2143" selection-end="2143" vertical-scroll-proportion="-23.083334">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="AbstractAuthenticationProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="4" selection-start="253" selection-end="941" vertical-scroll-proportion="-2.5">
+            <state line="47" column="1" selection-start="943" selection-end="943" vertical-scroll-proportion="-29.375">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ObjectManagerInterface.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Object/ObjectManagerInterface.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="32" column="10" selection-start="1284" selection-end="1284" vertical-scroll-proportion="-9.833333">
               <folding />
             </state>
           </provider>
@@ -183,16 +181,7 @@
       <file leaf-file-name="AbstractAccessController.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="0" selection-start="311" selection-end="311" vertical-scroll-proportion="-7.5">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ObjectManagerTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ObjectManagerTest.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="50" selection-start="1200" selection-end="1200" vertical-scroll-proportion="-21.833334">
+            <state line="47" column="13" selection-start="892" selection-end="892" vertical-scroll-proportion="-25.625">
               <folding />
             </state>
           </provider>
@@ -218,20 +207,20 @@
       <list>
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProviderInterface.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessManager.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessController.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/Exception/InvalidConfigurationException.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderUtilityTest.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/AppTest.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAccessControllerTest.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/ObjectManagerTest.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
       </list>
     </option>
   </component>
@@ -1374,26 +1363,30 @@
       <created>1378813142699</created>
       <updated>1378813142699</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Moved the access control to Access Controller classes&#10;Added a customized object manager">
+      <created>1379018503472</created>
+      <updated>1379018503472</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1791" height="1178" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32830188" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797733" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23667622" sideWeight="0.17830189" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32830188" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289225" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6009434" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23667622" sideWeight="0.6716981" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3264151" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23667622" sideWeight="0.67391306" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32608697" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990566" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1482,13 +1475,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="136" selection-end="176" vertical-scroll-proportion="-4.375">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/Exception/InvalidConfigurationException.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="27" selection-start="33" selection-end="33" vertical-scroll-proportion="-0.625">
@@ -1517,41 +1503,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="-2.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="4" selection-start="253" selection-end="941" vertical-scroll-proportion="-2.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="311" selection-end="311" vertical-scroll-proportion="-7.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="73" selection-start="372" selection-end="372" vertical-scroll-proportion="-7.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="1" selection-start="361" selection-end="361" vertical-scroll-proportion="-7.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/ConfigurationBasedAccessControllerTest.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="85" column="5" selection-start="2143" selection-end="2143" vertical-scroll-proportion="-23.083334">
@@ -1566,9 +1517,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../../typo3/sysext/extbase/Classes/Object/ObjectManagerInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="10" selection-start="1284" selection-end="1284" vertical-scroll-proportion="-9.833333">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="204" column="7" selection-start="5336" selection-end="5336" vertical-scroll-proportion="-2.9591837">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="20" selection-start="1002" selection-end="1002" vertical-scroll-proportion="-26.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="13" selection-start="892" selection-end="892" vertical-scroll-proportion="-25.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="0" selection-start="1734" selection-end="1734" vertical-scroll-proportion="-24.916666">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/RequestAuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="95" selection-start="178" selection-end="257" vertical-scroll-proportion="-4.375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="46" selection-start="91" selection-end="91" vertical-scroll-proportion="-2.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="1" selection-start="943" selection-end="943" vertical-scroll-proportion="-29.375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="77" selection-start="3236" selection-end="3236" vertical-scroll-proportion="-17.041666">
+        <state line="106" column="77" selection-start="3233" selection-end="3233" vertical-scroll-proportion="-7.4166665">
           <folding>
             <element signature="e#187#223#0" expanded="true" />
           </folding>
@@ -1577,17 +1584,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="74" column="0" selection-start="1574" selection-end="1574" vertical-scroll-proportion="173.125">
+        <state line="57" column="33" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.3167421">
           <folding>
             <element signature="e#29#55#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/Unit/Core/DataProviderTest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="227" column="12" selection-start="6027" selection-end="6027" vertical-scroll-proportion="0.74018127">
-          <folding />
         </state>
       </provider>
     </entry>

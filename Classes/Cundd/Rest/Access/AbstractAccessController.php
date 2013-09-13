@@ -9,13 +9,20 @@
 
 namespace Cundd\Rest\Access;
 
+use Cundd\Rest\App;
 
-class AbstractAccessController {
+abstract class AbstractAccessController implements AccessControllerInterface {
 	/**
 	 * The current request
 	 * @var \Cundd\Rest\Request
 	 */
 	protected $request;
+
+	/**
+	 * @var \Cundd\Rest\ObjectManager
+	 * @inject
+	 */
+	protected $objectManager;
 
 	/**
 	 * @param \Bullet\Request|\Cundd\Rest\Request $request
@@ -30,5 +37,23 @@ class AbstractAccessController {
 	 */
 	public function getRequest() {
 		return $this->request;
+	}
+
+
+	/**
+	 * Checks if a valid user is logged in
+	 * @return AccessControllerInterface::ACCESS
+	 */
+	protected function checkAuthentication() {
+		try {
+			$isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate();
+		} catch (\Exception $exception) {
+			App::getSharedDispatcher()->logException($exception);
+			$isAuthenticated = FALSE;
+		}
+		if ($isAuthenticated === FALSE) {
+			return self::ACCESS_UNAUTHORIZED;
+		}
+		return self::ACCESS_ALLOW;
 	}
 }

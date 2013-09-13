@@ -43,6 +43,16 @@ Allow read and write access for all models of the extension `MySecondext`:
         }
         ...
         
+Additionally you can require a valid user login for write operations:
+
+        ...
+        4 {
+            path = my_protectedext-*
+            read = allow
+            write = require
+        }
+        ...
+        
 
 Advanced configuration
 ----------------------

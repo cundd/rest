@@ -6,26 +6,9 @@ use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 /**
  * The class determines the access for the current request
  *
- * Example URL: logintype=login&pid=PIDwhereTheFEUsersAreStored&user=MyUserName&pass=MyPassword
- *
  * @package Cundd\Rest\Access
  */
 class ConfigurationBasedAccessController extends AbstractAccessController {
-	/**
-	 * Keyword to allow access for the given access method
-	 */
-	const ACCESS_ALLOW = 'allow';
-
-	/**
-	 * Keyword to deny access for the given access method
-	 */
-	const ACCESS_DENY = 'deny';
-
-	/**
-	 * Keyword to require a valid login for the given access method
-	 */
-	const ACCESS_REQUIRE_LOGIN = 'require';
-
 	/**
 	 * The request want's to read data
 	 */
@@ -56,6 +39,29 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 	}
 
 	/**
+	 * Returns if the current request has access to the requested resource
+	 * @return AccessControllerInterface::ACCESS
+	 */
+	public function getAccess() {
+		$configurationKey = self::ACCESS_METHOD_READ;
+		$configuration = $this->getConfigurationForCurrentPath();
+		if ($this->isWrite()) {
+			$configurationKey = self::ACCESS_METHOD_WRITE;
+		}
+
+		// Throw an exception if the configuration is not complete
+		if (!isset($configuration[$configurationKey])) {
+			throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+		}
+
+		$access = $configuration[$configurationKey];
+		if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
+			return $this->checkAuthentication();
+		}
+		return $access;
+	}
+
+	/**
 	 * Returns if the given request needs authentication
 	 *
 	 * @return bool
@@ -74,7 +80,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 		}
 
 		$access = $configuration[$configurationKey];
-		if ($access === self::ACCESS_REQUIRE_LOGIN) {
+		if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
 			return TRUE;
 		}
 		return FALSE;
