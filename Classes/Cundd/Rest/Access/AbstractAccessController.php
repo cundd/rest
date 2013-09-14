@@ -50,6 +50,8 @@ abstract class AbstractAccessController implements AccessControllerInterface {
 		} catch (\Exception $exception) {
 			App::getSharedDispatcher()->logException($exception);
 			$isAuthenticated = FALSE;
+
+			throw $exception;
 		}
 		if ($isAuthenticated === FALSE) {
 			return self::ACCESS_UNAUTHORIZED;

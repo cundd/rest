@@ -104,7 +104,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 
 			// Use the configuration based Authentication Provider
 			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\AuthenticationProvider';
+				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
 			}
 			$this->authenticationProvider = $this->get($authenticationProviderClass);
 			$this->authenticationProvider->setRequest($this->dispatcher->getRequest());

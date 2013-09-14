@@ -1,7 +1,14 @@
 plugin.tx_rest.settings.paths {
-  1 {
-    path = all
-    read = deny
-    write = deny
-  }
+	1 {
+		path = all
+		read = deny
+		write = deny
+	}
+}
+
+
+config.tx_extbase.objects {
+	Cundd\Rest\Authentication\UserProviderInterface {
+        className = Cundd\Rest\Authentication\UserProvider\FeUserProvider
+    }
 }
