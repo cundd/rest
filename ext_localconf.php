@@ -9,3 +9,10 @@ $TYPO3_CONF_VARS['FE']['eID_include']['rest'] = 'EXT:rest/index.php';
 if (isset($_SERVER['REQUEST_URI']) && substr($_SERVER['REQUEST_URI'], 0, 6) === '/rest/') {
 	$_GET['eID'] = 'rest';
 }
+
+if (TYPO3_MODE === 'BE') {
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['cliKeys']['rest'] = array(
+		'EXT:' . $_EXTKEY . '/Classes/Cundd/Rest/Server.php',
+		'_CLI_rest',
+	);
+}

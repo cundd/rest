@@ -62,11 +62,17 @@ class App implements SingletonInterface {
 
 	/**
 	 * Dispatch the request
+	 *
+	 * @param \Cundd\Rest\Request $request Overwrite the request
+	 * @param \Bullet\Response $responsePointer Reference to be filled with the response
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
-	public function dispatch() {
-		/** @var \Cundd\Rest\Request $request */
-		$request = $this->getRequest();
+	public function dispatch($request = NULL, &$responsePointer = NULL) {
+		if ($request) {
+			$this->request = $request;
+		} else {
+			$request = $this->getRequest();
+		}
 
 		// Checks if the request needs authentication
 		switch ($this->objectManager->getAccessController()->getAccess()) {
@@ -74,12 +80,12 @@ class App implements SingletonInterface {
 				break;
 
 			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-				echo new \Bullet\Response('Unauthorized', 401);
+				echo $responsePointer = new \Bullet\Response('Unauthorized', 401);
 				return FALSE;
 
 			case AccessControllerInterface::ACCESS_DENY:
 			default:
-				echo new \Bullet\Response('Forbidden', 403);
+				echo $responsePointer = new \Bullet\Response('Forbidden', 403);
 				return FALSE;
 		}
 
@@ -238,6 +244,7 @@ class App implements SingletonInterface {
 			$response = $this->exceptionToResponse($exception);
 		}
 
+		$responsePointer = $response;
 		$responseString = $response . '';
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
@@ -250,7 +257,7 @@ class App implements SingletonInterface {
 	 * @return \Bullet\Response
 	 */
 	public function exceptionToResponse($exception) {
-		return new \Bullet\Response($exception->getMessage(), 501);
+		return new \Bullet\Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 	}
 
 	/**
