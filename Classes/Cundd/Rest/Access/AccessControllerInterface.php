@@ -39,13 +39,29 @@ interface AccessControllerInterface {
 
 	/**
 	 * Returns if the current request has access to the requested resource
+	 *
 	 * @return AccessControllerInterface::ACCESS
 	 */
 	public function getAccess();
 
 	/**
 	 * Returns if the given request needs authentication
+	 *
 	 * @return bool
 	 */
 	public function requestNeedsAuthentication();
+
+	/**
+	 * Returns the current request
+	 *
+	 * @return \Bullet\Request
+	 */
+	public function getRequest();
+
+	/**
+	 * Sets the current request
+	 *
+	 * @param \Cundd\Rest\Request $request
+	 */
+	public function setRequest(\Cundd\Rest\Request $request);
 }

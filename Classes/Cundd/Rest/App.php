@@ -70,6 +70,7 @@ class App implements SingletonInterface {
 	public function dispatch($request = NULL, &$responsePointer = NULL) {
 		if ($request) {
 			$this->request = $request;
+			$this->objectManager->reassignRequest();
 		} else {
 			$request = $this->getRequest();
 		}

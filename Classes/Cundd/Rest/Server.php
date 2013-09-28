@@ -86,6 +86,8 @@ class Server {
 			/** @var \Bullet\Response $restResponse */
 			$restResponse = NULL;
 
+			$restServer->setServerGlobals($request);
+
 			ob_start();
 			$app->dispatch($restRequest, $restResponse);
 			ob_end_clean();
@@ -149,17 +151,27 @@ class Server {
 	/**
 	 * Returns the headers
 	 *
-	 * @param \Bullet\Response $response
+	 * @param \Bullet\Response $restResponse
 	 * @return array
 	 */
-	public function spyHeadersOfResponse($response) {
+	public function spyHeadersOfResponse($restResponse) {
 		static $reflectionProperty = NULL;
 		if ($reflectionProperty === NULL) {
 			$reflectionClass = new \ReflectionClass('\\Bullet\\Response');
 			$reflectionProperty = $reflectionClass->getProperty('_headers');
 			$reflectionProperty->setAccessible(TRUE);
 		}
-		return $reflectionProperty->getValue($response);
+		return $reflectionProperty->getValue($restResponse);
+	}
+
+	/**
+	 * @param \React\Http\Request $request
+	 */
+	public function setServerGlobals($request) {
+		$headers =  $request->getHeaders();
+		if (isset($headers['Authorization']) && $headers['Authorization']) {
+			$_SERVER['HTTP_AUTHENTICATION'] = $headers['Authorization'];
+		}
 	}
 }
 

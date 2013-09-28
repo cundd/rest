@@ -136,5 +136,17 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 		return $this->accessController;
 	}
 
+	/**
+	 * Resets the managed objects
+	 */
+	public function reassignRequest() {
+		$request = $this->dispatcher->getRequest();
+		if ($this->authenticationProvider) {
+			$this->authenticationProvider->setRequest($request);
+		}
+		if ($this->accessController) {
+			$this->accessController->setRequest($request);
+		}
+	}
 
 }
