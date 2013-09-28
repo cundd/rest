@@ -68,7 +68,6 @@ class Server {
 		}
 	}
 
-
 	/**
 	 * Starts the server
 	 */
@@ -91,10 +90,7 @@ class Server {
 			$app->dispatch($restRequest, $restResponse);
 			ob_end_clean();
 
-			// Spy the headers
-			$headers = $restServer->spyHeadersOfResponse($restResponse);
-
-			$response->writeHead(200, $headers);
+			$response->writeHead(200, $restServer->getHeadersFromResponse($restResponse));
 			$response->end($restResponse->content());
 
 			unset($restRequest);
@@ -113,6 +109,41 @@ class Server {
 		fwrite(STDOUT, 'Starting server at ' . $this->host . ':' . $this->port);
 
 		$loop->run();
+	}
+
+	/**
+	 * Returns the headers from the response
+	 *
+	 * @param \Bullet\Response $restResponse
+	 * @return array<mixed>
+	 */
+	public function getHeadersFromResponse($restResponse) {
+		// Spy the headers
+		$headers = $this->spyHeadersOfResponse($restResponse);
+
+		// If no headers are defined guess at least the content type
+		if (!$headers) {
+			$contentType = '';
+			$content = $restResponse->content();
+			$xmlIndicatorPosition = strpos($content, '<');
+			$jsonIndicatorPosition = strpos($content, '{');
+
+			if ($xmlIndicatorPosition === FALSE) {
+				$xmlIndicatorPosition = 2000;
+			}
+			if ($jsonIndicatorPosition === FALSE) {
+				$jsonIndicatorPosition = 2000;
+			}
+			if ($jsonIndicatorPosition < $xmlIndicatorPosition) {
+				$contentType = 'application/json; charset=UTF-8';
+			} else {
+				$contentType = 'application/xml; charset=UTF-8';
+			}
+			$headers = array(
+				'Content-type' => $contentType
+			);
+		}
+		return $headers;
 	}
 
 	/**

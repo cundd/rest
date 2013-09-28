@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="Added API key field to TYPO3's built in frontend user&#10;Added support to check for a valid FE user in the Basic Authentication Provider">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_localconf.php" afterPath="$PROJECT_DIR$/ext_localconf.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
+    <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
@@ -19,7 +13,7 @@
     <file path="/*.regexp" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368285724212" ignored="false" />
     <file path="/Bootstrap.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380052495572" ignored="false" />
     <file path="/DataMapFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368384038532" ignored="false" />
-    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380051915082" ignored="false" />
+    <file path="/Dummy.txt" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380140649612" ignored="false" />
     <file path="/RestQuerySettings.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644206009" ignored="false" />
     <file path="/Repository.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368644353138" ignored="false" />
     <file path="/QueryFactory.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1368645021464" ignored="false" />
@@ -75,10 +69,11 @@
     <file path="/UserProviderInterface.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379177723585" ignored="false" />
     <file path="/FeUserProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379180661284" ignored="false" />
     <file path="/UserProvider.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379180050069" ignored="false" />
-    <file path="/Server.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380138915514" ignored="false" />
-    <file path="/server.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380138866653" ignored="false" />
+    <file path="/Server.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380362686585" ignored="false" />
+    <file path="/server.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380359371030" ignored="false" />
     <file path="/composer.json" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1379789955910" ignored="false" />
-    <file path="/Response.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380135144764" ignored="false" />
+    <file path="/Response.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380362016913" ignored="false" />
+    <file path="$PROJECT_DIR$/../cundd_composer/vendor/vlucas/bulletphp/src/Bullet/Response.php" changelist="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" time="1380362121469" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +100,7 @@
       <file leaf-file-name="server.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="33" selection-start="1994" selection-end="1994" vertical-scroll-proportion="-38.75">
+            <state line="62" column="33" selection-start="1994" selection-end="1994" vertical-scroll-proportion="-23.666666">
               <folding>
                 <element signature="e#24#1171#0" expanded="true" />
               </folding>
@@ -113,13 +108,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Server.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Server.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="10" selection-start="2534" selection-end="2534" vertical-scroll-proportion="-28.75">
+            <state line="91" column="0" selection-start="2306" selection-end="2306" vertical-scroll-proportion="0.17151164">
               <folding>
                 <element signature="e#1250#1278#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Response.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/react/react/src/React/Http/Response.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="28" selection-start="167" selection-end="167" vertical-scroll-proportion="-1.8367347">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EventEmitter.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/evenement/evenement/src/Evenement/EventEmitter.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="6" selection-start="249" selection-end="249" vertical-scroll-proportion="-3.75">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -128,15 +141,6 @@
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state line="115" column="21" selection-start="3344" selection-end="3344" vertical-scroll-proportion="-21.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Server.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vendor/react/react/src/React/Socket/Server.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="4" selection-start="323" selection-end="373" vertical-scroll-proportion="-10.625">
               <folding />
             </state>
           </provider>
@@ -151,10 +155,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="App.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="248" column="106" selection-start="7527" selection-end="7527" vertical-scroll-proportion="0.7630814">
+            <state line="69" column="20" selection-start="1359" selection-end="1359" vertical-scroll-proportion="96.083336">
               <folding />
             </state>
           </provider>
@@ -163,7 +167,7 @@
       <file leaf-file-name="Response.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/Response.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="20" selection-start="525" selection-end="525" vertical-scroll-proportion="-14.708333">
+            <state line="37" column="5" selection-start="1005" selection-end="1005" vertical-scroll-proportion="-0.625">
               <folding />
             </state>
           </provider>
@@ -205,7 +209,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/ext_tables.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
         <option value="$PROJECT_DIR$/ext_typoscript_setup.txt" />
@@ -216,11 +219,12 @@
         <option value="$PROJECT_DIR$/composer.json" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Response.php" />
-        <option value="$PROJECT_DIR$/server.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
+        <option value="$PROJECT_DIR$/server.php" />
+        <option value="$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/Response.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" />
       </list>
     </option>
   </component>
@@ -543,12 +547,20 @@
       <created>1379180862291</created>
       <updated>1379180862291</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="WIP: Added React based server (http://reactphp.org/) (Usage: php server.php {port} {IP})">
+      <created>1380140300860</created>
+      <updated>1380140300860</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Updated README">
+      <created>1380140652902</created>
+      <updated>1380140652902</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1791" height="1178" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32830188" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -556,7 +568,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6009434" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20114613" sideWeight="0.67391306" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20114613" sideWeight="0.67391306" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23667622" sideWeight="0.17830189" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -615,7 +627,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added API key field to TYPO3's built in frontend user&#10;Added support to check for a valid FE user in the Basic Authentication Provider" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated README" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -648,18 +660,13 @@
     <MESSAGE value="Moved the access control to Access Controller classes&#10;Added a customized object manager" />
     <MESSAGE value="Cleaned up the access control mechanism" />
     <MESSAGE value="Added API key field to TYPO3's built in frontend user&#10;Added support to check for a valid FE user in the Basic Authentication Provider" />
+    <MESSAGE value="WIP: Added React based server (http://reactphp.org/) (Usage: php server.php {port} {IP})" />
+    <MESSAGE value="Updated README" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vendor/react/react/src/React/Http/Request.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="8" selection-start="174" selection-end="174" vertical-scroll-proportion="-3.75">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="118" column="20" selection-start="3590" selection-end="3590" vertical-scroll-proportion="-27.25">
@@ -702,15 +709,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="33" selection-start="1994" selection-end="1994" vertical-scroll-proportion="-38.75">
-          <folding>
-            <element signature="e#24#1171#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="115" column="21" selection-start="3344" selection-end="3344" vertical-scroll-proportion="-21.0">
@@ -739,26 +737,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Server.php">
+    <entry file="file://$PROJECT_DIR$/vendor/evenement/evenement/src/Evenement/EventEmitter.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="10" selection-start="2534" selection-end="2534" vertical-scroll-proportion="-28.75">
-          <folding>
-            <element signature="e#1250#1278#0" expanded="true" />
-          </folding>
+        <state line="13" column="6" selection-start="249" selection-end="249" vertical-scroll-proportion="-3.75">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/Response.php">
+    <entry file="file://$PROJECT_DIR$/server.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="20" selection-start="525" selection-end="525" vertical-scroll-proportion="-14.708333">
-          <folding />
+        <state line="62" column="33" selection-start="1994" selection-end="1994" vertical-scroll-proportion="-23.666666">
+          <folding>
+            <element signature="e#24#1171#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="248" column="106" selection-start="7527" selection-end="7527" vertical-scroll-proportion="0.7630814">
+        <state line="69" column="20" selection-start="1359" selection-end="1359" vertical-scroll-proportion="96.083336">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/react/react/src/React/Http/Response.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="28" selection-start="167" selection-end="167" vertical-scroll-proportion="-1.8367347">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/Response.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="5" selection-start="1005" selection-end="1005" vertical-scroll-proportion="-0.625">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Server.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="0" selection-start="2306" selection-end="2306" vertical-scroll-proportion="0.17151164">
+          <folding>
+            <element signature="e#1250#1278#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
