@@ -34,6 +34,7 @@
 
 namespace Cundd\Rest;
 
+use Iresults\Core\Iresults;
 use React\EventLoop\Factory;
 use React\Socket\Server as SocketServer;
 use React\Http\Server as HttpServer;
@@ -54,6 +55,13 @@ class Server {
 	 */
 	protected $host = '127.0.0.1';
 
+	/**
+	 * Rest app
+	 *
+	 * @var \Cundd\Rest\App
+	 */
+	protected $app;
+
 
 
 	function __construct($port = NULL, $host = NULL) {
@@ -66,51 +74,65 @@ class Server {
 		if ($host) {
 			$this->host = $host;
 		}
+
+		$this->app = new \Cundd\Rest\App();
 	}
 
 	/**
 	 * Starts the server
 	 */
 	public function start() {
-		$app = new \Cundd\Rest\App;
-		$restServer = $this;
-
-		/**
-		 * @param \React\Http\Request $request
-		 * @param \React\Http\Response $response
-		 */
-		$serverCallback = function ($request, $response) use ($app, $restServer) {
-			/** @var \Cundd\Rest\Request $restRequest */
-			$restRequest = new \Cundd\Rest\Request($request->getMethod(), $request->getPath());
-
-			/** @var \Bullet\Response $restResponse */
-			$restResponse = NULL;
-
-			$restServer->setServerGlobals($request);
-
-			ob_start();
-			$app->dispatch($restRequest, $restResponse);
-			ob_end_clean();
-
-			$response->writeHead(200, $restServer->getHeadersFromResponse($restResponse));
-			$response->end($restResponse->content());
-
-			unset($restRequest);
-			unset($restResponse);
-		};
-
-
 		$loop = Factory::create();
 		$socketServer = new SocketServer($loop);
 		$httpServer = new HttpServer($socketServer);
-
-		$httpServer->on('request', $serverCallback);
-
+		$httpServer->on('request', array($this, 'serverCallback'));
 		$socketServer->listen($this->port, $this->host);
 
 		fwrite(STDOUT, 'Starting server at ' . $this->host . ':' . $this->port);
 
 		$loop->run();
+	}
+
+	/**
+	 * Handles the requests
+	 *
+	 * @param \React\Http\Request $request   Request to handle
+	 * @param \React\Http\Response $response Prebuilt response object
+	 */
+	public function serverCallback($request, $response) {
+		// Currently the PHP server is readonly
+		if (!in_array(strtoupper($request->getMethod()), array('GET', 'HEAD'))) {
+			$response->writeHead(405, array('Content-type' => 'text/plain'));
+			$response->end('Writing is currently not supported');
+			return;
+		}
+
+		/** @var \Cundd\Rest\Request $restRequest */
+		$restRequest = new \Cundd\Rest\Request($request->getMethod(), $this->sanitizePath($request->getPath()));
+		$this->setServerGlobals($request);
+
+		/** @var \Bullet\Response $restResponse */
+		$restResponse = NULL;
+
+		ob_start();
+		$this->app->dispatch($restRequest, $restResponse);
+		ob_end_clean();
+
+		$response->writeHead($restResponse->status(), $this->getHeadersFromResponse($restResponse));
+		$response->end($restResponse->content());
+
+		unset($restRequest);
+		unset($restResponse);
+	}
+
+	/**
+	 * Sanitize the given path as URL
+	 *
+	 * @param string $path
+	 * @return mixed
+	 */
+	public function sanitizePath($path) {
+		return filter_var($path, FILTER_SANITIZE_URL);
 	}
 
 	/**
@@ -130,16 +152,26 @@ class Server {
 			$xmlIndicatorPosition = strpos($content, '<');
 			$jsonIndicatorPosition = strpos($content, '{');
 
-			if ($xmlIndicatorPosition === FALSE) {
-				$xmlIndicatorPosition = 2000;
-			}
-			if ($jsonIndicatorPosition === FALSE) {
-				$jsonIndicatorPosition = 2000;
-			}
-			if ($jsonIndicatorPosition < $xmlIndicatorPosition) {
-				$contentType = 'application/json; charset=UTF-8';
-			} else {
-				$contentType = 'application/xml; charset=UTF-8';
+			switch (TRUE) {
+				case $xmlIndicatorPosition === FALSE && $jsonIndicatorPosition === FALSE:
+					$contentType = 'text/plain';
+					break;
+
+				case $xmlIndicatorPosition === FALSE:
+					$contentType = 'application/json; charset=UTF-8';
+					break;
+
+				case $jsonIndicatorPosition === FALSE:
+					$contentType = 'application/xml; charset=UTF-8';
+					break;
+
+				case $jsonIndicatorPosition < $xmlIndicatorPosition:
+					$contentType = 'application/json; charset=UTF-8';
+					break;
+
+				case $xmlIndicatorPosition < $jsonIndicatorPosition:
+					$contentType = 'application/xml; charset=UTF-8';
+					break;
 			}
 			$headers = array(
 				'Content-type' => $contentType
