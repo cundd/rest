@@ -6,7 +6,8 @@ Installation
 
 1. Install the extension through the Extension Manager
 2. Install [Cundd Composer extension](https://github.com/cundd/CunddComposer) and let [Composer](http://getcomposer.org/) install all the dependencies
-
+3. Configure the API access
+4. Connect to `your-domain.com/rest/` (`rest/` is the request namespace)
 
 Configuration
 -------------
