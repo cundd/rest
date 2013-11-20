@@ -2,8 +2,8 @@
 namespace Cundd\Rest\DataProvider;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\HttpUtility;
-use TYPO3\CMS\Frontend\Utility\EidUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
+use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Core\Log\LogLevel;
 
 class DataProvider implements DataProviderInterface {
@@ -179,6 +179,7 @@ class DataProvider implements DataProviderInterface {
 	 * @return array<mixed>
 	 */
 	public function getModelData($model) {
+		$doNotAddClass = FALSE;
 		$properties = NULL;
 		if (is_object($model)) {
 			// Get the data from the model
@@ -186,13 +187,18 @@ class DataProvider implements DataProviderInterface {
 				$properties = $model->jsonSerialize();
 			} else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
 				$properties = $model->_getProperties();
+			} else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
+				$properties = array_values(iterator_to_array($model));
+				$doNotAddClass = TRUE;
 			}
 
 			// Transform objects recursive
 			if (is_array($properties)) {
 				foreach ($properties as $propertyKey => $propertyValue) {
 					if (is_object($propertyValue)) {
-						if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+						if ($propertyValue instanceof LazyLoadingProxy) {
+							$properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
+						} else if ($propertyValue instanceof LazyObjectStorage) {
 							$properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
 						} else {
 							$properties[$propertyKey] = $this->getModelData($propertyValue);
@@ -201,7 +207,7 @@ class DataProvider implements DataProviderInterface {
 				}
 			}
 
-			if ($properties && !isset($properties['__class'])) {
+			if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
 				$properties['__class'] = get_class($model);
 			}
 		}
@@ -238,6 +244,30 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
+	 * Returns the data for the given lazy object storage
+	 * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy $proxy
+	 * @param string $propertyKey
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return array<mixed>
+	 */
+	public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model) {
+		$returnData = array();
+
+		/*
+		 * Get the first level of nested objects and all built in TYPO3
+		 * categories
+		 */
+		if ($this->currentModelDataDepth < 1 && $model instanceof \TYPO3\CMS\Extbase\Domain\Model\Category) {
+			$this->currentModelDataDepth++;
+
+			$returnData = $this->getModelData($proxy->_loadRealInstance());
+
+			$this->currentModelDataDepth--;
+		}
+		return $returnData;
+	}
+
+	/**
 	 * Returns the URI of a nested resource
 	 *
 	 * @param string $resourceKey
@@ -265,7 +295,7 @@ class DataProvider implements DataProviderInterface {
 	public function getModelProperty($model, $propertyKey) {
 		$propertyValue = $model->_getProperty($propertyKey);
 		if (is_object($propertyValue)) {
-			if ($propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage) {
+			if ($propertyValue instanceof LazyObjectStorage) {
 				$propertyValue = iterator_to_array($propertyValue);
 
 				// Transform objects recursive
@@ -314,7 +344,7 @@ class DataProvider implements DataProviderInterface {
 	public function replaceModelForPath($oldModel, $newModel, $path) {
 		$repository = $this->getRepositoryForPath($path);
 		if ($repository) {
-			$repository->replace($oldModel, $newModel);
+			$repository->update($newModel);
 			$this->persistAllChanges();
 		}
 	}
@@ -432,7 +462,7 @@ class DataProvider implements DataProviderInterface {
 	 */
 	protected function getLogger() {
 		if (!$this->logger) {
-			$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+			$this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
 		}
 		return $this->logger;
 	}
