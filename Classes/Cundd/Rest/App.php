@@ -67,6 +67,7 @@ class App implements SingletonInterface {
 	public function dispatch() {
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
+		$responseString = '';
 
 		// Checks if the request needs authentication
 		switch ($this->objectManager->getAccessController()->getAccess()) {
@@ -86,10 +87,20 @@ class App implements SingletonInterface {
 		$dispatcher = $this;
 		$app = $this->app;
 
+
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 		 */
 		$model = NULL;
+
+		/** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
+		$cacheInstance = $this->objectManager->getCacheInstance();
+
+		$cacheKey = sha1($this->getOriginalPath() . '_' . $request->method());
+		if ($this->getPath() && $request->isRead()) {
+			$responseString = $cacheInstance->get($cacheKey);
+			$this->log('Cache read (success: ' . ($responseString ? 'TRUE' : 'FALSE') . ')');
+		}
 
 		// If a path is given
 		if ($this->getPath()) {
@@ -250,20 +261,29 @@ class App implements SingletonInterface {
 		});
 
 		$success = TRUE;
-		$response = $this->app->run($request);
+		if (!$responseString) {
+			$response = $this->app->run($request);
 
-		$response->content($response->content());
+			$response->content($response->content());
 
-		if ($response->content() instanceof \Exception) {
-			$success = FALSE;
+			if ($response->content() instanceof \Exception) {
+				$success = FALSE;
 
-			$exception = $response->content();
-			$this->logException($exception);
-			$response = $this->exceptionToResponse($exception);
+				$exception = $response->content();
+				$this->logException($exception);
+				$response = $this->exceptionToResponse($exception);
+			}
+
+			if ($this->getPath() && $request->isRead() && $success) {
+				$this->log('Cache write');
+				$cacheInstance->set($cacheKey, (string)$response, array($this->getPath()), 5 * 60);
+			}
+
+			$responseString = (string)$response;
+			$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
+		} else {
+			$this->logResponse('response:' . array('response' => '' . $responseString));
 		}
-
-		$responseString = $response . '';
-		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
 	}

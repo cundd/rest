@@ -136,5 +136,14 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 		return $this->accessController;
 	}
 
+	/**
+	 * Returns the Cache instance
+	 *
+	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+	 */
+	public function getCacheInstance() {
+		return $GLOBALS['typo3CacheManager']->getCache('cundd_rest_cache');
+	}
+
 
 }
