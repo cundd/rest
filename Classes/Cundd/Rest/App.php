@@ -116,7 +116,13 @@ class App implements SingletonInterface {
 						if (!$model) {
 							return 404;
 						}
-						return $dispatcher->getModelData($model);
+						$result = $dispatcher->getModelData($model);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -138,7 +144,13 @@ class App implements SingletonInterface {
 							return 400;
 						}
 						$dispatcher->replaceModel($oldModel, $newModel);
-						return $dispatcher->getModelData($newModel);
+						$result = $dispatcher->getModelData($newModel);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					};
 					$app->put($replaceCallback);
 					$app->post($replaceCallback);
@@ -159,7 +171,13 @@ class App implements SingletonInterface {
 						}
 
 						$dispatcher->saveModel($model);
-						return $dispatcher->getModelData($model);
+						$result = $dispatcher->getModelData($model);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					};
 					$app->patch($updateCallback);
 
@@ -192,7 +210,13 @@ class App implements SingletonInterface {
 					}
 
 					$dispatcher->saveModel($model);
-					return $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+					$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							Utility::singularize($dispatcher->getOriginalPath()) => $result
+						);
+					}
+					return $result;
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
