@@ -11,6 +11,7 @@ namespace Cundd\Rest;
 
 
 use Cundd\Rest\DataProvider\Utility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
@@ -139,10 +140,10 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 	/**
 	 * Returns the Cache instance
 	 *
-	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+	 * @return \Cundd\Rest\Cache\Cache
 	 */
-	public function getCacheInstance() {
-		return $GLOBALS['typo3CacheManager']->getCache('cundd_rest_cache');
+	public function getCache() {
+		return $this->get('Cundd\\Rest\\Cache\\Cache');
 	}
 
 

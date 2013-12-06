@@ -1,9 +1,13 @@
-plugin.tx_rest.settings.paths {
-	1 {
-		path = all
-		read = deny
-		write = deny
+plugin.tx_rest.settings {
+	paths {
+		1 {
+			path = all
+			read = deny
+			write = deny
+		}
 	}
+
+	cacheLifeTime = -1
 }
 
 

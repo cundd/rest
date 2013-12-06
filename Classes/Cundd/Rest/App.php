@@ -2,6 +2,7 @@
 namespace Cundd\Rest;
 
 use Bullet\View\Exception;
+use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
 use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Log\Logger;
@@ -65,6 +66,7 @@ class App implements SingletonInterface {
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
+
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
 		$responseString = '';
@@ -87,20 +89,14 @@ class App implements SingletonInterface {
 		$dispatcher = $this;
 		$app = $this->app;
 
+		/** @var Cache $cache */
+		$cache = $this->objectManager->getCache();
+		$responseString = $cache->getCachedValueForRequest($request);
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 		 */
 		$model = NULL;
-
-		/** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
-		$cacheInstance = $this->objectManager->getCacheInstance();
-
-		$cacheKey = sha1($this->getOriginalPath() . '_' . $request->method());
-		if ($this->getPath() && $request->isRead()) {
-			$responseString = $cacheInstance->get($cacheKey);
-			$this->log('Cache read (success: ' . ($responseString ? 'TRUE' : 'FALSE') . ')');
-		}
 
 		// If a path is given
 		if ($this->getPath()) {
@@ -274,11 +270,7 @@ class App implements SingletonInterface {
 				$response = $this->exceptionToResponse($exception);
 			}
 
-			if ($this->getPath() && $request->isRead() && $success) {
-				$this->log('Cache write');
-				$cacheInstance->set($cacheKey, (string)$response, array($this->getPath()), 5 * 60);
-			}
-
+			$cache->setCachedValueForRequest($request, $response);
 			$responseString = (string)$response;
 			$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		} else {
