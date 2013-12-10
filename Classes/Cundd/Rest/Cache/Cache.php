@@ -86,16 +86,20 @@ class Cache {
 		}
 
 		$cacheInstance = $this->_getCacheInstance();
-		$responseString = $cacheInstance->get($this->_getCacheKey());
-		if (!$responseString) {
+		$responseArray = $cacheInstance->get($this->_getCacheKey());
+		if (!$responseArray) {
 			return NULL;
 		}
 
-		if ($request->isRead()) {
-			return $responseString;
+		if (!$request->isRead()) {
+			$this->_clearCache();
+			return NULL;
 		}
-		$this->_clearCache();
-		return NULL;
+
+		$response = new Response($responseArray['content'], $responseArray['status']);
+		$response->contentType($responseArray['content-type']);
+		$response->encoding($responseArray['encoding']);
+		return $response;
 	}
 
 	/**
@@ -132,7 +136,12 @@ class Cache {
 		}
 
 		$cacheInstance = $this->_getCacheInstance();
-		$cacheInstance->set($this->_getCacheKey(), (string)$response, $this->_getTags(), $cacheLifetime);
+		$cacheInstance->set($this->_getCacheKey(), array(
+			'content' => (string)$response,
+			'status' => $response->status(),
+			'encoding' => $response->encoding(),
+			'content-type' => $response->contentType()
+		), $this->_getTags(), $cacheLifetime);
 	}
 
 

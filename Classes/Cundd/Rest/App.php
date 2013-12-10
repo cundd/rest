@@ -69,7 +69,6 @@ class App implements SingletonInterface {
 
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
-		$responseString = '';
 
 		// Checks if the request needs authentication
 		switch ($this->objectManager->getAccessController()->getAccess()) {
@@ -91,7 +90,7 @@ class App implements SingletonInterface {
 
 		/** @var Cache $cache */
 		$cache = $this->objectManager->getCache();
-		$responseString = $cache->getCachedValueForRequest($request);
+		$response = $cache->getCachedValueForRequest($request);
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -257,7 +256,7 @@ class App implements SingletonInterface {
 		});
 
 		$success = TRUE;
-		if (!$responseString) {
+		if (!$response) {
 			$response = $this->app->run($request);
 
 			$response->content($response->content());
@@ -271,11 +270,10 @@ class App implements SingletonInterface {
 			}
 
 			$cache->setCachedValueForRequest($request, $response);
-			$responseString = (string)$response;
-			$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
-		} else {
-			$this->logResponse('response:' . array('response' => '' . $responseString));
 		}
+
+		$responseString = (string)$response;
+		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
 	}

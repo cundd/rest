@@ -136,8 +136,9 @@ class CacheTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->fixture->setCachedValueForRequest($request, $response);
 
 
-		$cachedValue = $this->fixture->getCachedValueForRequest($request);
-		$this->assertEquals('Test content', $cachedValue);
+		$cachedResponse = $this->fixture->getCachedValueForRequest($request);
+		$this->assertInstanceOf('Bullet\\Response', $cachedResponse);
+		$this->assertEquals('Test content', $cachedResponse);
 	}
 
 	public function buildRequestWithUri($uri) {

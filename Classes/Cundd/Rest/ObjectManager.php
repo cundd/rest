@@ -145,6 +145,4 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 	public function getCache() {
 		return $this->get('Cundd\\Rest\\Cache\\Cache');
 	}
-
-
 }
