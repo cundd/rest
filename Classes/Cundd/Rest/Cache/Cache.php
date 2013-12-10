@@ -57,6 +57,12 @@ class Cache {
 	protected $currentRequest;
 
 	/**
+	 * Concrete cache instance
+	 * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+	 */
+	protected $cacheInstance;
+
+	/**
 	 * Returns the cached value for the given request or NULL if it is not
 	 * defined
 	 *
@@ -129,15 +135,39 @@ class Cache {
 		$cacheInstance->set($this->_getCacheKey(), (string)$response, $this->_getTags(), $cacheLifetime);
 	}
 
+
+	/**
+	 * Returns the cache key for the given request
+	 *
+	 * @param \Cundd\Rest\Request $request
+	 * @return string
+	 */
+	public function getCacheKeyForRequest(\Cundd\Rest\Request $request) {
+		$this->currentRequest = $request;
+		return $this->_getCacheKey();
+	}
+
 	/**
 	 * Returns the cache instance
 	 *
 	 * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
 	 */
 	protected function _getCacheInstance() {
-		/** @var CacheManager $cacheManager */
-		$cacheManager = $GLOBALS['typo3CacheManager'];
-		return $cacheManager->getCache('cundd_rest_cache');
+		if (!$this->cacheInstance) {
+			/** @var CacheManager $cacheManager */
+			$cacheManager = $GLOBALS['typo3CacheManager'];
+			$this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
+		}
+		return $this->cacheInstance;
+	}
+
+	/**
+	 * Sets the concrete Cache instance
+	 *
+	 * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
+	 */
+	public function setCacheInstance($cacheInstance) {
+		$this->cacheInstance = $cacheInstance;
 	}
 
 	/**
@@ -170,6 +200,6 @@ class Cache {
 	 * @return string
 	 */
 	protected function _getCacheKey() {
-		return sha1($this->currentRequest->originalPath() . '_' . $this->currentRequest->method());
+		return sha1($this->currentRequest->url() . '_' . $this->currentRequest->format() . '_' . $this->currentRequest->method());
 	}
 }
