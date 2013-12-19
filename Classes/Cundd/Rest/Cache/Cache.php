@@ -34,6 +34,7 @@ namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
+use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogLevel;
 
@@ -74,13 +75,13 @@ class Cache {
 
 		/** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
 		$cacheInstance = NULL;
-		$cacheLifetime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifetime'));
+		$cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
 
 		/*
 		 * Use caching if the cache life time configuration is not -1, an API
 		 * path is given and the request is a read request
 		 */
-		$useCaching = ($cacheLifetime !== -1) && $request->path();
+		$useCaching = ($cacheLifeTime !== -1) && $request->path();
 		if (!$useCaching) {
 			return NULL;
 		}
@@ -124,13 +125,13 @@ class Cache {
 			return;
 		}
 
-		$cacheLifetime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifetime'));
+		$cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
 
 		/*
 		 * Use caching if the cache life time configuration is not -1, an API
 		 * path is given and the request is a read request
 		 */
-		$useCaching = ($cacheLifetime !== -1) && $request->path();
+		$useCaching = ($cacheLifeTime !== -1) && $request->path();
 		if (!$useCaching) {
 			return;
 		}
@@ -141,7 +142,7 @@ class Cache {
 			'status' => $response->status(),
 			'encoding' => $response->encoding(),
 			'content-type' => $response->contentType()
-		), $this->_getTags(), $cacheLifetime);
+		), $this->_getTags(), $cacheLifeTime);
 	}
 
 
