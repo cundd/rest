@@ -79,6 +79,22 @@ class Request extends BaseRequest {
 	}
 
 	/**
+	 * Returns if the request wants to write data
+	 * @return bool
+	 */
+	public function isWrite() {
+		return !$this->isRead();
+	}
+
+	/**
+	 * Returns if the request wants to read data
+	 * @return bool
+	 */
+	public function isRead() {
+		return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
+	}
+
+	/**
 	 * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
 	 */
 	public function injectConfigurationProvider($configurationProvider) {

@@ -2,6 +2,7 @@
 namespace Cundd\Rest;
 
 use Bullet\View\Exception;
+use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
 use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Log\Logger;
@@ -65,6 +66,7 @@ class App implements SingletonInterface {
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
+
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
 
@@ -85,6 +87,10 @@ class App implements SingletonInterface {
 
 		$dispatcher = $this;
 		$app = $this->app;
+
+		/** @var Cache $cache */
+		$cache = $this->objectManager->getCache();
+		$response = $cache->getCachedValueForRequest($request);
 
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -116,7 +122,13 @@ class App implements SingletonInterface {
 						if (!$model) {
 							return 404;
 						}
-						return $dispatcher->getModelData($model);
+						$result = $dispatcher->getModelData($model);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					});
 
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -138,7 +150,13 @@ class App implements SingletonInterface {
 							return 400;
 						}
 						$dispatcher->replaceModel($oldModel, $newModel);
-						return $dispatcher->getModelData($newModel);
+						$result = $dispatcher->getModelData($newModel);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					};
 					$app->put($replaceCallback);
 					$app->post($replaceCallback);
@@ -159,7 +177,13 @@ class App implements SingletonInterface {
 						}
 
 						$dispatcher->saveModel($model);
-						return $dispatcher->getModelData($model);
+						$result = $dispatcher->getModelData($model);
+						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+							return array(
+								Utility::singularize($dispatcher->getOriginalPath()) => $result
+							);
+						}
+						return $result;
 					};
 					$app->patch($updateCallback);
 
@@ -192,7 +216,13 @@ class App implements SingletonInterface {
 					}
 
 					$dispatcher->saveModel($model);
-					return $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+					$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							Utility::singularize($dispatcher->getOriginalPath()) => $result
+						);
+					}
+					return $result;
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -226,19 +256,23 @@ class App implements SingletonInterface {
 		});
 
 		$success = TRUE;
-		$response = $this->app->run($request);
+		if (!$response) {
+			$response = $this->app->run($request);
 
-		$response->content($response->content());
+			$response->content($response->content());
 
-		if ($response->content() instanceof \Exception) {
-			$success = FALSE;
+			if ($response->content() instanceof \Exception) {
+				$success = FALSE;
 
-			$exception = $response->content();
-			$this->logException($exception);
-			$response = $this->exceptionToResponse($exception);
+				$exception = $response->content();
+				$this->logException($exception);
+				$response = $this->exceptionToResponse($exception);
+			}
+
+			$cache->setCachedValueForRequest($request, $response);
 		}
 
-		$responseString = $response . '';
+		$responseString = (string)$response;
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;

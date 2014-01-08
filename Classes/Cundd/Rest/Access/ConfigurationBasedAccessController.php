@@ -20,12 +20,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 	const ACCESS_METHOD_WRITE = 'write';
 
 	/**
-	 * Specifies if the request wants to write data
-	 * @var boolean
-	 */
-	protected $write = -1;
-
-	/**
 	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
 	 */
 	protected $configurationProvider;
@@ -91,11 +85,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 	 * @return bool
 	 */
 	public function isWrite() {
-		if ($this->write === -1) {
-			$this->write = !in_array(strtoupper($this->request->method()), array('GET', 'HEAD'));
-//			$this->write = in_array(strtoupper($this->request->method()), array('POST', 'PUT', 'DELETE', 'PATCH'));
-		}
-		return $this->write;
+		return $this->request->isWrite();
 	}
 
 	/**

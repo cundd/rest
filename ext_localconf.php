@@ -9,3 +9,7 @@ $TYPO3_CONF_VARS['FE']['eID_include']['rest'] = 'EXT:rest/index.php';
 if (isset($_SERVER['REQUEST_URI']) && substr($_SERVER['REQUEST_URI'], 0, 6) === '/rest/') {
 	$_GET['eID'] = 'rest';
 }
+
+if (!is_array($TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'])) {
+	$TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'] = array();
+}
