@@ -36,10 +36,10 @@ if (!defined ('TYPO3_MODE')) {
 $TCA['tx_rest_domain_model_document'] = array(
 	'ctrl' => $TCA['tx_rest_domain_model_document']['ctrl'],
 	'interface' => array(
-		'showRecordFieldList' => 'hidden, id, content, db',
+		'showRecordFieldList' => 'hidden, id, data_protected, db',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'hidden;;1, id, content, db,--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,starttime, endtime'),
+		'1' => array('showitem' => 'hidden;;1, id, data_protected, db,--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -102,7 +102,7 @@ $TCA['tx_rest_domain_model_document'] = array(
 				'eval' => 'trim,required'
 			),
 		),
-		'content' => array(
+		'data_protected' => array(
 			'exclude' => 0,
 			'label' => 'Content',
 			'config' => array(

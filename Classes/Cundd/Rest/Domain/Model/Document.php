@@ -322,5 +322,7 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	public function offsetUnset($offset) {
 		$this->setValueForKey(NULL, $offset);
 	}
+
+
 }
 ?>

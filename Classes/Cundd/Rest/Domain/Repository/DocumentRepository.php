@@ -26,10 +26,12 @@ namespace Cundd\Rest\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Cundd\Rest\Domain\Exception\InvalidDocumentException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use Cundd\Rest\Domain\Exception\NoDatabaseSelectedException;
 use Iresults\Core\Iresults;
+use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
@@ -77,6 +79,86 @@ class DocumentRepository extends Repository {
 			$this->setDatabase(func_get_arg(0));
 		}
 		return $this->getDatabase();
+	}
+
+	/**
+	 * Registers the given Document
+	 *
+	 * This is a high level shorthand for:
+	 * Object exists?
+	 *    Yes -> update
+	 *    No -> add
+	 *
+	 * @param Document|array|\stdClass $data
+	 * @throws \Cundd\Rest\Domain\Exception\InvalidDocumentException if the given data could not be converted to a Document
+	 * @return Document Returns the registered Document
+	 */
+	public function register($data) {
+		if (is_object($data) && $data instanceof Document) {
+			$this->registerObject($data);
+			return $data;
+		} else {
+			return $this->registerData($data);
+		}
+	}
+
+	/**
+	 * Registers the given Document
+	 *
+	 * This is a high level shorthand for:
+	 * Object exists?
+	 *    Yes -> update
+	 *    No -> add
+	 *
+	 * @param array $data
+	 * @throws \Cundd\Rest\Domain\Exception\InvalidDocumentException if the given data could not be converted to a Document
+	 * @return Document Returns the registered Document
+	 */
+	public function registerData($data) {
+		$object = $this->convertToDocument($data);
+		if (!$object) {
+			throw new InvalidDocumentException('Could not convert the given data to a Document', 1389286531);
+		}
+		$this->registerObject($object);
+		return $object;
+	}
+
+	/**
+	 * Registers the given Document
+	 *
+	 * This is a high level shorthand for:
+	 * Object exists?
+	 *    Yes -> update
+	 *    No -> add
+	 *
+	 * @param Document $object
+	 * @return Document Returns the registered Document
+	 */
+	public function registerObject($object) {
+		$foundObject = $this->findByGuid($object->getGuid());
+		$foundObject = $this->findById($object->getId());
+		$isNew = $object->_isNew() && ($foundObject === NULL);
+
+		if (!$object->getUid() && $foundObject) {
+			Iresults::pd('HASDFAS');
+			$object->setValueForKey('uid', $foundObject->getUid());
+		}
+
+		Iresults::pd('$foundObject', $foundObject);
+		Iresults::pd($object->getGuid());
+		Iresults::pd($object->getUid());
+		Iresults::pd($foundObject->getUid());
+		Iresults::pd($object);
+
+		$object->setValueForKey('uid', 50001);
+		Iresults::pd($object->getUid());
+
+		if ($isNew) {
+			$this->add($object);
+		} else {
+			$this->update($object);
+		}
+		return $object;
 	}
 
 	/**
@@ -155,7 +237,7 @@ class DocumentRepository extends Repository {
 
 		$query = $this->createQuery();
 		$query->matching($query->equals('db', $currentDatabase));
-		return $this->convertResults($query->execute());
+		return $this->convertCollection($query->execute());
 	}
 
 	/**
@@ -171,18 +253,26 @@ class DocumentRepository extends Repository {
 		return $this->findAll();
 	}
 
-//	/**
-//	 * Returns the Document with the given GUID
-//	 *
-//	 * @param string $guid
-//	 * @return Document
-//	 */
-//	public function findByGuid($guid) {
-//		$query = $this->createQuery();
-//		$query->matching($query->equals('guid', $guid));
-//		$query->setLimit(1);
-//		return $this->convertResult($query->execute());
-//	}
+	/**
+	 * Returns the Document with the given GUID
+	 *
+	 * @param string $guid
+	 * @return Document
+	 */
+	public function findByGuid($guid) {
+		/** @var Query $query */
+		$query = $this->createQuery();
+		list($database, $id) = explode('-', $guid, 2);
+		$query->matching(
+			$query->logicalAnd(
+				$query->equals('db', $database),
+				$query->equals('id', $id)
+			)
+		);
+
+		$query->setLimit(1);
+		return $this->convertToDocument($query->execute());
+	}
 
 	/**
 	 * Returns the Document with the given ID
@@ -194,7 +284,7 @@ class DocumentRepository extends Repository {
 		$query = $this->createQuery();
 		$query->matching($query->equals('id', $id));
 		$result = $query->execute();
-		return $this->convertResult(reset($result));
+		return $this->convertToDocument(reset($result));
 	}
 
 	/**
@@ -211,7 +301,7 @@ class DocumentRepository extends Repository {
 	 * @api
 	 */
 	public function findAllIgnoreDatabase() {
-		return $this->convertResults($this->createQuery()->execute());
+		return $this->convertCollection($this->createQuery()->execute());
 	}
 
 	/**
@@ -358,10 +448,10 @@ class DocumentRepository extends Repository {
 	 * @param array $resultCollection
 	 * @return array<Document>
 	 */
-	protected function convertResults($resultCollection) {
+	protected function convertCollection($resultCollection) {
 		$convertedObjects = array();
 		foreach ($resultCollection as $resultSet) {
-			$convertedObjects[] = $this->convertResult($resultSet);
+			$convertedObjects[] = $this->convertToDocument($resultSet);
 		}
 
 		return $convertedObjects;
@@ -370,13 +460,32 @@ class DocumentRepository extends Repository {
 	/**
 	 * Converts the query result set into objects
 	 *
-	 * @param array $resultSet
+	 * @param array|\stdClass $input
+	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
 	 * @return Document
 	 */
-	protected function convertResult($resultSet) {
+	protected function convertToDocument($input) {
+		if (!$input) {
+			return NULL;
+		}
+
 		$convertedObject = new Document();
-		foreach ($resultSet as $key => $value) {
+		if (is_object($input)) {
+			if ($input instanceof \stdClass) {
+				$input = get_object_vars($input);
+			}
+		}
+
+		foreach ($input as $key => $value) {
 			$convertedObject->setValueForKey($value, $key);
+		}
+
+		if (!$convertedObject->_getDb()) {
+			$currentDatabase = $this->getDatabase();
+			if (!$currentDatabase) {
+				throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+			}
+			$convertedObject->_setDb($currentDatabase);
 		}
 		return $convertedObject;
 	}

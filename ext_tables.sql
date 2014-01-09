@@ -16,7 +16,7 @@ CREATE TABLE tx_rest_domain_model_document (
 
 	id varchar(255) DEFAULT '' NOT NULL,
 	db varchar(255) DEFAULT '' NOT NULL,
-	content text NOT NULL,
+	data_protected text NOT NULL,
 
   tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
