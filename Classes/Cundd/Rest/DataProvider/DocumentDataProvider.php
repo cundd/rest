@@ -46,6 +46,30 @@ class DocumentDataProvider extends DataProvider {
 	}
 
 	/**
+	 * Adds or updates the given model in the repository for the
+	 * given API path
+	 * @param Document $model
+	 * @param string $path The API path
+	 * @return void
+	 */
+	public function saveModelForPath($model, $path) {
+		$documentDatabase = substr($path, 9); // Strip 'Document-'
+
+		/** @var DocumentRepository $repository */
+		$repository = $this->getRepositoryForPath($path);
+		$repository->setDatabase($documentDatabase);
+		$model->_setDb($documentDatabase);
+		if ($repository) {
+			if ($model->_isNew()) {
+				$repository->add($model);
+			} else {
+				$repository->update($model);
+			}
+			$this->persistAllChanges();
+		}
+	}
+
+	/**
 	 * Returns the data from the given model
 	 *
 	 * @param Document $model

@@ -101,18 +101,18 @@ class DocumentRepository extends Repository {
 	/**
 	 * Removes an object from this repository.
 	 *
-	 * @param object $object The object to remove
+	 * @param Document $object The object to remove
 	 * @throws NoDatabaseSelectedException if the given object and the repository have no database set
 	 * @return void
 	 * @api
 	 */
 	public function remove($object) {
-		if (!$object->getDb()) {
+		if (!$object->_getDb()) {
 			$currentDatabase = $this->getDatabase();
 			if (!$currentDatabase) {
 				throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
 			}
-			$object->setDb($currentDatabase);
+			$object->_setDb($currentDatabase);
 		}
 		parent::remove($object);
 	}
@@ -120,18 +120,18 @@ class DocumentRepository extends Repository {
 	/**
 	 * Replaces an existing object with the same identifier by the given object
 	 *
-	 * @param object $modifiedObject The modified object
+	 * @param Document $modifiedObject The modified object
 	 * @throws NoDatabaseSelectedException if the given object and the repository have no database set
 	 * @return void
 	 * @api
 	 */
 	public function update($modifiedObject) {
-		if (!$modifiedObject->getDb()) {
+		if (!$modifiedObject->_getDb()) {
 			$currentDatabase = $this->getDatabase();
 			if (!$currentDatabase) {
 				throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
 			}
-			$modifiedObject->setDb($currentDatabase);
+			$modifiedObject->_setDb($currentDatabase);
 		}
 		parent::update($modifiedObject);
 	}
@@ -370,9 +370,6 @@ class DocumentRepository extends Repository {
 	protected function convertResult($resultSet) {
 		$convertedObject = new Document();
 		foreach ($resultSet as $key => $value) {
-			if ($key === 'db' || $key === 'content') {
-				$key = '_' . $key;
-			}
 			$convertedObject->setValueForKey($value, $key);
 		}
 		return $convertedObject;

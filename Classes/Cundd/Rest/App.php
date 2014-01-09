@@ -529,7 +529,6 @@ class App implements SingletonInterface {
 	public function logException($exception) {
 		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
 		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
-		echo $exception . PHP_EOL;
 	}
 
 	/**

@@ -26,6 +26,7 @@ namespace Cundd\Rest\Domain\Model;
  ***************************************************************/
 
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
@@ -37,7 +38,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements \ArrayAccess {
+class Document extends AbstractEntity implements \ArrayAccess {
 	/**
 	 * ID
 	 *
@@ -54,22 +55,22 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 * @validate NotEmpty
 	 * @identity
 	 */
-	protected $_db;
+	protected $db;
 
 	/**
-	 * Document content
+	 * Document data
 	 *
 	 * @var \string
 	 * @validate NotEmpty
 	 */
-	protected $_content;
+	protected $dataProtected;
 
 	/**
 	 * Unpacked Document content
 	 *
 	 * @var array
 	 */
-	protected $_contentUnpacked = NULL;
+	protected $_dataUnpacked = NULL;
 
 	/**
 	 * Returns the Documents global unique identifier
@@ -77,7 +78,8 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 * @return string
 	 */
 	public function getGuid() {
-		return $this->_db . '-' . $this->id;
+		$guid = $this->db . '-' . $this->id;
+		return $guid !== '-' ? $guid : NULL;
 	}
 
 	/**
@@ -99,22 +101,22 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	}
 
 	/**
-	 * Sets the Document's content
+	 * Sets the Document's data
 	 *
 	 * @param string $content
 	 */
-	public function _setContent($content) {
-		$this->_content = $content;
-		$this->_contentUnpacked = NULL;
+	public function _setDataProtected($content) {
+		$this->dataProtected = $content;
+		$this->_dataUnpacked = NULL;
 	}
 
 	/**
-	 * Returns the Document's content
+	 * Returns the Document's data
 	 *
 	 * @return string
 	 */
-	public function _getContent() {
-		return $this->_content;
+	public function _getDataProtected() {
+		return $this->dataProtected;
 	}
 
 	/**
@@ -125,7 +127,7 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 */
 	public function _setDb($db) {
 		if (!ctype_alnum($db)) throw new InvalidDatabaseNameException('The given database name is invalid', 1389258923);
-		$this->_db = $db;
+		$this->db = strtolower($db);
 	}
 
 	/**
@@ -134,7 +136,7 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 * @return string
 	 */
 	public function _getDb() {
-		return $this->_db;
+		return $this->db;
 	}
 
 	/**
@@ -232,8 +234,8 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 		$unpackedContent = $this->_unpackContent();
 		$unpackedContent[$key] = $value;
 
-		unset($this->_contentUnpacked);
-		$this->_contentUnpacked = $unpackedContent;
+		unset($this->_dataUnpacked);
+		$this->_dataUnpacked = $unpackedContent;
 		$this->_packContent();
 	}
 
@@ -243,10 +245,10 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 * @return array|mixed
 	 */
 	public function _unpackContent() {
-		if (!$this->_contentUnpacked) {
-			$this->_contentUnpacked = json_decode($this->_content, TRUE);
+		if (!$this->_dataUnpacked) {
+			$this->_dataUnpacked = json_decode($this->dataProtected, TRUE);
 		}
-		return $this->_contentUnpacked;
+		return $this->_dataUnpacked;
 	}
 
 	/**
@@ -255,7 +257,7 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	 * @return $this
 	 */
 	public function _packContent() {
-		$this->_content = json_encode($this->_contentUnpacked);
+		$this->dataProtected = json_encode($this->_dataUnpacked);
 		return $this;
 	}
 
@@ -320,7 +322,5 @@ class Document extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity implements
 	public function offsetUnset($offset) {
 		$this->setValueForKey(NULL, $offset);
 	}
-
-
 }
 ?>

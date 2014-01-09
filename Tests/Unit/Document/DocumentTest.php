@@ -24,7 +24,7 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function setUp() {
 		$this->fixture = new Document();
-		$this->fixture->_setContent(json_encode(array(
+		$this->fixture->_setDataProtected(json_encode(array(
 			'firstName' => 'Daniel',
 			'lastName' => 'Corn',
 			'address' => array(
@@ -45,8 +45,8 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function setContentTest() {
 		$content = '{"data": "The new test content"}';
-		$this->fixture->_setContent($content);
-		$this->assertEquals($content, $this->fixture->_getContent());
+		$this->fixture->_setDataProtected($content);
+		$this->assertEquals($content, $this->fixture->_getDataProtected());
 	}
 
 	/**
@@ -54,7 +54,7 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function getInitialContentTest() {
 		$model = new Document();
-		$result = $model->_getContent();
+		$result = $model->_getDataProtected();
 		$this->assertNull($result);
 	}
 
@@ -62,9 +62,25 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function setDbTest() {
-		$db = 'test-db';
+		$db = 'testdb';
 		$this->fixture->_setDb($db);
 		$this->assertEquals($db, $this->fixture->_getDb());
+
+		$db = 'testdb1';
+		$this->fixture->_setDb($db);
+		$this->assertEquals($db, $this->fixture->_getDb());
+
+		$db = 'test1db2';
+		$this->fixture->_setDb($db);
+		$this->assertEquals($db, $this->fixture->_getDb());
+	}
+
+	/**
+	 * @expectException \Cundd\Rest\Domain\Exception\InvalidDatabaseNameException
+	 */
+	public function setInvalidDbTest() {
+		$db = 'test-db';
+		$this->fixture->_setDb($db);
 	}
 
 	/**
@@ -78,17 +94,19 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function setGuidTest() {
-		$guid = time();
-		$this->fixture->setGuid($guid);
-		$this->assertEquals($guid, $this->fixture->getGuid());
+	public function changeGuidTest() {
+		$id = time();
+		$database = 'testdb';
+		$this->fixture->setId($id);
+		$this->fixture->_setDb($database);
+		$this->assertEquals($database . '-' . $id, $this->fixture->getGuid());
 
 	}
 
 	/**
 	 * @test
 	 */
-	public function getInitialiGuidTest() {
+	public function getInitialGuidTest() {
 		$result = $this->fixture->getGuid();
 		$this->assertNull($result);
 
