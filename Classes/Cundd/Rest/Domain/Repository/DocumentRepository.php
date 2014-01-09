@@ -95,7 +95,9 @@ class DocumentRepository extends Repository {
 			}
 			$object->_setDb($currentDatabase);
 		}
+		$this->willChangeDocument($object);
 		parent::add($object);
+		$this->didChangeDocument($object);
 	}
 
 	/**
@@ -114,7 +116,9 @@ class DocumentRepository extends Repository {
 			}
 			$object->_setDb($currentDatabase);
 		}
+		$this->willChangeDocument($object);
 		parent::remove($object);
+		$this->didChangeDocument($object);
 	}
 
 	/**
@@ -133,7 +137,9 @@ class DocumentRepository extends Repository {
 			}
 			$modifiedObject->_setDb($currentDatabase);
 		}
+		$this->willChangeDocument($modifiedObject);
 		parent::update($modifiedObject);
+		$this->didChangeDocument($modifiedObject);
 	}
 
 	/**
@@ -373,6 +379,22 @@ class DocumentRepository extends Repository {
 			$convertedObject->setValueForKey($value, $key);
 		}
 		return $convertedObject;
+	}
+
+	/**
+	 * Invoked before a Document in the repository will be changed
+	 *
+	 * @param Document $document
+	 */
+	public function willChangeDocument($document) {
+	}
+
+	/**
+	 * Invoked after a Document in the repository will be changed
+	 *
+	 * @param Document $document
+	 */
+	public function didChangeDocument($document) {
 	}
 
 
