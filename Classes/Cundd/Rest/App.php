@@ -66,6 +66,9 @@ class App implements SingletonInterface {
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch() {
+		if (!$this->getPath()) {
+			return $this->greet();
+		}
 
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
@@ -229,9 +232,10 @@ class App implements SingletonInterface {
 				/* LIST 																	 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->get(function($request) use($dispatcher, $app) {
-					$repository = $dispatcher->getRepository();
-					$allModels = $repository->findAll();
-					$allModels = iterator_to_array($allModels);
+					$allModels = $dispatcher->getAllModels();
+					if (!is_array($allModels)) {
+						$allModels = iterator_to_array($allModels);
+					}
 
 					$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
 					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
@@ -243,17 +247,6 @@ class App implements SingletonInterface {
 				});
 			});
 		}
-
-		$this->app->path('/', function($request) {
-			$greeting = 'What\'s up?';
-			$hour = date('H');
-			if ($hour <= '10' ) {
-				$greeting = 'Good Morning!';
-			} else if ($hour >= '23') {
-				$greeting = 'Hy! Still awake?';
-			}
-			return $greeting;
-		});
 
 		$success = TRUE;
 		if (!$response) {
@@ -276,6 +269,33 @@ class App implements SingletonInterface {
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
+	}
+
+	/**
+	 * Print the greeting
+	 * @return boolean Returns if the request has been successfully dispatched
+	 */
+	public function greet() {
+		/** @var \Cundd\Rest\Request $request */
+		$request = $this->getRequest();
+
+		$this->app->path('/', function($request) {
+			$greeting = 'What\'s up?';
+			$hour = date('H');
+			if ($hour <= '10' ) {
+				$greeting = 'Good Morning!';
+			} else if ($hour >= '23') {
+				$greeting = 'Hy! Still awake?';
+			}
+			return $greeting;
+		});
+
+		$response = $this->app->run($request);
+
+		$responseString = (string)$response;
+		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
+		echo $responseString;
+		return TRUE;
 	}
 
 	/**
@@ -325,6 +345,15 @@ class App implements SingletonInterface {
 	 */
 	public function getRepository() {
 		return $this->objectManager->getDataProvider()->getRepositoryForPath($this->getPath());
+	}
+
+	/**
+	 * Returns all domain model for the given API path
+	 *
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getAllModels() {
+		return $this->objectManager->getDataProvider()->getAllModelsForPath($this->getPath());
 	}
 
 	/**
@@ -500,6 +529,7 @@ class App implements SingletonInterface {
 	public function logException($exception) {
 		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
 		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+		echo $exception . PHP_EOL;
 	}
 
 	/**
