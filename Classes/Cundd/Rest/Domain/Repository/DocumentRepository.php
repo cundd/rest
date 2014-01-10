@@ -66,7 +66,8 @@ class DocumentRepository extends Repository {
 	 * @throws InvalidDatabaseNameException if an invalid database name is provided
 	 */
 	public function setDatabase($database) {
-		if (!ctype_alnum($database)) throw new InvalidDatabaseNameException('The given database name is invalid', 1389258923);
+		if (!ctype_alnum($database)) throw new InvalidDatabaseNameException('The given database name contains invalid characters', 1389258923);
+		if (strtolower($database) !== $database) throw new InvalidDatabaseNameException('The given database name must be lowercase', 1389348390);
 		$this->database = $database;
 	}
 
