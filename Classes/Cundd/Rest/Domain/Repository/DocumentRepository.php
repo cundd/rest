@@ -31,7 +31,9 @@ use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use Cundd\Rest\Domain\Exception\NoDatabaseSelectedException;
 use Iresults\Core\Iresults;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
@@ -48,6 +50,14 @@ class DocumentRepository extends Repository {
 	 * @var string
 	 */
 	protected $database;
+
+	/**
+	 * Defines if query results should be retrieved raw and converted by
+	 * convertCollection()
+	 *
+	 * @var bool
+	 */
+	protected $useRawQueryResults = TRUE;
 
 	/**
 	 * Selects a database
@@ -136,28 +146,12 @@ class DocumentRepository extends Repository {
 	 */
 	public function registerObject($object) {
 		$foundObject = $this->findByGuid($object->getGuid());
-		$foundObject = $this->findById($object->getId());
-		$isNew = $object->_isNew() && ($foundObject === NULL);
 
-		if (!$object->getUid() && $foundObject) {
-			Iresults::pd('HASDFAS');
-			$object->setValueForKey('uid', $foundObject->getUid());
+		// If the object appears as new but has a matching object merge those
+		if ($this->persistenceManager->isNewObject($object) && $foundObject) {
+			$object = $this->mergeDocuments($foundObject, $object);
 		}
-
-		Iresults::pd('$foundObject', $foundObject);
-		Iresults::pd($object->getGuid());
-		Iresults::pd($object->getUid());
-		Iresults::pd($foundObject->getUid());
-		Iresults::pd($object);
-
-		$object->setValueForKey('uid', 50001);
-		Iresults::pd($object->getUid());
-
-		if ($isNew) {
-			$this->add($object);
-		} else {
-			$this->update($object);
-		}
+		$this->add($object);
 		return $object;
 	}
 
@@ -271,7 +265,12 @@ class DocumentRepository extends Repository {
 		);
 
 		$query->setLimit(1);
-		return $this->convertToDocument($query->execute());
+
+		$result = $this->convertCollection($query->execute());
+		if (!$result) {
+			return NULL;
+		}
+		return reset($result);
 	}
 
 	/**
@@ -283,8 +282,12 @@ class DocumentRepository extends Repository {
 	public function findOneById($id) {
 		$query = $this->createQuery();
 		$query->matching($query->equals('id', $id));
-		$result = $query->execute();
-		return $this->convertToDocument(reset($result));
+
+		$result = $this->convertCollection($query->execute());
+		if (!$result) {
+			return NULL;
+		}
+		return reset($result);
 	}
 
 	/**
@@ -328,10 +331,25 @@ class DocumentRepository extends Repository {
 	 * @api
 	 */
 	public function removeAll() {
+		Iresults::forceDebug();
+		Iresults::pd('remove all');
 		foreach ($this->findAll() AS $object) {
+			Iresults::pd($object);
 			$this->remove($object);
 		}
+
+		if ($this->useRawQueryResults) {
+			$currentDatabase = $this->getDatabase();
+			if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+
+			$query = $this->createQuery();
+			$query->getQuerySettings()->setReturnRawQueryResult(FALSE);
+			$query->statement('DELETE FROM tx_rest_domain_model_document WHERE db = ?', array($currentDatabase));
+			$query->execute();
+		}
 	}
+
+
 
 	/**
 	 * Finds an object matching the given identifier.
@@ -437,18 +455,24 @@ class DocumentRepository extends Repository {
 			$query->setQuerySettings(clone $this->defaultQuerySettings);
 		}
 		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
-		$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
 		$query->getQuerySettings()->setRespectStoragePage(FALSE);
+		$query->getQuerySettings()->setReturnRawQueryResult($this->useRawQueryResults);
 		return $query;
 	}
 
 	/**
 	 * Converts the query result into objects
 	 *
-	 * @param array $resultCollection
+	 * @param array|QueryResultInterface $resultCollection
 	 * @return array<Document>
 	 */
 	protected function convertCollection($resultCollection) {
+		if (!$this->useRawQueryResults) {
+			if (is_object($resultCollection) && $resultCollection->count() === 0) {
+				return array();
+			}
+			return $resultCollection;
+		}
 		$convertedObjects = array();
 		foreach ($resultCollection as $resultSet) {
 			$convertedObjects[] = $this->convertToDocument($resultSet);
@@ -465,6 +489,10 @@ class DocumentRepository extends Repository {
 	 * @return Document
 	 */
 	protected function convertToDocument($input) {
+		if (!$this->useRawQueryResults && is_object($input) && $input instanceof Document) {
+			return $input;
+		}
+
 		if (!$input) {
 			return NULL;
 		}
@@ -476,10 +504,34 @@ class DocumentRepository extends Repository {
 			}
 		}
 
-		foreach ($input as $key => $value) {
-			$convertedObject->setValueForKey($value, $key);
+
+		/*
+		 * Check if the input has a value for key 'data_protected' or
+		 * 'dataProtected' and set it first
+		 */
+		if (isset($input['data_protected']) && $input['data_protected']) {
+			$input[Document::DATA_PROPERTY_NAME] = $input['data_protected'];
+			unset($input['data_protected']);
+		}
+		$key = Document::DATA_PROPERTY_NAME;
+		if (isset($input[$key]) && $input[$key]) {
+			$value = $input[$key];
+			$convertedObject->setValueForKey($key, $value);
+			unset($input[$key]);
 		}
 
+		/*
+		 * Loop through each (remaining) key value pair from the input and
+		 * assign it to the Document
+		 */
+		foreach ($input as $key => $value) {
+			$key = GeneralUtility::underscoredToLowerCamelCase($key);
+			$convertedObject->setValueForKey($key, $value);
+		}
+
+		/*
+		 * Make sure the Document's database is set
+		 */
 		if (!$convertedObject->_getDb()) {
 			$currentDatabase = $this->getDatabase();
 			if (!$currentDatabase) {
@@ -488,6 +540,31 @@ class DocumentRepository extends Repository {
 			$convertedObject->_setDb($currentDatabase);
 		}
 		return $convertedObject;
+	}
+
+	/**
+	 * Merges two Documents
+	 *
+	 * @param Document $oldDocument
+	 * @param Document|array|\stdClass $newDocument
+	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
+	 * @return Document
+	 */
+	protected function mergeDocuments($oldDocument, $newDocument) {
+		$mergeKeys = array('uid', 'pid', 'id', 'db', Document::DATA_PROPERTY_NAME);
+		foreach ($mergeKeys as $key) {
+			if (isset($newDocument[$key]) && $newDocument[$key]) {
+				$oldDocument[$key] = $newDocument[$key];
+			}
+		}
+		if (!$oldDocument->_getDb()) {
+			$currentDatabase = $this->getDatabase();
+			if (!$currentDatabase) {
+				throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+			}
+			$oldDocument->_setDb($currentDatabase);
+		}
+		return $oldDocument;
 	}
 
 	/**

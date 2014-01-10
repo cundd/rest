@@ -148,7 +148,7 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$function = 'Superman';
 		$key = 'function';
 
-		$this->fixture->setValueForKey($function, $key);
+		$this->fixture->setValueForKey($key, $function);
 		$this->assertEquals($function, $this->fixture->valueForKey($key));
 	}
 

@@ -3,7 +3,9 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
+use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -34,7 +36,7 @@ class DocumentDataProvider extends DataProvider {
 	 * Returns all domain model for the given API path
 	 *
 	 * @param string $path API path to get the repository for
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 * @return DomainObjectInterface
 	 */
 	public function getAllModelsForPath($path) {
 		$documentDatabase = substr($path, 9); // Strip 'Document-'
@@ -79,7 +81,7 @@ class DocumentDataProvider extends DataProvider {
 		$properties = NULL;
 		if (is_object($model)) {
 			// Get the data from the model
-			if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+			if ($model instanceof DomainObjectInterface) {
 				$properties = $model->_getProperties();
 			}
 			$properties['_meta'] = array(
@@ -90,18 +92,35 @@ class DocumentDataProvider extends DataProvider {
 			);
 
 
-			$content = $model->_unpackContent();
+			$documentData = $model->_getUnpackedData();
+
+//			Iresults::forceDebug();
+//
+//
+//			Iresults::pd('DOC DATA');
+//			Iresults::pd($documentData);
+//			Iresults::pd($model);
+////			Iresults::pd($model->_getDataProtected());
+//
+//			Iresults::say('');
+//			Iresults::say('');
+//			Iresults::say('');
 
 			// Remove hidden fields
-			unset($content['tstamp']);
-			unset($content['crdate']);
-			unset($content['cruser_id']);
-			unset($content['deleted']);
-			unset($content['hidden']);
-			unset($content['starttime']);
-			unset($content['endtime']);
+			unset($documentData['tstamp']);
+			unset($documentData['crdate']);
+			unset($documentData['cruser_id']);
+			unset($documentData['cruserId']);
+			unset($documentData['deleted']);
+			unset($documentData['hidden']);
+			unset($documentData['starttime']);
+			unset($documentData['endtime']);
 
-			$properties = array_merge($content, $properties);
+			// Remove the already assigned entries
+			unset($properties[Document::DATA_PROPERTY_NAME]);
+			unset($properties['db']);
+
+			$properties = array_merge($documentData, $properties);
 		}
 
 		return $properties;

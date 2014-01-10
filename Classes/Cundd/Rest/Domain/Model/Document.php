@@ -40,6 +40,11 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
  */
 class Document extends AbstractEntity implements \ArrayAccess {
 	/**
+	 * Name of the property that holds the data
+	 */
+	const DATA_PROPERTY_NAME = 'dataProtected';
+
+	/**
 	 * ID
 	 *
 	 * @var \string
@@ -181,7 +186,7 @@ class Document extends AbstractEntity implements \ArrayAccess {
 			return $this->$key;
 		}
 
-		$unpackedContent = $this->_unpackContent();
+		$unpackedContent = $this->_getUnpackedData();
 		if (isset($unpackedContent[$key])) {
 			return $unpackedContent[$key];
 		} else if (property_exists($this, $key)) {
@@ -193,12 +198,12 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	/**
 	 * Sets the value for the given key
 	 *
-	 * @param mixed $value
 	 * @param string $key
+	 * @param mixed  $value
 	 * @return $this
 	 */
-	public function setValueForKey($value, $key) {
-		$this->_setValueForKey($value, $key);
+	public function setValueForKey($key, $value) {
+		$this->_setValueForKey($key, $value);
 		return $this;
 	}
 
@@ -221,17 +226,22 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	/**
 	 * Sets the value for the given key
 	 *
-	 * @param mixed $value
 	 * @param string $key
+	 * @param mixed  $value
 	 */
-	protected function _setValueForKey($value, $key) {
+	protected function _setValueForKey($key, $value) {
+		if ($key === 'dataProtected') {
+			$this->dataProtected = $value;
+			$this->_dataUnpacked = NULL;
+			return;
+		}
 		if (property_exists($this, $key)) {
 			$this->$key = $value;
 			return;
 		}
 
 
-		$unpackedContent = $this->_unpackContent();
+		$unpackedContent = $this->_getUnpackedData();
 		$unpackedContent[$key] = $value;
 
 		unset($this->_dataUnpacked);
@@ -240,11 +250,11 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	}
 
 	/**
-	 * Returns the unpacked Document content
+	 * Returns the unpacked Document data
 	 *
 	 * @return array|mixed
 	 */
-	public function _unpackContent() {
+	public function _getUnpackedData() {
 		if (!$this->_dataUnpacked) {
 			$this->_dataUnpacked = json_decode($this->dataProtected, TRUE);
 		}
@@ -306,7 +316,7 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	 * @return void
 	 */
 	public function offsetSet($offset, $value) {
-		$this->setValueForKey($value, $offset);
+		$this->setValueForKey($offset, $value);
 	}
 
 	/**
@@ -320,7 +330,7 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	 * @return void
 	 */
 	public function offsetUnset($offset) {
-		$this->setValueForKey(NULL, $offset);
+		$this->setValueForKey($offset, NULL);
 	}
 
 
