@@ -133,6 +133,6 @@ class DocumentDataProvider extends DataProvider {
 	 * @return string
 	 */
 	public function getDatabaseNameFromPath($path) {
-		return strtolower(substr($path, 9)); // Strip 'Document-'
+		return Utility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
 	}
 }
