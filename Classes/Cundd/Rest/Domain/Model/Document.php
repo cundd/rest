@@ -333,6 +333,14 @@ class Document extends AbstractEntity implements \ArrayAccess {
 		$this->setValueForKey($offset, NULL);
 	}
 
+	function __get($name) {
+		return $this->valueForKey($name);
+	}
+
+	function __isset($name) {
+		return $this->offsetExists($name);
+	}
+
 
 }
 ?>

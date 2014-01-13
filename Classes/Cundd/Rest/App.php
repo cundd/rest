@@ -315,6 +315,14 @@ class App implements SingletonInterface {
 		if (!$this->request) {
 			$format = '';
 			$uri = $this->getUri($format);
+
+			/*
+			 * Transform Document URLs
+			 * @Todo: Make this better
+			 */
+			if (substr($uri, 0, 9) === 'Document/') {
+				$uri = 'Document-' . substr($uri, 9);
+			}
 			$this->request = new Request(NULL, $uri);
 			$this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
 			if ($format) {

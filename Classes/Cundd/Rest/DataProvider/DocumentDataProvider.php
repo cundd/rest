@@ -39,7 +39,7 @@ class DocumentDataProvider extends DataProvider {
 	 * @return DomainObjectInterface
 	 */
 	public function getAllModelsForPath($path) {
-		$documentDatabase = substr($path, 9); // Strip 'Document-'
+		$documentDatabase = $this->getDatabaseNameFromPath($path);
 
 		/** @var DocumentRepository $documentRepository */
 		$documentRepository = $this->getRepositoryForPath($path);
@@ -55,7 +55,7 @@ class DocumentDataProvider extends DataProvider {
 	 * @return void
 	 */
 	public function saveModelForPath($model, $path) {
-		$documentDatabase = substr($path, 9); // Strip 'Document-'
+		$documentDatabase = $this->getDatabaseNameFromPath($path);
 
 		/** @var DocumentRepository $repository */
 		$repository = $this->getRepositoryForPath($path);
@@ -124,5 +124,15 @@ class DocumentDataProvider extends DataProvider {
 		}
 
 		return $properties;
+	}
+
+	/**
+	 * Returns the Document database name for the given path
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	public function getDatabaseNameFromPath($path) {
+		return strtolower(substr($path, 9)); // Strip 'Document-'
 	}
 }

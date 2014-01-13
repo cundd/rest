@@ -57,7 +57,7 @@ class DocumentRepository extends Repository {
 	 *
 	 * @var bool
 	 */
-	protected $useRawQueryResults = TRUE;
+	protected $useRawQueryResults = FALSE;
 
 	/**
 	 * Selects a database
@@ -152,7 +152,15 @@ class DocumentRepository extends Repository {
 		if ($this->persistenceManager->isNewObject($object) && $foundObject) {
 			$object = $this->mergeDocuments($foundObject, $object);
 		}
-		$this->add($object);
+
+		Iresults::pd('register', $object, ($object->_isNew() || $this->useRawQueryResults), ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults));
+
+		//if ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults) {
+		if ($object->_isNew() || $this->useRawQueryResults) {
+			$this->add($object);
+		} else {
+			$this->update($object);
+		}
 		return $object;
 	}
 
@@ -268,10 +276,16 @@ class DocumentRepository extends Repository {
 		$query->setLimit(1);
 
 		$result = $this->convertCollection($query->execute());
+		Iresults::pd($result);
 		if (!$result) {
 			return NULL;
 		}
-		return reset($result);
+		if ($this->useRawQueryResults) {
+			return reset($result);
+		}
+		if ($result instanceof QueryResultInterface) {
+			return $result->getFirst();
+		}
 	}
 
 	/**
@@ -288,7 +302,12 @@ class DocumentRepository extends Repository {
 		if (!$result) {
 			return NULL;
 		}
-		return reset($result);
+		if ($this->useRawQueryResults) {
+			return reset($result);
+		}
+		if ($result instanceof QueryResultInterface) {
+			return $result->getFirst();
+		}
 	}
 
 	/**
@@ -328,14 +347,13 @@ class DocumentRepository extends Repository {
 	 * Removes all objects of this repository as if remove() was called for
 	 * all of them.
 	 *
+	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if no Document database has been selected
 	 * @return void
+	 *
 	 * @api
 	 */
 	public function removeAll() {
-		Iresults::forceDebug();
-		Iresults::pd('remove all');
 		foreach ($this->findAll() AS $object) {
-			Iresults::pd($object);
 			$this->remove($object);
 		}
 
@@ -343,9 +361,20 @@ class DocumentRepository extends Repository {
 			$currentDatabase = $this->getDatabase();
 			if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
 
+			$GLOBALS['TYPO3_DB']->store_lastBuiltQuery = true;
+			$databaseConnection = $GLOBALS['TYPO3_DB'];
+
+			$query = 'UPDATE tx_rest_domain_model_document SET deleted=2 WHERE db = \'' . $currentDatabase . '\'';
+			$result = $databaseConnection->sql_query($query);
+			var_dump($query);
+			var_dump($result);
+			var_dump($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery);
+			return;
+
 			$query = $this->createQuery();
-			$query->getQuerySettings()->setReturnRawQueryResult(FALSE);
-			$query->statement('DELETE FROM tx_rest_domain_model_document WHERE db = ?', array($currentDatabase));
+			$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+			$query->statement('UPDATE `tx_rest_domain_model_document` SET `deleted`=2 WHERE db = ?', array($currentDatabase));
+			// $query->statement('DELETE FROM tx_rest_domain_model_document WHERE db = ?', array($currentDatabase));
 			$query->execute();
 		}
 	}
@@ -490,43 +519,70 @@ class DocumentRepository extends Repository {
 	 * @return Document
 	 */
 	protected function convertToDocument($input) {
-		if (!$this->useRawQueryResults && is_object($input) && $input instanceof Document) {
-			return $input;
-		}
-
 		if (!$input) {
 			return NULL;
 		}
 
-		$convertedObject = new Document();
+		$inputData = $input;
 		if (is_object($input)) {
 			if ($input instanceof \stdClass) {
-				$input = get_object_vars($input);
+				$inputData = get_object_vars($input);
 			}
 		}
 
+		$convertedObject = NULL;
+		if (!$this->useRawQueryResults) {
+			// If the input already is a Document return it
+			if (is_object($input) && $input instanceof Document) {
+				return $input;
+			}
+
+			switch (TRUE) {
+				case isset($inputData['uid']):
+					$convertedObject = $this->findByUid($inputData['uid']);
+					break;
+
+				case isset($inputData['id']) && $this->getDatabase():
+					$convertedObject = $this->findByGuid($this->getDatabase() . '-' . $inputData['id']);
+					break;
+
+				case isset($inputData['id']):
+					$convertedObject = $this->findById($inputData['id']);
+					break;
+
+				default:
+			}
+		}
+
+		if (!$convertedObject) {
+			$convertedObject = new Document();
+		}
 
 		/*
 		 * Check if the input has a value for key 'data_protected' or
 		 * 'dataProtected' and set it first
 		 */
-		if (isset($input['data_protected']) && $input['data_protected']) {
-			$input[Document::DATA_PROPERTY_NAME] = $input['data_protected'];
-			unset($input['data_protected']);
+		if (isset($inputData['data_protected']) && $inputData['data_protected']) {
+			$inputData[Document::DATA_PROPERTY_NAME] = $inputData['data_protected'];
+			unset($inputData['data_protected']);
 		}
 		$key = Document::DATA_PROPERTY_NAME;
-		if (isset($input[$key]) && $input[$key]) {
-			$value = $input[$key];
+		if (isset($inputData[$key]) && $inputData[$key]) {
+			$value = $inputData[$key];
 			$convertedObject->setValueForKey($key, $value);
-			unset($input[$key]);
+			unset($inputData[$key]);
 		}
 
 		/*
 		 * Loop through each (remaining) key value pair from the input and
 		 * assign it to the Document
 		 */
-		foreach ($input as $key => $value) {
-			$key = GeneralUtility::underscoredToLowerCamelCase($key);
+		foreach ($inputData as $key => $value) {
+//			if (ctype_lower($key[0])) { // Preserve the case
+//				$key = GeneralUtility::underscoredToLowerCamelCase($key);
+//			} else {
+//				$key = GeneralUtility::underscoredToUpperCamelCase($key);
+//			}
 			$convertedObject->setValueForKey($key, $value);
 		}
 
@@ -557,6 +613,9 @@ class DocumentRepository extends Repository {
 			if (isset($newDocument[$key]) && $newDocument[$key]) {
 				$oldDocument[$key] = $newDocument[$key];
 			}
+		}
+		if (!is_object($oldDocument)) {
+			Iresults::pd($oldDocument);
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();
