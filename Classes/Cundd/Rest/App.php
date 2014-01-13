@@ -128,7 +128,7 @@ class App implements SingletonInterface {
 						$result = $dispatcher->getModelData($model);
 						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
+								Utility::singularize($dispatcher->getRootObjectKey()) => $result
 							);
 						}
 						return $result;
@@ -156,7 +156,7 @@ class App implements SingletonInterface {
 						$result = $dispatcher->getModelData($newModel);
 						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
+								Utility::singularize($dispatcher->getRootObjectKey()) => $result
 							);
 						}
 						return $result;
@@ -183,7 +183,7 @@ class App implements SingletonInterface {
 						$result = $dispatcher->getModelData($model);
 						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
+								Utility::singularize($dispatcher->getRootObjectKey()) => $result
 							);
 						}
 						return $result;
@@ -222,7 +222,7 @@ class App implements SingletonInterface {
 					$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
 					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 						return array(
-							Utility::singularize($dispatcher->getOriginalPath()) => $result
+							Utility::singularize($dispatcher->getRootObjectKey()) => $result
 						);
 					}
 					return $result;
@@ -240,7 +240,7 @@ class App implements SingletonInterface {
 					$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
 					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 						return array(
-							$dispatcher->getOriginalPath() => $result
+							$dispatcher->getRootObjectKey() => $result
 						);
 					}
 					return $result;
@@ -345,6 +345,24 @@ class App implements SingletonInterface {
 	 */
 	public function getOriginalPath() {
 		return $this->getRequest()->originalPath();
+	}
+
+	/**
+	 * Returns the key to use for the root object if addRootObjectForCollection
+	 * is enabled
+	 *
+	 * @return string
+	 */
+	public function getRootObjectKey() {
+		$originalPath = $this->getOriginalPath();
+		/*
+		 * Transform Document URLs
+		 * @Todo: Make this better
+		 */
+		if (substr($originalPath, 0, 9) === 'Document-') {
+			$originalPath = substr($originalPath, 9);
+		}
+		return $originalPath;
 	}
 
 	/**
