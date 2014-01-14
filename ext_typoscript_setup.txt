@@ -5,6 +5,12 @@ plugin.tx_rest.settings {
 			read = deny
 			write = deny
 		}
+
+		2000 {
+			path = Document
+			read = deny
+			write = deny
+		}
 	}
 
 	cacheLifeTime = -1
