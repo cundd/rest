@@ -49,7 +49,7 @@ class DocumentRepository extends Repository {
 	 *
 	 * @var string
 	 */
-	protected $database;
+	protected $database = '';
 
 	/**
 	 * Defines if query results should be retrieved raw and converted by
@@ -642,6 +642,16 @@ class DocumentRepository extends Repository {
 	 */
 	public function didChangeDocument($document) {
 	}
+
+	/**
+	 * Returns the class name of this class.
+	 *
+	 * @return string Class name of the repository.
+	 */
+	protected function getRepositoryClassName() {
+		return __CLASS__;
+	}
+
 
 
 }
