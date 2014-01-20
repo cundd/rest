@@ -35,6 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  *
@@ -286,6 +287,7 @@ class DocumentRepository extends Repository {
 		if ($result instanceof QueryResultInterface) {
 			return $result->getFirst();
 		}
+		return NULL;
 	}
 
 	/**
@@ -361,7 +363,7 @@ class DocumentRepository extends Repository {
 			$currentDatabase = $this->getDatabase();
 			if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
 
-			$GLOBALS['TYPO3_DB']->store_lastBuiltQuery = true;
+			$GLOBALS['TYPO3_DB']->store_lastBuiltQuery = TRUE;
 			$databaseConnection = $GLOBALS['TYPO3_DB'];
 
 			$query = 'UPDATE tx_rest_domain_model_document SET deleted=2 WHERE db = \'' . $currentDatabase . '\'';
@@ -378,7 +380,6 @@ class DocumentRepository extends Repository {
 			$query->execute();
 		}
 	}
-
 
 
 	/**
@@ -434,7 +435,7 @@ class DocumentRepository extends Repository {
 	 * Dispatches magic methods (findBy[Property]())
 	 *
 	 * @param string $methodName The name of the magic method
-	 * @param string $arguments The arguments of the magic method
+	 * @param string $arguments  The arguments of the magic method
 	 * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException
 	 * @return mixed
 	 * @api
@@ -488,6 +489,78 @@ class DocumentRepository extends Repository {
 		$query->getQuerySettings()->setRespectStoragePage(FALSE);
 		$query->getQuerySettings()->setReturnRawQueryResult($this->useRawQueryResults);
 		return $query;
+	}
+
+	/**
+	 * Search for Documents matching the given properties
+	 *
+	 * @param array   $properties Dictionary of property keys and values
+	 * @param bool    $count      Return the number of matches
+	 * @param integer $limit      Limit the number of matches
+	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
+	 * @return mixed|null|object
+	 */
+	public function findWithProperties($properties, $count = FALSE, $limit = -1) {
+		/** @var Query $query */
+		$query = $this->createQuery();
+
+		$constraintsCollection = array();
+
+		if (isset($properties['guid'])) {
+			list($database, $id) = explode('-', $properties['guid'], 2);
+			$constraintsCollection[] = $query->equals('db', $database);
+			$constraintsCollection[] = $query->equals('id', $id);
+			unset($properties['guid']);
+		} else {
+			$currentDatabase = $this->getDatabase();
+			if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+			$query->matching($query->equals('db', $currentDatabase));
+		}
+
+		$realDatabaseColumns = array('uid', 'pid', 'tstamp', 'crdate', 'cruser_id');
+		foreach ($realDatabaseColumns as $realDatabaseColumn) {
+			if (isset($properties[$realDatabaseColumn])) {
+				$constraintsCollection[] = $query->equals($realDatabaseColumn, $properties[$realDatabaseColumn]);
+				unset($properties[$realDatabaseColumn]);
+			}
+		}
+		if (!empty($constraintsCollection)) {
+			$query->matching($query->logicalAnd($constraintsCollection));
+		}
+
+
+		// Get the objects
+		$resultCollection = $this->convertCollection($query->execute());
+
+		// Filter using the remaining properties
+		$filteredResultCollection = array();
+		$filteredResultCollectionCount = 0;
+
+		/** @var Document $currentDocument */
+
+		/*
+		 * Loop through each found Document and check each of the properties
+		 * that were not filtered in the query
+		 */
+		foreach ($resultCollection as $currentDocument) {
+			$isMatchingResult = TRUE;
+			$currentDocumentData = $currentDocument->_getUnpackedData();
+
+			foreach ($properties as $propertyKey => $propertyValue) {
+				if ($propertyValue !== ObjectAccess::getPropertyPath($currentDocumentData, $propertyKey)) {
+					$isMatchingResult = FALSE;
+					break;
+				}
+			}
+
+			if ($isMatchingResult) {
+				$filteredResultCollection[] = $currentDocument;
+				if (++$filteredResultCollectionCount > ($limit - 1)) {
+					break;
+				}
+			}
+		}
+		return $filteredResultCollection;
 	}
 
 	/**
@@ -602,7 +675,7 @@ class DocumentRepository extends Repository {
 	/**
 	 * Merges two Documents
 	 *
-	 * @param Document $oldDocument
+	 * @param Document                 $oldDocument
 	 * @param Document|array|\stdClass $newDocument
 	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
 	 * @return Document
@@ -653,6 +726,6 @@ class DocumentRepository extends Repository {
 	}
 
 
-
 }
+
 ?>

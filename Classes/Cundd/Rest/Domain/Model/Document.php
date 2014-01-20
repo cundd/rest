@@ -26,6 +26,7 @@ namespace Cundd\Rest\Domain\Model;
  ***************************************************************/
 
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
+use Iresults\Core\Iresults;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
@@ -161,7 +162,10 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	 * @return mixed
 	 */
 	public function valueForKeyPath($keyPath) {
-		return ObjectAccess::getPropertyPath($this, $keyPath);
+		if (strpos($keyPath, '.') === FALSE) {
+			return $this->valueForKey($keyPath);
+		}
+		return ObjectAccess::getPropertyPath($this->_getUnpackedData(), $keyPath);
 	}
 
 	/**
@@ -182,7 +186,7 @@ class Document extends AbstractEntity implements \ArrayAccess {
 	 * @return mixed
 	 */
 	protected function _valueForKey($key) {
-		if (isset($this->$key)) {
+		if (isset($this->$key) && $this->$key) {
 			return $this->$key;
 		}
 
