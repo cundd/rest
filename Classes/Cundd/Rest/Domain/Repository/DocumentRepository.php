@@ -569,7 +569,7 @@ class DocumentRepository extends Repository {
 	 * @param array|QueryResultInterface $resultCollection
 	 * @return array<Document>
 	 */
-	protected function convertCollection($resultCollection) {
+	public function convertCollection($resultCollection) {
 		if (!$this->useRawQueryResults) {
 			if (is_object($resultCollection) && $resultCollection->count() === 0) {
 				return array();
@@ -591,7 +591,7 @@ class DocumentRepository extends Repository {
 	 * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
 	 * @return Document
 	 */
-	protected function convertToDocument($input) {
+	public function convertToDocument($input) {
 		if (!$input) {
 			return NULL;
 		}

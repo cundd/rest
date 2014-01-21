@@ -1,6 +1,7 @@
 <?php
 namespace Cundd\Rest\DataProvider;
 
+use Cundd\Rest\Domain\Exception\InvalidIdException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
 use Iresults\Core\Iresults;
@@ -134,5 +135,43 @@ class DocumentDataProvider extends DataProvider {
 	 */
 	public function getDatabaseNameFromPath($path) {
 		return Utility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
+	}
+
+	/**
+	 * Returns a domain model for the given API path and data
+	 * This method will load existing models.
+	 *
+	 * @param array|string|int $data Data of the new model or it's UID
+	 * @param string $path API path to get the repository for
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getModelWithDataForPath($data, $path) {
+		// If no data is given return a new instance
+		if (!$data) {
+			return $this->getEmptyModelForPath($path);
+		} else if (is_scalar($data)) { // If it is a scalar treat it as identity
+			return $this->getModelWithIdentityForPath($data, $path);
+		}
+
+		$data = $this->prepareModelData($data);
+		try {
+			if (!isset($data['id']) || !$data['id']) {
+				throw new InvalidIdException('Missing object ID', 1390319238);
+			}
+			$documentDatabase = $this->getDatabaseNameFromPath($path);
+
+			/** @var DocumentRepository $repository */
+			$repository = $this->getRepositoryForPath($path);
+			$repository->setDatabase($documentDatabase);
+
+			$model = $repository->convertToDocument($data);
+			$model->_setDb($documentDatabase);
+		} catch (\Exception $exception) {
+			$model = NULL;
+
+			$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+			$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+		}
+		return $model;
 	}
 }
