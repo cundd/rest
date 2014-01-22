@@ -139,7 +139,7 @@ class App implements SingletonInterface {
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$replaceCallback = function($request) use($uid, $dispatcher, $app) {
 						/** @var \Cundd\Rest\Request $request */
-						$data = $request->post();
+						$data = $dispatcher->getSentData();
 						$data['__identity'] = $uid;
 						$dispatcher->logRequest('replace request', array('body' => $data));
 
@@ -169,7 +169,8 @@ class App implements SingletonInterface {
 					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 					$updateCallback = function($request) use($uid, $dispatcher, $app) {
 						/** @var \Cundd\Rest\Request $request */
-						$data = $request->post();
+						$data = $dispatcher->getSentData();
+
 						$data['__identity'] = $uid;
 						$dispatcher->logRequest('update request', array('body' => $data));
 
@@ -207,7 +208,7 @@ class App implements SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$app->post(function($request) use($dispatcher, $app) {
 					/** @var \Cundd\Rest\Request $request */
-					$data = $request->post();
+					$data = $dispatcher->getSentData();
 					$dispatcher->logRequest('create request', array('body' => $data));
 
 					/**
@@ -345,6 +346,28 @@ class App implements SingletonInterface {
 	 */
 	public function getOriginalPath() {
 		return $this->getRequest()->originalPath();
+	}
+
+	/**
+	 * Returns the sent data
+	 * @return mixed
+	 */
+	public function getSentData() {
+		$request = $this->getRequest();
+
+		/** @var \Cundd\Rest\Request $request */
+		$data = $request->post();
+		/*
+		 * If no form url-encoded body is sent check if a JSON
+		 * payload is sent with the singularized root object key as
+		 * the payload's root object key
+		 */
+		if (!$data) {
+			$data = $request->get(
+				Utility::singularize($this->getRootObjectKey())
+			);
+		}
+		return $data;
 	}
 
 	/**

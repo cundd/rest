@@ -245,6 +245,25 @@ class DocumentRepository extends Repository {
 	}
 
 	/**
+	 * Returns all data of the selected Document database
+	 *
+	 * Like findAll() but will return the raw database tables
+	 *
+	 * @throws NoDatabaseSelectedException if no database has been selected
+	 * @return array<array>
+	 * @api
+	 */
+	public function findAllRaw() {
+		$currentDatabase = $this->getDatabase();
+		if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+
+		$query = $this->createQuery();
+		$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+		$query->matching($query->equals('db', $currentDatabase));
+		return $query->execute();
+	}
+
+	/**
 	 * Returns all objects of the given Document database
 	 *
 	 * Will select the given Document database and call findAll()
