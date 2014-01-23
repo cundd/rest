@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 /**
  * Class Document
  *
- * A Document is a flexible
+ * A Document is a flexible, schema-less object
  *
  * @package rest
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
