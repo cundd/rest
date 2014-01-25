@@ -326,7 +326,6 @@ class App implements SingletonInterface {
 	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
-		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode() . PHP_EOL . $exception, 501);
 		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 	}
 

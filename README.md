@@ -9,6 +9,7 @@ Installation
 3. Configure the API access
 4. Connect to `your-domain.com/rest/` (`rest/` is the request namespace)
 
+
 Configuration
 -------------
 
@@ -106,87 +107,119 @@ Tip: The request path will be used as root key, so you may want to configure ali
 
 Server
 ------
+
 The extension includes an (experimental) web server based on [React](http://reactphp.org/). To start the server, open a terminal, navigate to the rest extension's directory and type the following command:
 
     php server.php port (IP)
     
 Replace `port` and the optional `IP` with your configuration.
 
-Example
+
+Document Storage
+----------------
+
+The Document Storage is an (experimental) store for objects of class `\Cundd\Rest\Domain\Model\Document`. The Document class is a flexible, schema-less object. It's (required) core properties are an ID and the name of the connected database. All other properties can be dynamically set and retrieved through key-value-coding methods:
+
+Return the value for the given key: 
+	
+	valueForKey($key)
+
+
+Returns the value for the given key path (i.e. "foo.bar"):
+
+	valueForKeyPath($keyPath)
+	
+
+Sets the value for the given key:
+
+	setValueForKey($key, $value)
+
+
+Details
 -------
 
-api.domain.com/rest/*path*
-
+### Paths and the associated classes
 
 Path              | Class                                | Repository                                        | Data Provider                                   | Conf
 ----------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ----
-/yag-gallery      | Tx_Yag_Domain_Model_Gallery[]        | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *
-/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery          | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *
-/cundd-foo-bar    | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | \**
-/cundd-foo-bar/34 | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | \**
-/Document/db      | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
-/Document/db/9    | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
-/Document/db/a3b  | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+/yag-gallery      | Tx_Yag_Domain_Model_Gallery[]        | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*
+/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery          | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*
+/cundd-foo-bar    | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*
+/cundd-foo-bar/34 | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*
+/Document/db      | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
+/Document/db/9    | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
+/Document/db/a3b  | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
+/cundd-daa-bar    | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
+/cundd-daa-bar/34 | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
 
 
+### Paths, methods and the associated actions
 
-999b92b6-35ec-4994-88b5-bf114f61ffb1
-
-
-/Document/foo/9   | \Cundd\Rest\Domain\Model\Document   | \Cundd\Foo\Domain\Repository\BarRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
-/Document/foo     | \Cundd\Rest\Domain\Model\Document   | \Cundd\Foo\Domain\Repository\BarRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
-
-http://vvb2.ateliermerz.com/rest/Document/RealEstate/9
-
-
-Document/RealEstate
-
-
-/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery      | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider
+Path              | Method | Class                                | Action                           | Conf
+----------------- | ------ | ------------------------------------ | -------------------------------- | ----
+/yag-gallery      | GET    | Tx_Yag_Domain_Model_Gallery[]        | List all galleries               | *a*
+/yag-gallery      | POST   | Tx_Yag_Domain_Model_Gallery          | Create a new gallery             | *a*
+/yag-gallery      | DELETE |                                      | 405 Method Not Allowed           | *a*
+/yag-gallery/2    | GET    | Tx_Yag_Domain_Model_Gallery          | Return  the gallery with UID 2   | *a*
+/yag-gallery/2    | POST   | Tx_Yag_Domain_Model_Gallery          | Replace  the gallery with UID 2  | *a*
+/yag-gallery/2    | DELETE | Tx_Yag_Domain_Model_Gallery          | Delete  the gallery with UID 2   | *a*
+/yag-gallery/2    | PATCH  | Tx_Yag_Domain_Model_Gallery          | Update  the gallery with UID 2   | *a*
 
 
-
-http://localhost:8888/rest/cundd-foo-bar
-
-Cundd\Foo\Domain\Model\Bar
-
-
-
-
-Iresults-ImmoRegistry-Mail
-
-http://vvb2.ateliermerz.com/rest/Iresults-ImmoRegistry-Mail
+Path              | Method | Class                                | Action                                                  | Conf
+----------------- | ------ | ------------------------------------ | ------------------------------------------------------- | ----
+/Document/db      | GET    | \Cundd\Rest\Domain\Model\Document[]  | List all Documents in database 'db'                     | *c*
+/Document/db      | POST   | \Cundd\Rest\Domain\Model\Document    | Create a new Document in database 'db'                  | *c*
+/Document/db      | DELETE |                                      | 405 Method Not Allowed                                  | *c*
+/Document/db/9    | GET    | \Cundd\Rest\Domain\Model\Document    | Return  the Document with UID or ID 2 in database 'db'  | *c*
+/Document/db/9    | POST   | \Cundd\Rest\Domain\Model\Document    | Replace the Document with UID or ID 2 in database 'db'  | *c*
+/Document/db/9    | DELETE | \Cundd\Rest\Domain\Model\Document    | Delete  the Document with UID or ID 2 in database 'db'  | *c*
+/Document/db/9    | PATCH  | \Cundd\Rest\Domain\Model\Document    | Update  the Document with UID or ID 2 in database 'db'  | *c*
 
 
-/yag-gallery      
+### Configuration
+
+*a)*
+
+	plugin.tx_rest.settings.paths {
+		10 {
+			path = yag-gallery
+			read = allow
+			write = allow
+		}
+	}
 
 
+*b)*
+
+	plugin.tx_rest.settings.paths {
+		10 {
+			path = cundd-foo-bar
+			read = allow
+			write = allow
+		}
+	}
 
 
+*c)*
+
+	plugin.tx_rest.settings.paths {
+		10 {
+			path = Document-db
+			read = allow
+			write = allow
+		}
+	}
 
 
+*d)*
 
+Assume the class `\Cundd\Daa\Rest\DataProvider`.
 
-
-
-
-
-
-
-
-Path              | Method  | Class                            | Repository                                     | Data Provider                         
------------------ | ------- | -------------------------------- | ---------------------------------------------- | -------------------------------------  
-/yag-gallery      | GET     | Tx_Yag_Domain_Model_Gallery[]    | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DataProvider 
-/yag-gallery/2    | GET     | Tx_Yag_Domain_Model_Gallery      | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DataProvider 
-/yag-gallery      | DELETE  
-
-
-
-
-yag-gallery
-
-
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
+	plugin.tx_rest.settings.paths {
+		10 {
+			path = Cundd-Daa-Bar
+			read = allow
+			write = allow
+		}
+	}

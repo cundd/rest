@@ -40,8 +40,6 @@ class DocumentDataProvider extends DataProvider {
 	 * @return DomainObjectInterface
 	 */
 	public function getAllModelsForPath($path) {
-		var_dump($path);
-		fwrite(STDOUT, var_export($path, TRUE));
 		$documentDatabase = $this->getDatabaseNameFromPath($path);
 
 		/** @var DocumentRepository $documentRepository */
