@@ -102,3 +102,81 @@ This wraps the whole response array into an object with the key read from the re
 
 Tip: The request path will be used as root key, so you may want to configure aliases.
 
+
+Example
+-------
+
+api.domain.com/rest/*path*
+
+
+Path              | Class                                | Repository                                        | Data Provider                                   | Conf
+----------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ----
+/yag-gallery      | Tx_Yag_Domain_Model_Gallery[]        | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *
+/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery          | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *
+/cundd-foo-bar    | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | \**
+/cundd-foo-bar/34 | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | \**
+/Document/db      | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+/Document/db/9    | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+/Document/db/a3b  | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+
+
+
+999b92b6-35ec-4994-88b5-bf114f61ffb1
+
+
+/Document/foo/9   | \Cundd\Rest\Domain\Model\Document   | \Cundd\Foo\Domain\Repository\BarRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+/Document/foo     | \Cundd\Rest\Domain\Model\Document   | \Cundd\Foo\Domain\Repository\BarRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider   | \*\**
+
+http://vvb2.ateliermerz.com/rest/Document/RealEstate/9
+
+
+Document/RealEstate
+
+
+/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery      | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DocumentDataProvider
+
+
+
+http://localhost:8888/rest/cundd-foo-bar
+
+Cundd\Foo\Domain\Model\Bar
+
+
+
+
+Iresults-ImmoRegistry-Mail
+
+http://vvb2.ateliermerz.com/rest/Iresults-ImmoRegistry-Mail
+
+
+/yag-gallery      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Path              | Method  | Class                            | Repository                                     | Data Provider                         
+----------------- | ------- | -------------------------------- | ---------------------------------------------- | -------------------------------------  
+/yag-gallery      | GET     | Tx_Yag_Domain_Model_Gallery[]    | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DataProvider 
+/yag-gallery/2    | GET     | Tx_Yag_Domain_Model_Gallery      | Tx_Yag_Domain_Repository_GalleryRepository     | \Cundd\Rest\DataProvider\DataProvider 
+/yag-gallery      | DELETE  
+
+
+
+
+yag-gallery
+
+
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |

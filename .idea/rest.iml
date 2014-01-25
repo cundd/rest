@@ -6,20 +6,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="PHP">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
-          <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../typo3/sysext" />
-        </CLASSES>
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
-          <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../typo3/sysext" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>
 
