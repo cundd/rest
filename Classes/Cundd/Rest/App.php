@@ -76,6 +76,10 @@ class App implements SingletonInterface {
 			$request = $this->getRequest();
 		}
 
+		if (!$this->getPath()) {
+			return $this->greet();
+		}
+
 		// Checks if the request needs authentication
 		switch ($this->objectManager->getAccessController()->getAccess()) {
 			case AccessControllerInterface::ACCESS_ALLOW:
@@ -104,18 +108,6 @@ class App implements SingletonInterface {
 		if ($this->getPath()) {
 			$this->configureApiPaths();
 		}
-
-		// Defaults
-		$this->app->path('/', function($request) {
-			$greeting = 'What\'s up?';
-			$hour = date('H');
-			if ($hour <= '10' ) {
-				$greeting = 'Good Morning!';
-			} else if ($hour >= '23') {
-				$greeting = 'Hy! Still awake?';
-			}
-			return $greeting;
-		});
 
 		$success = TRUE;
 		if (!$response) {
@@ -159,12 +151,12 @@ class App implements SingletonInterface {
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			$app->param('slug', function($request, $uid) use($dispatcher, $app) {
 				$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-					$model = $dispatcher->getModelWithData($uid);
-					if (!$model) {
-						return 404;
-					}
-					return $dispatcher->getModelProperty($model, $propertyKey);
-				});
+						$model = $dispatcher->getModelWithData($uid);
+						if (!$model) {
+							return 404;
+						}
+						return $dispatcher->getModelProperty($model, $propertyKey);
+					});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* SHOW
@@ -174,7 +166,13 @@ class App implements SingletonInterface {
 					if (!$model) {
 						return 404;
 					}
-					return $dispatcher->getModelData($model);
+					$result = $dispatcher->getModelData($model);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							Utility::singularize($dispatcher->getRootObjectKey()) => $result
+						);
+					}
+					return $result;
 				});
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -182,21 +180,31 @@ class App implements SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$replaceCallback = function($request) use($uid, $dispatcher, $app) {
 					/** @var \Cundd\Rest\Request $request */
-					$data = $request->post();
+					$data = $dispatcher->getSentData();
 					$data['__identity'] = $uid;
-					$dispatcher->logRequest('replace request', array('body' => $data));
+					$dispatcher->logRequest('update request', array('body' => $data));
 
 					$oldModel = $dispatcher->getModelWithData($uid);
-					$newModel = $dispatcher->getNewModelWithData($data);
-
 					if (!$oldModel) {
 						return 404;
 					}
-					if (!$newModel) {
+
+					/**
+					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+					 */
+					$model = $dispatcher->getModelWithData($data);
+					if (!$model) {
 						return 400;
 					}
-					$dispatcher->replaceModel($oldModel, $newModel);
-					return $dispatcher->getModelData($newModel);
+
+					$dispatcher->saveModel($model);
+					$result = $dispatcher->getModelData($model);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							Utility::singularize($dispatcher->getRootObjectKey()) => $result
+						);
+					}
+					return $result;
 				};
 				$app->put($replaceCallback);
 				$app->post($replaceCallback);
@@ -206,7 +214,7 @@ class App implements SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				$updateCallback = function($request) use($uid, $dispatcher, $app) {
 					/** @var \Cundd\Rest\Request $request */
-					$data = $request->post();
+					$data = $dispatcher->getSentData();
 					$data['__identity'] = $uid;
 					$dispatcher->logRequest('update request', array('body' => $data));
 
@@ -217,7 +225,13 @@ class App implements SingletonInterface {
 					}
 
 					$dispatcher->saveModel($model);
-					return $dispatcher->getModelData($model);
+					$result = $dispatcher->getModelData($model);
+					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+						return array(
+							Utility::singularize($dispatcher->getRootObjectKey()) => $result
+						);
+					}
+					return $result;
 				};
 				$app->patch($updateCallback);
 
@@ -238,7 +252,7 @@ class App implements SingletonInterface {
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			$app->post(function($request) use($dispatcher, $app) {
 				/** @var \Cundd\Rest\Request $request */
-				$data = $request->post();
+				$data = $dispatcher->getSentData();
 				$dispatcher->logRequest('create request', array('body' => $data));
 
 				/**
@@ -250,21 +264,28 @@ class App implements SingletonInterface {
 				}
 
 				$dispatcher->saveModel($model);
-				return $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+				$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+				if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+					return array(
+						Utility::singularize($dispatcher->getRootObjectKey()) => $result
+					);
+				}
+				return $result;
 			});
 
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			/* LIST 																	 */
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			$app->get(function($request) use($dispatcher, $app) {
-				$repository = $dispatcher->getRepository();
-				$allModels = $repository->findAll();
-				$allModels = iterator_to_array($allModels);
+				$allModels = $dispatcher->getAllModels();
+				if (!is_array($allModels)) {
+					$allModels = iterator_to_array($allModels);
+				}
 
 				$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
 				if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 					return array(
-						$dispatcher->getOriginalPath() => $result
+						$dispatcher->getRootObjectKey() => $result
 					);
 				}
 				return $result;
@@ -273,11 +294,39 @@ class App implements SingletonInterface {
 	}
 
 	/**
+	 * Print the greeting
+	 * @return boolean Returns if the request has been successfully dispatched
+	 */
+	public function greet() {
+		/** @var \Cundd\Rest\Request $request */
+		$request = $this->getRequest();
+
+		$this->app->path('/', function($request) {
+			$greeting = 'What\'s up?';
+			$hour = date('H');
+			if ($hour <= '10' ) {
+				$greeting = 'Good Morning!';
+			} else if ($hour >= '23') {
+				$greeting = 'Hy! Still awake?';
+			}
+			return $greeting;
+		});
+
+		$response = $this->app->run($request);
+
+		$responseString = (string)$response;
+		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
+		echo $responseString;
+		return TRUE;
+	}
+
+	/**
 	 * Catch and report the exception, that occurred during the request
 	 * @param \Exception $exception
 	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
+		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode() . PHP_EOL . $exception, 501);
 		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 	}
 
@@ -289,6 +338,14 @@ class App implements SingletonInterface {
 		if (!$this->request) {
 			$format = '';
 			$uri = $this->getUri($format);
+
+			/*
+			 * Transform Document URLs
+			 * @Todo: Make this better
+			 */
+			if (substr($uri, 0, 9) === 'Document/') {
+				$uri = 'Document-' . substr($uri, 9);
+			}
 			$this->request = new Request(NULL, $uri);
 			$this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
 			if ($format) {
@@ -314,11 +371,60 @@ class App implements SingletonInterface {
 	}
 
 	/**
+	 * Returns the sent data
+	 * @return mixed
+	 */
+	public function getSentData() {
+		$request = $this->getRequest();
+
+		/** @var \Cundd\Rest\Request $request */
+		$data = $request->post();
+		/*
+		 * If no form url-encoded body is sent check if a JSON
+		 * payload is sent with the singularized root object key as
+		 * the payload's root object key
+		 */
+		if (!$data) {
+			$data = $request->get(
+				Utility::singularize($this->getRootObjectKey())
+			);
+		}
+		return $data;
+	}
+
+	/**
+	 * Returns the key to use for the root object if addRootObjectForCollection
+	 * is enabled
+	 *
+	 * @return string
+	 */
+	public function getRootObjectKey() {
+		$originalPath = $this->getOriginalPath();
+		/*
+		 * Transform Document URLs
+		 * @Todo: Make this better
+		 */
+		if (substr($originalPath, 0, 9) === 'Document-') {
+			$originalPath = substr($originalPath, 9);
+		}
+		return $originalPath;
+	}
+
+	/**
 	 * Returns the domain model repository for the current API path
 	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
 	 */
 	public function getRepository() {
 		return $this->objectManager->getDataProvider()->getRepositoryForPath($this->getPath());
+	}
+
+	/**
+	 * Returns all domain model for the given API path
+	 *
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getAllModels() {
+		return $this->objectManager->getDataProvider()->getAllModelsForPath($this->getPath());
 	}
 
 	/**

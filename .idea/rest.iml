@@ -6,6 +6,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< HEAD
     <orderEntry type="library" scope="PROVIDED" name="sass-stdlib" level="application" />
     <orderEntry type="module-library">
       <library name="PHP">
@@ -31,6 +32,8 @@
         </SOURCES>
       </library>
     </orderEntry>
+=======
+>>>>>>> feature/document-store
   </component>
 </module>
 

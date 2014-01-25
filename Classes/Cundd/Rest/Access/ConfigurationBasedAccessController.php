@@ -34,6 +34,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
 	/**
 	 * Returns if the current request has access to the requested resource
+	 *
+	 * @throws Exception\InvalidConfigurationException if the configuration is incomplete
 	 * @return AccessControllerInterface::ACCESS
 	 */
 	public function getAccess() {
@@ -124,7 +126,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 			$currentPath = $configuration['path'];
 
 			$currentPathPattern = str_replace('*', '\w*', str_replace('?', '\w', $currentPath));
-			$currentPathPattern = "!$currentPathPattern!";
+			$currentPathPattern = "!^$currentPathPattern$!";
 			if ($currentPath === 'all' && !$matchingConfiguration) {
 				$matchingConfiguration = $configuration;
 			} else if (preg_match($currentPathPattern, $path)) {

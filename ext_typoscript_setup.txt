@@ -5,14 +5,23 @@ plugin.tx_rest.settings {
 			read = deny
 			write = deny
 		}
+
+		2000 {
+			path = Document
+			read = deny
+			write = deny
+		}
 	}
 
 	cacheLifeTime = -1
 }
 
 
-config.tx_extbase.objects {
-	Cundd\Rest\Authentication\UserProviderInterface {
-        className = Cundd\Rest\Authentication\UserProvider\FeUserProvider
-    }
+
+config.tx_extbase {
+	objects {
+		Cundd\Rest\Authentication\UserProviderInterface {
+			className = Cundd\Rest\Authentication\UserProvider\FeUserProvider
+		}
+	}
 }

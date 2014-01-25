@@ -85,6 +85,16 @@ class DataProvider implements DataProviderInterface {
 	}
 
 	/**
+	 * Returns all domain model for the given API path
+	 *
+	 * @param string $path API path to get the repository for
+	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+	 */
+	public function getAllModelsForPath($path) {
+		return $this->getRepositoryForPath($path)->findAll();
+	}
+
+	/**
 	 * Returns a domain model for the given API path and data
 	 * This method will load existing models.
 	 *
