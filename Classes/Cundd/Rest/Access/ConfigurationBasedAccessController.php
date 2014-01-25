@@ -81,6 +81,17 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 	}
 
 	/**
+	 * Sets the current request
+	 *
+	 * @param \Cundd\Rest\Request $request
+	 */
+	public function setRequest(\Cundd\Rest\Request $request) {
+		parent::setRequest($request);
+		$this->write = -1;
+	}
+
+
+	/**
 	 * Returns if the request wants to write data
 	 * @return bool
 	 */

@@ -28,8 +28,8 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
 
 		// most other servers
 		} elseif (isset($_SERVER['HTTP_AUTHENTICATION'])) {
-			if (strpos(strtolower($_SERVER['HTTP_AUTHENTICATION']),'basic')===0) {
-				list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+			if (strpos(strtolower($_SERVER['HTTP_AUTHENTICATION']), 'basic') === 0) {
+				list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHENTICATION'], 6)));
 			}
 		}
 		return $this->userProvider->checkCredentials($username, $password);

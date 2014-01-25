@@ -1,5 +1,6 @@
 <?php
 namespace Cundd\Rest;
+use Bullet\HTTP;
 use Bullet\Request as BaseRequest;
 
 class Request extends BaseRequest {
@@ -16,7 +17,8 @@ class Request extends BaseRequest {
 	/**
 	 * @var string
 	 */
-	protected $originalPath;
+	protected $originalPath = -1;
+
 
 	/**
 	 * @return string
@@ -43,7 +45,7 @@ class Request extends BaseRequest {
 	 * @return string
 	 */
 	public function originalPath() {
-		if (!$this->originalPath) {
+		if ($this->originalPath === -1) {
 			return $this->path();
 		}
 		return $this->originalPath;

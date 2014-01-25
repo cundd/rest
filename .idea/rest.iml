@@ -6,17 +6,28 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="sass-stdlib" level="application" />
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
           <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../../../../../Resources/typo3_src-6.1.7/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../cundd_composer" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
           <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../../../../../Resources/typo3_src-6.1.7/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../cundd_composer" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/../cundd_composer/Resources/Private/PHP/composer.phar" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/../cundd_composer/Resources/Private/PHP/composer.phar" />
         </SOURCES>
       </library>
     </orderEntry>

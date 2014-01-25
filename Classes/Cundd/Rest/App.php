@@ -1,10 +1,10 @@
 <?php
 namespace Cundd\Rest;
 
+use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
-use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -63,12 +63,18 @@ class App implements SingletonInterface {
 
 	/**
 	 * Dispatch the request
+	 *
+	 * @param \Cundd\Rest\Request $request Overwrite the request
+	 * @param Response $responsePointer Reference to be filled with the response
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
-	public function dispatch() {
-
-		/** @var \Cundd\Rest\Request $request */
-		$request = $this->getRequest();
+	public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
+		if ($request) {
+			$this->request = $request;
+			$this->objectManager->reassignRequest();
+		} else {
+			$request = $this->getRequest();
+		}
 
 		// Checks if the request needs authentication
 		switch ($this->objectManager->getAccessController()->getAccess()) {
@@ -76,17 +82,14 @@ class App implements SingletonInterface {
 				break;
 
 			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-				echo new \Bullet\Response('Unauthorized', 401);
+				echo new Response('Unauthorized', 401);
 				return FALSE;
 
 			case AccessControllerInterface::ACCESS_DENY:
 			default:
-				echo new \Bullet\Response('Forbidden', 403);
+				echo new Response('Forbidden', 403);
 				return FALSE;
 		}
-
-		$dispatcher = $this;
-		$app = $this->app;
 
 		/** @var Cache $cache */
 		$cache = $this->objectManager->getCache();
@@ -99,151 +102,10 @@ class App implements SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
-			$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
-
-			$app->path($this->getPath(), function($request) use($dispatcher, $app) {
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* WITH UID 																 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->param('slug', function($request, $uid) use($dispatcher, $app) {
-					$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getModelWithData($uid);
-						if (!$model) {
-							return 404;
-						}
-						return $dispatcher->getModelProperty($model, $propertyKey);
-					});
-
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* SHOW
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$app->get(function($request) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getModelWithData($uid);
-						if (!$model) {
-							return 404;
-						}
-						$result = $dispatcher->getModelData($model);
-						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
-							);
-						}
-						return $result;
-					});
-
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* REPLACE																	 */
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$replaceCallback = function($request) use($uid, $dispatcher, $app) {
-						/** @var \Cundd\Rest\Request $request */
-						$data = $request->post();
-						$data['__identity'] = $uid;
-						$dispatcher->logRequest('replace request', array('body' => $data));
-
-						$oldModel = $dispatcher->getModelWithData($uid);
-						$newModel = $dispatcher->getNewModelWithData($data);
-
-						if (!$oldModel) {
-							return 404;
-						}
-						if (!$newModel) {
-							return 400;
-						}
-						$dispatcher->replaceModel($oldModel, $newModel);
-						$result = $dispatcher->getModelData($newModel);
-						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
-							);
-						}
-						return $result;
-					};
-					$app->put($replaceCallback);
-					$app->post($replaceCallback);
-
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* UPDATE																	 */
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$updateCallback = function($request) use($uid, $dispatcher, $app) {
-						/** @var \Cundd\Rest\Request $request */
-						$data = $request->post();
-						$data['__identity'] = $uid;
-						$dispatcher->logRequest('update request', array('body' => $data));
-
-						$model = $dispatcher->getModelWithData($data);
-
-						if (!$model) {
-							return 404;
-						}
-
-						$dispatcher->saveModel($model);
-						$result = $dispatcher->getModelData($model);
-						if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-							return array(
-								Utility::singularize($dispatcher->getOriginalPath()) => $result
-							);
-						}
-						return $result;
-					};
-					$app->patch($updateCallback);
-
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					/* REMOVE																	 */
-					/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-					$app->delete(function($request) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getModelWithData($uid);
-						if ($model) {
-							$dispatcher->removeModel($model);
-						}
-						return 200;
-					});
-				});
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* CREATE																	 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->post(function($request) use($dispatcher, $app) {
-					/** @var \Cundd\Rest\Request $request */
-					$data = $request->post();
-					$dispatcher->logRequest('create request', array('body' => $data));
-
-					/**
-					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-					 */
-					$model = $dispatcher->getModelWithData($data);
-					if (!$model) {
-						return 400;
-					}
-
-					$dispatcher->saveModel($model);
-					$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
-					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-						return array(
-							Utility::singularize($dispatcher->getOriginalPath()) => $result
-						);
-					}
-					return $result;
-				});
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* LIST 																	 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->get(function($request) use($dispatcher, $app) {
-					$repository = $dispatcher->getRepository();
-					$allModels = $repository->findAll();
-					$allModels = iterator_to_array($allModels);
-
-					$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
-					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-						return array(
-							$dispatcher->getOriginalPath() => $result
-						);
-					}
-					return $result;
-				});
-			});
+			$this->configureApiPaths();
 		}
 
+		// Defaults
 		$this->app->path('/', function($request) {
 			$greeting = 'What\'s up?';
 			$hour = date('H');
@@ -272,6 +134,7 @@ class App implements SingletonInterface {
 			$cache->setCachedValueForRequest($request, $response);
 		}
 
+		$responsePointer = $response;
 		$responseString = (string)$response;
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
@@ -279,12 +142,143 @@ class App implements SingletonInterface {
 	}
 
 	/**
+	 * Configure the API paths
+	 */
+	protected function configureApiPaths() {
+		/**
+		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+		 */
+		$request = $this->getRequest();
+		$dispatcher = $this;
+		$app = $this->app;
+
+		$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
+		$app->path($this->getPath(), function($request) use($dispatcher, $app) {
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			/* WITH UID 																 */
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			$app->param('slug', function($request, $uid) use($dispatcher, $app) {
+				$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
+					$model = $dispatcher->getModelWithData($uid);
+					if (!$model) {
+						return 404;
+					}
+					return $dispatcher->getModelProperty($model, $propertyKey);
+				});
+
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				/* SHOW
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				$app->get(function($request) use($uid, $dispatcher, $app) {
+					$model = $dispatcher->getModelWithData($uid);
+					if (!$model) {
+						return 404;
+					}
+					return $dispatcher->getModelData($model);
+				});
+
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				/* REPLACE																	 */
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				$replaceCallback = function($request) use($uid, $dispatcher, $app) {
+					/** @var \Cundd\Rest\Request $request */
+					$data = $request->post();
+					$data['__identity'] = $uid;
+					$dispatcher->logRequest('replace request', array('body' => $data));
+
+					$oldModel = $dispatcher->getModelWithData($uid);
+					$newModel = $dispatcher->getNewModelWithData($data);
+
+					if (!$oldModel) {
+						return 404;
+					}
+					if (!$newModel) {
+						return 400;
+					}
+					$dispatcher->replaceModel($oldModel, $newModel);
+					return $dispatcher->getModelData($newModel);
+				};
+				$app->put($replaceCallback);
+				$app->post($replaceCallback);
+
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				/* UPDATE																	 */
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				$updateCallback = function($request) use($uid, $dispatcher, $app) {
+					/** @var \Cundd\Rest\Request $request */
+					$data = $request->post();
+					$data['__identity'] = $uid;
+					$dispatcher->logRequest('update request', array('body' => $data));
+
+					$model = $dispatcher->getModelWithData($data);
+
+					if (!$model) {
+						return 404;
+					}
+
+					$dispatcher->saveModel($model);
+					return $dispatcher->getModelData($model);
+				};
+				$app->patch($updateCallback);
+
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				/* REMOVE																	 */
+				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+				$app->delete(function($request) use($uid, $dispatcher, $app) {
+					$model = $dispatcher->getModelWithData($uid);
+					if ($model) {
+						$dispatcher->removeModel($model);
+					}
+					return 200;
+				});
+			});
+
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			/* CREATE																	 */
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			$app->post(function($request) use($dispatcher, $app) {
+				/** @var \Cundd\Rest\Request $request */
+				$data = $request->post();
+				$dispatcher->logRequest('create request', array('body' => $data));
+
+				/**
+				 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+				 */
+				$model = $dispatcher->getModelWithData($data);
+				if (!$model) {
+					return 400;
+				}
+
+				$dispatcher->saveModel($model);
+				return $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
+			});
+
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			/* LIST 																	 */
+			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
+			$app->get(function($request) use($dispatcher, $app) {
+				$repository = $dispatcher->getRepository();
+				$allModels = $repository->findAll();
+				$allModels = iterator_to_array($allModels);
+
+				$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
+				if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+					return array(
+						$dispatcher->getOriginalPath() => $result
+					);
+				}
+				return $result;
+			});
+		});
+	}
+
+	/**
 	 * Catch and report the exception, that occurred during the request
 	 * @param \Exception $exception
-	 * @return \Bullet\Response
+	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
-		return new \Bullet\Response($exception->getMessage(), 501);
+		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 	}
 
 	/**

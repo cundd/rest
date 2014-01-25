@@ -25,14 +25,17 @@ abstract class AbstractAccessController implements AccessControllerInterface {
 	protected $objectManager;
 
 	/**
-	 * @param \Bullet\Request|\Cundd\Rest\Request $request
-	 * @return mixed|void
+	 * Sets the current request
+	 *
+	 * @param \Cundd\Rest\Request $request
 	 */
 	public function setRequest(\Cundd\Rest\Request $request) {
 		$this->request = $request;
 	}
 
 	/**
+	 * Returns the current request
+	 *
 	 * @return \Bullet\Request
 	 */
 	public function getRequest() {
@@ -42,6 +45,7 @@ abstract class AbstractAccessController implements AccessControllerInterface {
 
 	/**
 	 * Checks if a valid user is logged in
+	 *
 	 * @return AccessControllerInterface::ACCESS
 	 */
 	protected function checkAuthentication() {

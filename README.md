@@ -6,7 +6,8 @@ Installation
 
 1. Install the extension through the Extension Manager
 2. Install [Cundd Composer extension](https://github.com/cundd/CunddComposer) and let [Composer](http://getcomposer.org/) install all the dependencies
-
+3. Configure the API access
+4. Connect to `your-domain.com/rest/` (`rest/` is the request namespace)
 
 Configuration
 -------------
@@ -102,3 +103,11 @@ This wraps the whole response array into an object with the key read from the re
 
 Tip: The request path will be used as root key, so you may want to configure aliases.
 
+
+Server
+------
+The extension includes an (experimental) web server based on [React](http://reactphp.org/). To start the server, open a terminal, navigate to the rest extension's directory and type the following command:
+
+    php server.php port (IP)
+    
+Replace `port` and the optional `IP` with your configuration.

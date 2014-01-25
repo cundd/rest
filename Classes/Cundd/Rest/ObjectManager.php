@@ -145,4 +145,17 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 	public function getCache() {
 		return $this->get('Cundd\\Rest\\Cache\\Cache');
 	}
+
+	/**
+	 * Resets the managed objects
+	 */
+	public function reassignRequest() {
+		$request = $this->dispatcher->getRequest();
+		if ($this->authenticationProvider) {
+			$this->authenticationProvider->setRequest($request);
+		}
+		if ($this->accessController) {
+			$this->accessController->setRequest($request);
+		}
+	}
 }
