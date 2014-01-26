@@ -13,7 +13,7 @@ Installation
 Configuration
 -------------
 
-Configure the access rules for different URI paths. `path` defines the URI path for the current rule. The `write` configuration belongs to the HTTP methods POST, PUT, DELETE and PATCH. Any other method will be treated as `read`.
+Configure the access rules for different URI paths. `path` defines the URI path for the current rule. The `read` configuration belongs to the HTTP methods GET and HEAD. Any other method will be treated as `write`.
 
 The default access is defined with the path `all`:
 
@@ -120,17 +120,17 @@ Document Storage
 
 The Document Storage is an (experimental) store for objects of class `\Cundd\Rest\Domain\Model\Document`. The Document class is a flexible, schema-less object. It's (required) core properties are an ID and the name of the connected database. All other properties can be dynamically set and retrieved through key-value-coding methods:
 
-Return the value for the given key: 
+Get the value for a key: 
 	
 	valueForKey($key)
 
 
-Returns the value for the given key path (i.e. "foo.bar"):
+Get the value for a key path (i.e. "foo.bar"):
 
 	valueForKeyPath($keyPath)
 	
 
-Sets the value for the given key:
+Set the value for a key:
 
 	setValueForKey($key, $value)
 
@@ -139,6 +139,8 @@ Details
 -------
 
 ### Paths and the associated classes
+
+Below you find the URL paths (the part after `rest/`) and the matching class names that will be used:
 
 Path              | Class                                | Repository                                        | Data Provider                                   | Conf
 ----------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ----
@@ -152,6 +154,7 @@ Path              | Class                                | Repository           
 /cundd-daa-bar    | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
 /cundd-daa-bar/34 | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
 
+*) These classes are not fixed and depend on the custom `\Cundd\Daa\Rest\DataProvider`.
 
 ### Paths, methods and the associated actions
 
