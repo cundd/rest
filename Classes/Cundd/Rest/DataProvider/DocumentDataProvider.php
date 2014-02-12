@@ -4,7 +4,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Exception\InvalidIdException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
-use Iresults\Core\Iresults;
+use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
@@ -95,17 +95,17 @@ class DocumentDataProvider extends DataProvider {
 
 			$documentData = $model->_getUnpackedData();
 
-//			Iresults::forceDebug();
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::forceDebug();
 //
 //
-//			Iresults::pd('DOC DATA');
-//			Iresults::pd($documentData);
-//			Iresults::pd($model);
-////			Iresults::pd($model->_getDataProtected());
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd('DOC DATA');
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($documentData);
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($model);
+////			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($model->_getDataProtected());
 //
-//			Iresults::say('');
-//			Iresults::say('');
-//			Iresults::say('');
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::say('');
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::say('');
+//			(c) 2014 Daniel Corn <info@cundd.net>, cundd::say('');
 
 			// Remove hidden fields
 			unset($documentData['tstamp']);

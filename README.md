@@ -144,9 +144,9 @@ Cundd\Foo\Domain\Model\Bar
 
 
 
-Iresults-ImmoRegistry-Mail
+(c) 2014 Daniel Corn <info@cundd.net>, cundd-ImmoRegistry-Mail
 
-http://vvb2.ateliermerz.com/rest/Iresults-ImmoRegistry-Mail
+http://vvb2.ateliermerz.com/rest/(c) 2014 Daniel Corn <info@cundd.net>, cundd-ImmoRegistry-Mail
 
 
 /yag-gallery      

@@ -108,7 +108,7 @@ class MyNestedJsonSerializeModel2 extends MyNestedModel {
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  *
- * @author Daniel Corn <cod@iresults.li>
+ * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	static public function setUpBeforeClass() {

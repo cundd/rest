@@ -4,8 +4,8 @@ namespace Cundd\Rest\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Andreas Thurnheer-Meier <tma@iresults.li>, iresults
- *  Daniel Corn <cod@iresults.li>, iresults
+ *  (c) 2013 Andreas Thurnheer-Meier <tma@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -30,7 +30,7 @@ use Cundd\Rest\Domain\Exception\InvalidDocumentException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use Cundd\Rest\Domain\Exception\NoDatabaseSelectedException;
-use Iresults\Core\Iresults;
+use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
@@ -154,7 +154,7 @@ class DocumentRepository extends Repository {
 			$object = $this->mergeDocuments($foundObject, $object);
 		}
 
-		Iresults::pd('register', $object, ($object->_isNew() || $this->useRawQueryResults), ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults));
+		(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd('register', $object, ($object->_isNew() || $this->useRawQueryResults), ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults));
 
 		//if ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults) {
 		if ($object->_isNew() || $this->useRawQueryResults) {
@@ -296,7 +296,7 @@ class DocumentRepository extends Repository {
 		$query->setLimit(1);
 
 		$result = $this->convertCollection($query->execute());
-		Iresults::pd($result);
+		(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($result);
 		if (!$result) {
 			return NULL;
 		}
@@ -728,7 +728,7 @@ class DocumentRepository extends Repository {
 			}
 		}
 		if (!is_object($oldDocument)) {
-			Iresults::pd($oldDocument);
+			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($oldDocument);
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();

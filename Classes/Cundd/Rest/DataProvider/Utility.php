@@ -60,7 +60,7 @@ class Utility {
 			if ($className[0] !== '\\') {
 				$className = '\\' . $className;
 			}
-			// \Iresults\Result\Domain\Model\Team
+			// \(c) 2014 Daniel Corn <info@cundd.net>, cundd\Result\Domain\Model\Team
 			$classNameParts = explode('\\', $className);
 			if (count($classNameParts) > 5) {
 				array_shift($classNameParts);

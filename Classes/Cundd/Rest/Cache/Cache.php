@@ -2,8 +2,7 @@
 /*
  *  Copyright notice
  *
- *  (c) 2013 Andreas Thurnheer-Meier <tma@iresults.li>, iresults
- *  Daniel Corn <cod@iresults.li>, iresults
+ *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -34,7 +33,7 @@ namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
-use Iresults\Core\Iresults;
+use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogLevel;
 

@@ -4,7 +4,7 @@ namespace Cundd\Rest\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Daniel Corn <cod@iresults.li>, iresults
+ *  (c) 2013 Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -26,7 +26,7 @@ namespace Cundd\Rest\Domain\Model;
  ***************************************************************/
 
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
-use Iresults\Core\Iresults;
+use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
