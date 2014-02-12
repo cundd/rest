@@ -400,6 +400,27 @@ class DocumentRepository extends Repository {
 		}
 	}
 
+	/**
+	 * Remove all Documents from the given database
+	 *
+	 * @param string $database
+	 * @return boolean|\mysqli_result|object MySQLi result object / DBAL object
+	 */
+	public function removeAllFromDatabase($database) {
+		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+		$databaseConnection = $GLOBALS['TYPO3_DB'];
+
+		$where = 'db = \'' . $database . '\'';
+		$result = $databaseConnection->exec_UPDATEquery(
+			'tx_rest_domain_model_document',
+			$where,
+			array(
+				'deleted' => 1
+			)
+		);
+		return $result;
+	}
+
 
 	/**
 	 * Finds an object matching the given identifier.

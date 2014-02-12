@@ -146,9 +146,9 @@ class DocumentDataProvider extends DataProvider {
 	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
 	 */
 	public function getModelWithDataForPath($data, $path) {
-		// If no data is given return a new instance
+		// If no data is given return NULL
 		if (!$data) {
-			return $this->getEmptyModelForPath($path);
+			return NULL;
 		} else if (is_scalar($data)) { // If it is a scalar treat it as identity
 			return $this->getModelWithIdentityForPath($data, $path);
 		}
