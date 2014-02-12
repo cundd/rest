@@ -4,7 +4,6 @@ namespace Cundd\Rest;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
-use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;

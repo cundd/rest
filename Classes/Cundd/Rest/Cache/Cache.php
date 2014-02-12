@@ -33,7 +33,6 @@ namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
-use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogLevel;
 

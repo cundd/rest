@@ -30,8 +30,6 @@ use Cundd\Rest\Domain\Exception\InvalidDocumentException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use Cundd\Rest\Domain\Exception\NoDatabaseSelectedException;
-use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
@@ -153,8 +151,6 @@ class DocumentRepository extends Repository {
 		if ($this->persistenceManager->isNewObject($object) && $foundObject) {
 			$object = $this->mergeDocuments($foundObject, $object);
 		}
-
-		(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd('register', $object, ($object->_isNew() || $this->useRawQueryResults), ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults));
 
 		//if ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults) {
 		if ($object->_isNew() || $this->useRawQueryResults) {
@@ -296,7 +292,6 @@ class DocumentRepository extends Repository {
 		$query->setLimit(1);
 
 		$result = $this->convertCollection($query->execute());
-		(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($result);
 		if (!$result) {
 			return NULL;
 		}
@@ -726,9 +721,6 @@ class DocumentRepository extends Repository {
 			if (isset($newDocument[$key]) && $newDocument[$key]) {
 				$oldDocument[$key] = $newDocument[$key];
 			}
-		}
-		if (!is_object($oldDocument)) {
-			(c) 2014 Daniel Corn <info@cundd.net>, cundd::pd($oldDocument);
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();

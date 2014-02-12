@@ -26,7 +26,6 @@ namespace Cundd\Rest\Domain\Model;
  ***************************************************************/
 
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
-use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 

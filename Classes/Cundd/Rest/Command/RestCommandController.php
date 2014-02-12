@@ -34,7 +34,6 @@ namespace Cundd\Rest\Command;
 
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
-use (c) 2014 Daniel Corn <info@cundd.net>, cundd\Core\(c) 2014 Daniel Corn <info@cundd.net>, cundd;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 \Tx_CunddComposer_Autoloader::register();
