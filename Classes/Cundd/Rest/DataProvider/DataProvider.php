@@ -379,7 +379,11 @@ class DataProvider implements DataProviderInterface {
 	 * Persist all changes to the database
 	 */
 	public function persistAllChanges() {
-		$persistenceManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
+		$persistenceManagerClass = 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			$persistenceManagerClass = 'Tx_Extbase_Persistence_Manager';
+		}
+		$persistenceManager = $this->objectManager->get($persistenceManagerClass);
 		$persistenceManager->persistAll();
 	}
 

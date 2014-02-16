@@ -497,6 +497,13 @@ class DocumentRepository extends Repository {
 	 * @api
 	 */
 	public function createQuery() {
+		$query = parent::createQuery();
+		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
+		$query->getQuerySettings()->setRespectStoragePage(FALSE);
+		$query->getQuerySettings()->setReturnRawQueryResult($this->useRawQueryResults);
+		return $query;
+
+
 		$query = $this->persistenceManager->createQueryForType($this->objectType);
 		if ($this->defaultOrderings !== array()) {
 			$query->setOrderings($this->defaultOrderings);
@@ -707,7 +714,6 @@ class DocumentRepository extends Repository {
 			}
 		}
 		if (!is_object($oldDocument)) {
-			Iresults::pd($oldDocument);
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();
@@ -741,6 +747,9 @@ class DocumentRepository extends Repository {
 	 * @return string Class name of the repository.
 	 */
 	protected function getRepositoryClassName() {
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			return 'Tx_Rest_Domain_Repository_DocumentRepository';
+		}
 		return __CLASS__;
 	}
 

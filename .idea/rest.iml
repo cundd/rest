@@ -6,34 +6,32 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-<<<<<<< HEAD
-    <orderEntry type="library" scope="PROVIDED" name="sass-stdlib" level="application" />
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../../../Resources/typo3_src-6.1.7/typo3/sysext" />
-          <root url="file://$MODULE_DIR$/../cundd_composer" />
+          <root url="file://$MODULE_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../phpunit" />
-          <root url="file://$MODULE_DIR$/../../../../../Resources/typo3_src-6.1.7/typo3/sysext" />
-          <root url="file://$MODULE_DIR$/../cundd_composer" />
+          <root url="file://$MODULE_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library name="PHARS">
         <CLASSES>
-          <root url="phar://$MODULE_DIR$/../cundd_composer/Resources/Private/PHP/composer.phar" />
+          <root url="phar://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/Resources/Private/PHP/composer.phar" />
         </CLASSES>
         <SOURCES>
-          <root url="phar://$MODULE_DIR$/../cundd_composer/Resources/Private/PHP/composer.phar" />
+          <root url="phar://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/Resources/Private/PHP/composer.phar" />
         </SOURCES>
       </library>
     </orderEntry>
-=======
->>>>>>> feature/document-store
   </component>
 </module>
 

@@ -10,6 +10,10 @@ class Bootstrap {
 	 * @return	void
 	 */
 	public function init() {
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			require_once __DIR__ . '/../../../legacy.php';
+		}
+
 		EidUtility::connectDB();
 		$this->initTSFE();
 	}
