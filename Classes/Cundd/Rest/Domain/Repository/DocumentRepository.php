@@ -591,7 +591,7 @@ class DocumentRepository extends Repository {
 
 			if ($isMatchingResult) {
 				$filteredResultCollection[] = $currentDocument;
-				if (++$filteredResultCollectionCount > ($limit - 1)) {
+				if ($limit !== -1 && ++$filteredResultCollectionCount > ($limit - 1)) {
 					break;
 				}
 			}
