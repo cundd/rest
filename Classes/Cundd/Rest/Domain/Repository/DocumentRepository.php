@@ -324,6 +324,7 @@ class DocumentRepository extends Repository {
 		if ($result instanceof QueryResultInterface) {
 			return $result->getFirst();
 		}
+		return NULL;
 	}
 
 	/**

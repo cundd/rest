@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="Added API key field to TYPO3's built in frontend user&#10;Added support to check for a valid FE user in the Basic Authentication Provider">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_emconf.php" afterPath="$PROJECT_DIR$/ext_emconf.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/php.xml" afterPath="$PROJECT_DIR$/.idea/php.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" />
     </list>
     <ignored path="rest.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -17,8 +14,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/rest$rest.coverage" NAME="rest Coverage Results" MODIFIED="1369339694081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/rest$AppTest.coverage" NAME="Unit Coverage Results" MODIFIED="1369339680234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/rest$rest.coverage" NAME="rest Coverage Results" MODIFIED="1369339694081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -35,7 +32,7 @@
       <file leaf-file-name="ConfigurationBasedAccessController.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="23" selection-start="1723" selection-end="1723" vertical-scroll-proportion="0.0" vertical-offset="952" max-vertical-offset="2448">
+            <state line="56" column="23" selection-start="1723" selection-end="1723" vertical-scroll-proportion="0.0" vertical-offset="896" max-vertical-offset="2240">
               <folding />
             </state>
           </provider>
@@ -44,7 +41,7 @@
       <file leaf-file-name="BasicAuthenticationProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/BasicAuthenticationProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="21" selection-start="512" selection-end="512" vertical-scroll-proportion="0.0" vertical-offset="340" max-vertical-offset="714">
+            <state line="20" column="21" selection-start="512" selection-end="512" vertical-scroll-proportion="0.0" vertical-offset="320" max-vertical-offset="608">
               <folding />
             </state>
           </provider>
@@ -53,7 +50,7 @@
       <file leaf-file-name="UserProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="54" selection-start="1320" selection-end="1320" vertical-scroll-proportion="0.0" vertical-offset="629" max-vertical-offset="765">
+            <state line="37" column="54" selection-start="1320" selection-end="1320" vertical-scroll-proportion="0.0" vertical-offset="592" max-vertical-offset="656">
               <folding />
             </state>
           </provider>
@@ -62,7 +59,7 @@
       <file leaf-file-name="FeUserProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider/FeUserProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="0" selection-start="2590" selection-end="2590" vertical-scroll-proportion="0.0" vertical-offset="1360" max-vertical-offset="1683">
+            <state line="80" column="0" selection-start="2590" selection-end="2590" vertical-scroll-proportion="0.0" vertical-offset="1280" max-vertical-offset="1520">
               <folding />
             </state>
           </provider>
@@ -71,7 +68,7 @@
       <file leaf-file-name="ext_emconf.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ext_emconf.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="29" selection-start="902" selection-end="902" vertical-scroll-proportion="-15.692307" vertical-offset="0" max-vertical-offset="714">
+            <state line="32" column="29" selection-start="902" selection-end="902" vertical-scroll-proportion="0.0" vertical-offset="512" max-vertical-offset="736">
               <folding />
             </state>
           </provider>
@@ -80,7 +77,7 @@
       <file leaf-file-name="Document.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="7" selection-start="1398" selection-end="1398" vertical-scroll-proportion="-24.846153" vertical-offset="0" max-vertical-offset="5984">
+            <state line="41" column="7" selection-start="1503" selection-end="1503" vertical-scroll-proportion="0.0" vertical-offset="656" max-vertical-offset="5600">
               <folding />
             </state>
           </provider>
@@ -89,16 +86,7 @@
       <file leaf-file-name="DocumentRepository.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="16" selection-start="1702" selection-end="1702" vertical-scroll-proportion="0.6484536" vertical-offset="0" max-vertical-offset="12682">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="0" selection-start="1905" selection-end="1905" vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="3179">
+            <state line="326" column="20" selection-start="9402" selection-end="9402" vertical-scroll-proportion="0.6185065" vertical-offset="4723" max-vertical-offset="12696">
               <folding />
             </state>
           </provider>
@@ -107,7 +95,7 @@
       <file leaf-file-name="DataProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="14" selection-start="637" selection-end="637" vertical-scroll-proportion="-15.692307" vertical-offset="0" max-vertical-offset="8177">
+            <state line="27" column="14" selection-start="637" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="7680">
               <folding />
             </state>
           </provider>
@@ -116,7 +104,7 @@
       <file leaf-file-name="DocumentDataProvider.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="16" selection-start="485" selection-end="485" vertical-scroll-proportion="-3.2692308" vertical-offset="0" max-vertical-offset="2958">
+            <state line="13" column="0" selection-start="491" selection-end="491" vertical-scroll-proportion="0.0" vertical-offset="208" max-vertical-offset="2640">
               <folding />
             </state>
           </provider>
@@ -156,6 +144,7 @@
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider/FeUserProvider.php" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/ext_emconf.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" />
       </list>
     </option>
   </component>
@@ -197,7 +186,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -289,6 +277,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Private" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -570,34 +562,19 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="options.lastSelected" value="fileTemplates" />
+    <property name="options.lastSelected" value="web.server" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Tests/Unit/Core" />
     <property name="FullScreen" value="false" />
     <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
-  </component>
-  <component name="PublishConfig">
-    <servers>
-      <server id="2475b7d7-b3db-4edb-bf07-d8cf8ba0e192">
-        <serverdata />
-      </server>
-      <server id="63ecf7ca-d168-47cb-a83d-33dd92c27697">
-        <serverdata />
-      </server>
-      <server id="cd017821-1bb6-4a15-a9a0-1eb1bd25aea5">
-        <serverdata />
-      </server>
-      <server id="d519e93d-30a4-40cd-89b2-cfb079b6ac96">
-        <serverdata />
-      </server>
-    </servers>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -640,10 +617,6 @@
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
-      <method />
-    </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="">
-      <browser start="false" url="" with-js-debugger="false" />
       <method />
     </configuration>
     <configuration default="true" type="PhpUnitRemoteRunConfigurationType" factoryName="PHPUnit on Server">
@@ -758,32 +731,37 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1859" height="1178" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="22" width="1859" height="1178" extended-state="0" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6009434" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797733" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2421401" sideWeight="0.6716981" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23667622" sideWeight="0.17830189" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32608697" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23667622" sideWeight="0.17830189" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6009434" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2449092" sideWeight="0.6716981" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39889705" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32608697" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32797733" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32830188" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990566" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -817,6 +795,69 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="23" selection-start="1723" selection-end="1723" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2240">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/BasicAuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="21" selection-start="512" selection-end="512" vertical-scroll-proportion="0.0" vertical-offset="320" max-vertical-offset="608">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="54" selection-start="1320" selection-end="1320" vertical-scroll-proportion="0.0" vertical-offset="592" max-vertical-offset="656">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider/FeUserProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="0" selection-start="2590" selection-end="2590" vertical-scroll-proportion="0.0" vertical-offset="1280" max-vertical-offset="1520">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ext_emconf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="29" selection-start="902" selection-end="902" vertical-scroll-proportion="0.0" vertical-offset="512" max-vertical-offset="736">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="7" selection-start="1503" selection-end="1503" vertical-scroll-proportion="0.0" vertical-offset="656" max-vertical-offset="5600">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="16" selection-start="1823" selection-end="1823" vertical-scroll-proportion="0.0" vertical-offset="736" max-vertical-offset="12112">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="14" selection-start="637" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="7680">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="491" selection-end="491" vertical-scroll-proportion="0.0" vertical-offset="208" max-vertical-offset="2640">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ext_tables.sql">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="2" selection-start="97" selection-end="97" vertical-scroll-proportion="-3.0" vertical-offset="0" max-vertical-offset="0" />
@@ -887,42 +928,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="1905" selection-end="1905" vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="3179">
-          <folding />
-        </state>
+        <state line="76" column="0" selection-start="1905" selection-end="1905" vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="3179" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="14" selection-start="637" selection-end="637" vertical-scroll-proportion="-15.692307" vertical-offset="0" max-vertical-offset="8177">
+        <state line="27" column="14" selection-start="637" selection-end="637" vertical-scroll-proportion="0.0" vertical-offset="432" max-vertical-offset="7680">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="16" selection-start="485" selection-end="485" vertical-scroll-proportion="-3.2692308" vertical-offset="0" max-vertical-offset="2958">
+        <state line="13" column="0" selection-start="491" selection-end="491" vertical-scroll-proportion="0.0" vertical-offset="208" max-vertical-offset="2640">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ext_emconf.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="29" selection-start="902" selection-end="902" vertical-scroll-proportion="-15.692307" vertical-offset="0" max-vertical-offset="714">
+        <state line="32" column="29" selection-start="902" selection-end="902" vertical-scroll-proportion="0.0" vertical-offset="512" max-vertical-offset="736">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="7" selection-start="1398" selection-end="1398" vertical-scroll-proportion="-24.846153" vertical-offset="0" max-vertical-offset="5984">
+        <state line="41" column="7" selection-start="1503" selection-end="1503" vertical-scroll-proportion="0.0" vertical-offset="656" max-vertical-offset="5600">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="16" selection-start="1702" selection-end="1702" vertical-scroll-proportion="0.6484536" vertical-offset="0" max-vertical-offset="12682">
+        <state line="326" column="20" selection-start="9402" selection-end="9402" vertical-scroll-proportion="0.6185065" vertical-offset="4723" max-vertical-offset="12696">
           <folding />
         </state>
       </provider>
