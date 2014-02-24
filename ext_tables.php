@@ -16,8 +16,9 @@ $tempColumns = array (
 
 
 if (version_compare(TYPO3_version, '6.0.0') < 0) {
-	require_once __DIR__ . '/ext/rest/legacy.php';
+	require_once __DIR__ . '/ext/rest/legacy_core.php';
 }
+
 
 
 \TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('fe_users');

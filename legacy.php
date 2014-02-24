@@ -1,10 +1,9 @@
 <?php
-class_alias('tslib_eidtools', 			'TYPO3\\CMS\\Frontend\\Utility\\EidUtility');
-class_alias('t3lib_extMgm', 			'TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility');
-class_alias('t3lib_div', 				'TYPO3\\CMS\\Core\\Utility\\GeneralUtility');
-class_alias('tslib_fe', 				'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController');
+require_once __DIR__ . '/legacy_core.php';
+
 class_alias('t3lib_tsparser_ext', 		'TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
-class_alias('t3lib_Singleton', 			'TYPO3\\CMS\\Core\\SingletonInterface');
+class_alias('tslib_eidtools', 			'TYPO3\\CMS\\Frontend\\Utility\\EidUtility');
+class_alias('tslib_fe', 				'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController');
 
 class_alias('Tx_Extbase_Object_ObjectManagerInterface',						'TYPO3\\CMS\\Extbase\\Object\\ObjectManagerInterface');
 class_alias('Tx_Extbase_Object_ObjectManager',								'TYPO3\\CMS\\Extbase\\Object\\ObjectManager');

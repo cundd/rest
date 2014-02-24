@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b977a075-b9de-4f5c-a8c6-1709a2b01b7f" name="Default" comment="Enhanced the documentation&#10;Removed debugging code">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Exception.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/legacy_core.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" afterPath="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_autoload.php" afterPath="$PROJECT_DIR$/ext_autoload.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ext_tables.php" afterPath="$PROJECT_DIR$/ext_tables.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/legacy.php" afterPath="$PROJECT_DIR$/legacy.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/rest.iml" afterPath="$PROJECT_DIR$/.idea/rest.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rest.iws" />
@@ -23,8 +21,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/rest$rest.coverage" NAME="rest Coverage Results" MODIFIED="1369339694081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/rest$AppTest.coverage" NAME="Unit Coverage Results" MODIFIED="1369339680234" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/rest$rest.coverage" NAME="rest Coverage Results" MODIFIED="1369339694081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -38,93 +36,91 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ext_tables.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ext_tables.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="257" selection-end="357" vertical-scroll-proportion="-10.625" vertical-offset="0" max-vertical-offset="855">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Logger.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Classes/Log/Logger.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="170" column="4" selection-start="5097" selection-end="5273" vertical-scroll-proportion="-4.4166665" vertical-offset="2444" max-vertical-offset="4815">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="legacy.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/legacy.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="0" selection-start="3292" selection-end="3292" vertical-scroll-proportion="-38.458332" vertical-offset="322" max-vertical-offset="1335">
+            <state line="3" column="97" selection-start="143" selection-end="143" vertical-scroll-proportion="-1.875" vertical-offset="0" max-vertical-offset="1320">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Manager.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext/extbase/Classes/Persistence/Manager.php">
+      <file leaf-file-name="ObjectManager.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="6" selection-start="1169" selection-end="1169" vertical-scroll-proportion="71.541664" vertical-offset="1882" max-vertical-offset="2895">
+            <state line="47" column="0" selection-start="1029" selection-end="1029" vertical-scroll-proportion="-23.125" vertical-offset="0" max-vertical-offset="2445">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PersistenceManager.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/Generic/PersistenceManager.php">
+      <file leaf-file-name="Exception.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Exception.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="6" selection-start="1340" selection-end="1340" vertical-scroll-proportion="-21.25" vertical-offset="0" max-vertical-offset="5490">
+            <state line="15" column="36" selection-start="225" selection-end="225" vertical-scroll-proportion="-6.25" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LegacyClassesForIde.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Migrations/Code/LegacyClassesForIde.php">
+      <file leaf-file-name="ObjectManager.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Object/ObjectManager.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2286" column="100" selection-start="71482" selection-end="71482" vertical-scroll-proportion="-4.852941" vertical-offset="33960" max-vertical-offset="99870">
+            <state line="37" column="14" selection-start="1464" selection-end="1464" vertical-scroll-proportion="-14.041667" vertical-offset="218" max-vertical-offset="2190">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PersistenceManagerInterface.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/PersistenceManagerInterface.php">
+      <file leaf-file-name="App.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="10" selection-start="1293" selection-end="1293" vertical-scroll-proportion="36.875" vertical-offset="1365" max-vertical-offset="2910">
+            <state line="645" column="32" selection-start="18272" selection-end="18272" vertical-scroll-proportion="-19.44" vertical-offset="8598" max-vertical-offset="9735">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Bootstrap.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
+      <file leaf-file-name="InvalidConfigurationException.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/Exception/InvalidConfigurationException.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="8" selection-start="263" selection-end="313" vertical-scroll-proportion="-7.5" vertical-offset="0" max-vertical-offset="1470">
-              <folding>
-                <element signature="e#28#88#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataProvider.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="383" column="72" selection-start="12003" selection-end="12003" vertical-scroll-proportion="0.53504443" vertical-offset="5158" max-vertical-offset="7275">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="135">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Repository.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/Repository.php">
+      <file leaf-file-name="InvalidConfigurationException.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/Exception/InvalidConfigurationException.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="362" column="23" selection-start="12803" selection-end="12803" vertical-scroll-proportion="-35.75" vertical-offset="4572" max-vertical-offset="5595">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="657">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AccessControllerInterface.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="44" column="20" selection-start="894" selection-end="894" vertical-scroll-proportion="-23.75" vertical-offset="0" max-vertical-offset="990">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConfigurationBasedAccessController.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="54" column="35" selection-start="1688" selection-end="1688" vertical-scroll-proportion="-23.125" vertical-offset="255" max-vertical-offset="2325">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractAccessController.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="55" column="47" selection-start="1075" selection-end="1132" vertical-scroll-proportion="-17.375" vertical-offset="318" max-vertical-offset="975">
               <folding />
             </state>
           </provider>
@@ -179,27 +175,29 @@
       <list>
         <option value="$PROJECT_DIR$/vendor/vlucas/bulletphp/src/Bullet/Response.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/BasicAuthenticationProvider.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Request.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Server.php" />
-        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
         <option value="$USER_HOME$/typo3/sysext/core/Classes/Core/SystemEnvironmentBuilder.php" />
         <option value="$PROJECT_DIR$/server_typo3.php" />
         <option value="$PROJECT_DIR$/server.php" />
         <option value="$PROJECT_DIR$/ext_localconf.php" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php" />
-        <option value="$PROJECT_DIR$/ext_tables.php" />
-        <option value="$PROJECT_DIR$/ext_autoload.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Migrations/Code/LegacyClassesForIde.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/App.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php" />
-        <option value="$PROJECT_DIR$/legacy.php" />
         <option value="$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php" />
+        <option value="$PROJECT_DIR$/ext_tables.php" />
+        <option value="$PROJECT_DIR$/ext_autoload.php" />
+        <option value="$PROJECT_DIR$/legacy_core.php" />
+        <option value="$PROJECT_DIR$/legacy.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/Exception.php" />
+        <option value="$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php" />
       </list>
     </option>
   </component>
@@ -215,7 +213,7 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
+    <option name="y" value="23" />
     <option name="width" value="1859" />
     <option name="height" value="1178" />
   </component>
@@ -245,6 +243,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -429,7 +428,43 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.jetbrains.php.config.PhpExternalLibrariesNodePatcher$PatchedExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PHP" />
+              <option name="myItemType" value="com.jetbrains.php.phar.PharLibraryContentsTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
               <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Configuration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TCA" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -567,9 +602,150 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cundd" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Authentication" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cundd" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Authentication" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="UserProvider" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cundd" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Authentication" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Exception" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cundd" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Access" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cundd" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Rest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Access" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Exception" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -772,13 +948,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1859" height="1178" extended-state="6" />
+    <frame x="0" y="23" width="1859" height="1178" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924527" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996324" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3272059" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3272059" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39981097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -786,17 +962,17 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16160458" sideWeight="0.6009434" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2173913" sideWeight="0.67296785" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21959274" sideWeight="0.67296785" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3254717" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32703215" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986766" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990566" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32986766" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -843,95 +1019,9 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="389" column="12" selection-start="11166" selection-end="11166" vertical-scroll-proportion="0.0" vertical-offset="5835" max-vertical-offset="11325">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Command/RestCommandController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="8" selection-start="1566" selection-end="1566" vertical-scroll-proportion="0.0" vertical-offset="900" max-vertical-offset="1050">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="5" selection-start="3141" selection-end="4477" vertical-scroll-proportion="0.0" vertical-offset="2175" max-vertical-offset="5325">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="353" column="20" selection-start="11091" selection-end="11091" vertical-scroll-proportion="0.0" vertical-offset="5295" max-vertical-offset="7260">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="328" column="104" selection-start="9801" selection-end="9801" vertical-scroll-proportion="0.0" vertical-offset="4181" max-vertical-offset="9825">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1050">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProviderInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="20" selection-start="1192" selection-end="1192" vertical-scroll-proportion="0.0" vertical-offset="585" max-vertical-offset="1695">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="1057" max-vertical-offset="2325">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Request.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1635">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="16" selection-start="1335" selection-end="1338" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="2550">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="389" column="12" selection-start="11166" selection-end="11166" vertical-scroll-proportion="0.0" vertical-offset="5835" max-vertical-offset="11325">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Command/RestCommandController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="8" selection-start="1566" selection-end="1566" vertical-scroll-proportion="0.0" vertical-offset="900" max-vertical-offset="1050">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="5" selection-start="3141" selection-end="4477" vertical-scroll-proportion="0.0" vertical-offset="2175" max-vertical-offset="5325">
-          <folding />
-        </state>
+        <state line="145" column="5" selection-start="3141" selection-end="4477" vertical-scroll-proportion="0.0" vertical-offset="2175" max-vertical-offset="5325" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
@@ -951,11 +1041,6 @@
         <state line="2" column="27" selection-start="37" selection-end="60" vertical-scroll-proportion="-1.25" vertical-offset="0" max-vertical-offset="930" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="1" selection-start="1173" selection-end="1173" vertical-scroll-proportion="-15.625" vertical-offset="0" max-vertical-offset="1110" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state line="225" column="0" selection-start="8139" selection-end="8139" vertical-scroll-proportion="0.0" vertical-offset="1413" max-vertical-offset="3465" />
@@ -970,37 +1055,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DocumentDataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="16" selection-start="1335" selection-end="1338" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="2550">
-          <folding />
-        </state>
+        <state line="44" column="16" selection-start="1335" selection-end="1338" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="2550" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Command/RestCommandController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="8" selection-start="1566" selection-end="1566" vertical-scroll-proportion="0.0" vertical-offset="900" max-vertical-offset="1050">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1007">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="1057" max-vertical-offset="2325">
-          <folding />
-        </state>
+        <state line="60" column="8" selection-start="1566" selection-end="1566" vertical-scroll-proportion="0.0" vertical-offset="900" max-vertical-offset="1050" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Request.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="18" selection-start="316" selection-end="316" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1650">
-          <folding />
-        </state>
+        <state line="19" column="18" selection-start="316" selection-end="316" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1650" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Classes/Utility/ExtensionManagementUtility.php">
@@ -1012,9 +1077,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ext_localconf.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="129" selection-start="710" selection-end="710" vertical-scroll-proportion="-10.625" vertical-offset="0" max-vertical-offset="420">
-          <folding />
-        </state>
+        <state line="17" column="129" selection-start="710" selection-end="710" vertical-scroll-proportion="-10.625" vertical-offset="0" max-vertical-offset="420" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Classes/Utility/GeneralUtility.php">
@@ -1024,74 +1087,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ext_autoload.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="0" selection-start="953" selection-end="1044" vertical-scroll-proportion="0.20642202" vertical-offset="0" max-vertical-offset="654">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/composer.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="9" selection-start="288" selection-end="288" vertical-scroll-proportion="-7.5" vertical-offset="0" max-vertical-offset="420">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_classmap.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="18" selection-start="1479" selection-end="1479" vertical-scroll-proportion="-9.75" vertical-offset="51" max-vertical-offset="2145">
-          <folding />
-        </state>
+        <state line="19" column="18" selection-start="1479" selection-end="1479" vertical-scroll-proportion="-9.75" vertical-offset="51" max-vertical-offset="2145" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_files.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="701">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_psr4.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="678">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_namespaces.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="701">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_real.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="325" selection-end="325" vertical-scroll-proportion="-2.25" vertical-offset="156" max-vertical-offset="810">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="701" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/ClassLoader.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="231" column="39" selection-start="7305" selection-end="7305" vertical-scroll-proportion="-14.125" vertical-offset="3006" max-vertical-offset="5280">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="18" selection-start="243" selection-end="243" vertical-scroll-proportion="-6.25" vertical-offset="0" max-vertical-offset="600">
-          <folding />
-        </state>
+        <state line="231" column="39" selection-start="7305" selection-end="7305" vertical-scroll-proportion="-14.125" vertical-offset="3006" max-vertical-offset="5280" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext/extbase/Classes/Configuration/ConfigurationManager.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="117" selection-start="1351" selection-end="1405" vertical-scroll-proportion="-8.125" vertical-offset="0" max-vertical-offset="1785">
-          <folding />
-        </state>
+        <state line="34" column="117" selection-start="1351" selection-end="1405" vertical-scroll-proportion="-8.125" vertical-offset="0" max-vertical-offset="1785" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Classes/Log/LogLevel.php">
@@ -1103,93 +1116,234 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/Repository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="362" column="23" selection-start="12803" selection-end="12803" vertical-scroll-proportion="-35.75" vertical-offset="4572" max-vertical-offset="5595">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ext_tables.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="257" selection-end="357" vertical-scroll-proportion="-10.625" vertical-offset="0" max-vertical-offset="855">
+        <state line="362" column="23" selection-start="12803" selection-end="12803" vertical-scroll-proportion="0.0" vertical-offset="5430" max-vertical-offset="5595">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Model/Document.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="12" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.5501931" vertical-offset="0" max-vertical-offset="5280">
-          <folding />
-        </state>
+        <state line="41" column="12" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.5501931" vertical-offset="0" max-vertical-offset="5280" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Domain/Repository/DocumentRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="749" column="8" selection-start="22784" selection-end="22784" vertical-scroll-proportion="5.7866797" vertical-offset="5105" max-vertical-offset="11325">
-          <folding />
-        </state>
+        <state line="749" column="8" selection-start="22784" selection-end="22784" vertical-scroll-proportion="5.7866797" vertical-offset="5105" max-vertical-offset="11325" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Classes/Log/Logger.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="170" column="4" selection-start="5097" selection-end="5273" vertical-scroll-proportion="-4.4166665" vertical-offset="2444" max-vertical-offset="4815">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="328" column="86" selection-start="9783" selection-end="9783" vertical-scroll-proportion="-6.76" vertical-offset="4477" max-vertical-offset="9735">
+        <state line="170" column="4" selection-start="5097" selection-end="5273" vertical-scroll-proportion="0.0" vertical-offset="2444" max-vertical-offset="4815">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/Generic/PersistenceManager.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="6" selection-start="1340" selection-end="1340" vertical-scroll-proportion="-21.25" vertical-offset="0" max-vertical-offset="5490">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Migrations/Code/LegacyClassesForIde.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2286" column="100" selection-start="71482" selection-end="71482" vertical-scroll-proportion="-4.852941" vertical-offset="33960" max-vertical-offset="99870">
+        <state line="34" column="6" selection-start="1340" selection-end="1340" vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="5490">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext/extbase/Classes/Persistence/Manager.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="6" selection-start="1169" selection-end="1169" vertical-scroll-proportion="71.541664" vertical-offset="1882" max-vertical-offset="2895">
+        <state line="35" column="6" selection-start="1169" selection-end="1169" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="3255">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Persistence/PersistenceManagerInterface.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="10" selection-start="1293" selection-end="1293" vertical-scroll-proportion="36.875" vertical-offset="1365" max-vertical-offset="2910">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/legacy.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="0" selection-start="3292" selection-end="3292" vertical-scroll-proportion="-38.458332" vertical-offset="322" max-vertical-offset="1335">
+        <state line="32" column="10" selection-start="1293" selection-end="1293" vertical-scroll-proportion="0.0" vertical-offset="480" max-vertical-offset="2910">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Bootstrap.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="8" selection-start="263" selection-end="313" vertical-scroll-proportion="-7.5" vertical-offset="0" max-vertical-offset="1470">
-          <folding>
-            <element signature="e#28#88#0" expanded="true" />
-          </folding>
+        <state line="12" column="8" selection-start="263" selection-end="313" vertical-scroll-proportion="-0.0" vertical-offset="180" max-vertical-offset="1470">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/DataProvider/DataProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="383" column="72" selection-start="12003" selection-end="12003" vertical-scroll-proportion="0.53504443" vertical-offset="5158" max-vertical-offset="7275">
+        <state line="362" column="64" selection-start="11355" selection-end="11355" vertical-scroll-proportion="-0.044422507" vertical-offset="5430" max-vertical-offset="7275">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="1" selection-start="1173" selection-end="1173" vertical-scroll-proportion="-1.875" vertical-offset="0" max-vertical-offset="780">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/composer.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="9" selection-start="288" selection-end="288" vertical-scroll-proportion="-7.5" vertical-offset="0" max-vertical-offset="420">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/autoload.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1037">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_psr4.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="678">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_real.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="0" selection-start="325" selection-end="325" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="810">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor/composer/autoload_namespaces.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="157" selection-end="157" vertical-scroll-proportion="-3.75" vertical-offset="0" max-vertical-offset="345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="5" selection-start="387" selection-end="387" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="600">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1037">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/AbstractAuthenticationProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1037">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/UserProvider/FeUserProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="5.0" vertical-offset="120" max-vertical-offset="1155">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Object/ObjectManagerInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="12" selection-start="1329" selection-end="1329" vertical-scroll-proportion="-14.375" vertical-offset="135" max-vertical-offset="1215">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core/Migrations/Code/LegacyClassesForIde.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2121" column="50" selection-start="65372" selection-end="65412" vertical-scroll-proportion="-6.58" vertical-offset="31486" max-vertical-offset="99870">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ext_tables.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="0" selection-start="364" selection-end="364" vertical-scroll-proportion="-13.125" vertical-offset="0" max-vertical-offset="870">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ext_autoload.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="36" selection-start="1037" selection-end="1037" vertical-scroll-proportion="-6.25" vertical-offset="0" max-vertical-offset="330">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/legacy_core.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="85" selection-start="169" selection-end="169" vertical-scroll-proportion="-1.25" vertical-offset="0" max-vertical-offset="165">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/legacy.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="97" selection-start="143" selection-end="143" vertical-scroll-proportion="-1.875" vertical-offset="0" max-vertical-offset="1320">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase/Classes/Object/ObjectManager.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="14" selection-start="1464" selection-end="1464" vertical-scroll-proportion="-14.041667" vertical-offset="218" max-vertical-offset="2190">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AccessControllerInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="20" selection-start="894" selection-end="894" vertical-scroll-proportion="-23.75" vertical-offset="0" max-vertical-offset="990">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/ConfigurationBasedAccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="35" selection-start="1688" selection-end="1688" vertical-scroll-proportion="-23.125" vertical-offset="255" max-vertical-offset="2325">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/AbstractAccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="47" selection-start="1075" selection-end="1132" vertical-scroll-proportion="-17.375" vertical-offset="318" max-vertical-offset="975">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/ObjectManager.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="0" selection-start="1029" selection-end="1029" vertical-scroll-proportion="-23.125" vertical-offset="0" max-vertical-offset="2445">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Exception.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="36" selection-start="225" selection-end="225" vertical-scroll-proportion="-6.25" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/App.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="645" column="32" selection-start="18272" selection-end="18272" vertical-scroll-proportion="-19.44" vertical-offset="8598" max-vertical-offset="9735">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Authentication/Exception/InvalidConfigurationException.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="681">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Classes/Cundd/Rest/Access/Exception/InvalidConfigurationException.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="681">
           <folding />
         </state>
       </provider>
