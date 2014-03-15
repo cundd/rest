@@ -34,7 +34,6 @@
 
 namespace Cundd\Rest;
 
-use Iresults\Core\Iresults;
 use React\EventLoop\Factory;
 use React\Socket\Server as SocketServer;
 use React\Http\Server as HttpServer;

@@ -145,6 +145,18 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	}
 
 	/**
+	 * Returns the correct class name of the Persistence Manager for the current TYPO3 version
+	 *
+	 * @return string
+	 */
+	static public function getPersistenceManagerClassName() {
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			return 'Tx_Extbase_Persistence_Manager';
+		}
+		return 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
+	}
+
+	/**
 	 * Returns the Cache instance
 	 *
 	 * @return \Cundd\Rest\Cache\Cache

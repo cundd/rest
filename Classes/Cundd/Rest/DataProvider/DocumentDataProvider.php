@@ -4,7 +4,6 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Exception\InvalidIdException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
-use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;

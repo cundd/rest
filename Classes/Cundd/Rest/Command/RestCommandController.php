@@ -33,8 +33,6 @@
 namespace Cundd\Rest\Command;
 
 
-use Cundd\Rest\Domain\Repository\DocumentRepository;
-use Iresults\Core\Iresults;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 \Tx_CunddComposer_Autoloader::register();
@@ -52,7 +50,6 @@ class RestCommandController extends CommandController {
 	 * List all Documents
 	 */
 	public function showDocumentsCommand() {
-		Iresults::forceDebug();
 
 
 		$this->outputLine('hallo');

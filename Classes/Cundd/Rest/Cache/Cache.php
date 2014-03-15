@@ -34,9 +34,7 @@ namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
-use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Log\LogLevel;
 
 /**
  * The class caches responses of requests
