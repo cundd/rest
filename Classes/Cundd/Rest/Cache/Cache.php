@@ -98,6 +98,10 @@ class Cache {
 		$response = new Response($responseArray['content'], $responseArray['status']);
 		$response->contentType($responseArray['content-type']);
 		$response->encoding($responseArray['encoding']);
+		$response->header('Last-Modified', $responseArray['last-modified']);
+		$response->header('Expires', $this->getHttpDate(time() + $cacheLifeTime));
+
+		$response->header('cundd-rest-cached', 'true');
 		return $response;
 	}
 
@@ -139,10 +143,10 @@ class Cache {
 			'content' => (string)$response,
 			'status' => $response->status(),
 			'encoding' => $response->encoding(),
-			'content-type' => $response->contentType()
+			'content-type' => $response->contentType(),
+			'last-modified' => $this->getHttpDate(time()),
 		), $this->_getTags(), $cacheLifeTime);
 	}
-
 
 	/**
 	 * Returns the cache key for the given request
@@ -153,6 +157,17 @@ class Cache {
 	public function getCacheKeyForRequest(\Cundd\Rest\Request $request) {
 		$this->currentRequest = $request;
 		return $this->_getCacheKey();
+	}
+
+
+	/**
+	 * Returns a date in the format for a HTTP header
+	 *
+	 * @param $date
+	 * @return string
+	 */
+	protected function getHttpDate($date) {
+		return gmdate('D, d M Y H:i:s \G\M\T', $date);
 	}
 
 	/**
