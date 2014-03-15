@@ -1,6 +1,6 @@
 #################################
 ### PROJECT SETTINGS
-vendor
+
 
 #################################
 ### GENERAL SETTINGS
@@ -45,6 +45,9 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 
+### PhpStorm
+.idea/workspace.xml
+
 ### Eclipse
 *.pydevproject
 .project
@@ -72,3 +75,23 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+# Composer
+vendor/
+
+# Node
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+node_modules

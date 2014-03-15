@@ -22,16 +22,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="PHARS">
-        <CLASSES>
-          <root url="phar://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/Resources/Private/PHP/composer.phar" />
-        </CLASSES>
-        <SOURCES>
-          <root url="phar://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/Resources/Private/PHP/composer.phar" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>
 
