@@ -9,16 +9,16 @@
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext" />
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core" />
-          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer" />
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../web_governmentpackage-4.7.7/typo3_src-4.7.7/typo3/sysext" />
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/core" />
-          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer" />
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.1.7/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
         </SOURCES>
       </library>
     </orderEntry>

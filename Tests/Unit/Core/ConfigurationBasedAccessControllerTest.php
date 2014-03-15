@@ -15,25 +15,25 @@ class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Access\\ConfigurationBasedAccessController');
 
 		$settings = array(
-			"paths" =>
+			'paths' =>
 			array(
-				"1." =>
+				'1.' =>
 				array(
-					"path" => "all",
-					"read" => "allow",
-					"write" => "deny",
+					'path' => 'all',
+					'read' => 'allow',
+					'write' => 'deny',
 				),
-				"2." =>
+				'2.' =>
 				array(
-					"path" => "my_ext-my_model",
-					"read" => "allow",
-					"write" => "allow"
+					'path' => 'my_ext-my_model',
+					'read' => 'allow',
+					'write' => 'allow'
 				),
-				"3." =>
+				'3.' =>
 				array(
-					"path" => "my_secondext-*",
-					"read" => "allow",
-					"write" => "deny",
+					'path' => 'my_secondext-*',
+					'read' => 'deny',
+					'write' => 'allow',
 				)
 			)
 		);
@@ -47,13 +47,14 @@ class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function getDefaultConfigurationForPathTest() {
-		$path = 'my_ext-my_default_model/1/';
+		$uri = 'my_ext-my_default_model/1/';
+		$request = new Request(NULL, $uri);
 		$testConfiguration = array(
-			"path" => "all",
-			"read" => "allow",
-			"write" => "deny",
+			'path' => 'all',
+			'read' => 'allow',
+			'write' => 'deny',
 		);
-		$configuration = $this->fixture->getConfigurationForPath($path);
+		$configuration = $this->fixture->getConfigurationForPath($request->path());
 		$this->assertEquals($testConfiguration, $configuration);
 	}
 
@@ -61,13 +62,14 @@ class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function getConfigurationForPathWithoutWildcardTest() {
-		$path = 'my_ext-my_model/3/';
+		$uri = 'my_ext-my_model/3/';
+		$request = new Request(NULL, $uri);
 		$testConfiguration = array(
-			"path" => "my_ext-my_model",
-			"read" => "allow",
-			"write" => "allow"
+			'path' => 'my_ext-my_model',
+			'read' => 'allow',
+			'write' => 'allow'
 		);
-		$configuration = $this->fixture->getConfigurationForPath($path);
+		$configuration = $this->fixture->getConfigurationForPath($request->path());
 		$this->assertEquals($testConfiguration, $configuration);
 	}
 
@@ -75,13 +77,14 @@ class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function getConfigurationForPathWithWildcardTest() {
-		$path = 'my_secondext-my_model/34/';
+		$uri = 'my_secondext-my_model/34/';
+		$request = new Request(NULL, $uri);
 		$testConfiguration = array(
-			"path" => "my_secondext-*",
-			"read" => "allow",
-			"write" => "deny"
+			'path' => 'my_secondext-*',
+			'read' => 'deny',
+			'write' => 'allow'
 		);
-		$configuration = $this->fixture->getConfigurationForPath($path);
+		$configuration = $this->fixture->getConfigurationForPath($request->path());
 		$this->assertEquals($testConfiguration, $configuration);
 	}
 

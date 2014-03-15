@@ -29,9 +29,8 @@
  * Created 10.12.13 09:21
  */
 
-
 namespace Cundd\Rest\Test\Core;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use Cundd\Rest\Cache\Cache;
 
 /**
  * Tests for the Caching interface
@@ -45,13 +44,10 @@ class CacheTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	protected function setUp() {
-		#$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache']['backend'] = 't3lib_cache_backend_NullBackend';
-		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
-
-		#$cacheFactory = create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
-
-		$this->fixture->setCacheInstance();
-
+		/** @var Cache $fixture */
+		$fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
+		$fixture->setCacheLifeTime(10);
+		$this->fixture = $fixture;
 	}
 
 	protected function tearDown() {

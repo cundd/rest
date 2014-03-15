@@ -61,6 +61,13 @@ class Cache {
 	protected $cacheInstance;
 
 	/**
+	 * Cache life time
+	 *
+	 * @var integer
+	 */
+	protected $cacheLifeTime = NULL;
+
+	/**
 	 * Returns the cached value for the given request or NULL if it is not
 	 * defined
 	 *
@@ -72,7 +79,7 @@ class Cache {
 
 		/** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
 		$cacheInstance = NULL;
-		$cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
+		$cacheLifeTime = $this->getCacheLifeTime();
 
 		/*
 		 * Use caching if the cache life time configuration is not -1, an API
@@ -126,7 +133,7 @@ class Cache {
 			return;
 		}
 
-		$cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
+		$cacheLifeTime = $this->getCacheLifeTime();
 
 		/*
 		 * Use caching if the cache life time configuration is not -1, an API
@@ -158,6 +165,29 @@ class Cache {
 		return $this->_getCacheKey();
 	}
 
+
+	/**
+	 * Sets the cache life time
+	 *
+	 * @param int $cacheLifeTime
+	 * @return $this
+	 */
+	public function setCacheLifeTime($cacheLifeTime) {
+		$this->cacheLifeTime = $cacheLifeTime;
+		return $this;
+	}
+
+	/**
+	 * Returns the cache life time
+	 *
+	 * @return int
+	 */
+	public function getCacheLifeTime() {
+		if ($this->cacheLifeTime === NULL) {
+			$this->cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
+		}
+		return $this->cacheLifeTime;
+	}
 
 	/**
 	 * Returns a date in the format for a HTTP header
