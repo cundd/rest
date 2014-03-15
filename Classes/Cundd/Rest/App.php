@@ -326,7 +326,10 @@ class App implements SingletonInterface {
 	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
-		return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+		if ($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+			return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+		}
+		return new Response('Sorry! Something is wrong. Exception code: ' . $exception, 501);
 	}
 
 	/**

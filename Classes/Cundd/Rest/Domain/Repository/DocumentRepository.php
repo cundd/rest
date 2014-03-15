@@ -30,7 +30,6 @@ use Cundd\Rest\Domain\Exception\InvalidDocumentException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use Cundd\Rest\Domain\Exception\NoDatabaseSelectedException;
-use Iresults\Core\Iresults;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
@@ -153,8 +152,6 @@ class DocumentRepository extends Repository {
 		if ($this->persistenceManager->isNewObject($object) && $foundObject) {
 			$object = $this->mergeDocuments($foundObject, $object);
 		}
-
-		Iresults::pd('register', $object, ($object->_isNew() || $this->useRawQueryResults), ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults));
 
 		//if ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults) {
 		if ($object->_isNew() || $this->useRawQueryResults) {
@@ -296,7 +293,6 @@ class DocumentRepository extends Repository {
 		$query->setLimit(1);
 
 		$result = $this->convertCollection($query->execute());
-		Iresults::pd($result);
 		if (!$result) {
 			return NULL;
 		}
@@ -497,6 +493,13 @@ class DocumentRepository extends Repository {
 	 * @api
 	 */
 	public function createQuery() {
+		$query = parent::createQuery();
+		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
+		$query->getQuerySettings()->setRespectStoragePage(FALSE);
+		$query->getQuerySettings()->setReturnRawQueryResult($this->useRawQueryResults);
+		return $query;
+
+
 		$query = $this->persistenceManager->createQueryForType($this->objectType);
 		if ($this->defaultOrderings !== array()) {
 			$query->setOrderings($this->defaultOrderings);
@@ -707,7 +710,6 @@ class DocumentRepository extends Repository {
 			}
 		}
 		if (!is_object($oldDocument)) {
-			Iresults::pd($oldDocument);
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();
@@ -741,6 +743,11 @@ class DocumentRepository extends Repository {
 	 * @return string Class name of the repository.
 	 */
 	protected function getRepositoryClassName() {
+		new Document();
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			return 'Tx_Rest_Domain_Repository_DocumentRepository';
+		}
+
 		return __CLASS__;
 	}
 

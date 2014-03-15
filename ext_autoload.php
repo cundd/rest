@@ -28,6 +28,11 @@
  * @author COD
  * Created 09.01.14 11:12
  */
+
+
+if (version_compare(TYPO3_version, '6.0.0') < 0) {
+	require_once __DIR__ . '/legacy_core.php';
+}
 $extensionPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('rest');
 return array(
 	'Cundd\\Rest\\Command\\RestCommandController' => $extensionPath . 'Classes/Cundd/Rest/Command/RestCommandController.php',

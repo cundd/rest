@@ -1,10 +1,12 @@
 <?php
 namespace Cundd\Rest\DataProvider;
 
+use Cundd\Rest\ObjectManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 class DataProvider implements DataProviderInterface {
 	/**
@@ -379,7 +381,14 @@ class DataProvider implements DataProviderInterface {
 	 * Persist all changes to the database
 	 */
 	public function persistAllChanges() {
-		$persistenceManager = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
+//		/** @var ObjectManager $objectManager */
+//		$objectManager = $this->objectManager;
+//		/** @var PersistenceManagerInterface $persistenceManager */
+//		$persistenceManager = $objectManager->getPersistenceManager();
+//		$persistenceManager->persistAll();
+
+		/** @var PersistenceManagerInterface $persistenceManager */
+		$persistenceManager = $this->objectManager->get(ObjectManager::getPersistenceManagerClassName());
 		$persistenceManager->persistAll();
 	}
 

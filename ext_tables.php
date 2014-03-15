@@ -15,6 +15,12 @@ $tempColumns = array (
 );
 
 
+if (version_compare(TYPO3_version, '6.0.0') < 0) {
+	require_once __DIR__ . '/ext/rest/legacy_core.php';
+}
+
+
+
 \TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('fe_users');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_users', $tempColumns, 1);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'tx_rest_apikey;;;;1-1-1', '', 'after:password');
@@ -42,4 +48,6 @@ $TCA['tx_rest_domain_model_document'] = array(
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/document.gif'
 	),
 );
+
+
 ?>

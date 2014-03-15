@@ -12,12 +12,13 @@ namespace Cundd\Rest;
 
 use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
 
 
-class ObjectManager extends BaseObjectManager implements ObjectManagerInterface {
+class ObjectManager extends BaseObjectManager implements ObjectManagerInterface, SingletonInterface {
 	/**
 	 * @var \Cundd\Rest\App
 	 */
@@ -65,11 +66,15 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 
 	/**
 	 * Returns the data provider
+	 *
+	 * @throws Exception if the dispatcher is not set
 	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
 	 */
 	public function getDataProvider() {
 		if (!$this->dataProvider) {
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+			/** @var App $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Data Provider
 			$dataProviderClass  = 'Tx_' . $extension . '_Rest_DataProvider';
@@ -95,7 +100,9 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 	 */
 	public function getAuthenticationProvider() {
 		if (!$this->authenticationProvider) {
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+			/** @var App $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Authentication Provider
 			$authenticationProviderClass  = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
@@ -108,7 +115,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
 			}
 			$this->authenticationProvider = $this->get($authenticationProviderClass);
-			$this->authenticationProvider->setRequest($this->dispatcher->getRequest());
+			$this->authenticationProvider->setRequest($dispatcher->getRequest());
 		}
 		return $this->authenticationProvider;
 	}
@@ -135,6 +142,18 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface 
 			$this->accessController->setRequest($this->dispatcher->getRequest());
 		}
 		return $this->accessController;
+	}
+
+	/**
+	 * Returns the correct class name of the Persistence Manager for the current TYPO3 version
+	 *
+	 * @return string
+	 */
+	static public function getPersistenceManagerClassName() {
+		if (version_compare(TYPO3_version, '6.0.0') < 0) {
+			return 'Tx_Extbase_Persistence_Manager';
+		}
+		return 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
 	}
 
 	/**
