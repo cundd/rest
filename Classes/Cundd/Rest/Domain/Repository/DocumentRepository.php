@@ -4,8 +4,8 @@ namespace Cundd\Rest\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Andreas Thurnheer-Meier <tma@iresults.li>, iresults
- *  Daniel Corn <cod@iresults.li>, iresults
+ *  (c) 2013 Andreas Thurnheer-Meier <tma@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -325,6 +325,7 @@ class DocumentRepository extends Repository {
 		if ($result instanceof QueryResultInterface) {
 			return $result->getFirst();
 		}
+		return NULL;
 	}
 
 	/**
@@ -394,6 +395,27 @@ class DocumentRepository extends Repository {
 			// $query->statement('DELETE FROM tx_rest_domain_model_document WHERE db = ?', array($currentDatabase));
 			$query->execute();
 		}
+	}
+
+	/**
+	 * Remove all Documents from the given database
+	 *
+	 * @param string $database
+	 * @return boolean|\mysqli_result|object MySQLi result object / DBAL object
+	 */
+	public function removeAllFromDatabase($database) {
+		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+		$databaseConnection = $GLOBALS['TYPO3_DB'];
+
+		$where = 'db = \'' . $database . '\'';
+		$result = $databaseConnection->exec_UPDATEquery(
+			'tx_rest_domain_model_document',
+			$where,
+			array(
+				'deleted' => 1
+			)
+		);
+		return $result;
 	}
 
 
@@ -577,7 +599,7 @@ class DocumentRepository extends Repository {
 
 			if ($isMatchingResult) {
 				$filteredResultCollection[] = $currentDocument;
-				if (++$filteredResultCollectionCount > ($limit - 1)) {
+				if ($limit !== -1 && ++$filteredResultCollectionCount > ($limit - 1)) {
 					break;
 				}
 			}
@@ -708,8 +730,6 @@ class DocumentRepository extends Repository {
 			if (isset($newDocument[$key]) && $newDocument[$key]) {
 				$oldDocument[$key] = $newDocument[$key];
 			}
-		}
-		if (!is_object($oldDocument)) {
 		}
 		if (!$oldDocument->_getDb()) {
 			$currentDatabase = $this->getDatabase();
