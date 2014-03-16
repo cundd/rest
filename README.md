@@ -142,42 +142,42 @@ Details
 
 Below you find the URL paths (the part after `rest/`) and the matching class names that will be used:
 
-Path              | Class                                | Repository                                        | Data Provider                                   | Conf
------------------ | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ----
-/yag-gallery      | Tx_Yag_Domain_Model_Gallery[]        | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*
-/yag-gallery/2    | Tx_Yag_Domain_Model_Gallery          | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*
-/cundd-foo-bar    | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*
-/cundd-foo-bar/34 | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*
-/Document/db      | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
-/Document/db/9    | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
-/Document/db/a3b  | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*
-/cundd-daa-bar    | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
-/cundd-daa-bar/34 | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*
+| Path              | Class                                | Repository                                        | Data Provider                                   | Conf |
+| ----------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ---- |
+| /yag-gallery      | Tx_Yag_Domain_Model_Gallery[]        | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*  |
+| /yag-gallery/2    | Tx_Yag_Domain_Model_Gallery          | Tx_Yag_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*  |
+| /cundd-foo-bar    | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*  |
+| /cundd-foo-bar/34 | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*  |
+| /Document/db      | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
+| /Document/db/9    | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
+| /Document/db/a3b  | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
+| /cundd-daa-bar    | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*  |
+| /cundd-daa-bar/34 | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*  |
 
 *) These classes are not fixed and depend on the custom `\Cundd\Daa\Rest\DataProvider`.
 
 ### Paths, methods and the associated actions
 
-Path              | Method | Class                                | Action                           | Conf
------------------ | ------ | ------------------------------------ | -------------------------------- | ----
-/yag-gallery      | GET    | Tx_Yag_Domain_Model_Gallery[]        | List all galleries               | *a*
-/yag-gallery      | POST   | Tx_Yag_Domain_Model_Gallery          | Create a new gallery             | *a*
-/yag-gallery      | DELETE |                                      | 405 Method Not Allowed           | *a*
-/yag-gallery/2    | GET    | Tx_Yag_Domain_Model_Gallery          | Return  the gallery with UID 2   | *a*
-/yag-gallery/2    | POST   | Tx_Yag_Domain_Model_Gallery          | Replace  the gallery with UID 2  | *a*
-/yag-gallery/2    | DELETE | Tx_Yag_Domain_Model_Gallery          | Delete  the gallery with UID 2   | *a*
-/yag-gallery/2    | PATCH  | Tx_Yag_Domain_Model_Gallery          | Update  the gallery with UID 2   | *a*
+| Path              | Method | Class                                | Action                           | Conf |
+| ----------------- | ------ | ------------------------------------ | -------------------------------- | ---- |
+| /yag-gallery      | GET    | Tx_Yag_Domain_Model_Gallery[]        | List all galleries               | *a*  |
+| /yag-gallery      | POST   | Tx_Yag_Domain_Model_Gallery          | Create a new gallery             | *a*  |
+| /yag-gallery      | DELETE |                                      | 405 Method Not Allowed           | *a*  |
+| /yag-gallery/2    | GET    | Tx_Yag_Domain_Model_Gallery          | Return  the gallery with UID 2   | *a*  |
+| /yag-gallery/2    | POST   | Tx_Yag_Domain_Model_Gallery          | Replace  the gallery with UID 2  | *a*  |
+| /yag-gallery/2    | DELETE | Tx_Yag_Domain_Model_Gallery          | Delete  the gallery with UID 2   | *a*  |
+| /yag-gallery/2    | PATCH  | Tx_Yag_Domain_Model_Gallery          | Update  the gallery with UID 2   | *a*  |
 
 
-Path              | Method | Class                                | Action                                                  | Conf
------------------ | ------ | ------------------------------------ | ------------------------------------------------------- | ----
-/Document/db      | GET    | \Cundd\Rest\Domain\Model\Document[]  | List all Documents in database 'db'                     | *c*
-/Document/db      | POST   | \Cundd\Rest\Domain\Model\Document    | Create a new Document in database 'db'                  | *c*
-/Document/db      | DELETE |                                      | 405 Method Not Allowed                                  | *c*
-/Document/db/9    | GET    | \Cundd\Rest\Domain\Model\Document    | Return  the Document with UID or ID 2 in database 'db'  | *c*
-/Document/db/9    | POST   | \Cundd\Rest\Domain\Model\Document    | Replace the Document with UID or ID 2 in database 'db'  | *c*
-/Document/db/9    | DELETE | \Cundd\Rest\Domain\Model\Document    | Delete  the Document with UID or ID 2 in database 'db'  | *c*
-/Document/db/9    | PATCH  | \Cundd\Rest\Domain\Model\Document    | Update  the Document with UID or ID 2 in database 'db'  | *c*
+| Path              | Method | Class                                | Action                                                  | Conf |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------- | ---- |
+| /Document/db      | GET    | \Cundd\Rest\Domain\Model\Document[]  | List all Documents in database 'db'                     | *c*  |
+| /Document/db      | POST   | \Cundd\Rest\Domain\Model\Document    | Create a new Document in database 'db'                  | *c*  |
+| /Document/db      | DELETE |                                      | 405 Method Not Allowed                                  | *c*  |
+| /Document/db/9    | GET    | \Cundd\Rest\Domain\Model\Document    | Return  the Document with UID or ID 2 in database 'db'  | *c*  |
+| /Document/db/9    | POST   | \Cundd\Rest\Domain\Model\Document    | Replace the Document with UID or ID 2 in database 'db'  | *c*  |
+| /Document/db/9    | DELETE | \Cundd\Rest\Domain\Model\Document    | Delete  the Document with UID or ID 2 in database 'db'  | *c*  |
+| /Document/db/9    | PATCH  | \Cundd\Rest\Domain\Model\Document    | Update  the Document with UID or ID 2 in database 'db'  | *c*  |
 
 
 ### Configuration
