@@ -8,6 +8,7 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
@@ -87,7 +88,9 @@ class ObjectConverterTest extends AbstractVirtualObject {
 	/**
 	 * @test
 	 */
-	public function convertFromVirtualObjectWithUnusedDataTest() {
+	public function convertFromVirtualObjectWithSkippedUndefinedPropertyTest() {
+		$this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
+
 		$testObjectData = $this->testObjectData;
 		$testObjectData['property7'] = 'What ever - this must not be in the result';
 		$virtualObject = new VirtualObject($testObjectData);
@@ -100,7 +103,37 @@ class ObjectConverterTest extends AbstractVirtualObject {
 	/**
 	 * @test
 	 */
-	public function convertToVirtualObjectWithUnusedDataTest() {
+	public function convertToVirtualObjectWithSkippedUndefinedPropertyTest() {
+		$this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
+
+		$testRawData   = $this->testRawData;
+		$testRawData['property_seven'] = 'What ever - this must not be in the result';
+		$virtualObject = $this->fixture->convertToVirtualObject($testRawData);
+
+		$virtualObjectData = $virtualObject->getData();
+		$this->assertFalse(isset($virtualObjectData['property_seven']));
+		$this->assertEquals($this->testObjectData, $virtualObjectData);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
+	 */
+	public function convertFromVirtualObjectWithUndefinedPropertyTest() {
+		$testObjectData = $this->testObjectData;
+		$testObjectData['property7'] = 'What ever - this must not be in the result';
+		$virtualObject = new VirtualObject($testObjectData);
+		$rawData       = $this->fixture->convertFromVirtualObject($virtualObject);
+
+		$this->assertFalse(isset($rawData['property7']));
+		$this->assertEquals($this->testRawData, $rawData);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
+	 */
+	public function convertToVirtualObjectWithUndefinedPropertyTest() {
 		$testRawData   = $this->testRawData;
 		$testRawData['property_seven'] = 'What ever - this must not be in the result';
 		$virtualObject = $this->fixture->convertToVirtualObject($testRawData);

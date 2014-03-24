@@ -8,6 +8,7 @@
 
 namespace Cundd\Rest\VirtualObject;
 use Cundd\Rest\VirtualObject\Exception\InvalidConverterTypeException;
+use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 
 /**
@@ -27,6 +28,7 @@ class ObjectConverter {
 	 * Converts the given Virtual Object into it's source representation
 	 *
 	 * @param VirtualObject $virtualObject
+	 * @throws InvalidPropertyException if a property is not defined in the mapping
 	 * @throws Exception\MissingConfigurationException if the configuration is not set
 	 * @return array
 	 */
@@ -45,8 +47,8 @@ class ObjectConverter {
 				$propertyValue = $this->convertToType($propertyValue, $type);
 
 				$convertedData[$sourceKey] = $propertyValue;
-			} else {
-				#throw InvalidPropertyException
+			} else if (!$configuration->shouldSkipUnknownProperties()) {
+				throw new InvalidPropertyException('Property "' . $propertyKey . '" is not defined', 1395670264);
 			}
 		}
 		return $convertedData;
@@ -56,7 +58,8 @@ class ObjectConverter {
 	 * Converts the given source array into a Virtual Object
 	 *
 	 * @param array $source
-	 * @throws Exception\MissingConfigurationException if the configuration is not set
+	 * @throws InvalidPropertyException if a property is not defined in the mapping
+	 * @throws MissingConfigurationException if the configuration is not set
 	 * @return VirtualObject
 	 */
 	public function convertToVirtualObject($source){
@@ -74,8 +77,8 @@ class ObjectConverter {
 				$sourceValue = $this->convertToType($sourceValue, $type);
 
 				$convertedData[$propertyKey] = $sourceValue;
-			} else {
-				#throw InvalidPropertyException
+			} else if (!$configuration->shouldSkipUnknownProperties()) {
+				throw new InvalidPropertyException('Property "' . $sourceKey . '" is not defined', 1395670264);
 			}
 		}
 		return new VirtualObject($convertedData);

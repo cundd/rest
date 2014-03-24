@@ -75,4 +75,19 @@ interface ConfigurationInterface {
 	 * @return string
 	 */
 	public function getSourceIdentifier();
+
+	/**
+	 * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
+	 *
+	 * @param boolean $skipUnknownProperties
+	 * @return $this
+	 */
+	public function setSkipUnknownProperties($skipUnknownProperties);
+
+	/**
+	 * Return whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
+	 *
+	 * @return boolean
+	 */
+	public function shouldSkipUnknownProperties();
 }

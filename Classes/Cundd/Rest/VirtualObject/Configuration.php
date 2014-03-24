@@ -32,6 +32,14 @@ class Configuration implements ConfigurationInterface {
 	 */
 	protected $sourceKeyToPropertyMap = array();
 
+	/**
+	 * Whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
+	 *
+	 * @var boolean
+	 */
+	protected $skipUnknownProperties = FALSE;
+
+
 	function __construct($configurationData = array()) {
 		$this->configurationData = $configurationData;
 	}
@@ -138,6 +146,27 @@ class Configuration implements ConfigurationInterface {
 		}
 		return $this->sourceKeyToPropertyMap;
 	}
+
+	/**
+	 * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
+	 *
+	 * @param boolean $skipUnknownProperties
+	 * @return $this
+	 */
+	public function setSkipUnknownProperties($skipUnknownProperties) {
+		$this->skipUnknownProperties = $skipUnknownProperties;
+		return $this;
+	}
+
+	/**
+	 * Return whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
+	 *
+	 * @return boolean
+	 */
+	public function shouldSkipUnknownProperties() {
+		return $this->skipUnknownProperties;
+	}
+
 
 
 } 
