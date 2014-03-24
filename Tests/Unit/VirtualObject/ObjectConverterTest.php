@@ -11,6 +11,7 @@ namespace Cundd\Rest\Test\VirtualObject;
 use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
+use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 
 require_once __DIR__ . '/AbstractVirtualObject.php';
 
