@@ -13,10 +13,10 @@ use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 
-require_once __DIR__ . '/AbstractVirtualObject.php';
+require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 
-class ObjectConverterTest extends AbstractVirtualObject {
+class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 	/**
 	 * @var \Cundd\Rest\VirtualObject\ObjectConverter
 	 */
@@ -25,10 +25,12 @@ class ObjectConverterTest extends AbstractVirtualObject {
 	public function setUp() {
 		$this->fixture = new ObjectConverter();
 		$this->fixture->setConfiguration($this->getTestConfiguration());
+		parent::setUp();
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**

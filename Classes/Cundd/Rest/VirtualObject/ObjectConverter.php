@@ -8,6 +8,7 @@
 
 namespace Cundd\Rest\VirtualObject;
 use Cundd\Rest\VirtualObject\Exception\InvalidConverterTypeException;
+use Cundd\Rest\VirtualObject\Exception\InvalidObjectException;
 use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 
@@ -24,6 +25,10 @@ class ObjectConverter {
 	 */
 	protected $configuration;
 
+	function __construct($configuration = array()) {
+		$this->configuration = $configuration;
+	}
+
 	/**
 	 * Converts the given Virtual Object into it's source representation
 	 *
@@ -32,7 +37,7 @@ class ObjectConverter {
 	 * @throws Exception\MissingConfigurationException if the configuration is not set
 	 * @return array
 	 */
-	public function convertFromVirtualObject($virtualObject) {
+	public function convertFromVirtualObject(VirtualObject $virtualObject) {
 		$convertedData = array();
 		$configuration = $this->getConfiguration();
 

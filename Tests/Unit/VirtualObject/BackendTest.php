@@ -10,36 +10,9 @@ namespace Cundd\Rest\Test\VirtualObject;
 
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-require_once __DIR__ . '/AbstractVirtualObject.php';
+require_once __DIR__ . '/AbstractDatabaseCase.php';
 
-class BackendTest extends AbstractVirtualObject {
-	/**
-	 * Test database name
-	 *
-	 * @var string
-	 */
-	static protected $testDatabaseTable = 'tx_rest_domain_model_test';
-
-	/**
-	 * Test data sets
-	 *
-	 * @var array
-	 */
-	static protected $testData = array(
-		array(
-			'uid'          => 100,
-			'title'        => 'Test entry',
-			'content'      => 'This is my text',
-			'content_time' => 1395678480
-		),
-		array(
-			'uid'          => 200,
-			'title'        => 'Test entry',
-			'content'      => 'This is my second text',
-			'content_time' => 1395678480
-		)
-	);
-
+class BackendTest extends AbstractDatabaseCase {
 	/**
 	 * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
 	 */
@@ -48,18 +21,13 @@ class BackendTest extends AbstractVirtualObject {
 	public function setUp() {
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\BackendInterface');
 //		$this->fixture->setConfiguration($this->getTestConfiguration());
+		parent::setUp();
 	}
 
-	public static function setUpBeforeClass() {
-		self::dropTable();
-		self::createTable();
-		self::insertData();
+	public function tearDown() {
+		unset($this->fixture);
+		parent::tearDown();
 	}
-
-	public static function tearDownAfterClass() {
-		#	self::dropTable();
-	}
-
 
 	/**
 	 * @test
@@ -166,46 +134,5 @@ class BackendTest extends AbstractVirtualObject {
 	public function findAll() {
 		$this->assertEquals(2, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, array()));
 	}
-
-
-	static protected function createTable() {
-		$testDatabaseTable = self::$testDatabaseTable;
-		$createTableSQL    = <<<SQL
-CREATE TABLE $testDatabaseTable (
-
-	`uid` int(11) NOT NULL AUTO_INCREMENT,
-
-	title varchar(255) DEFAULT '' NOT NULL,
-	content text NOT NULL,
-
-	content_time int(11),
-
-	PRIMARY KEY (uid)
-) AUTO_INCREMENT=1;
-SQL;
-
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
-		$databaseConnection->sql_query($createTableSQL);
-	}
-
-	static protected function dropTable() {
-		$testDatabaseTable = self::$testDatabaseTable;
-		$dropTableSQL      = <<<SQL
-		DROP TABLE IF EXISTS $testDatabaseTable;
-SQL;
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
-		$databaseConnection->sql_query($dropTableSQL);
-	}
-
-	static protected function insertData() {
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
-		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
-		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
-	}
-
-
 }
  

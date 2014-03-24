@@ -77,6 +77,13 @@ interface ConfigurationInterface {
 	public function getSourceIdentifier();
 
 	/**
+	 * Returns the name of the property which uniquely identifies an object
+	 *
+	 * @return string
+	 */
+	public function getIdentifier();
+
+	/**
 	 * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
 	 *
 	 * @param boolean $skipUnknownProperties

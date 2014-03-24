@@ -167,6 +167,14 @@ class Configuration implements ConfigurationInterface {
 		return $this->skipUnknownProperties;
 	}
 
+	/**
+	 * Returns the name of the property which uniquely identifies an object
+	 *
+	 * @return string
+	 */
+	public function getIdentifier() {
+		return isset($this->configurationData['identifier']) ? $this->configurationData['identifier'] : NULL;
+	}
 
 
 } 

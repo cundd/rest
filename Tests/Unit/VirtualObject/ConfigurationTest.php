@@ -8,14 +8,14 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-require_once __DIR__ . '/AbstractVirtualObject.php';
+require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 /**
  * Class ConfigurationTest
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class ConfigurationTest extends AbstractVirtualObject {
+class ConfigurationTest extends AbstractVirtualObjectCase {
 	/**
 	 * @var \Cundd\Rest\VirtualObject\Configuration
 	 */
@@ -24,10 +24,12 @@ class ConfigurationTest extends AbstractVirtualObject {
 	public function setUp() {
 		$testConfiguration = $this->getTestConfigurationData();
 		$this->fixture = new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
+		parent::setUp();
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**
@@ -79,6 +81,13 @@ class ConfigurationTest extends AbstractVirtualObject {
 	 */
 	public function getSourceIdentifierTest() {
 		$this->assertEquals('my_resource_table', $this->fixture->getSourceIdentifier());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getIdentifierTest() {
+		$this->assertEquals('property1', $this->fixture->getIdentifier());
 	}
 }
  

@@ -21,6 +21,8 @@ class Backend implements BackendInterface {
 	 * @return integer the UID of the inserted row
 	 */
 	public function addRow($tableName, array $row) {
+		$this->checkTableArgument($tableName);
+
 		$this->getAdapter()->exec_INSERTquery($tableName, $row);
 		$uid = $this->getAdapter()->sql_insert_id();
 		$this->checkSqlErrors();
@@ -36,6 +38,8 @@ class Backend implements BackendInterface {
 	 * @return mixed|void
 	 */
 	public function updateRow($tableName, $query, array $row) {
+		$this->checkTableArgument($tableName);
+
 		$result = $this->getAdapter()->exec_UPDATEquery($tableName, $this->createWhereStatementFromQuery($query, $tableName), $row);
 		$this->checkSqlErrors();
 		return $result;
@@ -49,6 +53,8 @@ class Backend implements BackendInterface {
 	 * @return mixed|void
 	 */
 	public function removeRow($tableName, array $identifier) {
+		$this->checkTableArgument($tableName);
+
 		$result = $this->getAdapter()->exec_DELETEquery($tableName, $this->createWhereStatementFromQuery($identifier, $tableName));
 		$this->checkSqlErrors();
 		return $result;
@@ -63,6 +69,8 @@ class Backend implements BackendInterface {
 	 * @api
 	 */
 	public function getObjectCountByQuery($tableName, $query) {
+		$this->checkTableArgument($tableName);
+
 		list($row) = $this->getAdapter()->exec_SELECTgetRows('COUNT(*) AS count', $tableName, $this->createWhereStatementFromQuery($query, $tableName));
 		$this->checkSqlErrors();
 		return intval($row['count']);
@@ -77,6 +85,8 @@ class Backend implements BackendInterface {
 	 * @api
 	 */
 	public function getObjectDataByQuery($tableName, $query) {
+		$this->checkTableArgument($tableName);
+
 		$result = $this->getAdapter()->exec_SELECTgetRows('*', $tableName, $this->createWhereStatementFromQuery($query, $tableName));
 		$this->checkSqlErrors();
 		return $result;
@@ -91,6 +101,7 @@ class Backend implements BackendInterface {
 	protected function checkSqlErrors() {
 		$error = $this->getAdapter()->sql_error();
 		if ($error !== '') {
+			$error = '#' . $this->getAdapter()->sql_errno() . ': ' . $error;
 			throw new \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException($error, 1247602160);
 		}
 	}
@@ -105,13 +116,7 @@ class Backend implements BackendInterface {
 	 * @return string
 	 */
 	protected function createWhereStatementFromQuery($query, $tableName) {
-		if (!is_string($tableName)) {
-			throw new InvalidTableNameException('The given table name is of type ' . gettype($tableName) . '. You may have a wrong argument order', 1395677889);
-		}
-		if (!$tableName) {
-			throw new InvalidTableNameException('The given table name is empty', 1395677890);
-		}
-
+		$this->checkTableArgument($tableName);
 
 		$adapter = $this->getAdapter();
 		$constraints = array();
@@ -127,6 +132,24 @@ class Backend implements BackendInterface {
 			;
 		}
 		return implode(' AND ', $constraints);
+	}
+
+	/**
+	 * Checks if the given table name is valid
+	 *
+	 * @param string $tableName
+	 * @throws Exception\InvalidTableNameException
+	 */
+	protected function checkTableArgument($tableName) {
+		if (!is_string($tableName)) {
+			throw new InvalidTableNameException('The given table name is of type ' . gettype($tableName) . '. You may have a wrong argument order', 1395677889);
+		}
+		if (!$tableName) {
+			throw new InvalidTableNameException('The given table name is empty', 1395677890);
+		}
+		if (!ctype_alnum(str_replace('_', '', $tableName))) {
+			throw new InvalidTableNameException('The given table name is not valid', 1395682370);
+		}
 	}
 
 	/**

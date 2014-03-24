@@ -18,7 +18,7 @@ use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class AbstractVirtualObject extends BaseTestCase {
+class AbstractVirtualObjectCase extends BaseTestCase {
 	/**
 	 * @var array
 	 */
@@ -46,6 +46,7 @@ class AbstractVirtualObject extends BaseTestCase {
 {
     "ResourceName": {
         "mapping": {
+        	"identifier": "property1",
             "tableName": "my_resource_table",
 
             "properties": {
