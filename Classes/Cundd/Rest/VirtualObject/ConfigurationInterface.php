@@ -19,12 +19,22 @@ namespace Cundd\Rest\VirtualObject;
  */
 interface ConfigurationInterface {
 	/**
-	 * Returns TRUE if the given property name should be mapped, FALSE otherwise.
+	 * Returns TRUE if the given property name exists
 	 *
 	 * @param string $propertyName
 	 * @return boolean
 	 */
 	public function hasProperty($propertyName);
+
+	/**
+	 * Returns TRUE if the given source key is mapped
+	 *
+	 * Checks if one of the configured property mappings uses the given source key
+	 *
+	 * @param string $sourceKey
+	 * @return boolean
+	 */
+	public function hasSourceKey($sourceKey);
 
 	/**
 	 * Returns the configuration for the given property name
@@ -35,18 +45,27 @@ interface ConfigurationInterface {
 	public function getConfigurationForProperty($propertyName);
 
 	/**
-	 * Returns the source property (column) name for the given property name
+	 * Returns the source key (column name) for the given property name
 	 *
 	 * @param string $propertyName
 	 * @return string
 	 */
-	public function getSourcePropertyNameForProperty($propertyName);
+	public function getSourceKeyForProperty($propertyName);
+
+	/**
+	 * Returns the property for the given source property (column)
+	 *
+	 * @param $sourceKey
+	 * @internal param string $propertyName
+	 * @return string
+	 */
+	public function getPropertyForSourceKey($sourceKey);
 
 	/**
 	 * Returns the data type for the given property name
 	 *
 	 * @param string $propertyName
-	 * @return string Returns one of the following: "string", "float", "int", "integer", "bool", "boolean"
+	 * @return string Returns one of the following simple "string", "float", "int", "integer", "bool", "boolean" or one of the complex types
 	 */
 	public function getTypeForProperty($propertyName);
 
@@ -56,6 +75,4 @@ interface ConfigurationInterface {
 	 * @return string
 	 */
 	public function getSourceIdentifier();
-
-
-} 
+}

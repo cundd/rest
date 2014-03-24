@@ -25,6 +25,13 @@ class Configuration implements ConfigurationInterface {
 	 */
 	protected $configurationData = array();
 
+	/**
+	 * A map of all the source keys and the associated property names
+	 *
+	 * @var array
+	 */
+	protected $sourceKeyToPropertyMap = array();
+
 	function __construct($configurationData = array()) {
 		$this->configurationData = $configurationData;
 	}
@@ -37,6 +44,19 @@ class Configuration implements ConfigurationInterface {
 	 */
 	public function hasProperty($propertyName) {
 		return isset($this->configurationData['properties'][$propertyName]);
+	}
+
+	/**
+	 * Returns TRUE if the given source key is mapped
+	 *
+	 * Checks if one of the configured property mappings uses the given source key
+	 *
+	 * @param string $sourceKey
+	 * @return boolean
+	 */
+	public function hasSourceKey($sourceKey) {
+		$sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
+		return isset($sourceKeyToPropertyMap[$sourceKey]);
 	}
 
 	/**
@@ -57,12 +77,25 @@ class Configuration implements ConfigurationInterface {
 	 * @param string $propertyName
 	 * @return string
 	 */
-	public function getSourcePropertyNameForProperty($propertyName) {
+	public function getSourceKeyForProperty($propertyName) {
 		if (!$this->hasProperty($propertyName)) {
 			return NULL;
 		}
 		return isset($this->configurationData['properties'][$propertyName]['column'])
 			? $this->configurationData['properties'][$propertyName]['column']
+			: NULL;
+	}
+
+	/**
+	 * Returns the property for the given source property (column)
+	 *
+	 * @param string $sourceKey
+	 * @return string
+	 */
+	public function getPropertyForSourceKey($sourceKey) {
+		$sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
+		return isset($sourceKeyToPropertyMap[$sourceKey])
+			? $sourceKeyToPropertyMap[$sourceKey]
 			: NULL;
 	}
 
@@ -90,6 +123,20 @@ class Configuration implements ConfigurationInterface {
 		return isset($this->configurationData['tableName'])
 			? $this->configurationData['tableName']
 			: NULL;
+	}
+
+	/**
+	 * Returns a map of all the source keys and the associated property names
+	 *
+	 * @return array
+	 */
+	public function getSourceKeyToPropertyMap() {
+		if (!$this->sourceKeyToPropertyMap) {
+			foreach ($this->configurationData['properties'] as $propertyName => $propertyMapping) {
+				$this->sourceKeyToPropertyMap[$propertyMapping['column']] = $propertyName;
+			}
+		}
+		return $this->sourceKeyToPropertyMap;
 	}
 
 
