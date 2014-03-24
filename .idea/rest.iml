@@ -10,15 +10,27 @@
       <library name="PHP">
         <CLASSES>
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../../Resources/phpunit.phar" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
         </CLASSES>
         <SOURCES>
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../../Resources/phpunit.phar" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/../../Resources/phpunit.phar" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/../../Resources/phpunit.phar" />
         </SOURCES>
       </library>
     </orderEntry>
