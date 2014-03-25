@@ -20,7 +20,7 @@ use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
 class ObjectManager extends BaseObjectManager implements ObjectManagerInterface, SingletonInterface {
 	/**
-	 * @var \Cundd\Rest\App
+	 * @var \Cundd\Rest\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -47,7 +47,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 
 	/**
 	 * Injects the dispatcher
-	 * @param \Cundd\Rest\App $dispatcher
+	 *
+*@param \Cundd\Rest\Dispatcher $dispatcher
 	 */
 	public function setDispatcher($dispatcher) {
 		$this->dispatcher = $dispatcher;
@@ -72,8 +73,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	 */
 	public function getDataProvider() {
 		if (!$this->dataProvider) {
-			/** @var App $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			/** @var Dispatcher $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
 			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Data Provider
@@ -100,8 +101,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	 */
 	public function getAuthenticationProvider() {
 		if (!$this->authenticationProvider) {
-			/** @var App $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			/** @var Dispatcher $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
 			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Authentication Provider

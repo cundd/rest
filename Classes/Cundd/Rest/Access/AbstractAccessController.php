@@ -9,7 +9,7 @@
 
 namespace Cundd\Rest\Access;
 
-use Cundd\Rest\App;
+use Cundd\Rest\Dispatcher;
 
 abstract class AbstractAccessController implements AccessControllerInterface {
 	/**
@@ -53,7 +53,7 @@ abstract class AbstractAccessController implements AccessControllerInterface {
 		try {
 			$isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate();
 		} catch (\Exception $exception) {
-			App::getSharedDispatcher()->logException($exception);
+			Dispatcher::getSharedDispatcher()->logException($exception);
 			$isAuthenticated = FALSE;
 
 			throw $exception;

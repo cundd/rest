@@ -11,7 +11,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
 
 
-class App implements SingletonInterface {
+class Dispatcher implements SingletonInterface {
 	/**
 	 * API path
 	 * @var string
@@ -46,7 +46,8 @@ class App implements SingletonInterface {
 
 	/**
 	 * The shared instance
-	 * @var \Cundd\Rest\App
+	 *
+*@var \Cundd\Rest\Dispatcher
 	 */
 	static protected $sharedDispatcher;
 
@@ -106,6 +107,7 @@ class App implements SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
+			$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
 			$this->configureApiPaths();
 		}
 
@@ -150,18 +152,19 @@ class App implements SingletonInterface {
 			/* WITH UID 																 */
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			$app->param('slug', function($request, $uid) use($dispatcher, $app) {
-				$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getModelWithData($uid);
-						if (!$model) {
-							return 404;
-						}
-						return $dispatcher->getModelProperty($model, $propertyKey);
-					});
+				$getPropertyCallback = function ($request, $propertyKey) use($uid, $dispatcher, $app) {
+					$model = $dispatcher->getModelWithData($uid);
+					if (!$model) {
+						return 404;
+					}
+					return $dispatcher->getModelProperty($model, $propertyKey);
+				};
+				$app->param('slug', $getPropertyCallback);
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* SHOW
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->get(function($request) use($uid, $dispatcher, $app) {
+				$getCallback = function($request) use($uid, $dispatcher, $app) {
 					$model = $dispatcher->getModelWithData($uid);
 					if (!$model) {
 						return 404;
@@ -173,7 +176,8 @@ class App implements SingletonInterface {
 						);
 					}
 					return $result;
-				});
+				};
+				$app->get($getCallback);
 
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* REPLACE																	 */
@@ -238,19 +242,20 @@ class App implements SingletonInterface {
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 				/* REMOVE																	 */
 				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->delete(function($request) use($uid, $dispatcher, $app) {
+				$deleteCallback = function($request) use($uid, $dispatcher, $app) {
 					$model = $dispatcher->getModelWithData($uid);
 					if ($model) {
 						$dispatcher->removeModel($model);
 					}
 					return 200;
-				});
+				};
+				$app->delete($deleteCallback);
 			});
 
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			/* CREATE																	 */
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			$app->post(function($request) use($dispatcher, $app) {
+			$createCallback = function($request) use($dispatcher, $app) {
 				/** @var \Cundd\Rest\Request $request */
 				$data = $dispatcher->getSentData();
 				$dispatcher->logRequest('create request', array('body' => $data));
@@ -271,12 +276,13 @@ class App implements SingletonInterface {
 					);
 				}
 				return $result;
-			});
+			};
+			$app->post($createCallback);
 
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 			/* LIST 																	 */
 			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			$app->get(function($request) use($dispatcher, $app) {
+			$listCallback = function($request) use($dispatcher, $app) {
 				$allModels = $dispatcher->getAllModels();
 				if (!is_array($allModels)) {
 					$allModels = iterator_to_array($allModels);
@@ -289,7 +295,8 @@ class App implements SingletonInterface {
 					);
 				}
 				return $result;
-			});
+			};
+			$app->get($listCallback);
 		});
 	}
 
@@ -500,6 +507,15 @@ class App implements SingletonInterface {
 	}
 
 	/**
+	 * Returns the Bullet App
+	 *
+	 * @return \Bullet\App
+	 */
+	public function getApp() {
+		return $this->app;
+	}
+
+	/**
 	 * Returns the URI
 	 * @param string $format Reference to be filled with the request format
 	 * @return string
@@ -643,7 +659,8 @@ class App implements SingletonInterface {
 
 	/**
 	 * Returns the shared dispatcher instance
-	 * @return \Cundd\Rest\App
+	 *
+	 * @return \Cundd\Rest\Dispatcher
 	 */
 	static public function getSharedDispatcher() {
 		return self::$sharedDispatcher;
