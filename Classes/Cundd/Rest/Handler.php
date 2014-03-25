@@ -10,7 +10,6 @@ namespace Cundd\Rest;
 
 use Bullet\App;
 use Cundd\Rest\DataProvider\DataProviderInterface;
-use Cundd\Rest\Dispatcher;
 use Cundd\Rest\DataProvider\Utility;
 
 /**
@@ -34,6 +33,8 @@ class Handler implements HandlerInterface {
 	protected $identifier;
 
 	/**
+	 * Object Manager
+	 *
 	 * @var \Cundd\Rest\ObjectManager
 	 */
 	protected $objectManager;
