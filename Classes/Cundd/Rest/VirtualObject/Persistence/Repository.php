@@ -58,10 +58,17 @@ class Repository implements RepositoryInterface {
 	 * @return void
 	 */
 	public function remove($object) {
-		$this->backend->removeRow(
-			$this->getSourceIdentifier(),
-			$this->getObjectConverter()->convertFromVirtualObject($object)
-		);
+		$identifierQuery = $this->getIdentifiersOfObject($object);
+		if (
+			$identifierQuery
+			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
+		) {
+			$this->backend->removeRow(
+				$this->getSourceIdentifier(),
+				$identifierQuery,
+				$this->getObjectConverter()->convertFromVirtualObject($object)
+			);
+		}
 	}
 
 	/**

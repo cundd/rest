@@ -136,7 +136,7 @@ CONFIGURATION;
 		$createTableSQL    = <<<SQL
 CREATE TABLE $testDatabaseTable (
 
-	`uid` int(11) NOT NULL AUTO_INCREMENT,
+	uid int(11) NOT NULL AUTO_INCREMENT,
 
 	title varchar(255) DEFAULT '' NOT NULL,
 	content text NOT NULL,
