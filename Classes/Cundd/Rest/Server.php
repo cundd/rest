@@ -48,7 +48,7 @@ class Server {
 	/**
 	 * Rest app
 	 *
-	 * @var \Cundd\Rest\App
+	 * @var \Cundd\Rest\Dispatcher
 	 */
 	protected $app;
 
@@ -65,7 +65,7 @@ class Server {
 			$this->host = $host;
 		}
 
-		$this->app = new \Cundd\Rest\App();
+		$this->app = new \Cundd\Rest\Dispatcher();
 	}
 
 	/**

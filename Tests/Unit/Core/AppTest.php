@@ -40,7 +40,7 @@ class DummyObject {}
  */
 class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Cundd\Rest\App
+	 * @var \Cundd\Rest\Dispatcher
 	 */
 	protected $fixture;
 
@@ -51,7 +51,7 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 
 	public function setUp() {
-		$this->fixture = new \Cundd\Rest\App;
+		$this->fixture = new \Cundd\Rest\Dispatcher;
 	}
 
 	public function tearDown() {
