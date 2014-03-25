@@ -122,7 +122,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	}
 
 	/**
-	 * Returns teh Access Controller
+	 * Returns the Access Controller
 	 * @return \Cundd\Rest\Access\AccessControllerInterface
 	 */
 	public function getAccessController() {
@@ -143,6 +143,30 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 			$this->accessController->setRequest($this->dispatcher->getRequest());
 		}
 		return $this->accessController;
+	}
+
+	/**
+	 * Returns the Handler which is responsible for handling the current request
+	 *
+	 * @return HandlerInterface
+	 */
+	public function getHandler() {
+		/** @var \Cundd\Rest\HandlerInterface $handler */
+		list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+
+		// Check if an extension provides a Handler
+		$accessControllerClass  = 'Tx_' . $extension . '_Rest_Handler';
+		if (!class_exists($accessControllerClass)) {
+			$accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
+		}
+
+		// Use the configuration based Authentication Provider
+		if (!class_exists($accessControllerClass)) {
+			$accessControllerClass = 'Cundd\\Rest\\HandlerInterface';
+		}
+		$handler = $this->get($accessControllerClass);
+		//$handler->setRequest($this->dispatcher->getRequest());
+		return $handler;
 	}
 
 	/**
