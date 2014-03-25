@@ -1,10 +1,8 @@
 <?php
-namespace Cundd\Rest\Domain\Model;
-
-/***************************************************************
+/*
  *  Copyright notice
  *
- *  (c) 2013 Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -23,7 +21,9 @@ namespace Cundd\Rest\Domain\Model;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
+
+namespace Cundd\Rest\Domain\Model;
 
 use Cundd\Rest\Domain\Exception\InvalidDatabaseNameException;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;

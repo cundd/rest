@@ -13,7 +13,7 @@
         }
     ],
     "minimum-stability": "dev",
-    "license": "MIT",
+    "license": "GPL-2.0+",
     "autoload": {
         "psr-0": {
             "Cundd\\Rest": "Classes/"
