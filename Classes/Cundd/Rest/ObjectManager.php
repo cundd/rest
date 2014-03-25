@@ -48,7 +48,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	/**
 	 * Injects the dispatcher
 	 *
-*@param \Cundd\Rest\Dispatcher $dispatcher
+	 * @param \Cundd\Rest\Dispatcher $dispatcher
 	 */
 	public function setDispatcher($dispatcher) {
 		$this->dispatcher = $dispatcher;
@@ -56,6 +56,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 
 	/**
 	 * Returns the configuration provider
+	 *
 	 * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
 	 */
 	public function getConfigurationProvider() {

@@ -9,6 +9,7 @@
 namespace Cundd\Rest;
 
 use Bullet\App;
+use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\DataProvider\Utility;
 
@@ -31,6 +32,20 @@ class Handler implements HandlerInterface {
 	 * @var string
 	 */
 	protected $identifier;
+
+	/**
+	 * @var \Cundd\Rest\ObjectManager
+	 */
+	protected $objectManager;
+
+	/**
+	 * Inject the object manager instance
+	 *
+	 * @param \Cundd\Rest\ObjectManager $objectManager
+	 */
+	public function injectObjectManager(\Cundd\Rest\ObjectManager $objectManager) {
+		$this->objectManager = $objectManager;
+	}
 
 	/**
 	 * Sets the current request
@@ -80,13 +95,12 @@ class Handler implements HandlerInterface {
 	 * @return mixed
 	 */
 	public function getProperty($propertyKey) {
-		// $getPropertyCallback = function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-		$dispatcher = Dispatcher::getSharedDispatcher();
-		$model      = $dispatcher->getModelWithData($this->getIdentifier());
+		$dataProvider = $this->getDataProvider();
+		$model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$model) {
 			return 404;
 		}
-		return $dispatcher->getModelProperty($model, $propertyKey);
+		return $dataProvider->getModelProperty($model, $propertyKey);
 	}
 
 	/**
@@ -100,12 +114,13 @@ class Handler implements HandlerInterface {
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 		//$getCallback = function($request) use($uid, $dispatcher, $app) {
 		$dispatcher = Dispatcher::getSharedDispatcher();
-		$model      = $dispatcher->getModelWithData($this->getIdentifier());
+		$dataProvider = $this->getDataProvider();
+		$model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$model) {
 			return 404;
 		}
-		$result = $dispatcher->getModelData($model);
-		if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+		$result = $dataProvider->getModelData($model);
+		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 			return array(
 				Utility::singularize($dispatcher->getRootObjectKey()) => $result
 			);
@@ -119,15 +134,15 @@ class Handler implements HandlerInterface {
 	 * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
 	 */
 	public function replace() {
-//		$replaceCallback = function($request) use($uid, $dispatcher, $app) {
 		$dispatcher = Dispatcher::getSharedDispatcher();
+		$dataProvider = $this->getDataProvider();
 
 		/** @var \Cundd\Rest\Request $request */
 		$data               = $dispatcher->getSentData();
 		$data['__identity'] = $this->getIdentifier();
 		$dispatcher->logRequest('update request', array('body' => $data));
 
-		$oldModel = $dispatcher->getModelWithData($this->getIdentifier());
+		$oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$oldModel) {
 			return 404;
 		}
@@ -135,14 +150,14 @@ class Handler implements HandlerInterface {
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 		 */
-		$model = $dispatcher->getModelWithData($data);
+		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 		if (!$model) {
 			return 400;
 		}
 
-		$dispatcher->saveModel($model);
-		$result = $dispatcher->getModelData($model);
-		if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+		$dataProvider->saveModelForPath($model, $this->getPath());
+		$result = $dataProvider->getModelData($model);
+		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 			return array(
 				Utility::singularize($dispatcher->getRootObjectKey()) => $result
 			);
@@ -156,25 +171,23 @@ class Handler implements HandlerInterface {
 	 * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
 	 */
 	public function update() {
-		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-		/* UPDATE																	 */
-		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-//		$updateCallback = function($request) use($uid, $dispatcher, $app) {
 		$dispatcher = Dispatcher::getSharedDispatcher();
+		$dataProvider = $this->getDataProvider();
+
 		/** @var \Cundd\Rest\Request $request */
 		$data               = $dispatcher->getSentData();
 		$data['__identity'] = $this->getIdentifier();
 		$dispatcher->logRequest('update request', array('body' => $data));
 
-		$model = $dispatcher->getModelWithData($data);
+		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
 		if (!$model) {
 			return 404;
 		}
 
-		$dispatcher->saveModel($model);
-		$result = $dispatcher->getModelData($model);
-		if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+		$dataProvider->saveModelForPath($model, $this->getPath());
+		$result = $dataProvider->getModelData($model);
+		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 			return array(
 				Utility::singularize($dispatcher->getRootObjectKey()) => $result
 			);
@@ -191,11 +204,10 @@ class Handler implements HandlerInterface {
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 		/* REMOVE																	 */
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-//		$deleteCallback = function($request) use($uid, $dispatcher, $app) {
-		$dispatcher = Dispatcher::getSharedDispatcher();
-		$model      = $dispatcher->getModelWithData($this->getIdentifier());
+		$dataProvider = $this->getDataProvider();
+		$model      = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if ($model) {
-			$dispatcher->removeModel($model);
+			$dataProvider->removeModelForPath($model, $this->getPath());
 		}
 		return 200;
 	}
@@ -209,8 +221,9 @@ class Handler implements HandlerInterface {
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 		/* CREATE																	 */
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-//		$createCallback = function($request) use($dispatcher, $app) {
 		$dispatcher = Dispatcher::getSharedDispatcher();
+		$dataProvider = $this->getDataProvider();
+
 		/** @var \Cundd\Rest\Request $request */
 		$data = $dispatcher->getSentData();
 		$dispatcher->logRequest('create request', array('body' => $data));
@@ -218,14 +231,14 @@ class Handler implements HandlerInterface {
 		/**
 		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
 		 */
-		$model = $dispatcher->getModelWithData($data);
+		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 		if (!$model) {
 			return 400;
 		}
 
-		$dispatcher->saveModel($model);
-		$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
-		if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+		$dataProvider->saveModelForPath($model, $this->getPath());
+		$result = $dataProvider->getModelData($model);
+		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 			return array(
 				Utility::singularize($dispatcher->getRootObjectKey()) => $result
 			);
@@ -242,15 +255,16 @@ class Handler implements HandlerInterface {
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 		/* LIST 																	 */
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-//		$listCallback = function($request) use($dispatcher, $app) {
 		$dispatcher = Dispatcher::getSharedDispatcher();
-		$allModels  = $dispatcher->getAllModels();
+		$dataProvider = $this->getDataProvider();
+
+		$allModels  = $dataProvider->getAllModelsForPath($this->getPath());
 		if (!is_array($allModels)) {
 			$allModels = iterator_to_array($allModels);
 		}
 
-		$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
-		if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+		$result = array_map(array($dataProvider, 'getModelData'), $allModels);
+		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
 			return array(
 				$dispatcher->getRootObjectKey() => $result
 			);
@@ -338,6 +352,24 @@ class Handler implements HandlerInterface {
 			};
 			$app->get($listCallback);
 		});
+	}
+
+	/**
+	 * Returns the Data Provider
+	 *
+	 * @return DataProviderInterface
+	 */
+	protected function getDataProvider() {
+		return $this->objectManager->getDataProvider();
+	}
+
+	/**
+	 * Returns the current request path
+	 *
+	 * @return string
+	 */
+	protected function getPath() {
+		return $this->getRequest() ? $this->getRequest()->path() : Dispatcher::getSharedDispatcher()->getPath();
 	}
 
 } 
