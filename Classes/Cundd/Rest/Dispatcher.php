@@ -11,7 +11,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
 
 
-class App implements SingletonInterface {
+class Dispatcher implements SingletonInterface {
 	/**
 	 * API path
 	 * @var string
@@ -46,7 +46,8 @@ class App implements SingletonInterface {
 
 	/**
 	 * The shared instance
-	 * @var \Cundd\Rest\App
+	 *
+*@var \Cundd\Rest\Dispatcher
 	 */
 	static protected $sharedDispatcher;
 
@@ -106,7 +107,8 @@ class App implements SingletonInterface {
 
 		// If a path is given
 		if ($this->getPath()) {
-			$this->configureApiPaths();
+			$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
+			$this->objectManager->getHandler()->configureApiPaths();
 		}
 
 		$success = TRUE;
@@ -131,166 +133,6 @@ class App implements SingletonInterface {
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
-	}
-
-	/**
-	 * Configure the API paths
-	 */
-	protected function configureApiPaths() {
-		/**
-		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-		 */
-		$request = $this->getRequest();
-		$dispatcher = $this;
-		$app = $this->app;
-
-		$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"' );
-		$app->path($this->getPath(), function($request) use($dispatcher, $app) {
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			/* WITH UID 																 */
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			$app->param('slug', function($request, $uid) use($dispatcher, $app) {
-				$app->param('slug', function ($request, $propertyKey) use($uid, $dispatcher, $app) {
-						$model = $dispatcher->getModelWithData($uid);
-						if (!$model) {
-							return 404;
-						}
-						return $dispatcher->getModelProperty($model, $propertyKey);
-					});
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* SHOW
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->get(function($request) use($uid, $dispatcher, $app) {
-					$model = $dispatcher->getModelWithData($uid);
-					if (!$model) {
-						return 404;
-					}
-					$result = $dispatcher->getModelData($model);
-					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-						return array(
-							Utility::singularize($dispatcher->getRootObjectKey()) => $result
-						);
-					}
-					return $result;
-				});
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* REPLACE																	 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$replaceCallback = function($request) use($uid, $dispatcher, $app) {
-					/** @var \Cundd\Rest\Request $request */
-					$data = $dispatcher->getSentData();
-					$data['__identity'] = $uid;
-					$dispatcher->logRequest('update request', array('body' => $data));
-
-					$oldModel = $dispatcher->getModelWithData($uid);
-					if (!$oldModel) {
-						return 404;
-					}
-
-					/**
-					 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-					 */
-					$model = $dispatcher->getModelWithData($data);
-					if (!$model) {
-						return 400;
-					}
-
-					$dispatcher->saveModel($model);
-					$result = $dispatcher->getModelData($model);
-					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-						return array(
-							Utility::singularize($dispatcher->getRootObjectKey()) => $result
-						);
-					}
-					return $result;
-				};
-				$app->put($replaceCallback);
-				$app->post($replaceCallback);
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* UPDATE																	 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$updateCallback = function($request) use($uid, $dispatcher, $app) {
-					/** @var \Cundd\Rest\Request $request */
-					$data = $dispatcher->getSentData();
-					$data['__identity'] = $uid;
-					$dispatcher->logRequest('update request', array('body' => $data));
-
-					$model = $dispatcher->getModelWithData($data);
-
-					if (!$model) {
-						return 404;
-					}
-
-					$dispatcher->saveModel($model);
-					$result = $dispatcher->getModelData($model);
-					if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-						return array(
-							Utility::singularize($dispatcher->getRootObjectKey()) => $result
-						);
-					}
-					return $result;
-				};
-				$app->patch($updateCallback);
-
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				/* REMOVE																	 */
-				/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-				$app->delete(function($request) use($uid, $dispatcher, $app) {
-					$model = $dispatcher->getModelWithData($uid);
-					if ($model) {
-						$dispatcher->removeModel($model);
-					}
-					return 200;
-				});
-			});
-
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			/* CREATE																	 */
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			$app->post(function($request) use($dispatcher, $app) {
-				/** @var \Cundd\Rest\Request $request */
-				$data = $dispatcher->getSentData();
-				$dispatcher->logRequest('create request', array('body' => $data));
-
-				/**
-				 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-				 */
-				$model = $dispatcher->getModelWithData($data);
-				if (!$model) {
-					return 400;
-				}
-
-				$dispatcher->saveModel($model);
-				$result = $dispatcher->getObjectManager()->getDataProvider()->getModelData($model);
-				if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-					return array(
-						Utility::singularize($dispatcher->getRootObjectKey()) => $result
-					);
-				}
-				return $result;
-			});
-
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			/* LIST 																	 */
-			/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-			$app->get(function($request) use($dispatcher, $app) {
-				$allModels = $dispatcher->getAllModels();
-				if (!is_array($allModels)) {
-					$allModels = iterator_to_array($allModels);
-				}
-
-				$result = array_map(array($dispatcher->getObjectManager()->getDataProvider(), 'getModelData'), $allModels);
-				if ($dispatcher->getObjectManager()->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-					return array(
-						$dispatcher->getRootObjectKey() => $result
-					);
-				}
-				return $result;
-			});
-		});
 	}
 
 	/**
@@ -500,6 +342,15 @@ class App implements SingletonInterface {
 	}
 
 	/**
+	 * Returns the Bullet App
+	 *
+	 * @return \Bullet\App
+	 */
+	public function getApp() {
+		return $this->app;
+	}
+
+	/**
 	 * Returns the URI
 	 * @param string $format Reference to be filled with the request format
 	 * @return string
@@ -643,7 +494,8 @@ class App implements SingletonInterface {
 
 	/**
 	 * Returns the shared dispatcher instance
-	 * @return \Cundd\Rest\App
+	 *
+	 * @return \Cundd\Rest\Dispatcher
 	 */
 	static public function getSharedDispatcher() {
 		return self::$sharedDispatcher;

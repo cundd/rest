@@ -20,7 +20,7 @@ use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
 class ObjectManager extends BaseObjectManager implements ObjectManagerInterface, SingletonInterface {
 	/**
-	 * @var \Cundd\Rest\App
+	 * @var \Cundd\Rest\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -47,7 +47,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 
 	/**
 	 * Injects the dispatcher
-	 * @param \Cundd\Rest\App $dispatcher
+	 *
+	 * @param \Cundd\Rest\Dispatcher $dispatcher
 	 */
 	public function setDispatcher($dispatcher) {
 		$this->dispatcher = $dispatcher;
@@ -55,6 +56,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 
 	/**
 	 * Returns the configuration provider
+	 *
 	 * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
 	 */
 	public function getConfigurationProvider() {
@@ -72,8 +74,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	 */
 	public function getDataProvider() {
 		if (!$this->dataProvider) {
-			/** @var App $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			/** @var Dispatcher $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
 			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Data Provider
@@ -100,8 +102,8 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	 */
 	public function getAuthenticationProvider() {
 		if (!$this->authenticationProvider) {
-			/** @var App $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : App::getSharedDispatcher();
+			/** @var Dispatcher $dispatcher */
+			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
 			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
 			// Check if an extension provides a Authentication Provider
@@ -121,7 +123,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 	}
 
 	/**
-	 * Returns teh Access Controller
+	 * Returns the Access Controller
 	 * @return \Cundd\Rest\Access\AccessControllerInterface
 	 */
 	public function getAccessController() {
@@ -142,6 +144,30 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 			$this->accessController->setRequest($this->dispatcher->getRequest());
 		}
 		return $this->accessController;
+	}
+
+	/**
+	 * Returns the Handler which is responsible for handling the current request
+	 *
+	 * @return HandlerInterface
+	 */
+	public function getHandler() {
+		/** @var \Cundd\Rest\HandlerInterface $handler */
+		list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+
+		// Check if an extension provides a Handler
+		$accessControllerClass  = 'Tx_' . $extension . '_Rest_Handler';
+		if (!class_exists($accessControllerClass)) {
+			$accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
+		}
+
+		// Use the configuration based Authentication Provider
+		if (!class_exists($accessControllerClass)) {
+			$accessControllerClass = 'Cundd\\Rest\\HandlerInterface';
+		}
+		$handler = $this->get($accessControllerClass);
+		//$handler->setRequest($this->dispatcher->getRequest());
+		return $handler;
 	}
 
 	/**
