@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\Exception;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 
@@ -109,16 +110,6 @@ class Backend implements BackendInterface {
 	 */
 	public function getObjectDataByQuery($tableName, $query) {
 		$this->checkTableArgument($tableName);
-
-//		var_dump($this->getAdapter()->SELECTquery(
-//			'*',
-//			$tableName,
-//			$this->createWhereStatementFromQuery($query, $tableName),
-//			'',
-//			$this->createOrderingStatementFromQuery($query),
-//			$this->createLimitStatementFromQuery($query)
-//		));
-//		echo PHP_EOL;
 
 		$result = $this->getAdapter()->exec_SELECTgetRows(
 			'*',

@@ -7,6 +7,7 @@
  */
 
 namespace Cundd\Rest\VirtualObject\Persistence;
+use Cundd\Rest\VirtualObject\ConfigurationInterface;
 
 /**
  * Query implementation
@@ -19,6 +20,12 @@ class Query implements QueryInterface {
 	 * @inject
 	 */
 	protected $backend;
+
+	/**
+	 * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManager
+	 * @inject
+	 */
+	protected $persistenceManager;
 
 	/**
 	 * Constraints array
@@ -54,7 +61,7 @@ class Query implements QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		return $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $this);
+		return $this->persistenceManager->getObjectDataByQuery($this);
 	}
 
 
@@ -65,7 +72,7 @@ class Query implements QueryInterface {
 	 * @api
 	 */
 	public function count() {
-		return $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $this);
+		return $this->persistenceManager->getObjectCountByQuery($this);
 	}
 
 	/**
@@ -169,23 +176,33 @@ class Query implements QueryInterface {
 	}
 
 	/**
-	 * Sets the source identifier for the new query
-	 *
-	 * @param string $sourceIdentifier
-	 * @return QueryInterface
-	 */
-	public function setSourceIdentifier($sourceIdentifier) {
-		$this->sourceIdentifier = $sourceIdentifier;
-		return $this;
-	}
-
-	/**
 	 * Returns the source identifier for the new query
 	 *
 	 * @return string
 	 */
 	public function getSourceIdentifier() {
 		return $this->sourceIdentifier;
+	}
+
+	/**
+	 * Sets the configuration to use when converting
+	 *
+	 * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
+	 * @return $this
+	 */
+	public function setConfiguration($configuration) {
+		$this->persistenceManager->setConfiguration($configuration);
+		return $this;
+	}
+
+	/**
+	 * Returns the configuration to use when converting
+	 *
+	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+	 * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+	 */
+	public function getConfiguration() {
+		return $this->persistenceManager->getConfiguration();
 	}
 
 

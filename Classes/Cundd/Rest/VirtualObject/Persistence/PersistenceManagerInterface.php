@@ -31,7 +31,7 @@ use Cundd\Rest\VirtualObject\VirtualObject;
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-interface RepositoryInterface {
+interface PersistenceManagerInterface {
 	/**
 	 * Adds the given object to the database
 	 *
@@ -57,36 +57,27 @@ interface RepositoryInterface {
 	public function update($object);
 
 	/**
-	 * Returns all objects from the database
+	 * Returns the array of identifier properties of the object
 	 *
+	 * @param object $object
 	 * @return array
 	 */
-	public function findAll();
+	public function getIdentifiersOfObject($object);
 
 	/**
-	 * Returns the total number objects of this repository.
+	 * Returns the array of identifier columns and value of the object
 	 *
-	 * @return integer The object count
-	 * @api
+	 * @param object $object
+	 * @return array
 	 */
-	public function countAll();
+	public function getIdentifierColumnsOfObject($object);
 
 	/**
-	 * Removes all objects of this repository as if remove() was called for
-	 * all of them.
+	 * Returns the source identifier (the database table name)
 	 *
-	 * @return void
-	 * @api
+	 * @return string
 	 */
-	public function removeAll();
-
-	/**
-	 * Returns the object with the given identifier
-	 *
-	 * @param string $identifier
-	 * @return VirtualObject
-	 */
-	public function findByIdentifier($identifier);
+	public function getSourceIdentifier();
 
 	/**
 	 * Sets the configuration to use when converting
@@ -116,4 +107,30 @@ interface RepositoryInterface {
 	 * @return VirtualObject Returns the registered Document
 	 */
 	public function registerObject($object);
+
+	/**
+	 * Returns the number of items matching the query
+	 *
+	 * @param QueryInterface|array  $query
+	 * @return integer
+	 * @api
+	 */
+	public function getObjectCountByQuery($query);
+
+	/**
+	 * Returns the object data matching the $query
+	 *
+	 * @param QueryInterface|array  $query
+	 * @return array
+	 * @api
+	 */
+	public function getObjectDataByQuery($query);
+
+	/**
+	 * Returns the object with the given identifier
+	 *
+	 * @param string $identifier
+	 * @return VirtualObject
+	 */
+	public function getObjectByIdentifier($identifier);
 }

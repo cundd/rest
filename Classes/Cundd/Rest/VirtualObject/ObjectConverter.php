@@ -115,10 +115,6 @@ class ObjectConverter {
 		}
 
 		foreach ($source as $sourceKey => $sourceValue) {
-//			if ($sourceKey === '__identity') {
-//				$sourceKey = $configuration->getSourceKeyForProperty($configuration->getIdentifier());
-//				var_dump($sourceKey, $configuration->hasSourceKey($sourceKey));
-//			}
 			if ($configuration->hasSourceKey($sourceKey)) {
 				$propertyKey = $configuration->getPropertyForSourceKey($sourceKey);
 				$type = $configuration->getTypeForProperty($propertyKey);

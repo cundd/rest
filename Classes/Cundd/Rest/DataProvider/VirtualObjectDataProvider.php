@@ -76,7 +76,7 @@ class VirtualObjectDataProvider extends DataProvider {
 	 * Returns the Configuration for the given path
 	 *
 	 * @param string $path
-	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the path is empty
+	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
 	 * @return ConfigurationInterface
 	 */
 	public function getConfigurationForPath($path) {

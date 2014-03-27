@@ -31,7 +31,6 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
-use TYPO3\CMS\Extbase\Persistence\RepositoryInterface as ExtbaseRepositoryInterface;
 
 
 /**
@@ -39,7 +38,7 @@ use TYPO3\CMS\Extbase\Persistence\RepositoryInterface as ExtbaseRepositoryInterf
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
+class Repository implements RepositoryInterface {
 	/**
 	 * @var \Cundd\Rest\ObjectManager
 	 * @inject
@@ -54,15 +53,10 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	protected $configuration;
 
 	/**
-	 * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
+	 * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManager
 	 * @inject
 	 */
-	protected $backend;
-
-	/**
-	 * @var ObjectConverter
-	 */
-	protected $objectConverter;
+	protected $persistenceManager;
 
 	/**
 	 * Registers the given Virtual Object
@@ -76,16 +70,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return VirtualObject Returns the registered Document
 	 */
 	public function registerObject($object) {
-		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
-		if (
-			$identifierQuery
-			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
-		) {
-			$this->update($object);
-		} else {
-			$this->add($object);
-		}
-		return $object;
+		return $this->persistenceManager->registerObject($object);
 	}
 
 	/**
@@ -95,10 +80,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return void
 	 */
 	public function add($object) {
-		$this->backend->addRow(
-			$this->getSourceIdentifier(),
-			$this->getObjectConverter()->convertFromVirtualObject($object)
-		);
+		$this->persistenceManager->add($object);
 	}
 
 	/**
@@ -108,17 +90,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return void
 	 */
 	public function update($object) {
-		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
-		if (
-			$identifierQuery
-			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
-		) {
-			$this->backend->updateRow(
-				$this->getSourceIdentifier(),
-				$identifierQuery,
-				$this->getObjectConverter()->convertFromVirtualObject($object)
-			);
-		}
+		$this->persistenceManager->update($object);
 	}
 
 	/**
@@ -128,17 +100,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return void
 	 */
 	public function remove($object) {
-		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
-		if (
-			$identifierQuery
-			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
-		) {
-			$this->backend->removeRow(
-				$this->getSourceIdentifier(),
-				$identifierQuery,
-				$this->getObjectConverter()->convertFromVirtualObject($object)
-			);
-		}
+		$this->persistenceManager->remove($object);
 	}
 
 	/**
@@ -147,13 +109,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return array
 	 */
 	public function findAll() {
-		$objectConverter = $this->getObjectConverter();
-		$objectCollection = array();
-
-		$rawObjectCollection = $this->createQuery()
-			->setSourceIdentifier($this->getSourceIdentifier())
-			->execute()
-		;
+		return $this->createQuery()->execute();
 
 		foreach ($rawObjectCollection as $rawObjectData) {
 			$objectCollection[] = $objectConverter->convertToVirtualObject($rawObjectData);
@@ -168,6 +124,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @api
 	 */
 	public function countAll() {
+		return $this->createQuery()->count();
 		return $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), array());
 	}
 
@@ -191,64 +148,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @return VirtualObject
 	 */
 	public function findByIdentifier($identifier) {
-		$configuration = $this->getConfiguration();
-
-		$identifierProperty = $configuration->getIdentifier();
-		$identifierKey = $configuration->getSourceKeyForProperty($identifierProperty);
-
-
-		$objectConverter = $this->getObjectConverter();
-		$query = array(
-			$identifierKey => $identifier
-		);
-
-		$rawObjectCollection = $this->createQuery()
-			->setSourceIdentifier($this->getSourceIdentifier())
-			->setLimit(1)
-			->setConstraint($query)
-			->execute()
-		;
-		#$rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
-		foreach ($rawObjectCollection as $rawObjectData) {
-			return $objectConverter->convertToVirtualObject($rawObjectData);
-		}
-		return NULL;
-	}
-
-	/**
-	 * Returns the array of identifier properties of the object
-	 *
-	 * @param object $object
-	 * @return array
-	 */
-	public function getIdentifiersOfObject($object) {
-		$objectData = $object->getData();
-		$identifier = $this->getConfiguration()->getIdentifier();
-		return isset($objectData[$identifier]) ? array($identifier => $objectData[$identifier]) : array();
-	}
-
-	/**
-	 * Returns the array of identifier columns and value of the object
-	 *
-	 * @param object $object
-	 * @return array
-	 */
-	public function getIdentifierColumnsOfObject($object) {
-		$configuration = $this->getConfiguration();
-		$objectData = $object->getData();
-		$identifier = $configuration->getIdentifier();
-		$identifierColumn = $configuration->getSourceKeyForProperty($identifier);
-		return isset($objectData[$identifier]) ? array($identifierColumn => $objectData[$identifier]) : array();
-	}
-
-
-	/**
-	 * Returns the source identifier (the database table name)
-	 *
-	 * @return string
-	 */
-	public function getSourceIdentifier() {
-		return $this->getConfiguration()->getSourceIdentifier();
+		return $this->persistenceManager->getObjectByIdentifier($identifier);
 	}
 
 	/**
@@ -259,7 +159,7 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 */
 	public function setConfiguration($configuration) {
 		$this->configuration = $configuration;
-		$this->objectConverter = NULL;
+		$this->persistenceManager->setConfiguration($configuration);
 		return $this;
 	}
 
@@ -274,18 +174,6 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 			throw new MissingConfigurationException('Configuration not set', 1395681118);
 		}
 		return $this->configuration;
-	}
-
-	/**
-	 * Returns the Object Converter for the current configuration
-	 *
-	 * @return ObjectConverter
-	 */
-	protected function getObjectConverter() {
-		if (!$this->objectConverter) {
-			$this->objectConverter = new ObjectConverter($this->getConfiguration());
-		}
-		return $this->objectConverter;
 	}
 
 	/**
@@ -333,8 +221,9 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	 * @api
 	 */
 	public function createQuery() {
+		/** @var QueryInterface $query */
 		$query = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\QueryInterface');
-		$query->setSourceIdentifier($this->getSourceIdentifier());
+		$query->setConfiguration($this->getConfiguration());
 		return $query;
 	}
 

@@ -64,14 +64,6 @@ interface QueryInterface {
 	 */
 	public function setConstraint($constraint);
 
-	/**
-	 * Sets the source identifier for the new query
-	 *
-	 * @param string $sourceIdentifier
-	 * @return QueryInterface
-	 */
-	public function setSourceIdentifier($sourceIdentifier);
-
 //	/**
 //	 * The constraint used to limit the result set. Returns $this to allow
 //	 * for chaining (fluid interface).
@@ -294,5 +286,20 @@ interface QueryInterface {
 //	 */
 //	public function isEmpty($propertyName);
 
+	/**
+	 * Sets the configuration to use when converting
+	 *
+	 * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
+	 * @return $this
+	 */
+	public function setConfiguration($configuration);
+
+	/**
+	 * Returns the configuration to use when converting
+	 *
+	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+	 * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+	 */
+	public function getConfiguration();
 
 } 
