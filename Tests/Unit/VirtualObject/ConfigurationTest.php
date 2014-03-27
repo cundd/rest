@@ -72,6 +72,19 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 	/**
 	 * @test
 	 */
+	public function hasSourceKeyTest() {
+		$this->assertTrue($this->fixture->hasSourceKey('property_one'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_two'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_three'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_four'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_five'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_six'));
+		$this->assertFalse($this->fixture->hasSourceKey('property_not_exists'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function getConfigurationForPropertyTest() {
 		$testPropertyConfiguration = array(
 			'type' => 'string',
@@ -85,10 +98,19 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 	/**
 	 * @test
 	 */
-	public function getSourcePropertyNameForPropertyTest() {
+	public function getSourceKeyForPropertyTest() {
 		$this->assertEquals('property_three', $this->fixture->getSourceKeyForProperty('property3'));
 		$this->assertEquals('property_six', $this->fixture->getSourceKeyForProperty('property6'));
 		$this->assertNull($this->fixture->getSourceKeyForProperty('propertyNotExists'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getPropertyForSourceKeyTest() {
+		$this->assertEquals('property3', $this->fixture->getPropertyForSourceKey('property_three'));
+		$this->assertEquals('property6', $this->fixture->getPropertyForSourceKey('property_six'));
+		$this->assertNull($this->fixture->getPropertyForSourceKey('propertyNotExists'));
 	}
 
 	/**

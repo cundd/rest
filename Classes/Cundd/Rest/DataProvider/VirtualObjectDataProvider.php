@@ -33,6 +33,7 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
@@ -52,6 +53,12 @@ class VirtualObjectDataProvider extends DataProvider {
 	 * @var array<\Cundd\Rest\VirtualObject\ObjectConverter>
 	 */
 	protected $objectConverterMap = array();
+
+	/**
+	 * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
+	 * @inject
+	 */
+	protected $configurationFactory;
 
 	/**
 	 * Returns the Object Converter with the currently matching configuration
@@ -77,44 +84,8 @@ class VirtualObjectDataProvider extends DataProvider {
 	 * @return ConfigurationInterface
 	 */
 	public function getConfigurationForPath($path) {
-		$testConfigurationJson = <<<CONFIGURATION
-{
-    "ResourceName": {
-        "mapping": {
-        	"identifier": "id",
-            "tableName": "pages",
-
-            "properties": {
-                "id": {
-                    "type": "int",
-                    "column": "uid"
-                },
-                "sorting": {
-                    "type": "integer",
-                    "column": "sorting"
-                },
-                "title": {
-                    "type": "string",
-                    "column": "title"
-                },
-                "isSiteRoot": {
-                    "type": "bool",
-                    "column": "is_siteroot"
-                },
-                "parentPage": {
-                    "type": "int",
-                    "column": "pid"
-                }
-            }
-        }
-    }
-}
-CONFIGURATION;
-
-		$testConfigurationData = json_decode($testConfigurationJson, TRUE);
-		$testConfiguration = new \Cundd\Rest\VirtualObject\Configuration($testConfigurationData['ResourceName']['mapping']);
-		$testConfiguration->setSkipUnknownProperties(TRUE);
-		return $testConfiguration;
+		$path = substr($path, strpos($path, '-') + 1); // Strip the "VirtualObject-" from the path
+		return $this->configurationFactory->createFromTypoScriptForPath($path);
 	}
 
 	/**
@@ -137,7 +108,6 @@ CONFIGURATION;
 		$repositoryClass = $this->getRepositoryClassForPath($path);
 		/** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface $repository */
 		$repository = $this->objectManager->get($repositoryClass);
-//		$repository->setDefaultQuerySettings($this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings'));
 		$repository->setConfiguration($this->getConfigurationForPath($path));
 		return $repository;
 	}

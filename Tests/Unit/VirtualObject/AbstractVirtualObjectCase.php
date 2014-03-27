@@ -66,7 +66,15 @@ class AbstractVirtualObjectCase extends BaseTestCase {
 		if ($this->testConfiguration) {
 			return $this->testConfiguration;
 		}
-		$testConfigurationJson = <<<CONFIGURATION
+		$this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), TRUE);
+		return $this->testConfiguration;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getTestConfigurationJSONString() {
+		return <<<CONFIGURATION
 {
     "ResourceName": {
         "mapping": {
@@ -103,8 +111,5 @@ class AbstractVirtualObjectCase extends BaseTestCase {
     }
 }
 CONFIGURATION;
-
-		$this->testConfiguration = json_decode($testConfigurationJson, TRUE);
-		return $this->testConfiguration;
 	}
 }
