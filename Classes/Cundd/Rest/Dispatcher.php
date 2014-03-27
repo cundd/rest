@@ -34,7 +34,14 @@ use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
 
-
+/**
+ * Main dispatcher of REST requests
+ *
+ * The dispatcher will first check the access to the requested resource. Then it will check the cache for a stored
+ * response for the current request. If no cached response was found,
+ *
+ * @package Cundd\Rest
+ */
 class Dispatcher implements SingletonInterface {
 	/**
 	 * API path
@@ -71,7 +78,7 @@ class Dispatcher implements SingletonInterface {
 	/**
 	 * The shared instance
 	 *
-*@var \Cundd\Rest\Dispatcher
+	 * @var \Cundd\Rest\Dispatcher
 	 */
 	static protected $sharedDispatcher;
 
@@ -124,23 +131,23 @@ class Dispatcher implements SingletonInterface {
 		$cache = $this->objectManager->getCache();
 		$response = $cache->getCachedValueForRequest($request);
 
-		/**
-		 * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-		 */
-		$model = NULL;
-
-		// If a path is given
-		if ($this->getPath()) {
-			$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
-			$this->objectManager->getHandler()->configureApiPaths();
-		}
-
 		$success = TRUE;
+
+		// If no cached response exists
 		if (!$response) {
+
+			// If a path is given let the handler build up the routes
+			if ($this->getPath()) {
+				$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
+				$this->objectManager->getHandler()->configureApiPaths();
+			}
+
+			// Let Bullet PHP do the hard work
 			$response = $this->app->run($request);
 
-			$response->content($response->content());
+//			$response->content($response->content());
 
+			// Handle exceptions
 			if ($response->content() instanceof \Exception) {
 				$success = FALSE;
 
@@ -149,6 +156,7 @@ class Dispatcher implements SingletonInterface {
 				$response = $this->exceptionToResponse($exception);
 			}
 
+			// Cache the response
 			$cache->setCachedValueForRequest($request, $response);
 		}
 
@@ -239,142 +247,6 @@ class Dispatcher implements SingletonInterface {
 	}
 
 	/**
-	 * Returns the sent data
-	 * @return mixed
-	 */
-	public function getSentData() {
-		$request = $this->getRequest();
-
-		/** @var \Cundd\Rest\Request $request */
-		$data = $request->post();
-		/*
-		 * If no form url-encoded body is sent check if a JSON
-		 * payload is sent with the singularized root object key as
-		 * the payload's root object key
-		 */
-		if (!$data) {
-			$data = $request->get(
-				Utility::singularize($this->getRootObjectKey())
-			);
-		}
-		return $data;
-	}
-
-	/**
-	 * Returns the key to use for the root object if addRootObjectForCollection
-	 * is enabled
-	 *
-	 * @return string
-	 */
-	public function getRootObjectKey() {
-		$originalPath = $this->getOriginalPath();
-		/*
-		 * Transform Document URLs
-		 * @Todo: Make this better
-		 */
-		if (substr($originalPath, 0, 9) === 'Document-') {
-			$originalPath = substr($originalPath, 9);
-		}
-		return $originalPath;
-	}
-
-	/**
-	 * Returns the domain model repository for the current API path
-	 * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
-	 */
-	public function getRepository() {
-		return $this->objectManager->getDataProvider()->getRepositoryForPath($this->getPath());
-	}
-
-	/**
-	 * Returns all domain model for the given API path
-	 *
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getAllModels() {
-		return $this->objectManager->getDataProvider()->getAllModelsForPath($this->getPath());
-	}
-
-	/**
-	 * Returns a domain model for the given API path and data
-	 * This method will load existing models.
-	 *
-	 * @param array $data Data of the new model
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getModelWithData($data) {
-		return $this->objectManager->getDataProvider()->getModelWithDataForPath($data, $this->getPath());
-	}
-
-	/**
-	 * Returns a new domain model for the given API path and data
-	 * Even if the data contains an identifier, the existing model will not be loaded.
-	 *
-	 * @param array $data Data of the new model
-	 * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-	 */
-	public function getNewModelWithData($data) {
-		return $this->objectManager->getDataProvider()->getNewModelWithDataForPath($data, $this->getPath());
-	}
-
-	/**
-	 * Returns the data from the given model
-	 *
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-	 */
-	public function getModelData($model) {
-		return $this->objectManager->getDataProvider()->getModelData($model);
-	}
-
-	/**
-	 * Returns the property data from the given model
-	 *
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-	 * @param string $propertyKey
-	 * @return mixed
-	 */
-	public function getModelProperty($model, $propertyKey) {
-		return $this->objectManager->getDataProvider()->getModelProperty($model, $propertyKey);
-	}
-
-	/**
-	 * Tells the Data Provider to save the given model
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-	 * @return void
-	 */
-	public function saveModel($model) {
-		$this->objectManager->getDataProvider()->saveModelForPath($model, $this->getPath());
-	}
-
-	/**
-	 * Tells the Data Provider to replace the given old model with the new one
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
-	 * @return void
-	 */
-	public function replaceModel($oldModel, $newModel) {
-		$this->objectManager->getDataProvider()->replaceModelForPath($oldModel, $newModel, $this->getPath());
-	}
-
-	/**
-	 * Tells the Data Provider to remove the given model
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-	 * @return void
-	 */
-	public function removeModel($model) {
-		$this->objectManager->getDataProvider()->removeModelForPath($model, $this->getPath());
-	}
-
-	/**
-	 * Returns the Bullet App
-	 *
-	 * @return \Bullet\App
-	 */
-	public function getApp() {
-		return $this->app;
-	}
-
-	/**
 	 * Returns the URI
 	 * @param string $format Reference to be filled with the request format
 	 * @return string
@@ -421,20 +293,52 @@ class Dispatcher implements SingletonInterface {
 	}
 
 	/**
-	 * Returns the object manager
-	 *
-	 * @return \Cundd\Rest\ObjectManager
+	 * Returns the sent data
+	 * @return mixed
 	 */
-	public function getObjectManager() {
-		return $this->objectManager;
+	public function getSentData() {
+		$request = $this->getRequest();
+
+		/** @var \Cundd\Rest\Request $request */
+		$data = $request->post();
+		/*
+		 * If no form url-encoded body is sent check if a JSON
+		 * payload is sent with the singularized root object key as
+		 * the payload's root object key
+		 */
+		if (!$data) {
+			$data = $request->get(
+				Utility::singularize($this->getRootObjectKey())
+			);
+		}
+		return $data;
 	}
 
 	/**
-	 * Returns the data provider
-	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
+	 * Returns the key to use for the root object if addRootObjectForCollection
+	 * is enabled
+	 *
+	 * @return string
 	 */
-	public function getDataProvider() {
-		return $this->objectManager->getDataProvider();
+	public function getRootObjectKey() {
+		$originalPath = $this->getOriginalPath();
+		/*
+		 * Transform Document URLs
+		 * @Todo: Make this better
+		 */
+		if (substr($originalPath, 0, 9) === 'Document-') {
+			$originalPath = substr($originalPath, 9);
+		}
+		return $originalPath;
+	}
+
+	/**
+	 * Returns the Bullet App
+	 *
+	 * @return \Bullet\App
+	 */
+	public function getApp() {
+		return $this->app;
 	}
 
 	/**
@@ -524,6 +428,5 @@ class Dispatcher implements SingletonInterface {
 	static public function getSharedDispatcher() {
 		return self::$sharedDispatcher;
 	}
-
 }
 ?>
