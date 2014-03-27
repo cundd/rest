@@ -42,7 +42,7 @@ class ObjectConverter {
 	 */
 	protected $configuration;
 
-	function __construct($configuration = array()) {
+	function __construct($configuration = NULL) {
 		$this->configuration = $configuration;
 	}
 

@@ -139,6 +139,7 @@ class RepositoryTest extends AbstractDatabaseCase{
 		$this->fixture->update($object);
 
 		$result = $this->fixture->findByIdentifier($objectData['uid']);
+		$this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
 		$this->assertEquals($object->getData(), $result->getData());
 	}
 
@@ -161,6 +162,9 @@ class RepositoryTest extends AbstractDatabaseCase{
 	public function findByIdentifierTest() {
 		$uid = 100;
 		$result = $this->fixture->findByIdentifier($uid);
+
+		$this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
+
 		$resultData = $result->getData();
 		$this->assertEquals($uid, $resultData['uid']);
 

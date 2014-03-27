@@ -26,6 +26,7 @@
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 
+use Cundd\Rest\ObjectManager;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
@@ -39,6 +40,12 @@ use TYPO3\CMS\Extbase\Persistence\RepositoryInterface as ExtbaseRepositoryInterf
  * @package Cundd\Rest\VirtualObject\Persistence
  */
 class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
+	/**
+	 * @var \Cundd\Rest\ObjectManager
+	 * @inject
+	 */
+	protected $objectManager;
+
 	/**
 	 * The configuration to use when converting
 	 *
@@ -142,7 +149,12 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	public function findAll() {
 		$objectConverter = $this->getObjectConverter();
 		$objectCollection = array();
-		$rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), array());
+
+		$rawObjectCollection = $this->createQuery()
+			->setSourceIdentifier($this->getSourceIdentifier())
+			->execute()
+		;
+
 		foreach ($rawObjectCollection as $rawObjectData) {
 			$objectCollection[] = $objectConverter->convertToVirtualObject($rawObjectData);
 		}
@@ -189,7 +201,14 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 		$query = array(
 			$identifierKey => $identifier
 		);
-		$rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
+
+		$rawObjectCollection = $this->createQuery()
+			->setSourceIdentifier($this->getSourceIdentifier())
+			->setLimit(1)
+			->setConstraint($query)
+			->execute()
+		;
+		#$rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
 		foreach ($rawObjectCollection as $rawObjectData) {
 			return $objectConverter->convertToVirtualObject($rawObjectData);
 		}
@@ -310,11 +329,13 @@ class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+	 * @return QueryInterface
 	 * @api
 	 */
 	public function createQuery() {
-		// TODO: Implement createQuery() method.
+		$query = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\QueryInterface');
+		$query->setSourceIdentifier($this->getSourceIdentifier());
+		return $query;
 	}
 
 

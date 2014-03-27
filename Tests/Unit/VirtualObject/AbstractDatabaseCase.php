@@ -141,7 +141,6 @@ CONFIGURATION;
 
 	public function tearDown() {
 		self::truncateTable();
-
 		parent::tearDown();
 	}
 

@@ -42,7 +42,7 @@ class Backend implements BackendInterface {
 		$this->getAdapter()->exec_INSERTquery($tableName, $row);
 		$uid = $this->getAdapter()->sql_insert_id();
 		$this->checkSqlErrors();
-		return (integer) $uid;
+		return (integer)$uid;
 	}
 
 	/**
@@ -80,14 +80,21 @@ class Backend implements BackendInterface {
 	 * Returns the number of items matching the query
 	 *
 	 * @param string $tableName The database table name
-	 * @param array  $query
+	 * @param QueryInterface|array  $query
 	 * @return integer
 	 * @api
 	 */
 	public function getObjectCountByQuery($tableName, $query) {
 		$this->checkTableArgument($tableName);
 
-		list($row) = $this->getAdapter()->exec_SELECTgetRows('COUNT(*) AS count', $tableName, $this->createWhereStatementFromQuery($query, $tableName));
+		list($row) = $this->getAdapter()->exec_SELECTgetRows(
+			'COUNT(*) AS count',
+			$tableName,
+			$this->createWhereStatementFromQuery($query, $tableName),
+			'',
+			$this->createOrderingStatementFromQuery($query),
+			$this->createLimitStatementFromQuery($query)
+		);
 		$this->checkSqlErrors();
 		return intval($row['count']);
 	}
@@ -96,14 +103,31 @@ class Backend implements BackendInterface {
 	 * Returns the object data matching the $query
 	 *
 	 * @param string $tableName The database table name
-	 * @param array  $query
+	 * @param QueryInterface|array  $query
 	 * @return array
 	 * @api
 	 */
 	public function getObjectDataByQuery($tableName, $query) {
 		$this->checkTableArgument($tableName);
 
-		$result = $this->getAdapter()->exec_SELECTgetRows('*', $tableName, $this->createWhereStatementFromQuery($query, $tableName));
+//		var_dump($this->getAdapter()->SELECTquery(
+//			'*',
+//			$tableName,
+//			$this->createWhereStatementFromQuery($query, $tableName),
+//			'',
+//			$this->createOrderingStatementFromQuery($query),
+//			$this->createLimitStatementFromQuery($query)
+//		));
+//		echo PHP_EOL;
+
+		$result = $this->getAdapter()->exec_SELECTgetRows(
+			'*',
+			$tableName,
+			$this->createWhereStatementFromQuery($query, $tableName),
+			'',
+			$this->createOrderingStatementFromQuery($query),
+			$this->createLimitStatementFromQuery($query)
+		);
 		$this->checkSqlErrors();
 		return $result;
 	}
@@ -125,8 +149,8 @@ class Backend implements BackendInterface {
 	/**
 	 * Creates the WHERE-statement from the given key-value query-array
 	 *
-	 * @param array  $query
-	 * @param string $tableName
+	 * @param QueryInterface|array $query
+	 * @param string               $tableName
 	 * @throws Exception\InvalidColumnNameException if one of the column names is invalid
 	 * @throws Exception\InvalidTableNameException if the table name is invalid
 	 * @return string
@@ -134,7 +158,11 @@ class Backend implements BackendInterface {
 	protected function createWhereStatementFromQuery($query, $tableName) {
 		$this->checkTableArgument($tableName);
 
-		$adapter = $this->getAdapter();
+		if ($query instanceof QueryInterface) {
+			$query = $query->getConstraint();
+		}
+
+		$adapter     = $this->getAdapter();
 		$constraints = array();
 		foreach ($query as $column => $value) {
 			if (!ctype_alnum(str_replace('_', '', $column))) {
@@ -144,10 +172,44 @@ class Backend implements BackendInterface {
 			$constraints[] = ''
 				. $column
 				. '='
-				. $adapter->fullQuoteStr($value, $tableName)
-			;
+				. $adapter->fullQuoteStr($value, $tableName);
 		}
 		return implode(' AND ', $constraints);
+	}
+
+	/**
+	 * Returns the offset and limit statement for the given query
+	 *
+	 * @param QueryInterface $query
+	 * @return string
+	 */
+	protected function createLimitStatementFromQuery($query) {
+		#SELECT * FROM tbl LIMIT 5,10;  # Retrieve rows 6-15
+		if ($query instanceof QueryInterface) {
+			$limit = '' . $query->getOffset();
+			if ($query->getLimit()) {
+				$limit = ($limit ? $limit : '0') . ',' . $query->getLimit();
+			}
+			return $limit;
+		}
+		return '';
+	}
+
+	/**
+	 * Returns the order by statement for the given query
+	 *
+	 * @param QueryInterface $query
+	 * @return string
+	 */
+	protected function createOrderingStatementFromQuery($query) {
+		if ($query instanceof QueryInterface) {
+			$orderings = $query->getOrderings();
+			$orderArray = array_map(function($property, $direction) {
+				return $property . ' ' . $direction;
+			}, array_keys($orderings), $orderings);
+			return implode(', ', $orderArray);
+		}
+		return '';
 	}
 
 	/**

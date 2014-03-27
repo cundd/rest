@@ -32,16 +32,11 @@
 
 namespace Cundd\Rest\DataProvider;
 
-use Cundd\Rest\ObjectManager;
-use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
-use Cundd\Rest\VirtualObject\ObjectConverter;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
-use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Data Provider for Virtual Objects
@@ -81,10 +76,14 @@ class VirtualObjectDataProvider extends DataProvider {
 	 * Returns the Configuration for the given path
 	 *
 	 * @param string $path
+	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the path is empty
 	 * @return ConfigurationInterface
 	 */
 	public function getConfigurationForPath($path) {
 		$path = substr($path, strpos($path, '-') + 1); // Strip the "VirtualObject-" from the path
+		if (!$path) {
+			throw new MissingConfigurationException('Could not get configuration for empty path', 1395932408);
+		}
 		return $this->configurationFactory->createFromTypoScriptForPath($path);
 	}
 
