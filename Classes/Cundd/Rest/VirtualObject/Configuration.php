@@ -62,6 +62,26 @@ class Configuration implements ConfigurationInterface {
 	}
 
 	/**
+	 * Returns the list of all properties
+	 *
+	 * @return array
+	 */
+	public function getAllProperties() {
+		return array_keys($this->configurationData['properties']);
+	}
+
+	/**
+	 * Returns the list of all source keys
+	 *
+	 * @return array
+	 */
+	public function getAllSourceKeys() {
+		return array_map(function($item) {
+			return $item['column'];
+		}, array_values($this->configurationData['properties']));
+	}
+
+	/**
 	 * Returns TRUE if the given property name should be mapped, FALSE otherwise.
 	 *
 	 * @param string $propertyName

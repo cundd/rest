@@ -36,6 +36,20 @@ namespace Cundd\Rest\VirtualObject;
  */
 interface ConfigurationInterface {
 	/**
+	 * Returns the list of all properties
+	 *
+	 * @return array
+	 */
+	public function getAllProperties();
+
+	/**
+	 * Returns the list of all source keys
+	 *
+	 * @return array
+	 */
+	public function getAllSourceKeys();
+
+	/**
 	 * Returns TRUE if the given property name exists
 	 *
 	 * @param string $propertyName

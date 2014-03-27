@@ -59,6 +59,34 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 	/**
 	 * @test
 	 */
+	public function getAllPropertiesTest() {
+		$this->assertEquals(array(
+			'property1',
+			'property2',
+			'property3',
+			'property4',
+			'property5',
+			'property6',
+		), $this->fixture->getAllProperties());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getAllSourceKeysTest() {
+		$this->assertEquals(array(
+			'property_one',
+			'property_two',
+			'property_three',
+			'property_four',
+			'property_five',
+			'property_six',
+		), $this->fixture->getAllSourceKeys());
+	}
+
+	/**
+	 * @test
+	 */
 	public function hasPropertyTest() {
 		$this->assertTrue($this->fixture->hasProperty('property1'));
 		$this->assertTrue($this->fixture->hasProperty('property2'));

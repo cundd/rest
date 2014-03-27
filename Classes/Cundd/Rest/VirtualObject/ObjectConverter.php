@@ -55,8 +55,8 @@ class ObjectConverter {
 	 * @return array
 	 */
 	public function prepareDataFromVirtualObjectData($virtualObjectData) {
-		$convertedData = array();
 		$configuration = $this->getConfiguration();
+		$convertedData = array_fill_keys($configuration->getAllSourceKeys(), NULL);
 
 		if (!$configuration) {
 			throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
@@ -107,8 +107,8 @@ class ObjectConverter {
 	 * @return array
 	 */
 	public function prepareForVirtualObjectData($source){
-		$convertedData = array();
 		$configuration = $this->getConfiguration();
+		$convertedData = array_fill_keys($configuration->getAllProperties(), NULL);
 
 		if (!$configuration) {
 			throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
