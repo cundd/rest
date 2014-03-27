@@ -47,14 +47,14 @@ class ObjectConverter {
 	}
 
 	/**
-	 * Converts the given Virtual Object into it's source representation
+	 * Converts the given Virtual Object's data into it's source representation
 	 *
-	 * @param VirtualObject $virtualObject
+	 * @param array $virtualObjectData Raw data in the schema defined by the current mapping
 	 * @throws InvalidPropertyException if a property is not defined in the mapping
 	 * @throws Exception\MissingConfigurationException if the configuration is not set
 	 * @return array
 	 */
-	public function convertFromVirtualObject(VirtualObject $virtualObject) {
+	public function prepareDataFromVirtualObjectData($virtualObjectData) {
 		$convertedData = array();
 		$configuration = $this->getConfiguration();
 
@@ -62,7 +62,11 @@ class ObjectConverter {
 			throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
 		}
 
-		foreach ($virtualObject->getData() as $propertyKey => $propertyValue) {
+		foreach ($virtualObjectData as $propertyKey => $propertyValue) {
+			if ($propertyKey === '__identity') {
+				$propertyKey = $configuration->getIdentifier();
+			}
+
 			if ($configuration->hasProperty($propertyKey)) {
 				$type = $configuration->getTypeForProperty($propertyKey);
 				$sourceKey = $configuration->getSourceKeyForProperty($propertyKey);
@@ -77,14 +81,32 @@ class ObjectConverter {
 	}
 
 	/**
-	 * Converts the given source array into a Virtual Object
+	 * Converts the given Virtual Object into it's source representation
+	 *
+	 * @param VirtualObject|array $virtualObject Either a Virtual Object instance or raw data in the schema defined by the current mapping
+	 * @throws InvalidPropertyException if a property is not defined in the mapping
+	 * @throws Exception\MissingConfigurationException if the configuration is not set
+	 * @return array
+	 */
+	public function convertFromVirtualObject($virtualObject) {
+		$virtualObjectData = NULL;
+		if (is_array($virtualObject)) {
+			$virtualObjectData = $virtualObject;
+		} else if ($virtualObject instanceof VirtualObject) {
+			$virtualObjectData = $virtualObject->getData();
+		}
+		return $this->prepareDataFromVirtualObjectData($virtualObjectData);
+	}
+
+	/**
+	 * Converts the given source array into the configured Virtual Object data
 	 *
 	 * @param array $source
 	 * @throws InvalidPropertyException if a property is not defined in the mapping
 	 * @throws MissingConfigurationException if the configuration is not set
-	 * @return VirtualObject
+	 * @return array
 	 */
-	public function convertToVirtualObject($source){
+	public function prepareForVirtualObjectData($source){
 		$convertedData = array();
 		$configuration = $this->getConfiguration();
 
@@ -93,6 +115,10 @@ class ObjectConverter {
 		}
 
 		foreach ($source as $sourceKey => $sourceValue) {
+//			if ($sourceKey === '__identity') {
+//				$sourceKey = $configuration->getSourceKeyForProperty($configuration->getIdentifier());
+//				var_dump($sourceKey, $configuration->hasSourceKey($sourceKey));
+//			}
 			if ($configuration->hasSourceKey($sourceKey)) {
 				$propertyKey = $configuration->getPropertyForSourceKey($sourceKey);
 				$type = $configuration->getTypeForProperty($propertyKey);
@@ -103,7 +129,19 @@ class ObjectConverter {
 				throw new InvalidPropertyException('Property "' . $sourceKey . '" is not defined', 1395670264);
 			}
 		}
-		return new VirtualObject($convertedData);
+		return $convertedData;
+	}
+
+	/**
+	 * Converts the given source array into a Virtual Object
+	 *
+	 * @param array $source
+	 * @throws InvalidPropertyException if a property is not defined in the mapping
+	 * @throws MissingConfigurationException if the configuration is not set
+	 * @return VirtualObject
+	 */
+	public function convertToVirtualObject($source){
+		return new VirtualObject($this->prepareForVirtualObjectData($source));
 	}
 
 	/**
@@ -171,9 +209,11 @@ class ObjectConverter {
 	/**
 	 * Returns the configuration to use when converting
 	 *
+	 * @throws Exception\MissingConfigurationException if the configuration is not set
 	 * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
 	 */
 	public function getConfiguration() {
+		if (!$this->configuration) throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
 		return $this->configuration;
 	}
 
