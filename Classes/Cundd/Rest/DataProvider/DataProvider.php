@@ -400,17 +400,10 @@ class DataProvider implements DataProviderInterface {
 		}
 	}
 
-
 	/**
 	 * Persist all changes to the database
 	 */
 	public function persistAllChanges() {
-//		/** @var ObjectManager $objectManager */
-//		$objectManager = $this->objectManager;
-//		/** @var PersistenceManagerInterface $persistenceManager */
-//		$persistenceManager = $objectManager->getPersistenceManager();
-//		$persistenceManager->persistAll();
-
 		/** @var PersistenceManagerInterface $persistenceManager */
 		$persistenceManager = $this->objectManager->get(ObjectManager::getPersistenceManagerClassName());
 		$persistenceManager->persistAll();
