@@ -30,13 +30,15 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
+use TYPO3\CMS\Extbase\Persistence\RepositoryInterface as ExtbaseRepositoryInterface;
+
 
 /**
  * Repository for Virtual Objects
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-class Repository implements RepositoryInterface {
+class Repository implements RepositoryInterface, ExtbaseRepositoryInterface {
 	/**
 	 * The configuration to use when converting
 	 *
@@ -56,6 +58,30 @@ class Repository implements RepositoryInterface {
 	protected $objectConverter;
 
 	/**
+	 * Registers the given Virtual Object
+	 *
+	 * This is a high level shorthand for:
+	 * Object exists?
+	 *    Yes -> update
+	 *    No -> add
+	 *
+	 * @param VirtualObject $object
+	 * @return VirtualObject Returns the registered Document
+	 */
+	public function registerObject($object) {
+		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
+		if (
+			$identifierQuery
+			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
+		) {
+			$this->update($object);
+		} else {
+			$this->add($object);
+		}
+		return $object;
+	}
+
+	/**
 	 * Adds the given object to the database
 	 *
 	 * @param VirtualObject $object
@@ -69,18 +95,18 @@ class Repository implements RepositoryInterface {
 	}
 
 	/**
-	 * Removes the given object from the database
+	 * Updates the given object in the database
 	 *
 	 * @param VirtualObject $object
 	 * @return void
 	 */
-	public function remove($object) {
-		$identifierQuery = $this->getIdentifiersOfObject($object);
+	public function update($object) {
+		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
 		if (
 			$identifierQuery
 			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
 		) {
-			$this->backend->removeRow(
+			$this->backend->updateRow(
 				$this->getSourceIdentifier(),
 				$identifierQuery,
 				$this->getObjectConverter()->convertFromVirtualObject($object)
@@ -89,18 +115,18 @@ class Repository implements RepositoryInterface {
 	}
 
 	/**
-	 * Updates the given object in the database
+	 * Removes the given object from the database
 	 *
 	 * @param VirtualObject $object
 	 * @return void
 	 */
-	public function update($object) {
-		$identifierQuery = $this->getIdentifiersOfObject($object);
+	public function remove($object) {
+		$identifierQuery = $this->getIdentifierColumnsOfObject($object);
 		if (
 			$identifierQuery
 			&& $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
 		) {
-			$this->backend->updateRow(
+			$this->backend->removeRow(
 				$this->getSourceIdentifier(),
 				$identifierQuery,
 				$this->getObjectConverter()->convertFromVirtualObject($object)
@@ -153,12 +179,13 @@ class Repository implements RepositoryInterface {
 	 * @return VirtualObject
 	 */
 	public function findByIdentifier($identifier) {
-		$identifierKey = $this->getConfiguration()->getIdentifier();
+		$configuration = $this->getConfiguration();
+
+		$identifierProperty = $configuration->getIdentifier();
+		$identifierKey = $configuration->getSourceKeyForProperty($identifierProperty);
 
 
 		$objectConverter = $this->getObjectConverter();
-		$objectCollection = array();
-
 		$query = array(
 			$identifierKey => $identifier
 		);
@@ -170,7 +197,7 @@ class Repository implements RepositoryInterface {
 	}
 
 	/**
-	 * Returns the array of identifiers of the object
+	 * Returns the array of identifier properties of the object
 	 *
 	 * @param object $object
 	 * @return array
@@ -179,6 +206,20 @@ class Repository implements RepositoryInterface {
 		$objectData = $object->getData();
 		$identifier = $this->getConfiguration()->getIdentifier();
 		return isset($objectData[$identifier]) ? array($identifier => $objectData[$identifier]) : array();
+	}
+
+	/**
+	 * Returns the array of identifier columns and value of the object
+	 *
+	 * @param object $object
+	 * @return array
+	 */
+	public function getIdentifierColumnsOfObject($object) {
+		$configuration = $this->getConfiguration();
+		$objectData = $object->getData();
+		$identifier = $configuration->getIdentifier();
+		$identifierColumn = $configuration->getSourceKeyForProperty($identifier);
+		return isset($objectData[$identifier]) ? array($identifierColumn => $objectData[$identifier]) : array();
 	}
 
 
@@ -228,6 +269,53 @@ class Repository implements RepositoryInterface {
 		return $this->objectConverter;
 	}
 
+	/**
+	 * Finds an object matching the given identifier.
+	 *
+	 * @param integer $uid The identifier of the object to find
+	 * @return object The matching object if found, otherwise NULL
+	 * @api
+	 */
+	public function findByUid($uid) {
+		return $this->findByIdentifier($uid);
+	}
+
+	/**
+	 * Sets the property names to order the result by per default.
+	 * Expected like this:
+	 * array(
+	 * 'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
+	 * 'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @param array $defaultOrderings The property names to order by
+	 * @return void
+	 * @api
+	 */
+	public function setDefaultOrderings(array $defaultOrderings) {
+		// TODO: Implement setDefaultOrderings() method
+	}
+
+	/**
+	 * Sets the default query settings to be used in this repository
+	 *
+	 * @param \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings The query settings to be used by default
+	 * @return void
+	 * @api
+	 */
+	public function setDefaultQuerySettings(\TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings) {
+		// TODO: Implement setDefaultQuerySettings() method.
+	}
+
+	/**
+	 * Returns a query for objects of this repository
+	 *
+	 * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+	 * @api
+	 */
+	public function createQuery() {
+		// TODO: Implement createQuery() method.
+	}
 
 
 

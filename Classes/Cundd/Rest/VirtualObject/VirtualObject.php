@@ -34,7 +34,7 @@ namespace Cundd\Rest\VirtualObject;
  */
 class VirtualObject {
 	/**
-	 * The virtual data
+	 * The data
 	 *
 	 * @var array
 	 */
@@ -45,7 +45,7 @@ class VirtualObject {
 	}
 
 	/**
-	 * Sets the virtual data
+	 * Sets the data
 	 *
 	 * @param array $data
 	 * @return $this
@@ -56,11 +56,20 @@ class VirtualObject {
 	}
 
 	/**
-	 * Returns the virtual data
+	 * Returns the data
 	 *
 	 * @return array
 	 */
 	public function getData() {
 		return $this->data;
+	}
+
+	/**
+	 * Return the data if transformed to JSON
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize() {
+		return $this->getData();
 	}
 }

@@ -89,7 +89,7 @@ interface RepositoryInterface {
 	public function findByIdentifier($identifier);
 
 	/**
-	 * Returns the array of identifiers of the object
+	 * Returns the array of identifier properties of the object
 	 *
 	 * @param object $object
 	 * @return array
@@ -97,9 +97,46 @@ interface RepositoryInterface {
 	public function getIdentifiersOfObject($object);
 
 	/**
+	 * Returns the array of identifier columns and value of the object
+	 *
+	 * @param object $object
+	 * @return array
+	 */
+	public function getIdentifierColumnsOfObject($object);
+
+	/**
 	 * Returns the source identifier (the database table name)
 	 *
 	 * @return string
 	 */
 	public function getSourceIdentifier();
+
+	/**
+	 * Sets the configuration to use when converting
+	 *
+	 * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
+	 * @return $this
+	 */
+	public function setConfiguration($configuration);
+
+	/**
+	 * Returns the configuration to use when converting
+	 *
+	 * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+	 * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+	 */
+	public function getConfiguration();
+
+	/**
+	 * Registers the given Virtual Object
+	 *
+	 * This is a high level shorthand for:
+	 * Object exists?
+	 *    Yes -> update
+	 *    No -> add
+	 *
+	 * @param VirtualObject $object
+	 * @return VirtualObject Returns the registered Document
+	 */
+	public function registerObject($object);
 }
