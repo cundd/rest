@@ -60,6 +60,58 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 	/**
 	 * @test
 	 */
+	public function prepareDataFromVirtualObjectDataTest() {
+		$testObjectData = $this->testObjectData;
+		$virtualObject = new VirtualObject($testObjectData);
+		$rawData       = $this->fixture->prepareDataFromVirtualObjectData($virtualObject->getData());
+		$this->assertEquals($this->testRawData, $rawData);
+	}
+
+	/**
+	 * @test
+	 */
+	public function prepareForVirtualObjectDataTest() {
+		$testRawData   = $this->testRawData;
+		$preparedData = $this->fixture->prepareForVirtualObjectData($testRawData);
+		$this->assertEquals($this->testObjectData, $preparedData);
+	}
+
+	/**
+	 * @test
+	 */
+	public function prepareDataFromVirtualObjectDataUpdateTest() {
+		$testObjectData = $this->testObjectData;
+		unset($testObjectData['property1']);
+		unset($testObjectData['property6']);
+
+		$testRawData   = $this->testRawData;
+		unset($testRawData['property_one']);
+		unset($testRawData['property_six']);
+
+		$virtualObject = new VirtualObject($testObjectData);
+		$rawData       = $this->fixture->prepareDataFromVirtualObjectData($virtualObject->getData(), FALSE);
+		$this->assertEquals($testRawData, $rawData);
+	}
+
+	/**
+	 * @test
+	 */
+	public function prepareForVirtualObjectDataUpdateTest() {
+		$testRawData   = $this->testRawData;
+		unset($testRawData['property_one']);
+		unset($testRawData['property_six']);
+
+		$testObjectData = $this->testObjectData;
+		unset($testObjectData['property1']);
+		unset($testObjectData['property6']);
+
+		$preparedData = $this->fixture->prepareForVirtualObjectData($testRawData, FALSE);
+		$this->assertEquals($testObjectData, $preparedData);
+	}
+
+	/**
+	 * @test
+	 */
 	public function convertFromVirtualObjectTest() {
 		$testObjectData = $this->testObjectData;
 		$virtualObject = new VirtualObject($testObjectData);

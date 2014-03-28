@@ -50,13 +50,17 @@ class ObjectConverter {
 	 * Converts the given Virtual Object's data into it's source representation
 	 *
 	 * @param array $virtualObjectData Raw data in the schema defined by the current mapping
+	 * @param bool  $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
 	 * @throws InvalidPropertyException if a property is not defined in the mapping
 	 * @throws Exception\MissingConfigurationException if the configuration is not set
 	 * @return array
 	 */
-	public function prepareDataFromVirtualObjectData($virtualObjectData) {
+	public function prepareDataFromVirtualObjectData($virtualObjectData, $replace = TRUE) {
 		$configuration = $this->getConfiguration();
-		$convertedData = array_fill_keys($configuration->getAllSourceKeys(), NULL);
+		$convertedData = array();
+		if ($replace) {
+			$convertedData = array_fill_keys($configuration->getAllSourceKeys(), NULL);
+		}
 
 		if (!$configuration) {
 			throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
@@ -102,13 +106,17 @@ class ObjectConverter {
 	 * Converts the given source array into the configured Virtual Object data
 	 *
 	 * @param array $source
+	 * @param bool  $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
 	 * @throws InvalidPropertyException if a property is not defined in the mapping
 	 * @throws MissingConfigurationException if the configuration is not set
 	 * @return array
 	 */
-	public function prepareForVirtualObjectData($source){
+	public function prepareForVirtualObjectData($source, $replace = TRUE){
 		$configuration = $this->getConfiguration();
-		$convertedData = array_fill_keys($configuration->getAllProperties(), NULL);
+		$convertedData = array();
+		if ($replace) {
+			$convertedData = array_fill_keys($configuration->getAllProperties(), NULL);
+		}
 
 		if (!$configuration) {
 			throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
