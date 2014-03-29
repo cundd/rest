@@ -55,6 +55,11 @@ class Query implements QueryInterface {
 	protected $sourceIdentifier;
 
 	/**
+	 * @var \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
+	 */
+	protected $statement;
+
+	/**
 	 * Executes the query and returns the result
 	 *
 	 * @return array Returns the result
@@ -203,6 +208,28 @@ class Query implements QueryInterface {
 	 */
 	public function getConfiguration() {
 		return $this->persistenceManager->getConfiguration();
+	}
+
+	/**
+	 * Sets the statement of this query programmatically. If you use this, you will lose the abstraction from a concrete
+	 * storage backend (database)
+	 *
+	 * @param string $statement The statement
+	 * @param array $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
+	 * @return QueryInterface
+	 */
+	public function statement($statement, array $parameters = array()) {
+		$this->statement = new \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement($statement, $parameters);
+		return $this;
+	}
+
+	/**
+	 * Returns the statement of this query.
+	 *
+	 * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
+	 */
+	public function getStatement() {
+		return $this->statement;
 	}
 
 

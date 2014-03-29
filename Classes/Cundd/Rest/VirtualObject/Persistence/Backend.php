@@ -25,7 +25,6 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
-use Cundd\Rest\Exception;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 
@@ -91,11 +90,12 @@ class Backend implements BackendInterface {
 		list($row) = $this->getAdapter()->exec_SELECTgetRows(
 			'COUNT(*) AS count',
 			$tableName,
-			$this->createWhereStatementFromQuery($query, $tableName),
-			'',
-			$this->createOrderingStatementFromQuery($query),
-			$this->createLimitStatementFromQuery($query)
+			$this->createWhereStatementFromQuery($query, $tableName)
 		);
+//			'',
+//			$this->createOrderingStatementFromQuery($query),
+//			$this->createLimitStatementFromQuery($query)
+//		);
 		$this->checkSqlErrors();
 		return intval($row['count']);
 	}
@@ -147,15 +147,30 @@ class Backend implements BackendInterface {
 	 * @return string
 	 */
 	protected function createWhereStatementFromQuery($query, $tableName) {
+		$configuration = NULL;
 		$this->checkTableArgument($tableName);
 
 		if ($query instanceof QueryInterface) {
+			$configuration = $query->getConfiguration();
+
+			$statement = $query->getStatement();
+			if ($statement && $statement instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement) {
+				$sql = $statement->getStatement();
+				$parameters = $statement->getBoundVariables();
+
+				return $this->replacePlaceholders($sql, $parameters, $tableName);
+			}
+
 			$query = $query->getConstraint();
 		}
 
 		$adapter     = $this->getAdapter();
 		$constraints = array();
-		foreach ($query as $column => $value) {
+		foreach ($query as $property => $value) {
+			if ($configuration && !$configuration->hasProperty($property)) throw new InvalidColumnNameException('The given property is not defined', 1396092229);
+
+			$column = $configuration ? $configuration->getSourceKeyForProperty($property) : $property;
+
 			if (!ctype_alnum(str_replace('_', '', $column))) {
 				throw new InvalidColumnNameException('The given column is not valid', 1395678424);
 			}
@@ -166,6 +181,44 @@ class Backend implements BackendInterface {
 				. $adapter->fullQuoteStr($value, $tableName);
 		}
 		return implode(' AND ', $constraints);
+	}
+
+	/**
+	 * Replace query placeholders in a query part by the given parameters
+	 *
+	 * @param string &$sqlString The query part with placeholders
+	 * @param array $parameters The parameters
+	 * @param string $tableName
+	 *
+	 * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception
+	 * @return string
+	 */
+	protected function replacePlaceholders(&$sqlString, array $parameters, $tableName = 'foo') {
+		// TODO profile this method again
+		if (substr_count($sqlString, '?') !== count($parameters)) {
+			throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception('The number of question marks to replace must be equal to the number of parameters.', 1242816074);
+		}
+		$adapter = $this->getAdapter();
+		$offset = 0;
+		foreach ($parameters as $parameter) {
+			$markPosition = strpos($sqlString, '?', $offset);
+			if ($markPosition !== FALSE) {
+				if ($parameter === NULL) {
+					$parameter = 'NULL';
+				} elseif (is_array($parameter) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable) {
+					$items = array();
+					foreach ($parameter as $item) {
+						$items[] = $adapter->fullQuoteStr($item, $tableName);
+					}
+					$parameter = '(' . implode(',', $items) . ')';
+				} else {
+					$parameter = $adapter->fullQuoteStr($parameter, $tableName);
+				}
+				$sqlString = substr($sqlString, 0, $markPosition) . $parameter . substr($sqlString, ($markPosition + 1));
+			}
+			$offset = $markPosition + strlen($parameter);
+		}
+		return $sqlString;
 	}
 
 	/**
