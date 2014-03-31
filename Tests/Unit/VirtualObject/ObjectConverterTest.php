@@ -224,6 +224,122 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 
 	/**
 	 * @test
+	 */
+	public function typeConverterTest() {
+		$this->assertSame(90, $this->fixture->convertToType(90, 'integer'));
+		$this->assertSame(1, $this->fixture->convertToType(1, 'int'));
+		$this->assertSame(90, $this->fixture->convertToType(90.08, 'integer'));
+		$this->assertSame(1, $this->fixture->convertToType(1.09, 'int'));
+		$this->assertSame(90, $this->fixture->convertToType('90.08', 'integer'));
+		$this->assertSame(1, $this->fixture->convertToType('1.09', 'int'));
+
+		$this->assertSame(TRUE, $this->fixture->convertToType(TRUE, 'boolean'));
+		$this->assertSame(FALSE, $this->fixture->convertToType(FALSE, 'boolean'));
+		$this->assertSame(TRUE, $this->fixture->convertToType(1, 'boolean'));
+		$this->assertSame(FALSE, $this->fixture->convertToType(0, 'boolean'));
+		$this->assertSame(TRUE, $this->fixture->convertToType('yes', 'boolean'));
+		$this->assertSame(FALSE, $this->fixture->convertToType('', 'boolean'));
+		$this->assertSame(FALSE, $this->fixture->convertToType(array(), 'boolean'));
+		$this->assertSame(FALSE, $this->fixture->convertToType(NULL, 'boolean'));
+
+		$this->assertSame(1.09, $this->fixture->convertToType(1.09, 'float'));
+		$this->assertSame(90.08, $this->fixture->convertToType(90.08, 'float'));
+		$this->assertSame(1.0, $this->fixture->convertToType(1, 'float'));
+		$this->assertSame(90.0, $this->fixture->convertToType(90, 'float'));
+		$this->assertSame(0.0, $this->fixture->convertToType(0, 'float'));
+		$this->assertSame(1.09, $this->fixture->convertToType('1.09', 'float'));
+		$this->assertSame(90.08, $this->fixture->convertToType('90.08', 'float'));
+		$this->assertSame(1.0, $this->fixture->convertToType(TRUE, 'float'));
+		$this->assertSame(0.0, $this->fixture->convertToType(FALSE, 'float'));
+
+		$this->assertSame('Hello', $this->fixture->convertToType('Hello', 'string'));
+		$this->assertSame('how are you?', $this->fixture->convertToType('how are you?', 'string'));
+		$this->assertSame('1.09', $this->fixture->convertToType(1.09, 'string'));
+		$this->assertSame('90.08', $this->fixture->convertToType(90.08, 'string'));
+		$this->assertSame('1', $this->fixture->convertToType(1, 'string'));
+		$this->assertSame('90', $this->fixture->convertToType(90, 'string'));
+		$this->assertSame('0', $this->fixture->convertToType(0, 'string'));
+		$this->assertSame('1.09', $this->fixture->convertToType('1.09', 'string'));
+		$this->assertSame('90.08', $this->fixture->convertToType('90.08', 'string'));
+		$this->assertSame('1', $this->fixture->convertToType(TRUE, 'string'));
+		$this->assertSame('', $this->fixture->convertToType(FALSE, 'string'));
+
+		$this->assertSame('Hello', $this->fixture->convertToType('Hello', 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType('how are you?', 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType(1.09, 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType(90.08, 'slug'));
+		$this->assertSame('1', $this->fixture->convertToType(1, 'slug'));
+		$this->assertSame('90', $this->fixture->convertToType(90, 'slug'));
+		$this->assertSame('0', $this->fixture->convertToType(0, 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType('1.09', 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType('90.08', 'slug'));
+		$this->assertSame('1', $this->fixture->convertToType(TRUE, 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType(FALSE, 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType('i am not-"slug"', 'slug'));
+		$this->assertSame(NULL, $this->fixture->convertToType('i am neither', 'slug'));
+		$this->assertSame('but-i-am-1', $this->fixture->convertToType('but-i-am-1', 'slug'));
+		$this->assertSame('me2', $this->fixture->convertToType('me2', 'slug'));
+
+		$this->assertSame('www.my-domain.com', 			$this->fixture->convertToType('www.my-domain.com', 'url'));
+		$this->assertSame('sub.my-domain.com', 			$this->fixture->convertToType('sub.my-domain.com', 'url'));
+		$this->assertSame('my-domain.com', 			$this->fixture->convertToType('my-domain.com', 'url'));
+		$this->assertSame('www.my-domain.com/', 			$this->fixture->convertToType('www.my-domain.com/', 'url'));
+		$this->assertSame('sub.my-domain.com/', 			$this->fixture->convertToType('sub.my-domain.com/', 'url'));
+		$this->assertSame('my-domain.com/', 			$this->fixture->convertToType('my-domain.com/', 'url'));
+		$this->assertSame('www.my-domain.com/home', 			$this->fixture->convertToType('www.my-domain.com/home', 'url'));
+		$this->assertSame('sub.my-domain.com/home', 			$this->fixture->convertToType('sub.my-domain.com/home', 'url'));
+		$this->assertSame('my-domain.com/home', 			$this->fixture->convertToType('my-domain.com/home', 'url'));
+		$this->assertSame('www.my-domain.com/home/', 			$this->fixture->convertToType('www.my-domain.com/home/', 'url'));
+		$this->assertSame('sub.my-domain.com/home/', 			$this->fixture->convertToType('sub.my-domain.com/home/', 'url'));
+		$this->assertSame('my-domain.com/home/', 			$this->fixture->convertToType('my-domain.com/home/', 'url'));
+		$this->assertSame('www.my-domain.com/home?id=whatever', 			$this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('sub.my-domain.com/home?id=whatever', 			$this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever', 			$this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('www.my-domain.com/home?id=whatever', 			$this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('sub.my-domain.com/home?id=whatever', 			$this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever', 			$this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever', 			$this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
+		$this->assertSame('www.my-domain.com/index.php?id=whatever', 			$this->fixture->convertToType('www.my-domain.com/index.php?id=whatever', 'url'));
+		$this->assertSame('sub.my-domain.com/index.php?id=whatever', 			$this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever', 'url'));
+		$this->assertSame('my-domain.com/index.php?id=whatever', 			$this->fixture->convertToType('my-domain.com/index.php?id=whatever', 'url'));
+		$this->assertSame('www.my-domain.com/?id=whatever', 			$this->fixture->convertToType('www.my-domain.com/?id=whatever', 'url'));
+		$this->assertSame('sub.my-domain.com/?id=whatever', 			$this->fixture->convertToType('sub.my-domain.com/?id=whatever', 'url'));
+		$this->assertSame('my-domain.com/?id=whatever', 			$this->fixture->convertToType('my-domain.com/?id=whatever', 'url'));
+		$this->assertSame('www.my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('sub.my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('www.my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('sub.my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('www.my-domain.com/index.php?id=whatever&one=more-parameter', 			$this->fixture->convertToType('www.my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('sub.my-domain.com/index.php?id=whatever&one=more-parameter', 			$this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/index.php?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('www.my-domain.com/?id=whatever&one=more-parameter', 			$this->fixture->convertToType('www.my-domain.com/?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('sub.my-domain.com/?id=whatever&one=more-parameter', 			$this->fixture->convertToType('sub.my-domain.com/?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/?id=whatever&one=more-parameter', 'url'));
+
+		$this->assertSame('my-domain.com/?id=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/  ?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('my-domain.com/?i<scriptd=whatever&one=more-parameter', 			$this->fixture->convertToType('my-domain.com/  ?i<scriptd=whatever&one=more-parameter', 'url'));
+		$this->assertSame('/?id=whatever&one=more-parameter', 			$this->fixture->convertToType('/?id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('id=whatever&one=more-parameter', 			$this->fixture->convertToType('id=whatever&one=more-parameter', 'url'));
+		$this->assertSame('i', 			$this->fixture->convertToType('i', 'url'));
+		$this->assertSame('', 			$this->fixture->convertToType('£', 'url'));
+		$this->assertSame('', 			$this->fixture->convertToType('ö', 'url'));
+		$this->assertSame('', 			$this->fixture->convertToType('§', 'url'));
+
+		$this->assertSame('someone@example.com', 			$this->fixture->convertToType('someone@example.com', 'email'));
+		$this->assertSame('some.one@example.com', 			$this->fixture->convertToType('some.one@example.com', 'email'));
+		$this->assertSame('some-one@example.com', 			$this->fixture->convertToType('some-one@example.com', 'email'));
+		$this->assertSame('someone@example.com', 			$this->fixture->convertToType('some(one)@exa\\mple.com', 'email'));
+
+		$this->assertSame('someone@example.com', 			$this->fixture->convertToType("\0\0someone@example.com\t", 'trim'));
+		$this->assertSame('someone@example.com', 			$this->fixture->convertToType("  \0\0someone@example.com\t ", 'trim'));
+		$this->assertSame('someone@example.com', 			$this->fixture->convertToType("\x0B \0\0\0someone@example.com\t ", 'trim'));
+	}
+
+	/**
+	 * @test
 	 * @expectedException \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
 	 */
 	public function throwExceptionIfConfigurationIsNotSet() {

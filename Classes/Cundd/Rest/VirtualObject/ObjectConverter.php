@@ -156,7 +156,7 @@ class ObjectConverter {
 	 * @throws Exception\InvalidConverterTypeException if the given type is not valid
 	 * @return mixed Returns the converted value
 	 */
-	protected function convertToType($value, $type) {
+	public function convertToType($value, $type) {
 		$result = NULL;
 		switch (strtolower($type)) {
 			// Builtin types
@@ -181,7 +181,7 @@ class ObjectConverter {
 
 			// Special types
 			case 'slug':
-				$result = (preg_match("/[a-zA-Z0-9-_]/", $value) > 0);
+				$result = (preg_match('/^[a-zA-Z0-9-_]+$/', $value) > 0 ? (string)$value : NULL);
 				break;
 
 			case 'url':
@@ -190,6 +190,10 @@ class ObjectConverter {
 
 			case 'email':
 				$result = filter_var($value, FILTER_SANITIZE_EMAIL);
+				break;
+
+			case 'trim':
+				$result = trim($value);
 				break;
 
 
