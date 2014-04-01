@@ -11,6 +11,11 @@ plugin.tx_rest.settings {
 			read = deny
 			write = deny
 		}
+		2005 {
+			path = auth
+			read = allow
+			write = allow
+		}
 	}
 
 	cacheLifeTime = -1

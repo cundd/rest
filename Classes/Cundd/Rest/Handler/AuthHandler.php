@@ -14,9 +14,12 @@ use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Handler;
 use Cundd\Rest\HandlerInterface;
 use Cundd\Rest\Request;
-use Cundd\Rest\SessionManager;
 
 class AuthHandler implements HandlerInterface {
+	const STATUS_LOGGED_IN = 'logged-in';
+	const STATUS_LOGGED_OUT = 'logged-out';
+	const STATUS_FAILURE = 'login failure';
+
 	/**
 	 * Current request
 	 *
@@ -58,31 +61,54 @@ class AuthHandler implements HandlerInterface {
 		return $this->request;
 	}
 
+	/**
+	 * Returns the current status
+	 *
+	 * @return array
+	 */
 	public function getStatus() {
-		$login = $this->sessionManager->valueForKey('login');
+		$loginStatus = $this->sessionManager->valueForKey('loginStatus');
+		if ($loginStatus === NULL) {
+			$loginStatus = self::STATUS_LOGGED_OUT;
+		}
 		return array(
-			'success' => $login ? $login : FALSE
+			'status' => $loginStatus
 		);
 	}
 
+	/**
+	 * Check the given login data
+	 *
+	 * @param array $sentData
+	 * @return array
+	 */
 	public function checkLogin($sentData) {
-		$login = FALSE;
+		$loginStatus = self::STATUS_LOGGED_OUT;
 		if (isset($sentData['username']) && isset($sentData['apikey'])) {
 			$username = $sentData['username'];
 			$apikey = $sentData['apikey'];
-			$login = $this->userProvider->checkCredentials($username, $apikey);
-			$this->sessionManager->setValueForKey('login', $login);
+
+			if ($this->userProvider->checkCredentials($username, $apikey)) {
+				$loginStatus = self::STATUS_LOGGED_IN;
+			} else {
+				$loginStatus = self::STATUS_FAILURE;
+			}
+			$this->sessionManager->setValueForKey('loginStatus', $loginStatus);
 		}
 		return array(
-			'success' => $login
+			'status' => $loginStatus
 		);
 	}
 
-
+	/**
+	 * Log out
+	 *
+	 * @return array
+	 */
 	public function logout() {
-		$this->sessionManager->setValueForKey('login', FALSE);
+		$this->sessionManager->setValueForKey('loginStatus', self::STATUS_LOGGED_OUT);
 		return array(
-			'success' => TRUE
+			'status' => self::STATUS_LOGGED_OUT
 		);
 	}
 
@@ -98,98 +124,30 @@ class AuthHandler implements HandlerInterface {
 		/** @var AuthHandler */
 		$handler = $this;
 
-		/** @var SessionManager $sessionManager */
-		$sessionManager = $this->sessionManager;
-
-
-		$app->path($dispatcher->getPath(), function ($request) use ($handler, $app, $sessionManager, $dispatcher) {
+		$app->path($dispatcher->getPath(), function ($request) use ($handler, $app) {
 			$handler->setRequest($request);
 
 
-			$app->path('login', function($request) use ($handler, $app, $sessionManager, $dispatcher) {
-				$getCallback = function ($request) use ($handler, $sessionManager, $dispatcher) {
+			$app->path('login', function($request) use ($handler, $app) {
+				$getCallback = function ($request) use ($handler) {
 					return $handler->getStatus();
 				};
 				$app->get($getCallback);
 
-				$loginCallback = function ($request) use ($handler, $sessionManager, $dispatcher) {
+				$loginCallback = function ($request) use ($handler) {
+					$dispatcher = Dispatcher::getSharedDispatcher();
 					return $handler->checkLogin($dispatcher->getSentData());
 
 				};
 				$app->post($loginCallback);
 			});
 
-			$app->path('logout', function($request) use ($handler, $app, $sessionManager, $dispatcher) {
-				$getCallback = function ($request) use ($handler, $sessionManager, $dispatcher) {
+			$app->path('logout', function($request) use ($handler, $app) {
+				$getCallback = function ($request) use ($handler) {
 					return $handler->logout();
 				};
 				$app->get($getCallback);
 			});
-
-
-//			/*
-//			 * Handle an action
-//			 */
-//			$app->param('slug', function ($request, $identifier) use ($handler, $app) {
-//				$handler->setIdentifier($identifier);
-//
-//				/*
-//				 * Get single property
-//				 */
-//				$getPropertyCallback = function ($request, $propertyKey) use ($handler) {
-//					return $handler->getProperty($propertyKey);
-//				};
-//				$app->param('slug', $getPropertyCallback);
-//
-//				/*
-//				 * Show a single Model
-//				 */
-//				$getCallback = function ($request) use ($handler) {
-//					return $handler->show();
-//				};
-//				$app->get($getCallback);
-//
-//				/*
-//				 * Replace a Model
-//				 */
-//				$replaceCallback = function ($request) use ($handler) {
-//					return $handler->replace();
-//				};
-//				$app->put($replaceCallback);
-//				$app->post($replaceCallback);
-//
-//				/*
-//				 * Update a Model
-//				 */
-//				$updateCallback = function ($request) use ($handler) {
-//					return $handler->update();
-//				};
-//				$app->patch($updateCallback);
-//
-//				/*
-//				 * Delete a Model
-//				 */
-//				$deleteCallback = function ($request) use ($handler) {
-//					return $handler->delete();
-//				};
-//				$app->delete($deleteCallback);
-//			});
-//
-//			/*
-//			 * Create a Model
-//			 */
-//			$createCallback = function ($request) use ($handler) {
-//				return $handler->create();
-//			};
-//			$app->post($createCallback);
-//
-//			/*
-//			 * List all Models
-//			 */
-//			$listCallback = function ($request) use ($handler) {
-//				return $handler->listAll();
-//			};
-//			$app->get($listCallback);
 		});
 	}
 } 
