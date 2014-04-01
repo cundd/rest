@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PhpUnit" load_method="CUSTOM_LOADER" custom_loader_path="$USER_HOME$/typo3/cli_dispatch.phpsh" phpunit_phar_path="$USER_HOME$/Applications/bin/phpunit" />
+  <component name="PhpUnit" load_method="CUSTOM_LOADER" custom_loader_path="$PROJECT_DIR$/../web_cvjm/typo3conf/ext/phpunit/Composer/vendor/autoload.php" phpunit_phar_path="$PROJECT_DIR$/../../Resources/phpunit.phar" />
 </project>
 

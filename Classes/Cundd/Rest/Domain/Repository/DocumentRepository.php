@@ -1,11 +1,8 @@
 <?php
-namespace Cundd\Rest\Domain\Repository;
-
-/***************************************************************
+/*
  *  Copyright notice
  *
- *  (c) 2013 Andreas Thurnheer-Meier <tma@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *  Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -24,7 +21,9 @@ namespace Cundd\Rest\Domain\Repository;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
+
+namespace Cundd\Rest\Domain\Repository;
 
 use Cundd\Rest\Domain\Exception\InvalidDocumentException;
 use Cundd\Rest\Domain\Model\Document;

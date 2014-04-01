@@ -15,6 +15,8 @@ Configuration
 
 Configure the access rules for different URI paths. `path` defines the URI path for the current rule. The `read` configuration belongs to the HTTP methods GET and HEAD. Any other method will be treated as `write`.
 
+> Important: The term `URI path` or simply `path` refers to the first part of the resource URI after the namespace and API version. The path of the URL `http://your-domain.com/rest/my_ext-my_model/2` would be `my_ext-my_model`.
+
 The default access is defined with the path `all`:
 
     plugin.tx_rest.settings.paths {
@@ -25,7 +27,7 @@ The default access is defined with the path `all`:
         }
     }
     
-Allow read and write access to the mode `MyModel` of the extension `MyExt`:
+Allow read and write access to the model `MyModel` of the extension `MyExt`:
       
         ...
         2 {

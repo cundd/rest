@@ -2,8 +2,7 @@
 /*
  *  Copyright notice
  *
- *  (c) 2013 Andreas Thurnheer-Meier <tma@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *  Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>, (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *

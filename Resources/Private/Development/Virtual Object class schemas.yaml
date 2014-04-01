@@ -1,0 +1,33 @@
+- Cundd
+    - Rest
+        - VirtualObject
+            - ConfigurationInterface
+            - Configuration
+                - hasProperty
+                - hasSourceKey
+                - getConfigurationForProperty
+                - getSourceKeyForProperty
+                - getPropertyForSourceKey
+                - getTypeForProperty
+                - getSourceIdentifier
+                - setSkipUnknownProperties
+                - shouldSkipUnknownProperties
+
+            - ObjectConverter
+                - convert
+                - convertFromVirtualObject
+                - convertToVirtualObject
+                - setConfiguration
+                - getConfiguration
+
+            - Persistence
+                - PersistenceManagerInterface
+                - PersistenceManager
+                    - add
+                    - remove
+                    - update
+                    - findAll
+                    - findByIdentifier
+                    - findByUid
+                    - getObjectCountByQuery (?)
+                    - getObjectDataByQuery (?)
