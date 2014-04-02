@@ -26,15 +26,23 @@
 namespace Cundd\Rest\Authentication;
 
 
+use Cundd\Rest\Handler\AuthHandler;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
 	/**
 	 * Provider that will check the user credentials
+	 *
 	 * @var \Cundd\Rest\Authentication\UserProviderInterface
 	 * @inject
 	 */
 	protected $userProvider;
+
+	/**
+	 * @var \Cundd\Rest\SessionManager
+	 * @inject
+	 */
+	protected $sessionManager;
 
 	/**
 	 * Tries to authenticate the current request
@@ -43,6 +51,14 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
 	public function authenticate() {
 		$username = NULL;
 		$password = NULL;
+
+		/**
+		 * @TODO Move this to a separate Authentication Provider
+		 */
+		$loginStatus = $this->sessionManager->valueForKey('loginStatus');
+		if ($loginStatus !== NULL) {
+			return $loginStatus === AuthHandler::STATUS_LOGGED_IN;
+		}
 
 		// mod_php
 		if (isset($_SERVER['PHP_AUTH_USER'])) {
