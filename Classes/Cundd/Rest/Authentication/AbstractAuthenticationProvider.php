@@ -27,12 +27,6 @@ namespace Cundd\Rest\Authentication;
 
 abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface {
 	/**
-	 * Indicates if the current request is authenticated
-	 * @var bool
-	 */
-	protected $isAuthenticated = FALSE;
-
-	/**
 	 * The current request
 	 * @var \Cundd\Rest\Request
 	 */
@@ -44,14 +38,6 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
 	 */
 	public function authenticate() {
 		return FALSE;
-	}
-
-	/**
-	 * Returns if the current request is authenticated
-	 * @return bool
-	 */
-	public function isAuthenticated() {
-		return $this->isAuthenticated;
 	}
 
 	/**

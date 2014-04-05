@@ -40,12 +40,4 @@ class RequestAuthenticationProvider extends AbstractAuthenticationProvider {
 	public function authenticate() {
 		return (TRUE == ($GLOBALS['TSFE']->fe_user->user));
 	}
-
-	/**
-	 * Returns if the given request needs authentication
-	 * @return bool
-	 */
-	public function requestNeedsAuthentication() {
-		return TRUE;
-	}
 }

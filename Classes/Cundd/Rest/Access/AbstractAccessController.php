@@ -66,7 +66,6 @@ abstract class AbstractAccessController implements AccessControllerInterface {
 		return $this->request;
 	}
 
-
 	/**
 	 * Checks if a valid user is logged in
 	 *
