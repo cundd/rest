@@ -94,10 +94,12 @@ class PersistenceManager implements PersistenceManagerInterface {
 	 * @return void
 	 */
 	public function add($object) {
-		$this->backend->addRow(
+		$identifierValue = $this->backend->addRow(
 			$this->getSourceIdentifier(),
 			$this->getObjectConverter()->convertFromVirtualObject($object)
 		);
+		$identifierKey = $this->getConfiguration()->getIdentifier();
+		$object->setValueForKey($identifierKey, $identifierValue);
 	}
 
 	/**
