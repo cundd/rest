@@ -153,6 +153,20 @@ class VirtualObjectDataProvider extends DataProvider {
 	}
 
 	/**
+	 * Returns the data from the given model
+	 *
+	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+	 * @return array<mixed>
+	 */
+	public function getModelData($model) {
+		$properties = parent::getModelData($model);
+		if ($properties === $model) {
+			return array();
+		}
+		return $properties;
+	}
+
+	/**
 	 * Returns the property data from the given model
 	 *
 	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
