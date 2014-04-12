@@ -41,7 +41,7 @@ use Cundd\Rest\DataProvider\Utility;
  *
  * @package Cundd\Rest
  */
-class Handler implements HandlerInterface {
+class Handler implements CrudHandlerInterface {
 	/**
 	 * Current request
 	 *

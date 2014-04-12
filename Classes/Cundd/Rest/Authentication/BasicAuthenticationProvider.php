@@ -26,11 +26,18 @@
 namespace Cundd\Rest\Authentication;
 
 
+use Cundd\Rest\Handler\AuthHandler;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
+/**
+ * Authentication Provider for login data sent through Basic Auth
+ *
+ * @package Cundd\Rest\Authentication
+ */
 class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
 	/**
 	 * Provider that will check the user credentials
+	 *
 	 * @var \Cundd\Rest\Authentication\UserProviderInterface
 	 * @inject
 	 */

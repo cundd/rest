@@ -128,11 +128,19 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 				$authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
 			}
 
-			// Use the configuration based Authentication Provider
-			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
+
+			// Use the found Authentication Provider
+			if (class_exists($authenticationProviderClass)) {
+				$this->authenticationProvider = $this->get($authenticationProviderClass);
+			} else {
+				// Use the default Authentication Provider
+				#$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
+				$this->authenticationProvider = $this->get('Cundd\\Rest\\Authentication\\AuthenticationProviderCollection', array(
+					$this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
+					$this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
+				));
 			}
-			$this->authenticationProvider = $this->get($authenticationProviderClass);
+
 			$this->authenticationProvider->setRequest($dispatcher->getRequest());
 		}
 		return $this->authenticationProvider;
@@ -172,16 +180,20 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
 		list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
 
 		// Check if an extension provides a Handler
-		$accessControllerClass  = 'Tx_' . $extension . '_Rest_Handler';
-		if (!class_exists($accessControllerClass)) {
-			$accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
+		$handlerClass  = 'Tx_' . $extension . '_Rest_Handler';
+		if (!class_exists($handlerClass)) {
+			$handlerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
 		}
 
-		// Use the configuration based Authentication Provider
-		if (!class_exists($accessControllerClass)) {
-			$accessControllerClass = 'Cundd\\Rest\\HandlerInterface';
+		// Get the specific builtin handler
+		if (!class_exists($handlerClass)) {
+			$handlerClass = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
+			// Get the default handler
+			if (!class_exists($handlerClass)) {
+				$handlerClass = 'Cundd\\Rest\\HandlerInterface';
+			}
 		}
-		$handler = $this->get($accessControllerClass);
+		$handler = $this->get($handlerClass);
 		//$handler->setRequest($this->dispatcher->getRequest());
 		return $handler;
 	}
