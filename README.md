@@ -1,6 +1,8 @@
 rest
 ====
 
+The REST API for TYPO3 CMS
+
 Installation
 ------------
 
