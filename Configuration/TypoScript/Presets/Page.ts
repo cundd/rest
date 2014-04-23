@@ -23,7 +23,7 @@ plugin.tx_rest.settings {
 						column = uid
 						type = int
 					}
-					pageIdentifer {
+					pageIdentifier {
 						column = pid
 						type = int
 					}
