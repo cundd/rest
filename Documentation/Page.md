@@ -30,7 +30,7 @@ Send a GET request to `http://your-domain.com/rest/VirtualObject-Page/`.
 Creating a new page
 -------------------
 
-The following displays the request body to create a new page element with `header` and `bodytext` on the page with UID `pageIdentifer`.
+The following displays the request body to create a new page element with `title` and `doktype` on the parent page with UID `pageIdentifer`.
 
 	{
 		"VirtualObject-Page": {

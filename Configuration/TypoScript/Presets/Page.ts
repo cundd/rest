@@ -109,7 +109,7 @@ plugin.tx_rest.settings {
 #					}
 					editLock {
 						column = editlock
-						type = integer
+						type = boolean
 					}
 					hidden {
 						column = hidden
@@ -133,11 +133,11 @@ plugin.tx_rest.settings {
 					}
 					isSiteRoot {
 						column = is_siteroot
-						type = integer
+						type = bool
 					}
 					phpTreeStop {
 						column = php_tree_stop
-						type = integer
+						type = boolean
 					}
 #					tx_impexp_origuid {
 #						column = tx_impexp_origuid
