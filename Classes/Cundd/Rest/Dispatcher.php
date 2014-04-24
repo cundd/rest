@@ -310,6 +310,9 @@ class Dispatcher implements SingletonInterface {
 			$data = $request->get(
 				Utility::singularize($this->getRootObjectKey())
 			);
+			if (!$data) {
+				$data = json_decode($request->raw(), TRUE);
+			}
 		}
 		return $data;
 	}
