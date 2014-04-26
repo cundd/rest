@@ -65,7 +65,7 @@ class CacheTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$uri = 'MyExt-MyModel/1.blur';
 		$request = $this->buildRequestWithUri($uri);
 		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('44a16b7f79c92d97a55281bbfb4439ff310607ec', $cacheKey, 'Failed for URI ' . $uri);
+		$this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
 
 		$uri = 'MyExt-MyModel/1.json';
 		$request = $this->buildRequestWithUri($uri);

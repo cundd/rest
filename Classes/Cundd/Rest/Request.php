@@ -84,12 +84,43 @@ class Request extends BaseRequest {
 	 * @return string Format
 	 */
 	public function format($format = null) {
-		if ($format !== NULL) {
-			if (!isset($this->_mimeTypes[$format])) {
-				$format = NULL;
+		if (NULL !== $format) {
+			// If using full mime type, we only need the extension
+			if(strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
+				$format = array_search($format, $this->_mimeTypes);
+			}
+			$this->_format = $this->_validateFormat($format) ? $format : NULL;
+		}
+
+		if (!$this->_format && $format === NULL) {
+			// Detect extension and assign it as the requested format (overrides 'Accept' header)
+			$dotPos = strpos($this->url(), '.');
+			if($dotPos !== FALSE) {
+				$ext = substr($this->url(), $dotPos+1);
+				$this->_format = $this->_validateFormat($ext) ? $ext : NULL;
+			}
+
+			// Check the CONTENT_TYPE header
+			if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
+				$this->format(trim($_SERVER['CONTENT_TYPE']));
+			}
+
+			// Default to JSON
+			if (!$this->_format) {
+				$this->_format = 'json';
 			}
 		}
-		return parent::format($format);
+		return $this->_format;
+	}
+
+	/**
+	 * Returns if the given format is valid
+	 *
+	 * @param $format
+	 * @return boolean
+	 */
+	protected function _validateFormat($format) {
+		return isset($this->_mimeTypes[$format]);
 	}
 
 	/**
