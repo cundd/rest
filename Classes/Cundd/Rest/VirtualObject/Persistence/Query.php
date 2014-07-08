@@ -92,7 +92,7 @@ class Query implements QueryInterface {
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
-		$this->orderings;
+		$this->orderings = $orderings;
 		return $this;
 	}
 
@@ -234,4 +234,4 @@ class Query implements QueryInterface {
 
 
 
-} 
+}
