@@ -35,12 +35,11 @@ namespace Cundd\Rest\Test\VirtualObject;
 use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
-use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 
-class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
+class ObjectConverterTest extends AbstractVirtualObjectCase {
 	/**
 	 * @var \Cundd\Rest\VirtualObject\ObjectConverter
 	 */
@@ -171,11 +170,11 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 		$this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
 
 		$testObjectData = $this->testObjectData;
-		$testObjectData['property7'] = 'What ever - this must not be in the result';
+		$testObjectData['property99'] = 'What ever - this must not be in the result';
 		$virtualObject = new VirtualObject($testObjectData);
 		$rawData       = $this->fixture->convertFromVirtualObject($virtualObject);
 
-		$this->assertFalse(isset($rawData['property7']));
+		$this->assertFalse(isset($rawData['property99']));
 		$this->assertEquals($this->testRawData, $rawData);
 	}
 
@@ -186,11 +185,11 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 		$this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
 
 		$testRawData   = $this->testRawData;
-		$testRawData['property_seven'] = 'What ever - this must not be in the result';
+		$testRawData['property_ninetynine'] = 'What ever - this must not be in the result';
 		$virtualObject = $this->fixture->convertToVirtualObject($testRawData);
 
 		$virtualObjectData = $virtualObject->getData();
-		$this->assertFalse(isset($virtualObjectData['property_seven']));
+		$this->assertFalse(isset($virtualObjectData['property_ninetynine']));
 		$this->assertEquals($this->testObjectData, $virtualObjectData);
 	}
 
@@ -200,11 +199,11 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 	 */
 	public function convertFromVirtualObjectWithUndefinedPropertyTest() {
 		$testObjectData = $this->testObjectData;
-		$testObjectData['property7'] = 'What ever - this must not be in the result';
+		$testObjectData['property99'] = 'What ever - this must not be in the result';
 		$virtualObject = new VirtualObject($testObjectData);
 		$rawData       = $this->fixture->convertFromVirtualObject($virtualObject);
 
-		$this->assertFalse(isset($rawData['property7']));
+		$this->assertFalse(isset($rawData['property99']));
 		$this->assertEquals($this->testRawData, $rawData);
 	}
 
@@ -214,11 +213,11 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 	 */
 	public function convertToVirtualObjectWithUndefinedPropertyTest() {
 		$testRawData   = $this->testRawData;
-		$testRawData['property_seven'] = 'What ever - this must not be in the result';
+		$testRawData['property_ninetynine'] = 'What ever - this must not be in the result';
 		$virtualObject = $this->fixture->convertToVirtualObject($testRawData);
 
 		$virtualObjectData = $virtualObject->getData();
-		$this->assertFalse(isset($virtualObjectData['property_seven']));
+		$this->assertFalse(isset($virtualObjectData['property_ninetynine']));
 		$this->assertEquals($this->testObjectData, $virtualObjectData);
 	}
 
@@ -355,6 +354,8 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 		'property_four'  => PHP_INT_MAX,
 		'property_five'  => TRUE,
 		'property_six'   => FALSE,
+		'property_seven'   => FALSE,
+		'property_eight'   => 8,
 	);
 
 	protected $testObjectData = array(
@@ -364,6 +365,8 @@ class ObjectCaseConverterTest extends AbstractVirtualObjectCase {
 		'property4' => PHP_INT_MAX,
 		'property5' => TRUE,
 		'property6' => FALSE,
+		'property_seven' => FALSE,
+		'property_eight' => 8,
 	);
 
 }

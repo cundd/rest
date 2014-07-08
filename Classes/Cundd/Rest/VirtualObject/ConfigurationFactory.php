@@ -117,17 +117,23 @@ class ConfigurationFactory implements SingletonInterface {
 	}
 
 	/**
-	 * Tries to read the configuration from the given array
+	 * Returns a new Configuration instance with the given data
+	 *
+	 * @param array $configurationData
+	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+	 */
+	public function createWithConfigurationData($configurationData) {
+		return $this->_createWithConfigurationData($configurationData);
+	}
+
+	/**
+	 * Returns a new Configuration instance with the given data
 	 *
 	 * @param array $configurationData
 	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
 	 */
 	protected function _createWithConfigurationData($configurationData) {
-		if (isset($configurationData['properties'])) {
-			$configurationData['properties'] = $this->_preparePropertyMapping($configurationData['properties']);
-		}
-
-		$configurationObject = new Configuration($configurationData);
+		$configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
 		if (isset($configurationData['skipUnknownProperties'])) {
 			$configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
@@ -138,43 +144,53 @@ class ConfigurationFactory implements SingletonInterface {
 	/**
 	 * Prepares the given property mapping
 	 *
-	 * @param array $propertyMapping
+	 * @param array $mapping
 	 * @return array
 	 */
-	protected function _preparePropertyMapping($propertyMapping) {
+	static function preparePropertyMapping($mapping) {
 		/**
 		 * Remove the last character form the property key (used when imported from TypoScript)
+		 *
 		 * @var boolean $removeLastCharacter
 		 */
 		$removeLastCharacter = -1;
 
-		$propertyMappingPrepared = array();
-		foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
-			// If the last character is a dot (".") remove the last character of all property keys
-			if ($removeLastCharacter === -1) {
-				$removeLastCharacter = substr($propertyKey, -1) === '.';
-			}
-
-			if ($removeLastCharacter) {
-				$propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
-			}
-
-			// If the current property configuration is a string, it defines the type
-			if (is_string($propertyConfiguration)) {
-				$type = $propertyConfiguration;
-				$column = $propertyKey;
+		if (isset($mapping['properties']) || isset($mapping['properties.'])) {
+			if (isset($mapping['properties.'])) {
+				$propertyMapping = $mapping['properties.'];
+				unset($mapping['properties.']);
 			} else {
-				// else it has to be an array
-				$type = $propertyConfiguration['type'];
-				$column = isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey;
+				$propertyMapping = $mapping['properties'];
 			}
-			
-			$propertyMappingPrepared[$propertyKey] = array(
-				'type' => $type,
-				'column' => $column,
-			);
 
+			$propertyMappingPrepared = array();
+			foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
+				// If the last character is a dot (".") remove the last character of all property keys
+				if ($removeLastCharacter === -1) {
+					$removeLastCharacter = substr($propertyKey, -1) === '.';
+				}
+
+				if ($removeLastCharacter) {
+					$propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
+				}
+
+				// If the current property configuration is a string, it defines the type
+				if (is_string($propertyConfiguration)) {
+					$type = $propertyConfiguration;
+					$column = $propertyKey;
+				} else {
+					// else it has to be an array
+					$type = $propertyConfiguration['type'];
+					$column = isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey;
+				}
+
+				$propertyMappingPrepared[$propertyKey] = array(
+					'type' => $type,
+					'column' => $column,
+				);
+			}
+			$mapping['properties'] = $propertyMappingPrepared;
 		}
-		return $propertyMappingPrepared;
+		return $mapping;
 	}
 }

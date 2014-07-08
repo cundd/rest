@@ -47,7 +47,9 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 
 	public function setUp() {
 		$testConfiguration = $this->getTestConfigurationData();
-		$this->fixture = new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
+		$this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
+			\Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
+		);
 		parent::setUp();
 	}
 
@@ -67,6 +69,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 			'property4',
 			'property5',
 			'property6',
+			'property_seven',
+			'property_eight',
 		), $this->fixture->getAllProperties());
 	}
 
@@ -81,6 +85,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 			'property_four',
 			'property_five',
 			'property_six',
+			'property_seven',
+			'property_eight',
 		), $this->fixture->getAllSourceKeys());
 	}
 
@@ -94,6 +100,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 		$this->assertTrue($this->fixture->hasProperty('property4'));
 		$this->assertTrue($this->fixture->hasProperty('property5'));
 		$this->assertTrue($this->fixture->hasProperty('property6'));
+		$this->assertTrue($this->fixture->hasProperty('property_seven'));
+		$this->assertTrue($this->fixture->hasProperty('property_eight'));
 		$this->assertFalse($this->fixture->hasProperty('propertyNotExists'));
 	}
 
@@ -107,6 +115,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 		$this->assertTrue($this->fixture->hasSourceKey('property_four'));
 		$this->assertTrue($this->fixture->hasSourceKey('property_five'));
 		$this->assertTrue($this->fixture->hasSourceKey('property_six'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_seven'));
+		$this->assertTrue($this->fixture->hasSourceKey('property_eight'));
 		$this->assertFalse($this->fixture->hasSourceKey('property_not_exists'));
 	}
 

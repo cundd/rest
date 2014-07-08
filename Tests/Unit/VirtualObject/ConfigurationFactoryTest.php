@@ -47,42 +47,48 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 	 */
 	protected $fixture;
 
+	protected $typoScriptDummyArray = array(
+		'mapping.' => array(
+			'identifier' => 'property1',
+			'tableName' => 'my_resource_table',
+			'properties.' => array(
+				'property1.' => array(
+					'type' => 'string',
+					'column' => 'property_one',
+				),
+				'property2.' => array(
+					'type' => 'float',
+					'column' => 'property_two',
+				),
+				'property3.' => array(
+					'type' => 'int',
+					'column' => 'property_three',
+				),
+				'property4.' => array(
+					'type' => 'integer',
+					'column' => 'property_four',
+				),
+				'property5.' => array(
+					'type' => 'bool',
+					'column' => 'property_five',
+				),
+				'property6.' => array(
+					'type' => 'boolean',
+					'column' => 'property_six',
+				),
+				'property_seven.' => array(
+					'type' => 'boolean',
+				),
+				'property_eight.' => 'boolean',
+			)
+		)
+	);
+
 	public function setUp() {
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
 
 
-		$typoScriptDummyArray = array(
-			'mapping.' => array(
-				'identifier'  => 'property1',
-				'tableName'   => 'my_resource_table',
-				'properties.' => array(
-					'property1.' => array(
-						'type'   => 'string',
-						'column' => 'property_one',
-					),
-					'property2.' => array(
-						'type'   => 'float',
-						'column' => 'property_two',
-					),
-					'property3.' => array(
-						'type'   => 'int',
-						'column' => 'property_three',
-					),
-					'property4.' => array(
-						'type'   => 'integer',
-						'column' => 'property_four',
-					),
-					'property5.' => array(
-						'type'   => 'bool',
-						'column' => 'property_five',
-					),
-					'property6.' => array(
-						'type'   => 'boolean',
-						'column' => 'property_six',
-					)
-				)
-			)
-		);
+		$typoScriptDummyArray = $this->typoScriptDummyArray;
 
 
 		$typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
@@ -117,6 +123,15 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 	/**
 	 * @test
 	 */
+	public function createWithConfigurationDataTest() {
+		$configurationData = $this->typoScriptDummyArray['mapping.'];
+		$configurationObject = $this->fixture->createWithConfigurationData($configurationData);
+		$this->validateConfiguration($configurationObject);
+	}
+
+	/**
+	 * @test
+	 */
 	public function createFromTypoScriptForPathTest() {
 		$configurationObject = $this->fixture->createFromTypoScriptForPath('ResourceName');
 		$this->validateConfiguration($configurationObject);
@@ -145,10 +160,13 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 
 		$this->assertEquals('property3', $configuration->getPropertyForSourceKey('property_three'));
 		$this->assertEquals('property6', $configuration->getPropertyForSourceKey('property_six'));
+		$this->assertEquals('property_seven', $configuration->getPropertyForSourceKey('property_seven'));
+		$this->assertEquals('property_eight', $configuration->getPropertyForSourceKey('property_eight'));
 		$this->assertNull($configuration->getPropertyForSourceKey('propertyNotExists'));
 
 		$this->assertEquals('int', $configuration->getTypeForProperty('property3'));
 		$this->assertEquals('boolean', $configuration->getTypeForProperty('property6'));
+		$this->assertEquals('boolean', $configuration->getTypeForProperty('property_eight'));
 		$this->assertNull($configuration->getTypeForProperty('propertyNotExists'));
 
 		$this->assertEquals('my_resource_table', $configuration->getSourceIdentifier());
