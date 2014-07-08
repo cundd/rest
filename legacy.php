@@ -28,6 +28,8 @@ class_alias('Tx_Extbase_Persistence_ManagerInterface', 'TYPO3\\CMS\\Extbase\\Per
 
 class_alias('Tx_Extbase_Persistence_QueryInterface', 'TYPO3\\CMS\\Extbase\\Persistence\\QueryInterface');
 class_alias('Tx_Extbase_Persistence_QOM_Statement', 'TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Qom\\Statement');
+class_alias('Tx_Extbase_Persistence_QOM_Comparison', 'TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Qom\\Comparison');
+class_alias('Tx_Extbase_Persistence_QOM_ComparisonInterface', 'TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Qom\\ComparisonInterface');
 /**
  * Export Rest classes to TYPO3 4.7
  */
