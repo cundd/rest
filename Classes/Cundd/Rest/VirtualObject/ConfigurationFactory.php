@@ -24,6 +24,7 @@
  */
 
 namespace Cundd\Rest\VirtualObject;
+
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
@@ -64,7 +65,8 @@ class ConfigurationFactory implements SingletonInterface {
 		$configurationData = NULL;
 		if (
 			isset($configurationArray[$path]) && is_array($configurationArray[$path])
-			&& isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])) {
+			&& isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
+		) {
 			return $this->_createWithConfigurationData($configurationArray[$path]['mapping']);
 		}
 		return NULL;
@@ -87,21 +89,10 @@ class ConfigurationFactory implements SingletonInterface {
 			return NULL;
 		}
 
-		// Parse the TypoScript array
-		$propertyMapping = array();
-		$propertyMappingRaw = $mapping['properties.'];
-		foreach ($propertyMappingRaw as $propertyKey => $propertyConfiguration) {
-			$propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
-			$propertyMapping[$propertyKey] = array(
-				'type' => $propertyConfiguration['type'],
-				'column' => isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey,
-			);
-		}
-
 		$mergedConfigurationData = array(
 			'identifier' => $mapping['identifier'],
 			'tableName' => $mapping['tableName'],
-			'properties' => $propertyMapping
+			'properties' => $mapping['properties.']
 		);
 
 		if (isset($mapping['skipUnknownProperties'])) {
@@ -132,11 +123,58 @@ class ConfigurationFactory implements SingletonInterface {
 	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
 	 */
 	protected function _createWithConfigurationData($configurationData) {
+		if (isset($configurationData['properties'])) {
+			$configurationData['properties'] = $this->_preparePropertyMapping($configurationData['properties']);
+		}
+
 		$configurationObject = new Configuration($configurationData);
 
 		if (isset($configurationData['skipUnknownProperties'])) {
 			$configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
 		}
 		return $configurationObject;
+	}
+
+	/**
+	 * Prepares the given property mapping
+	 *
+	 * @param array $propertyMapping
+	 * @return array
+	 */
+	protected function _preparePropertyMapping($propertyMapping) {
+		/**
+		 * Remove the last character form the property key (used when imported from TypoScript)
+		 * @var boolean $removeLastCharacter
+		 */
+		$removeLastCharacter = -1;
+
+		$propertyMappingPrepared = array();
+		foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
+			// If the last character is a dot (".") remove the last character of all property keys
+			if ($removeLastCharacter === -1) {
+				$removeLastCharacter = substr($propertyKey, -1) === '.';
+			}
+
+			if ($removeLastCharacter) {
+				$propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
+			}
+
+			// If the current property configuration is a string, it defines the type
+			if (is_string($propertyConfiguration)) {
+				$type = $propertyConfiguration;
+				$column = $propertyKey;
+			} else {
+				// else it has to be an array
+				$type = $propertyConfiguration['type'];
+				$column = isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey;
+			}
+			
+			$propertyMappingPrepared[$propertyKey] = array(
+				'type' => $type,
+				'column' => $column,
+			);
+
+		}
+		return $propertyMappingPrepared;
 	}
 }
