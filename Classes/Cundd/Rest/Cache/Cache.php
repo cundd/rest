@@ -68,11 +68,18 @@ class Cache {
 	protected $cacheLifeTime = NULL;
 
 	/**
+	 * Life time defined in the expires header
+	 *
+	 * @var integer
+	 */
+	protected $expiresHeaderLifeTime = NULL;
+
+	/**
 	 * Returns the cached value for the given request or NULL if it is not
 	 * defined
 	 *
 	 * @param \Cundd\Rest\Request $request
-	 * @return string
+	 * @return \Bullet\Response
 	 */
 	public function getCachedValueForRequest(\Cundd\Rest\Request $request) {
 		$this->currentRequest = $request;
@@ -105,7 +112,7 @@ class Cache {
 		$response->contentType($responseArray['content-type']);
 		$response->encoding($responseArray['encoding']);
 		$response->header('Last-Modified', $responseArray['last-modified']);
-		$response->header('Expires', $this->getHttpDate(time() + $cacheLifeTime));
+		$response->header('Expires', $this->getHttpDate(time() + $this->getExpiresHeaderLifeTime()));
 
 		$response->header('cundd-rest-cached', 'true');
 		return $response;
@@ -184,9 +191,37 @@ class Cache {
 	 */
 	public function getCacheLifeTime() {
 		if ($this->cacheLifeTime === NULL) {
-			$this->cacheLifeTime = intval($this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime'));
+			$readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime');
+			if ($readCacheLifeTime === NULL) {
+				$readCacheLifeTime = -1;
+			}
+			$this->cacheLifeTime = intval($readCacheLifeTime);
 		}
 		return $this->cacheLifeTime;
+	}
+
+	/**
+	 * Sets the life time defined in the expires header
+	 *
+	 * @param int $expiresHeaderLifeTime
+	 * @return $this
+	 */
+	public function setExpiresHeaderLifeTime($expiresHeaderLifeTime) {
+		$this->expiresHeaderLifeTime = $expiresHeaderLifeTime;
+		return $this;
+	}
+
+	/**
+	 * Returns the life time defined in the expires header
+	 *
+	 * @return int
+	 */
+	public function getExpiresHeaderLifeTime() {
+		if ($this->expiresHeaderLifeTime === NULL) {
+			$readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('expiresHeaderLifeTime');
+			$this->expiresHeaderLifeTime = ($readCacheLifeTime !== NULL) ? intval($readCacheLifeTime) : $this->getCacheLifeTime();
+		}
+		return $this->expiresHeaderLifeTime;
 	}
 
 	/**

@@ -147,7 +147,7 @@ class ConfigurationFactory implements SingletonInterface {
 	 * @param array $mapping
 	 * @return array
 	 */
-	static function preparePropertyMapping($mapping) {
+	static public function preparePropertyMapping($mapping) {
 		/**
 		 * Remove the last character form the property key (used when imported from TypoScript)
 		 *
