@@ -111,6 +111,7 @@ class Profiler {
 			'runEndTime' => $runEndTime,
 			'runDuration' => $runEndTime - $runStartTime,
 			'memory' => memory_get_usage(TRUE),
+			'memoryPeak' => memory_get_peak_usage(TRUE),
 		);
 
 		if (isset($this->options['collectCaller']) && $this->options['collectCaller']) {
@@ -130,9 +131,11 @@ class Profiler {
 
 		foreach ($this->profilingData as $currentRunData) {
 			$currentMessagePart = sprintf(
-				'Profiling run %s: Duration %0.9f',
+				'Profiling run %s: Duration: %0.9f | Memory: %s (%s max)',
 				$currentRunData['name'],
-				$currentRunData['duration']
+				$currentRunData['duration'],
+				$this->formatMemory($currentRunData['memory']),
+				$this->formatMemory($currentRunData['memoryPeak'])
 			);
 			if (isset($currentRunData['caller'])) {
 				$caller = $currentRunData['caller'];
@@ -161,6 +164,13 @@ class Profiler {
 	}
 
 	/**
+	 * Clears the profiling data
+	 */
+	public function clear() {
+		$this->profilingData = array();
+	}
+
+	/**
 	 * Outputs a profiling message using the output handler
 	 *
 	 * @return array Returns last run data
@@ -168,6 +178,18 @@ class Profiler {
 	public function collectAndOutput() {
 		$currentRunData = $this->collect();
 		$this->output();
+		return $currentRunData;
+	}
+
+	/**
+	 * Outputs a profiling message using the output handler
+	 *
+	 * @return array Returns last run data
+	 */
+	public function collectClearAndOutput() {
+		$currentRunData = $this->collect();
+		$this->output();
+		$this->clear();
 		return $currentRunData;
 	}
 
@@ -203,6 +225,17 @@ class Profiler {
 	}
 
 	/**
+	 * Formats the given memory size
+	 *
+	 * @param integer $size
+	 * @return string
+	 */
+	protected function formatMemory($size) {
+		$unit=array('B','KB','MB','GB','TB','PB');
+		return @round($size/pow(1024,($i=intval(floor(log($size,1024))))),2).' '.$unit[$i];
+	}
+
+	/**
 	 * Returns the information about the caller of the debug output
 	 *
 	 * @return array
@@ -214,12 +247,15 @@ class Profiler {
 		}
 
 		if ($php54) {
-			$backtrace = debug_backtrace(FALSE, 2);
+			$backtrace = debug_backtrace(FALSE, 5);
 		} else {
 			$backtrace = debug_backtrace(FALSE);
 		}
-		array_shift($backtrace);
-		return reset($backtrace);
+		$backtraceEntry = current($backtrace);
+		while (isset($backtraceEntry['class']) && $backtraceEntry['class'] === __CLASS__) {
+			$backtraceEntry = next($backtrace);
+		}
+		return prev($backtrace);
 	}
 
 	/**
