@@ -108,6 +108,7 @@ class Cache {
 			return NULL;
 		}
 
+		/** TODO: Send 304 status if appropriate */
 		$response = new Response($responseArray['content'], $responseArray['status']);
 		$response->contentType($responseArray['content-type']);
 		$response->encoding($responseArray['encoding']);
