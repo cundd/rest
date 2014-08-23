@@ -123,7 +123,7 @@ class Handler implements CrudHandlerInterface {
 		$dataProvider = $this->getDataProvider();
 		$model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$model) {
-			return 404;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
 		}
 		return $dataProvider->getModelProperty($model, $propertyKey);
 	}
@@ -142,7 +142,7 @@ class Handler implements CrudHandlerInterface {
 		$dataProvider = $this->getDataProvider();
 		$model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$model) {
-			return 404;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
 		}
 		$result = $dataProvider->getModelData($model);
 		if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
@@ -169,7 +169,7 @@ class Handler implements CrudHandlerInterface {
 
 		$oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
 		if (!$oldModel) {
-			return 404;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
 		}
 
 		/**
@@ -177,7 +177,7 @@ class Handler implements CrudHandlerInterface {
 		 */
 		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 		if (!$model) {
-			return 400;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 400);
 		}
 
 		$dataProvider->saveModelForPath($model, $this->getPath());
@@ -207,7 +207,7 @@ class Handler implements CrudHandlerInterface {
 		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
 		if (!$model) {
-			return 404;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
 		}
 
 		$dataProvider->saveModelForPath($model, $this->getPath());
@@ -231,10 +231,11 @@ class Handler implements CrudHandlerInterface {
 		/* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
 		$dataProvider = $this->getDataProvider();
 		$model      = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
-		if ($model) {
-			$dataProvider->removeModelForPath($model, $this->getPath());
+		if (!$model) {
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
 		}
-		return 200;
+		$dataProvider->removeModelForPath($model, $this->getPath());
+		return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 200);
 	}
 
 	/**
@@ -258,7 +259,7 @@ class Handler implements CrudHandlerInterface {
 		 */
 		$model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 		if (!$model) {
-			return 400;
+			return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 400);
 		}
 
 		$dataProvider->saveModelForPath($model, $this->getPath());

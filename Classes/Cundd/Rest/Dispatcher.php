@@ -45,6 +45,7 @@ use Cundd\Rest\Access\AccessControllerInterface;
 class Dispatcher implements SingletonInterface {
 	/**
 	 * API path
+	 *
 	 * @var string
 	 */
 	protected $uri;
@@ -71,6 +72,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * The response format
+	 *
 	 * @var string
 	 */
 	protected $format;
@@ -86,7 +88,7 @@ class Dispatcher implements SingletonInterface {
 	 * Initialize
 	 */
 	public function __construct() {
-		$this->app = new \Bullet\App();
+		$this->app           = new \Bullet\App();
 		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
 		$this->objectManager->setDispatcher($this);
 
@@ -96,8 +98,8 @@ class Dispatcher implements SingletonInterface {
 	/**
 	 * Dispatch the request
 	 *
-	 * @param \Cundd\Rest\Request $request Overwrite the request
-	 * @param Response $responsePointer Reference to be filled with the response
+	 * @param \Cundd\Rest\Request $request         Overwrite the request
+	 * @param Response            $responsePointer Reference to be filled with the response
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
@@ -118,17 +120,17 @@ class Dispatcher implements SingletonInterface {
 				break;
 
 			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-				echo new Response('Unauthorized', 401);
+				echo $this->createErrorResponse('Unauthorized', 401);
 				return FALSE;
 
 			case AccessControllerInterface::ACCESS_DENY:
 			default:
-				echo new Response('Forbidden', 403);
+				echo $this->createErrorResponse('Forbidden', 403);
 				return FALSE;
 		}
 
 		/** @var Cache $cache */
-		$cache = $this->objectManager->getCache();
+		$cache    = $this->objectManager->getCache();
 		$response = $cache->getCachedValueForRequest($request);
 
 		$success = TRUE;
@@ -161,7 +163,7 @@ class Dispatcher implements SingletonInterface {
 		}
 
 		$responsePointer = $response;
-		$responseString = (string)$response;
+		$responseString  = (string)$response;
 		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
 		echo $responseString;
 		return $success;
@@ -169,16 +171,17 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Print the greeting
+	 *
 	 * @return boolean Returns if the request has been successfully dispatched
 	 */
 	public function greet() {
 		/** @var \Cundd\Rest\Request $request */
 		$request = $this->getRequest();
 
-		$this->app->path('/', function($request) {
+		$this->app->path('/', function ($request) {
 			$greeting = 'What\'s up?';
-			$hour = date('H');
-			if ($hour <= '10' ) {
+			$hour     = date('H');
+			if ($hour <= '10') {
 				$greeting = 'Good Morning!';
 			} else if ($hour >= '23') {
 				$greeting = 'Hy! Still awake?';
@@ -196,24 +199,104 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Catch and report the exception, that occurred during the request
+	 *
 	 * @param \Exception $exception
 	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
 		if ($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
-			return new Response('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+			return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 		}
-		return new Response('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+		return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+	}
+
+	/**
+	 * Returns a response with the given message and status code
+	 *
+	 * @param string|array $data
+	 * @param int          $status
+	 * @return Response
+	 */
+	public function createErrorResponse($data, $status) {
+		return $this->_createResponse($data, $status, TRUE);
+	}
+
+	/**
+	 * Returns a response with the given message and status code
+	 *
+	 * @param string|array $data
+	 * @param int          $status
+	 * @return Response
+	 */
+	public function createSuccessResponse($data, $status) {
+		return $this->_createResponse($data, $status);
+	}
+
+	/**
+	 * Returns a response with the given message and status code
+	 *
+	 * @param string|array $data Data to send
+	 * @param int          $status Status code of the response
+	 * @param bool         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+	 * @return Response
+	 */
+	protected function _createResponse($data, $status, $forceError = FALSE) {
+		$body     = NULL;
+		$response = new Response(NULL, $status);
+		$format   = $this->getRequest()->format();
+		if (!$format) {
+			$format = 'json';
+		}
+
+		$messageKey = 'message';
+		if ($forceError || $status >= 400) {
+			$messageKey = 'error';
+		}
+
+		switch ($format) {
+			case 'json':
+
+				switch (gettype($data)) {
+					case 'string':
+						$body = array(
+							$messageKey => $data
+						);
+						break;
+
+					case 'array':
+						$body = $data;
+						break;
+
+					case 'NULL':
+						$body = array(
+							$messageKey => $response->statusText($status)
+						);
+						break;
+				}
+
+				$response->contentType('application/json');
+				$response->content(json_encode($body));
+				break;
+
+			case 'xml':
+				// TODO: support more response formats
+
+			default:
+				$body = 'Unsupported format: ' . $this->getRequest()->format();
+				$response->content($body);
+		}
+		return $response;
 	}
 
 	/**
 	 * Returns the request
+	 *
 	 * @return \Cundd\Rest\Request
 	 */
 	public function getRequest() {
 		if (!$this->request) {
 			$format = '';
-			$uri = $this->getUri($format);
+			$uri    = $this->getUri($format);
 
 			/*
 			 * Transform Document URLs
@@ -248,6 +331,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Returns the URI
+	 *
 	 * @param string $format Reference to be filled with the request format
 	 * @return string
 	 */
@@ -260,7 +344,7 @@ class Dispatcher implements SingletonInterface {
 			}
 
 			// Strip the format from the URI
-			$resourceName = basename($uri);
+			$resourceName    = basename($uri);
 			$lastDotPosition = strrpos($resourceName, '.');
 			if ($lastDotPosition !== FALSE) {
 				$newUri = '';
@@ -278,9 +362,9 @@ class Dispatcher implements SingletonInterface {
 	}
 
 	/**
-	 * @param string $name Argument name
-	 * @param int $filter Filter for the input
-	 * @param mixed $default Default value to use if no argument with the given name exists
+	 * @param string $name    Argument name
+	 * @param int    $filter  Filter for the input
+	 * @param mixed  $default Default value to use if no argument with the given name exists
 	 * @return mixed
 	 */
 	protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
@@ -294,6 +378,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Returns the sent data
+	 *
 	 * @return mixed
 	 */
 	public function getSentData() {
@@ -346,6 +431,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Returns the logger
+	 *
 	 * @return \TYPO3\CMS\Core\Log\Logger
 	 */
 	public function getLogger() {
@@ -357,8 +443,9 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Logs the given request message and data
+	 *
 	 * @param string $message
-	 * @param array $data
+	 * @param array  $data
 	 */
 	public function logRequest($message, $data = NULL) {
 		if ($this->getExtensionConfiguration('logRequests')) {
@@ -368,8 +455,9 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Logs the given response message and data
+	 *
 	 * @param string $message
-	 * @param array $data
+	 * @param array  $data
 	 */
 	public function logResponse($message, $data = NULL) {
 		if ($this->getExtensionConfiguration('logResponse')) {
@@ -379,6 +467,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Logs the given exception
+	 *
 	 * @param \Exception $exception
 	 */
 	public function logException($exception) {
@@ -388,8 +477,9 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Logs the given message and data
+	 *
 	 * @param string $message
-	 * @param array $data
+	 * @param array  $data
 	 */
 	public function log($message, $data = NULL) {
 		if ($data) {
@@ -401,6 +491,7 @@ class Dispatcher implements SingletonInterface {
 
 	/**
 	 * Returns the extension configuration for the given key
+	 *
 	 * @param $key
 	 * @return mixed
 	 */
@@ -432,4 +523,5 @@ class Dispatcher implements SingletonInterface {
 		return self::$sharedDispatcher;
 	}
 }
+
 ?>
