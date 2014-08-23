@@ -54,7 +54,9 @@ class AbstractVirtualObjectCase extends BaseTestCase {
 	 */
 	protected function getTestConfiguration() {
 		$testConfiguration = $this->getTestConfigurationData();
-		return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
+		return new \Cundd\Rest\VirtualObject\Configuration(
+			\Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
+		);
 	}
 
 	/**
@@ -105,7 +107,12 @@ class AbstractVirtualObjectCase extends BaseTestCase {
                 "property6": {
                     "type": "boolean",
                     "column": "property_six"
-                }
+                },
+                "property_seven": {
+                    "type": "boolean",
+                    "column": "property_seven"
+                },
+                "property_eight": "boolean"
             }
         }
     }

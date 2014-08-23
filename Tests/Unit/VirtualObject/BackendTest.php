@@ -32,6 +32,7 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
@@ -75,6 +76,37 @@ class BackendTest extends AbstractDatabaseCase {
 		);
 		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
 		$this->assertEquals(2, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => 1395678400,
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(2, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => 1395678480,
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(2, $result);
+
+		$query  = array(
+			'title' => array(
+				'doNotEscapeValue' => 'title',
+				'value' => "'Test entry' and content_time = '1395678480'",
+			),
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(2, $result);
 	}
 
 
@@ -100,6 +132,149 @@ class BackendTest extends AbstractDatabaseCase {
 		);
 		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
 		$this->assertEquals(self::$testData, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => 1395678400,
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(self::$testData, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => 1395678480,
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(self::$testData, $result);
+
+		$query  = array(
+			'title' => array(
+				'doNotEscapeValue' => 'title',
+				'value' => "'Test entry' and content_time = '1395678480'",
+			),
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(self::$testData, $result);
+	}
+
+
+
+	/**
+	 * @test
+	 */
+	public function getObjectCountByQueryWithZeroResult() {
+		$query  = array(
+			'uid' => time()
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+
+		$query  = array(
+			'content_time' => time()
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+
+		$query  = array(
+			'content_time' => time(),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => time(),
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => time(),
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+
+		$query  = array(
+			'title' => array(
+				'doNotEscapeValue' => 'title',
+				'value' => "'Test entry' and content_time = '" . time() . "'",
+			),
+		);
+		$result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+		$this->assertEquals(0, $result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getObjectDataByQueryWithEmptyResult() {
+		$query  = array(
+			'uid' => time()
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
+
+		$query  = array(
+			'content_time' => time()
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
+
+		$query  = array(
+			'content_time' => time(),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => 1395678400,
+				'operator' => QueryInterface::OPERATOR_LESS_THAN,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
+
+		$query  = array(
+			'content_time' => array(
+				'value' => time(),
+				'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+
+			),
+			'title' => 'Test entry'
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
+
+		$query  = array(
+			'title' => array(
+				'doNotEscapeValue' => 'title',
+				'value' => "'Test entry' and content_time = '" . time() . "'",
+			),
+		);
+		$result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+		$this->assertEmpty($result);
 	}
 
 	/**

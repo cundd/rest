@@ -25,8 +25,10 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
+use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 class Backend implements BackendInterface {
 	/**
@@ -79,8 +81,8 @@ class Backend implements BackendInterface {
 	/**
 	 * Returns the number of items matching the query
 	 *
-	 * @param string $tableName The database table name
-	 * @param QueryInterface|array  $query
+	 * @param string               $tableName The database table name
+	 * @param QueryInterface|array $query
 	 * @return integer
 	 * @api
 	 */
@@ -103,8 +105,8 @@ class Backend implements BackendInterface {
 	/**
 	 * Returns the object data matching the $query
 	 *
-	 * @param string $tableName The database table name
-	 * @param QueryInterface|array  $query
+	 * @param string               $tableName The database table name
+	 * @param QueryInterface|array $query
 	 * @return array
 	 * @api
 	 */
@@ -144,6 +146,7 @@ class Backend implements BackendInterface {
 	 * @param string               $tableName
 	 * @throws Exception\InvalidColumnNameException if one of the column names is invalid
 	 * @throws Exception\InvalidTableNameException if the table name is invalid
+	 * @throws \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
 	 * @return string
 	 */
 	protected function createWhereStatementFromQuery($query, $tableName) {
@@ -164,7 +167,7 @@ class Backend implements BackendInterface {
 			$query = $query->getConstraint();
 		}
 
-		$adapter     = $this->getAdapter();
+		$adapter = $this->getAdapter();
 		$constraints = array();
 		foreach ($query as $property => $value) {
 			if ($configuration && !$configuration->hasProperty($property)) throw new InvalidColumnNameException('The given property is not defined', 1396092229);
@@ -175,19 +178,92 @@ class Backend implements BackendInterface {
 				throw new InvalidColumnNameException('The given column is not valid', 1395678424);
 			}
 
+			if (is_scalar($value) || $value === NULL) {
+				$operator = '=';
+				$comparisonValue = $adapter->fullQuoteStr($value, $tableName);
+			} else if (is_array($value)) {
+				/**
+				 * If you don't want the given value to be escaped set the constraint's "doNotEscapeValue" key to the
+				 * name of it's property key
+				 *
+				 * Example:
+				 * Use the raw value for the property "dangerousValue"
+				 *
+				 * $constraints = array(
+				 * 		"dangerousValue" => array(
+				 * 			"value" => "a raw unescaped value",
+				 * 			"doNotEscapeValue" => "dangerousValue"
+				 * 		)
+				 * );
+				 */
+				if (isset($value['doNotEscapeValue']) && $value['doNotEscapeValue'] === $property) {
+					$comparisonValue = $value['value'];
+				} else {
+					$comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
+				}
+				$operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
+//			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
+			} else {
+				throw new InvalidOperatorException('Operator could not be detected', 1404821478);
+			}
 			$constraints[] = ''
 				. $column
-				. '='
-				. $adapter->fullQuoteStr($value, $tableName);
+				. $operator
+				. $comparisonValue;
 		}
 		return implode(' AND ', $constraints);
+	}
+
+	/**
+	 * Returns the SQL operator for the given JCR operator type.
+	 *
+	 * @param string $operator One of the JCR_OPERATOR_* constants
+	 * @throws InvalidOperatorException
+	 * @return string an SQL operator
+	 */
+	protected function resolveOperator($operator) {
+		switch ($operator) {
+//			case self::OPERATOR_EQUAL_TO_NULL:
+//				$operator = 'IS';
+//				break;
+//			case self::OPERATOR_NOT_EQUAL_TO_NULL:
+//				$operator = 'IS NOT';
+//				break;
+			case QueryInterface::OPERATOR_IN:
+				$operator = 'IN';
+				break;
+			case QueryInterface::OPERATOR_EQUAL_TO:
+				$operator = '=';
+				break;
+			case QueryInterface::OPERATOR_NOT_EQUAL_TO:
+				$operator = '!=';
+				break;
+			case QueryInterface::OPERATOR_LESS_THAN:
+				$operator = '<';
+				break;
+			case QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
+				$operator = '<=';
+				break;
+			case QueryInterface::OPERATOR_GREATER_THAN:
+				$operator = '>';
+				break;
+			case QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
+				$operator = '>=';
+				break;
+			case QueryInterface::OPERATOR_LIKE:
+				$operator = 'LIKE';
+				break;
+			default:
+				throw new InvalidOperatorException('Unsupported operator encountered.', 1242816073);
+		}
+		return $operator;
 	}
 
 	/**
 	 * Replace query placeholders in a query part by the given parameters
 	 *
 	 * @param string &$sqlString The query part with placeholders
-	 * @param array $parameters The parameters
+	 * @param array  $parameters The parameters
 	 * @param string $tableName
 	 *
 	 * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception
@@ -248,7 +324,7 @@ class Backend implements BackendInterface {
 	protected function createOrderingStatementFromQuery($query) {
 		if ($query instanceof QueryInterface) {
 			$orderings = $query->getOrderings();
-			$orderArray = array_map(function($property, $direction) {
+			$orderArray = array_map(function ($property, $direction) {
 				return $property . ' ' . $direction;
 			}, array_keys($orderings), $orderings);
 			return implode(', ', $orderArray);

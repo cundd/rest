@@ -46,6 +46,7 @@ class CacheTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		/** @var Cache $fixture */
 		$fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
 		$fixture->setCacheLifeTime(10);
+		$fixture->setExpiresHeaderLifeTime(5);
 		$this->fixture = $fixture;
 	}
 
