@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest;
 use TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
 
 class Bootstrap {
@@ -50,9 +51,13 @@ class Bootstrap {
 	 * @return	void
 	 */
 	public function initTSFE($pageUid = -1, $overrule = FALSE) {
+		$rootLine = NULL;
 		$typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
-		if ($pageUid == -1) {
+		if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
 			$pageUid = intval(GeneralUtility::_GP('pid'));
+		}
+		if ($pageUid === -1) {
+			$pageUid = 0;
 		}
 
 		#$typo3confVariables['EXT']['extList'] = str_replace('tq_seo', '', $typo3confVariables['EXT']['extList']);
@@ -83,10 +88,15 @@ class Bootstrap {
 //			$start = microtime(TRUE);
 
 			// builds rootline
-//			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
-//			$rootline = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', 0, '', $this);
-//			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pageUid);
-//			$GLOBALS['TSFE']->rootLine = $rootLine;
+			if ($pageUid > 0) {
+				$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+				//$rootLine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', 0, '', $this);
+				/** @var RootlineUtility $rootLine */
+				$rootLineUtility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $pageUid);
+				$rootLine = $rootLineUtility->get();
+//				$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pageUid);
+				$GLOBALS['TSFE']->rootLine = $rootLine;
+			}
 
 			// Init template
 			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
@@ -94,10 +104,12 @@ class Bootstrap {
 			$GLOBALS['TSFE']->tmpl->init();
 
 			// this generates the constants/config + hierarchy info for the template.
-//			$GLOBALS['TSFE']->tmpl->runThroughTemplates(
-//				$rootLine,
-//				0 // start_template_uid
-//				);
+			if ($rootLine && $pageUid > 0) {
+				$GLOBALS['TSFE']->tmpl->runThroughTemplates(
+					$rootLine,
+					0 // start_template_uid
+				);
+			}
 			$GLOBALS['TSFE']->tmpl->generateConfig();
 			$GLOBALS['TSFE']->tmpl->loaded = 1;
 

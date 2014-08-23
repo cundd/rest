@@ -55,6 +55,7 @@ class TypoScriptConfigurationProvider implements SingletonInterface{
 		$keyPathParts = explode('.', $keyPath);
 		foreach ($keyPathParts as $key) {
 			if (is_array($matchingSetting)) {
+//				\Cundd\Rest\Utility\DebugUtility::debug($key, $key . '.', $matchingSetting[$key . '.']);
 				if (isset($matchingSetting[$key . '.'])) {
 					$matchingSetting = $matchingSetting[$key . '.'];
 				} else if (isset($matchingSetting[$key])) {
@@ -66,6 +67,7 @@ class TypoScriptConfigurationProvider implements SingletonInterface{
 				$matchingSetting = NULL;
 			}
 		}
+//		\Cundd\Rest\Utility\DebugUtility::debug($matchingSetting, $this->getSettings(), $keyPath);
 		return $matchingSetting;
 	}
 

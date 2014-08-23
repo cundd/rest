@@ -14,6 +14,7 @@
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/frontend" />
         </CLASSES>
         <SOURCES>
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3conf/ext/cundd_composer/vendor" />
@@ -21,6 +22,7 @@
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/fluid" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/extbase" />
           <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/core" />
+          <root url="file://$MODULE_DIR$/../web_cvjm/typo3_src-6.1.7/typo3/sysext/frontend" />
         </SOURCES>
       </library>
     </orderEntry>
