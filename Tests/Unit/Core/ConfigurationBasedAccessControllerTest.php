@@ -27,14 +27,18 @@ namespace Cundd\Rest\Test\Core;
 
 \Tx_CunddComposer_Autoloader::register();
 use Cundd\Rest\Request;
+use Cundd\Rest\Test\AbstractCase;
 
-class ConfigurationBasedAccessControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+require_once __DIR__ . '/../AbstractCase.php';
+
+class ConfigurationBasedAccessControllerTest extends AbstractCase {
 	/**
 	 * @var \Cundd\Rest\Access\ConfigurationBasedAccessController
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	protected function setUp() {
+		parent::setUp();
 		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Access\\ConfigurationBasedAccessController');
 

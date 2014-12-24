@@ -43,9 +43,9 @@ class PersistenceManagerTest extends AbstractDatabaseCase{
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\PersistenceManagerInterface');
 		$this->fixture->setConfiguration($this->getTestConfiguration());
-		parent::setUp();
 	}
 
 	public function tearDown() {

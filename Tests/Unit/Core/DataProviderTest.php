@@ -25,7 +25,10 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\Test\AbstractCase;
+
 \Tx_CunddComposer_Autoloader::register();
+require_once __DIR__ . '/../AbstractCase.php';
 
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
 	/**
@@ -133,7 +136,7 @@ class MyNestedJsonSerializeModel extends MyNestedModel {
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class DataProviderTest extends AbstractCase {
 	/**
 	 * @var \Cundd\Rest\DataProvider\DataProviderInterface
 	 */
@@ -151,6 +154,7 @@ class DataProviderTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	}
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
 	}
 

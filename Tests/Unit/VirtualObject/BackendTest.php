@@ -44,9 +44,10 @@ class BackendTest extends AbstractDatabaseCase {
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
+
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\BackendInterface');
 //		$this->fixture->setConfiguration($this->getTestConfiguration());
-		parent::setUp();
 	}
 
 	public function tearDown() {

@@ -46,11 +46,12 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
+
 		$testConfiguration = $this->getTestConfigurationData();
 		$this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
 			\Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
 		);
-		parent::setUp();
 	}
 
 	public function tearDown() {

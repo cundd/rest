@@ -30,19 +30,24 @@
 
 namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Test\AbstractCase;
+
+require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Tests for the Caching interface
  *
  * @package Cundd\Rest\Test\Core
  */
-class CacheTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class CacheTest extends AbstractCase {
 	/**
 	 * @var \Cundd\Rest\Cache\Cache
 	 */
 	protected $fixture;
 
 	protected function setUp() {
+		parent::setUp();
+
 		/** @var Cache $fixture */
 		$fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
 		$fixture->setCacheLifeTime(10);

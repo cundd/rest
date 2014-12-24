@@ -85,11 +85,10 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 	);
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
 
-
 		$typoScriptDummyArray = $this->typoScriptDummyArray;
-
 
 		$typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
 		$typeScriptConfigurationStub->expects($this->any())
@@ -97,7 +96,6 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 			->will($this->returnValue($typoScriptDummyArray));
 
 		$this->fixture->injectConfigurationProvider($typeScriptConfigurationStub);
-		parent::setUp();
 	}
 
 	public function tearDown() {

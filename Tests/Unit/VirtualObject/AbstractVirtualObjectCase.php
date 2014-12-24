@@ -33,22 +33,23 @@
 namespace Cundd\Rest\Test\VirtualObject;
 
 \Tx_CunddComposer_Autoloader::register();
+require_once __DIR__ . '/../AbstractCase.php';
 
+use Cundd\Rest\Test\AbstractCase;
 use Cundd\Rest\VirtualObject\Configuration;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
 /**
  * Abstract base class for Virtual Object tests
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class AbstractVirtualObjectCase extends BaseTestCase {
+class AbstractVirtualObjectCase extends AbstractCase {
 	/**
 	 * @var array
 	 */
 	protected $testConfiguration = array();
 
-	/**
+    /**
 	 * Returns the test configuration object
 	 * @return Configuration
 	 */

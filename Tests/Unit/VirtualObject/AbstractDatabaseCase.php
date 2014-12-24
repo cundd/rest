@@ -133,6 +133,7 @@ CONFIGURATION;
 	}
 
 
+
 	public function setUp() {
 		self::insertData();
 
