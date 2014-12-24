@@ -2,7 +2,13 @@
 if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
-Tx_CunddComposer_Autoloader::register();
+
+if (file_exists(__DIR__ . '/vendor/')) {
+	require_once __DIR__ . '/vendor/autoload.php';
+} else {
+	Tx_CunddComposer_Autoloader::register();
+}
+
 if (!class_exists('Cundd\\Rest\\Bootstrap')) {
 	throw new RuntimeException('Could not find class \\Cundd\\Rest\\Bootstrap. '
 		. 'Maybe the Composer dependencies have not been installed',
