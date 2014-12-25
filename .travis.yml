@@ -39,7 +39,7 @@ before_script:
   - mv build-environment/typo3conf .
   - git clone --single-branch --branch master --depth 1 https://github.com/cundd/rest typo3conf/ext/rest/
   - cd typo3conf/ext/rest/
-  - composer install
+  - composer.phar install
   - cd ../../../
   - mkdir fileadmin
   - mkdir uploads
