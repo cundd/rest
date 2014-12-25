@@ -35,7 +35,7 @@ before_script:
   - git clone --single-branch --branch develop --depth 1 https://github.com/cundd/rest typo3conf/ext/rest/
   - cd typo3conf/ext/rest/
   - composer --version
-  - composer install --verbose
+  - COMPOSER=cundd_composer.json composer install --verbose
   - cd ../../../
   - mkdir fileadmin
   - mkdir uploads
