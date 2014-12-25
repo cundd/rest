@@ -5,13 +5,15 @@ php:
   - 5.5
 
 env:
+  global:
+      - VENDOR="cundd"
+      - REPO="rest"
+      - CLI_HOME=`pwd`
   - DB=mysql TYPO3=master INTEGRATION=master
   - DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
   - DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
   - DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
   - DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
-  global:
-      - CLI_HOME=`pwd`
 
 matrix:
   include:
@@ -36,8 +38,8 @@ before_script:
   - mv core/typo3 .
   - if [[ -d core/t3lib ]]; then mv core/t3lib . ; fi
   - mv build-environment/typo3conf .
-  - git clone --single-branch --branch develop --depth 1 https://github.com/cundd/rest typo3conf/ext/rest/
-  - cd typo3conf/ext/rest/
+  - git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
+  - cd typo3conf/ext/$REPO/
   - composer --version
   - COMPOSER=cundd_composer.json composer install --verbose
   - cd ../../../
@@ -63,5 +65,5 @@ before_script:
 
 script:
   #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
-  - find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
-  - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/rest/Tests/Unit
+#  - find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+  - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
