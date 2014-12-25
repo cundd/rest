@@ -64,5 +64,6 @@ script:
   #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
   #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
+  - ls -l .
   - ls -l typo3conf/ext/rest/Tests/Unit
   - php typo3/cli_dispatch.phpsh phpunit -c typo3conf/ext/rest/Tests/Build/UnitTests.xml
