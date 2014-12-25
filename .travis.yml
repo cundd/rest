@@ -10,6 +10,8 @@ env:
   - DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
   - DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
   - DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
+  global:
+      - CLI_HOME=`pwd`
 
 matrix:
   include:
@@ -48,7 +50,7 @@ before_script:
   - if [[ "$DB" == "mysql" ]]; then mysql -uroot typo3_test < build-environment/Introduction/typo3conf/ext/introduction/Resources/Private/Subpackages/Introduction/Database/introduction.sql; fi
   - if [[ "$DB" == "mysql" && -f build-environment/dbimport/cache_tables.sql ]]; then mysql -uroot typo3_test < build-environment/dbimport/cache_tables.sql; fi
   - if [[ "$DB" == "mysql" && -f build-environment/dbimport/cli_users.sql ]]; then mysql -uroot typo3_test < build-environment/dbimport/cli_users.sql; fi
-  - php $PWD/typo3/cli_dispatch.phpsh coreapi database:databasecompare 1,2,3,4,5,6,7,8
+  - php $CLI_HOME/typo3/cli_dispatch.phpsh coreapi database:databasecompare 1,2,3,4,5,6,7,8
   # Here its an experimental feature. I tried to make PHP_CodeSniffer running but it doesn't work for the moment.
   # It installs PHP_CodeSniffer and the TYPO3CMS CGL standard via composer
   # But the custom standards won't be found
@@ -60,6 +62,6 @@ before_script:
   #- cd ..
 
 script:
-  #- $PWD/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $PWD/ext-phpunit
+  #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
   - find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
-  - php $PWD/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/rest/Tests/Unit
+  - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/rest/Tests/Unit
