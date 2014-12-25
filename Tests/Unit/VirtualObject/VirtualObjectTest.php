@@ -32,11 +32,11 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-\Tx_CunddComposer_Autoloader::register();
-
 use Cundd\Rest\VirtualObject\Configuration;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+
+require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Virtual Object tests

@@ -27,7 +27,6 @@ namespace Cundd\Rest\Test\Core;
 
 use Cundd\Rest\Test\AbstractCase;
 
-\Tx_CunddComposer_Autoloader::register();
 require_once __DIR__ . '/../AbstractCase.php';
 
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
