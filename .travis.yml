@@ -16,6 +16,8 @@ matrix:
     - php: 5.5
       env: DB=mysql TYPO3=master INTEGRATION=master
 
+sudo: false
+
 before_script:
 # Install build dependencies
 # TODO: The LocalConfiguration.php is only available for TYPO3 6.0 and higher.
@@ -60,4 +62,4 @@ before_script:
 script:
   #- $PWD/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $PWD/ext-phpunit
   - find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
-  - php $PWD/typo3/cli_dispatch.phpsh phpunit -c typo3conf/ext/rest/Tests/Unit
+  - php $PWD/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/rest/Tests/Unit
