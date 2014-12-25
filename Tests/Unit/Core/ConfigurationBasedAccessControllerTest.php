@@ -25,11 +25,11 @@
 
 namespace Cundd\Rest\Test\Core;
 
-\Tx_CunddComposer_Autoloader::register();
+require_once __DIR__ . '/../AbstractCase.php';
 use Cundd\Rest\Request;
 use Cundd\Rest\Test\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
+
 
 class ConfigurationBasedAccessControllerTest extends AbstractCase {
 	/**

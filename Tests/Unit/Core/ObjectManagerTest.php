@@ -33,7 +33,8 @@
 
 namespace Cundd\Rest\Test\Core;
 
-\Tx_CunddComposer_Autoloader::register();
+require_once __DIR__ . '/../AbstractCase.php';
+
 class ObjectManagerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**

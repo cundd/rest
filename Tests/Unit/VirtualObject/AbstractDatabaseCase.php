@@ -32,7 +32,6 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-\Tx_CunddComposer_Autoloader::register();
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 

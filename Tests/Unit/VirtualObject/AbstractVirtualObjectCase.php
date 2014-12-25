@@ -32,11 +32,10 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-\Tx_CunddComposer_Autoloader::register();
-require_once __DIR__ . '/../AbstractCase.php';
-
 use Cundd\Rest\Test\AbstractCase;
 use Cundd\Rest\VirtualObject\Configuration;
+
+require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Abstract base class for Virtual Object tests

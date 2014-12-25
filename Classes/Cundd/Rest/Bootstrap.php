@@ -39,7 +39,9 @@ class Bootstrap {
 			require_once __DIR__ . '/../../../legacy.php';
 		}
 
-		EidUtility::connectDB();
+		if (method_exists('TYPO3\CMS\Frontend\Utility\EidUtility', 'connectDB')) {
+			EidUtility::connectDB();
+		}
 		$this->initTSFE();
 	}
 

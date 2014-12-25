@@ -27,7 +27,8 @@ namespace Cundd\Rest\Test\Document;
 
 use Cundd\Rest\Domain\Model\Document;
 
-\Tx_CunddComposer_Autoloader::register();
+require_once __DIR__ . '/../AbstractCase.php';
+
 class DummyObject {}
 
 /**
