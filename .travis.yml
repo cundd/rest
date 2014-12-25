@@ -1,23 +1,20 @@
 language: php
 php:
   - 5.3
-  - 5.4
-  - 5.5
+  # - 5.4
+  # - 5.5
 
 env:
   - DB=mysql TYPO3=master INTEGRATION=master
-  - DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
-  - DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
-  - DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
-  - DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
+  # - DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
+  # - DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
+  # - DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
+  # - DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
 
 matrix:
   include:
     - php: 5.5
       env: DB=mysql TYPO3=master INTEGRATION=master
-
-services:
-  - memcached
 
 before_script:
 # Install build dependencies
@@ -28,8 +25,6 @@ before_script:
   - git clone --single-branch --branch $TYPO3 --depth 1 https://github.com/TYPO3/TYPO3.CMS.git core
   - source build-environment/install-helper.sh
   - if [[ "$TRAVIS_PHP_VERSION" != "5.5" ]]; then installPhpModule igbinary; fi
-  - installPhpModule -y memcache
-  - installPhpModule redis
   - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
 
 # Install rudimentary TYPO3
@@ -37,9 +32,10 @@ before_script:
   - mv core/typo3 .
   - if [[ -d core/t3lib ]]; then mv core/t3lib . ; fi
   - mv build-environment/typo3conf .
-  - git clone --single-branch --branch master --depth 1 https://github.com/cundd/rest typo3conf/ext/rest/
+  - git clone --single-branch --branch develop --depth 1 https://github.com/cundd/rest typo3conf/ext/rest/
   - cd typo3conf/ext/rest/
-  - composer.phar install
+  - composer --version
+  - composer install --verbose
   - cd ../../../
   - mkdir fileadmin
   - mkdir uploads
