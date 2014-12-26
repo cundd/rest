@@ -34,7 +34,7 @@ before_script:
   - mv core/typo3 .
   - if [[ -d core/t3lib ]]; then mv core/t3lib . ; fi
   - mv build-environment/typo3conf .
-  - git clone --single-branch --branch master --depth 1 git://git.typo3.org/TYPO3v4/Extensions/phpunit.git typo3conf/ext/phpunit/
+  - git clone --single-branch --branch master --depth 1 git://git.typo3.org/TYPO3CMS/Extensions/phpunit.git typo3conf/ext/phpunit/
   - git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
   - cd typo3conf/ext/$REPO/
   - composer --version
