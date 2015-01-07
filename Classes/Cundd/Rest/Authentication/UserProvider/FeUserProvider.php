@@ -77,7 +77,7 @@ class FeUserProvider implements UserProviderInterface {
 			}
 			$whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
 		}
-		$whereParts[] = '`' . self::PASSWORD_COLUMN_NAME . '` NOT LIKE ""';
+		$whereParts[] = '`' . self::PASSWORD_COLUMN_NAME . '`<>\'\'';
 		return implode(' AND ', $whereParts);
 	}
 
