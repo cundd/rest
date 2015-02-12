@@ -282,7 +282,7 @@ class Dispatcher implements SingletonInterface {
 				// TODO: support more response formats
 
 			default:
-				$body = 'Unsupported format: ' . $this->getRequest()->format();
+				$body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->getRequest()->format());
 				$response->content($body);
 		}
 		return $response;

@@ -154,7 +154,7 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->fixture->getRequest()->format('html');
 		$response = $this->fixture->createErrorResponse('HTML format is currently not supported', 200);
 		$this->assertEquals(200, $response->status());
-		$this->assertEquals('Unsupported format: html', $response->content());
+		$this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', $response->content());
 
 		$this->fixture->getRequest()->format('blur');
 		$response = $this->fixture->createErrorResponse('This will default to JSON', 200);
@@ -182,7 +182,7 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->fixture->getRequest()->format('html');
 		$response = $this->fixture->createSuccessResponse('HTML format is currently not supported', 200);
 		$this->assertEquals(200, $response->status());
-		$this->assertEquals('Unsupported format: html', $response->content());
+		$this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', $response->content());
 
 		$this->fixture->getRequest()->format('blur');
 		$response = $this->fixture->createSuccessResponse('This will default to JSON', 200);
