@@ -29,7 +29,6 @@ use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
