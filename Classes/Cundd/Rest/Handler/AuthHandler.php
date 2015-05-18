@@ -181,10 +181,11 @@ class AuthHandler implements HandlerInterface {
 			});
 
 			$app->path('logout', function($request) use ($handler, $app) {
-				$getCallback = function ($request) use ($handler) {
+				$postCallback = function ($request) use ($handler) {
 					return $handler->logout();
 				};
-				$app->get($getCallback);
+				$app->get($postCallback);
+				$app->post($postCallback);
 			});
 		});
 	}
