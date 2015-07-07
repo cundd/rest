@@ -14,8 +14,8 @@ CREATE TABLE tx_rest_domain_model_document (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
-	id varchar(255) DEFAULT '' NOT NULL,
-	db varchar(255) DEFAULT '' NOT NULL,
+	id varchar(164) DEFAULT '' NOT NULL,
+	db varchar(164) DEFAULT '' NOT NULL,
 	data_protected text NOT NULL,
 
   tstamp int(11) unsigned DEFAULT '0' NOT NULL,
