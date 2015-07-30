@@ -32,7 +32,6 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 

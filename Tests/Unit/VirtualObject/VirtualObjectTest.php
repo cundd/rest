@@ -32,11 +32,9 @@
 
 namespace Cundd\Rest\Test\VirtualObject;
 
-use Cundd\Rest\VirtualObject\Configuration;
 use Cundd\Rest\VirtualObject\VirtualObject;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
+require_once __DIR__ . '/../../Bootstrap.php';
 
 /**
  * Virtual Object tests

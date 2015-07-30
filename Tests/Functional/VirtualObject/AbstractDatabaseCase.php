@@ -36,7 +36,6 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 
 use Cundd\Rest\VirtualObject\Configuration;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
 /**
  * Abstract base class for Virtual Object tests with database support
@@ -134,9 +133,9 @@ CONFIGURATION;
 
 
 	public function setUp() {
+		parent::setUp();
 		self::insertData();
 
-		parent::setUp();
 	}
 
 	public function tearDown() {

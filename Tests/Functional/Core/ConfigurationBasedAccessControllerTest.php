@@ -37,7 +37,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
 	 */
 	protected $fixture;
 
-	protected function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
 		$this->fixture = $this->objectManager->get('Cundd\\Rest\\Access\\ConfigurationBasedAccessController');

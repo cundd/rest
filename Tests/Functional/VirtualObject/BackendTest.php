@@ -33,7 +33,6 @@
 namespace Cundd\Rest\Test\VirtualObject;
 
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
-use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
 
