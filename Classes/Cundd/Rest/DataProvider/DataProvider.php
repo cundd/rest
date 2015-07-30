@@ -215,7 +215,7 @@ class DataProvider implements DataProviderInterface {
 	 * @return array<mixed>
 	 */
 	public function getModelData($model) {
-		$doNotAddClass = FALSE;
+		$doNotAddClass = (bool)$this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider()->getSetting('doNotAddClass', 0);
 		$properties = NULL;
 		if (is_object($model)) {
 			// Get the data from the model
