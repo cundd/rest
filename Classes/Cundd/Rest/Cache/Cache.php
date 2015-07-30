@@ -34,6 +34,7 @@ namespace Cundd\Rest\Cache;
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The class caches responses of requests
@@ -243,7 +244,7 @@ class Cache {
 	protected function _getCacheInstance() {
 		if (!$this->cacheInstance) {
 			/** @var CacheManager $cacheManager */
-			$cacheManager = $GLOBALS['typo3CacheManager'];
+			$cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
 			$this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
 		}
 		return $this->cacheInstance;
