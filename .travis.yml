@@ -48,12 +48,9 @@ script:
   #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
   - >
-    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
-        echo;
-        export typo3DatabaseName="typo3";
-        export typo3DatabaseHost="localhost";
-        export typo3DatabaseUsername="root";
-        export typo3DatabasePassword="";
-        ## find . -wholename '*typo3/sysext/*/Tests/Functional/*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
-        find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
-    fi
+    export typo3DatabaseName="typo3";
+    export typo3DatabaseHost="localhost";
+    export typo3DatabaseUsername="root";
+    export typo3DatabasePassword="";
+    ## find . -wholename '*typo3/sysext/*/Tests/Functional/*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'

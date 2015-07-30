@@ -36,6 +36,7 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
+require_once __DIR__ . '/../../FixtureClasses.php';
 
 class ObjectManagerTest extends AbstractCase {
 

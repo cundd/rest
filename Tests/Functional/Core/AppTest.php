@@ -28,6 +28,7 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
+require_once __DIR__ . '/../../FixtureClasses.php';
 class DummyObject {}
 
 /**
@@ -45,12 +46,6 @@ class AppTest extends AbstractCase {
 	 * @var \Cundd\Rest\Dispatcher
 	 */
 	protected $fixture;
-
-	public static function setUpBeforeClass() {
-		class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
-		class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
-	}
-
 
 	public function setUp() {
 		parent::setUp();

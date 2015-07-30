@@ -519,6 +519,9 @@ class Dispatcher implements SingletonInterface {
 	 * @return \Cundd\Rest\Dispatcher
 	 */
 	static public function getSharedDispatcher() {
+		if (!self::$sharedDispatcher) {
+			new static();
+		}
 		return self::$sharedDispatcher;
 	}
 }
