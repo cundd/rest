@@ -6,10 +6,11 @@ php:
 
 env:
   - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=master INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
+  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master
+#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
+#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
+#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
+#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
 
 matrix:
   include:
@@ -20,51 +21,39 @@ sudo: false
 
 before_script:
 # Install build dependencies
+
 # TODO: The LocalConfiguration.php is only available for TYPO3 6.0 and higher.
 # To support lower versions we have to deliver also a localconf file
-  - cd ..
-  - git clone --single-branch --branch $INTEGRATION --depth 1 https://github.com/Konafets/TYPO3-Travis-Integration build-environment
-  - git clone --single-branch --branch $TYPO3 --depth 1 https://github.com/TYPO3/TYPO3.CMS.git core
-  - source build-environment/install-helper.sh
-  - if [[ "$TRAVIS_PHP_VERSION" != "5.5" ]]; then installPhpModule igbinary; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
+#  - cd ..
+#  - git clone --single-branch --branch $INTEGRATION --depth 1 https://github.com/Konafets/TYPO3-Travis-Integration build-environment
+#  - git clone --single-branch --branch $TYPO3 --depth 1 https://github.com/TYPO3/TYPO3.CMS.git core
+#  - source build-environment/install-helper.sh
+#  - if [[ "$TRAVIS_PHP_VERSION" != "5.5" ]]; then installPhpModule igbinary; fi
+#  - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
 
 # Install rudimentary TYPO3
-  - git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/TYPO3CMS/Distributions/Introduction.git build-environment/Introduction
-  - mv core/typo3 .
-  - if [[ -d core/t3lib ]]; then mv core/t3lib . ; fi
-  - mv build-environment/typo3conf .
-  - git clone --single-branch --branch master --depth 1 git://git.typo3.org/TYPO3CMS/Extensions/phpunit.git typo3conf/ext/phpunit/
+  - git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git
+  - cd TYPO3.CMS
+  - composer install
+
   - git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
   - cd typo3conf/ext/$REPO/
   - composer --version
   - COMPOSER=cundd_composer.json composer install --verbose
   - cd ../../../
-  - mkdir fileadmin
-  - mkdir uploads
-  - mkdir typo3temp
-  - git clone --single-branch --branch master --depth 1 git://github.com/etobi/ext-coreapi typo3conf/ext/coreapi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "DROP DATABASE IF EXISTS typo3_test;" -uroot; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database typo3_test;" -uroot; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -uroot typo3_test < build-environment/Introduction/typo3conf/ext/introduction/Resources/Private/Subpackages/Introduction/Database/introduction.sql; fi
-  - if [[ "$DB" == "mysql" && -f build-environment/dbimport/cache_tables.sql ]]; then mysql -uroot typo3_test < build-environment/dbimport/cache_tables.sql; fi
-  - if [[ "$DB" == "mysql" && -f build-environment/dbimport/cli_users.sql ]]; then mysql -uroot typo3_test < build-environment/dbimport/cli_users.sql; fi
-  - php typo3/cli_dispatch.phpsh coreapi database:databasecompare 1,2,3,4,5,6,7,8U
-  #- php $CLI_HOME/typo3/cli_dispatch.phpsh coreapi database:databasecompare 1,2,3,4,5,6,7,8
-  # Here its an experimental feature. I tried to make PHP_CodeSniffer running but it doesn't work for the moment.
-  # It installs PHP_CodeSniffer and the TYPO3CMS CGL standard via composer
-  # But the custom standards won't be found
-  #- cd ext-phpunit
-  #- composer install --verbose
-  #- vendor/bin/phpcs --version
-  #- vendor/bin/phpcs -i
-  #- ls -lah vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/TYPO3Sniffpool/Sniffs/Classes/
-  #- cd ..
+  - mysql -u="root" -p="" -e 'create database typo3_test';
 
 script:
   #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
   #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
-  - ls -l .
-  - ls -l typo3conf/ext/rest/Tests/Unit
-  - php typo3/cli_dispatch.phpsh phpunit -c typo3conf/ext/rest/Tests/Build/UnitTests.xml
+  - >
+    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
+        echo;
+        export typo3DatabaseName="typo3";
+        export typo3DatabaseHost="localhost";
+        export typo3DatabaseUsername="root";
+        export typo3DatabasePassword="";
+        ## find . -wholename '*typo3/sysext/*/Tests/Functional/*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+        find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+    fi

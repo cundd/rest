@@ -26,6 +26,7 @@
 namespace Cundd\Rest\Test\Core;
 
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -135,7 +136,7 @@ class MyNestedJsonSerializeModel2 extends MyNestedModel {
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class DataProviderUtilityTest extends AbstractCase {
 	static public function setUpBeforeClass() {
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Tx_MyExt_Domain_Model_MyModel2');
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Tx_MyExt_Domain_Repository_MyModelRepository2');
@@ -145,12 +146,6 @@ class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
 
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Vendor\\MyExt\\Domain\\Model\\MyModel2');
 		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository2');
-	}
-
-	public function setUp() {
-	}
-
-	public function tearDown() {
 	}
 
 	/**

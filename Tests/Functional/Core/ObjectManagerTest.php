@@ -33,9 +33,11 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\Test\AbstractCase;
+
 require_once __DIR__ . '/../AbstractCase.php';
 
-class ObjectManagerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class ObjectManagerTest extends AbstractCase {
 
 	/**
 	 * @var \Cundd\Rest\ObjectManager
@@ -43,11 +45,13 @@ class ObjectManagerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**

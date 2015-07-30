@@ -25,6 +25,8 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\Test\AbstractCase;
+
 require_once __DIR__ . '/../AbstractCase.php';
 class DummyObject {}
 
@@ -38,7 +40,7 @@ class DummyObject {}
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class AppTest extends AbstractCase {
 	/**
 	 * @var \Cundd\Rest\Dispatcher
 	 */
@@ -51,12 +53,14 @@ class AppTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = new \Cundd\Rest\Dispatcher;
 	}
 
 	public function tearDown() {
 		unset($this->fixture);
 		unset($_GET['u']);
+		parent::tearDown();
 	}
 
 	/**

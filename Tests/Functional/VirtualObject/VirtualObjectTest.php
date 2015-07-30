@@ -34,7 +34,7 @@ namespace Cundd\Rest\Test\VirtualObject;
 
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-require_once __DIR__ . '/../../Bootstrap.php';
+require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Virtual Object tests

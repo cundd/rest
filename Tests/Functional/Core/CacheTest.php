@@ -45,7 +45,7 @@ class CacheTest extends AbstractCase {
 	 */
 	protected $fixture;
 
-	protected function setUp() {
+	public function setUp() {
 		parent::setUp();
 
 		/** @var Cache $fixture */
@@ -57,6 +57,7 @@ class CacheTest extends AbstractCase {
 
 	protected function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**

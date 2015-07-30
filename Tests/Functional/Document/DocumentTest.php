@@ -26,6 +26,7 @@
 namespace Cundd\Rest\Test\Document;
 
 use Cundd\Rest\Domain\Model\Document;
+use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -41,13 +42,14 @@ class DummyObject {}
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class DocumentTest extends AbstractCase {
 	/**
 	 * @var Document
 	 */
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = new Document();
 		$this->fixture->_setDataProtected(json_encode(array(
 			'firstName' => 'Daniel',
@@ -63,6 +65,7 @@ class DocumentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**

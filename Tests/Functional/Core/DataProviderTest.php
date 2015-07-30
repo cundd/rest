@@ -159,6 +159,7 @@ class DataProviderTest extends AbstractCase {
 
 	public function tearDown() {
 		unset($this->fixture);
+		parent::tearDown();
 	}
 
 	/**
