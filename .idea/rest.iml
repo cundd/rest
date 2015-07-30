@@ -9,14 +9,18 @@
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../typo3/sysext/frontend" />
+          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../PHPUnit" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/fluid" />
-          <root url="file://$MODULE_DIR$/../phpunit" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/core" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/extbase" />
         </CLASSES>
         <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../typo3/sysext/frontend" />
+          <root url="file://$MODULE_DIR$/../cundd_composer/vendor" />
+          <root url="file://$MODULE_DIR$/../PHPUnit" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/fluid" />
-          <root url="file://$MODULE_DIR$/../phpunit" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/core" />
           <root url="file://$MODULE_DIR$/../../../typo3/sysext/extbase" />
         </SOURCES>

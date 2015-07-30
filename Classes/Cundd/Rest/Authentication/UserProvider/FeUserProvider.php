@@ -39,6 +39,11 @@ use Cundd\Rest\Authentication\UserProviderInterface;
 
 class FeUserProvider implements UserProviderInterface {
 	/**
+	 * Name of the password column
+	 */
+	const PASSWORD_COLUMN_NAME = 'tx_rest_apikey';
+
+	/**
 	 * Returns if the user with the given credentials is valid
 	 *
 	 * @param string $username
@@ -72,6 +77,7 @@ class FeUserProvider implements UserProviderInterface {
 			}
 			$whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
 		}
+		$whereParts[] = '`' . self::PASSWORD_COLUMN_NAME . '`<>\'\'';
 		return implode(' AND ', $whereParts);
 	}
 
@@ -81,7 +87,7 @@ class FeUserProvider implements UserProviderInterface {
 	 * @return array
 	 */
 	protected function preparePassword($password) {
-		return array($password, 'tx_rest_apikey');
+		return array($password, self::PASSWORD_COLUMN_NAME);
 	}
 
 	/**

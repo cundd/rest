@@ -172,5 +172,19 @@ class DataProviderUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
 		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel2'));
 		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel2'));
 	}
+
+    /**
+     * @test
+     */
+    public function singularizeTest()
+    {
+        $this->assertEquals('tree', Utility::singularize('trees'));
+        $this->assertEquals('friend', Utility::singularize('friends'));
+        $this->assertEquals('hobby', Utility::singularize('hobbies'));
+        $this->assertEquals('news', Utility::singularize('news'));
+        $this->assertEquals('equipment', Utility::singularize('equipment'));
+        $this->assertEquals('species', Utility::singularize('species'));
+        $this->assertEquals('series', Utility::singularize('series'));
+    }
 }
 ?>

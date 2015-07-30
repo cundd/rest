@@ -32,11 +32,12 @@
 namespace Cundd\Rest\Command;
 
 
+use Cundd\CunddComposer\Autoloader;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
-\Tx_CunddComposer_Autoloader::register();
+Autoloader::register();
 
 class RestCommandController extends CommandController {
 	/**

@@ -116,6 +116,9 @@ class Bootstrap {
 			$GLOBALS['TSFE']->tmpl->loaded = 1;
 
 			// builds a cObj
+            if(is_array($GLOBALS['TSFE']->page) === FALSE){
+                $GLOBALS['TSFE']->page = array();
+            }
 			$GLOBALS['TSFE']->newCObj();
 
 			// Add the FE user

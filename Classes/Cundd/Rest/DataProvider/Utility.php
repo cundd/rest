@@ -37,6 +37,25 @@ class Utility {
 	 */
 	const API_PATH_PART_SEPARATOR = '-';
 
+    /**
+     * Words to skip when converting to singular
+     *
+     * @var array
+     */
+    protected static $skipSingularization = array(
+        'news',
+        'equipment',
+        'information',
+        'rice',
+        'money',
+        'species',
+        'series',
+        'fish',
+        'sheep',
+        'press',
+        'sms',
+    );
+
 	/**
 	 * Returns an array of class name parts including vendor, extension
 	 * and domain model
@@ -79,7 +98,6 @@ class Utility {
 	 * @return string|bool Returns the path or FALSE if it couldn't be determined
 	 */
 	static public function getPathForClassName($className) {
-		$path = FALSE;
 		if (strpos($className, '\\')) {
 			if ($className[0] !== '\\') {
 				$className = '\\' . $className;
@@ -110,6 +128,9 @@ class Utility {
 	 * @return string
 	 */
 	static public function singularize($word) {
+        if (static::shouldSkipSingularization($word)) {
+            return $word;
+        }
 		// Here is the list of rules. To add a scenario,
 		// Add the plural ending as the key and the singular
 		// ending as the value for that key. This could be
@@ -147,4 +168,15 @@ class Utility {
 		}
 		return $word;
 	}
+
+    /**
+     * Returns if the given word should NOT be singularized
+     *
+     * @param string $word
+     * @return bool
+     */
+    protected static function shouldSkipSingularization($word)
+    {
+        return in_array($word, static::$skipSingularization);
+    }
 }

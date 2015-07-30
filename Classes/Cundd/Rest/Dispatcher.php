@@ -29,7 +29,6 @@ use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\DataProvider\Utility;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
@@ -282,7 +281,7 @@ class Dispatcher implements SingletonInterface {
 				// TODO: support more response formats
 
 			default:
-				$body = 'Unsupported format: ' . $this->getRequest()->format();
+				$body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->getRequest()->format());
 				$response->content($body);
 		}
 		return $response;
