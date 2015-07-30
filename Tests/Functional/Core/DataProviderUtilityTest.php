@@ -29,102 +29,8 @@ use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
+require_once __DIR__ . '/../../FixtureClasses.php';
 
-class MyModel2 extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $name = 'Initial value';
-
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-}
-class MyModelRepository2 extends \TYPO3\CMS\Extbase\Persistence\Repository {}
-
-class MyNestedModel2 extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $base = 'Base';
-
-	/**
-	 * @var \DateTime
-	 */
-	protected $date = NULL;
-
-	/**
-	 * @var \Cundd\Rest\Test\Core\MyModel
-	 */
-	protected $child = NULL;
-
-	function __construct() {
-		$this->child = new MyModel();
-		$this->date = new \DateTime();
-	}
-
-
-	/**
-	 * @param string $base
-	 */
-	public function setBase($base) {
-		$this->base = $base;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getBase() {
-		return $this->base;
-	}
-
-	/**
-	 * @param \Cundd\Rest\Test\Core\MyModel $child
-	 */
-	public function setChild($child) {
-		$this->child = $child;
-	}
-
-	/**
-	 * @return \Cundd\Rest\Test\Core\MyModel
-	 */
-	public function getChild() {
-		return $this->child;
-	}
-
-	/**
-	 * @param \DateTime $date
-	 */
-	public function setDate($date) {
-		$this->date = $date;
-	}
-
-	/**
-	 * @return \DateTime
-	 */
-	public function getDate() {
-		return $this->date;
-	}
-}
-
-class MyNestedJsonSerializeModel2 extends MyNestedModel {
-	public function jsonSerialize() {
-		return array(
-			'base' 	=> $this->base,
-			'child'	=> $this->child
-		);
-	}
-}
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -138,34 +44,34 @@ class MyNestedJsonSerializeModel2 extends MyNestedModel {
  */
 class DataProviderUtilityTest extends AbstractCase {
 	static public function setUpBeforeClass() {
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Tx_MyExt_Domain_Model_MyModel2');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Tx_MyExt_Domain_Repository_MyModelRepository2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'MyExt\\Domain\\Model\\MySecondModel2');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'MyExt\\Domain\\Repository\\MySecondModelRepository2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel2', 'Vendor\\MyExt\\Domain\\Model\\MyModel2');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository2', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository2');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
 	}
 
 	/**
 	 * @test
 	 */
 	public function getClassNamePartsForPathTest() {
-		$this->assertEquals(array('', 'MyExt', 'MyModel2'), Utility::getClassNamePartsForPath('my_ext-my_model2'));
+		$this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
 	}
 
 	/**
 	 * @test
 	 */
 	public function getPathForClassNameTest() {
-		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel2'));
-		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel2'));
-		$this->assertEquals('my_ext-my_model2', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel2'));
+		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
+		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
+		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
 
-		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel2'));
-		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel2'));
-		$this->assertEquals('my_ext-my_second_model2', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel2'));
+		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
+		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
+		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
 	}
 
     /**

@@ -28,102 +28,7 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-
-class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $name = 'Initial value';
-
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-}
-class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {}
-
-class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $base = 'Base';
-
-	/**
-	 * @var \DateTime
-	 */
-	protected $date = NULL;
-
-	/**
-	 * @var \Cundd\Rest\Test\Core\MyModel
-	 */
-	protected $child = NULL;
-
-	function __construct() {
-		$this->child = new MyModel();
-		$this->date = new \DateTime();
-	}
-
-
-	/**
-	 * @param string $base
-	 */
-	public function setBase($base) {
-		$this->base = $base;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getBase() {
-		return $this->base;
-	}
-
-	/**
-	 * @param \Cundd\Rest\Test\Core\MyModel $child
-	 */
-	public function setChild($child) {
-		$this->child = $child;
-	}
-
-	/**
-	 * @return \Cundd\Rest\Test\Core\MyModel
-	 */
-	public function getChild() {
-		return $this->child;
-	}
-
-	/**
-	 * @param \DateTime $date
-	 */
-	public function setDate($date) {
-		$this->date = $date;
-	}
-
-	/**
-	 * @return \DateTime
-	 */
-	public function getDate() {
-		return $this->date;
-	}
-}
-
-class MyNestedJsonSerializeModel extends MyNestedModel {
-	public function jsonSerialize() {
-		return array(
-			'base' 	=> $this->base,
-			'child'	=> $this->child
-		);
-	}
-}
+require_once __DIR__ . '/../../FixtureClasses.php';
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -245,10 +150,11 @@ class DataProviderTest extends AbstractCase {
 	 * @test
 	 */
 	public function getModelWithDataTest() {
+		$this->markTestSkipped('The test is currently failing because of a missing type converter');
 		$data = array('name' => 'Daniel Corn');
 		$path = 'MyExt-MyModel';
-//		$model = $this->fixture->getModelWithDataForPath($data, $path);
-//		$this->assertEquals('Daniel Corn', $model->getName());
+		$model = $this->fixture->getModelWithDataForPath($data, $path);
+		$this->assertEquals('Daniel Corn', $model->getName());
 	}
 
 	/**
@@ -256,11 +162,12 @@ class DataProviderTest extends AbstractCase {
 	 * @test
 	 */
 	public function getNewModelWithDataTest() {
+		$this->markTestSkipped('The test is currently failing because of a missing type converter');
 		$data = array('name' => 'Daniel Corn', '__identity' => 9);
 		$path = 'MyExt-MyModel';
-//		$model = $this->fixture->getModelWithDataForPath($data, $path);
-//		$this->assertEquals('Daniel Corn', $model->getName());
-//		$this->assertEquals(9, $model->getUid());
+		$model = $this->fixture->getModelWithDataForPath($data, $path);
+		$this->assertEquals('Daniel Corn', $model->getName());
+		$this->assertEquals(9, $model->getUid());
 	}
 
 	/**

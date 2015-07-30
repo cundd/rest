@@ -134,26 +134,17 @@ CONFIGURATION;
 
 	public function setUp() {
 		parent::setUp();
-		self::insertData();
-
+		$this->createTable();
+		$this->insertData();
 	}
 
 	public function tearDown() {
-		self::truncateTable();
+		$this->truncateTable();
+		$this->dropTable();
 		parent::tearDown();
 	}
 
-	public static function setUpBeforeClass() {
-		self::dropTable();
-		self::createTable();
-	}
-
-	public static function tearDownAfterClass() {
-		#	self::dropTable();
-	}
-
-
-	static protected function createTable() {
+	protected function createTable() {
 		$testDatabaseTable = self::$testDatabaseTable;
 		$createTableSQL    = <<<SQL
 CREATE TABLE $testDatabaseTable (
@@ -170,34 +161,34 @@ CREATE TABLE $testDatabaseTable (
 SQL;
 
 		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
+		$databaseConnection = $this->getDatabaseConnection();
 		$databaseConnection->sql_query($createTableSQL);
 	}
 
-	static protected function dropTable() {
+	protected function dropTable() {
 		$testDatabaseTable = self::$testDatabaseTable;
 		$dropTableSQL      = <<<SQL
 		DROP TABLE IF EXISTS $testDatabaseTable;
 SQL;
 		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
+		$databaseConnection = $this->getDatabaseConnection();
 		$databaseConnection->sql_query($dropTableSQL);
 	}
 
-	static protected function truncateTable() {
+	protected function truncateTable() {
 		$testDatabaseTable = self::$testDatabaseTable;
 		$dropTableSQL      = <<<SQL
 		TRUNCATE TABLE  $testDatabaseTable
 
 SQL;
 		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
+		$databaseConnection = $this->getDatabaseConnection();
 		$databaseConnection->sql_query($dropTableSQL);
 	}
 
-	static protected function insertData() {
+	protected function insertData() {
 		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $GLOBALS['TYPO3_DB'];
+		$databaseConnection = $this->getDatabaseConnection();
 		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
 		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
 	}

@@ -119,11 +119,38 @@ class CacheTest extends AbstractCase {
 	/**
 	 * @test
 	 */
-	public function getCachedValueForRequestTest() {
+	public function getCachedInitialValueForRequestTest() {
 		$uri = 'MyAliasedModel' . time();
 		$request = $this->buildRequestWithUri($uri);
+
+		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$this->fixture->setCacheInstance($cacheInstance);
 		$cachedValue = $this->fixture->getCachedValueForRequest($request);
 		$this->assertNull($cachedValue);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getCachedValueForRequestTest() {
+		$uri = 'MyAliasedModel' . time();
+		$responseArray = array(
+			'content' => 'the content',
+			'status' => 200,
+			'content-type' => null,
+			'encoding' => null,
+			'last-modified' => null,
+		);
+
+		$request = $this->buildRequestWithUri($uri);
+
+		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
+		$this->fixture->setCacheInstance($cacheInstance);
+		$response = $this->fixture->getCachedValueForRequest($request);
+		$this->assertInstanceOf('Bullet\\Response', $response);
+		$this->assertSame($responseArray['content'], $response->content());
+		$this->assertSame($responseArray['status'], $response->status());
 	}
 
 	/**
@@ -135,12 +162,10 @@ class CacheTest extends AbstractCase {
 		$uri = 'MyAliasedModel';
 		$request = $this->buildRequestWithUri($uri);
 
+		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
+		$this->fixture->setCacheInstance($cacheInstance);
 		$this->fixture->setCachedValueForRequest($request, $response);
-
-
-		$cachedResponse = $this->fixture->getCachedValueForRequest($request);
-		$this->assertInstanceOf('Bullet\\Response', $cachedResponse);
-		$this->assertEquals('Test content', $cachedResponse);
 	}
 
 	public function buildRequestWithUri($uri) {
