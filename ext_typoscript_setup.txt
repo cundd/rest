@@ -21,6 +21,7 @@ plugin.tx_rest.settings {
 	# This is not defined here to allow easy customization in third party extensions TypoScript setup
 	# cacheLifeTime = -1
 	# expiresHeaderLifeTime =
+	# doNotAddClass = 1
 }
 
 
