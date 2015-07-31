@@ -57,7 +57,7 @@ before_script:
     cd TYPO3.CMS;
     composer install;
     cd ..;
-    
+
     mysql -e 'create database typo3_test;';
 
 script:
@@ -103,4 +103,4 @@ script:
     ls -hal ./typo3conf/ext/;
 
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
-    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
+    phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/rest/Tests/Functional ;
