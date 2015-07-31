@@ -67,10 +67,10 @@ script:
   - >
     if [ -d "TYPO3.CMS" ]; then
       cd TYPO3.CMS/;
-    fi
+    fi;
     if [ -d "../TYPO3.CMS" ]; then
       cd ../TYPO3.CMS/;
-    fi
+    fi;
 
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="localhost";
