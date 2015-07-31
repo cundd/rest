@@ -78,6 +78,10 @@ script:
     ls -hal .;
     ls -hal ./travis/;
     ls -hal $CLI_HOME;
+    ls -hal ./TYPO3.CMS/*;
+    ls -hal ./TYPO3.CMS/typo3conf/*;
+    ls -hal ./TYPO3.CMS/typo3conf/ext/*;
+    ls -hal ./TYPO3.CMS/typo3conf/ext/rest/*;
     ls -hal ./TYPO3.CMS/typo3conf/ext/rest/Tests/*;
     find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
     find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
