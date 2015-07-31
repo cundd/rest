@@ -45,6 +45,10 @@ before_script:
 
 # Install rudimentary TYPO3
   - >
+    echo "Install dependencies";
+    composer --version;
+    COMPOSER=cundd_composer.json composer install --verbose;
+    #
     ls -hal;
     ls -hal ..;
     cd ..;
@@ -54,16 +58,6 @@ before_script:
     composer install;
     cd ..;
     #
-    echo "Put target into ext folder";
-    mkdir -p TYPO3.CMS/typo3conf/ext;
-    mv $REPO TYPO3.CMS/typo3conf/ext/;
-    #git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/;
-    cd TYPO3.CMS/typo3conf/ext/$REPO/;
-    #
-    echo "Install dependencies";
-    composer --version;
-    COMPOSER=cundd_composer.json composer install --verbose;
-    cd ../../../;
     mysql -e 'create database typo3_test;';
 
 script:
@@ -75,6 +69,10 @@ script:
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
+
+    mkdir -p ./TYPO3.CMS/typo3conf/ext/;
+    ln -s $CLI_HOME ./TYPO3.CMS/typo3conf/ext/$REPO;
+
     ls -hal .;
     ls -hal ./travis/;
     ls -hal $CLI_HOME;
@@ -83,5 +81,6 @@ script:
     ls -hal ./TYPO3.CMS/typo3conf/ext/*;
     ls -hal ./TYPO3.CMS/typo3conf/ext/rest/*;
     ls -hal ./TYPO3.CMS/typo3conf/ext/rest/Tests/*;
+
     find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
     find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
