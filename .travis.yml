@@ -24,8 +24,8 @@ matrix:
     - php: hhvm
 
   include:
-    - php: 5.5
-      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=master INTEGRATION=master
+    - php: 5.4
+      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master
 
 sudo: false
 
@@ -43,27 +43,28 @@ before_script:
 
 # Install rudimentary TYPO3
   - >
-  ls -hal
-  ls -hal ..
-  cd ..
+    ls -hal
+    ls -hal ..
+    cd ..
+    echo "Get TYPO3 source"
+    git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git
+    cd TYPO3.CMS
+    composer install
+    cd ..
 
-  echo "Get TYPO3 source"
-  git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git
-  cd TYPO3.CMS
-  composer install
-  cd ..
+  - >
+    echo "Put target into ext folder"
+    mkdir -p TYPO3.CMS/typo3conf/ext
+    mv $REPO TYPO3.CMS/typo3conf/ext/
+    #git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
+    cd TYPO3.CMS/typo3conf/ext/$REPO/
 
-  echo "Put target into ext folder"
-  mkdir -p TYPO3.CMS/typo3conf/ext
-  mv $REPO TYPO3.CMS/typo3conf/ext/
-  #git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
-  cd TYPO3.CMS/typo3conf/ext/$REPO/
-
-  echo "Install dependencies"
-  composer --version
-  COMPOSER=cundd_composer.json composer install --verbose
-  cd ../../../
-  mysql -e 'create database typo3_test;'
+  - >
+    echo "Install dependencies"
+    composer --version
+    COMPOSER=cundd_composer.json composer install --verbose
+    cd ../../../
+    mysql -e 'create database typo3_test;'
 
 script:
   #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
