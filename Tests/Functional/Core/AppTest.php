@@ -28,7 +28,6 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-require_once __DIR__ . '/../../FixtureClasses.php';
 class DummyObject {}
 
 /**
@@ -49,6 +48,7 @@ class AppTest extends AbstractCase {
 
 	public function setUp() {
 		parent::setUp();
+		require_once __DIR__ . '/../../FixtureClasses.php';
 		$this->fixture = new \Cundd\Rest\Dispatcher;
 	}
 

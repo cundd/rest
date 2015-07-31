@@ -28,7 +28,6 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-require_once __DIR__ . '/../../FixtureClasses.php';
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -41,193 +40,210 @@ require_once __DIR__ . '/../../FixtureClasses.php';
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class DataProviderTest extends AbstractCase {
-	/**
-	 * @var \Cundd\Rest\DataProvider\DataProviderInterface
-	 */
-	protected $fixture;
+    /**
+     * @var \Cundd\Rest\DataProvider\DataProviderInterface
+     */
+    protected $fixture;
 
-	static public function setUpBeforeClass() {
-		class_alias('\\Cundd\\Rest\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
-		class_alias('\\Cundd\\Rest\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
+    static public function setUpBeforeClass() {
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+    }
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
-	}
+    public function setUp() {
+        parent::setUp();
 
-	public function setUp() {
-		parent::setUp();
-		$this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
-	}
+        require_once __DIR__ . '/../../FixtureClasses.php';
+        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
+            class_alias('\\Cundd\\Rest\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
+        }
+        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
+        }
 
-	public function tearDown() {
-		unset($this->fixture);
-		parent::tearDown();
-	}
+        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
+        }
+        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+        }
 
-	/**
-	 * @test
-	 */
-	public function getRepositoryForPathTest() {
-		$repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+        }
+        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+        }
 
-		$repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
-	}
+        $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
+    }
 
-	/**
-	 * @test
-	 */
-	public function getNamespacedRepositoryForPathTest() {
-		$repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+    public function tearDown() {
+        unset($this->fixture);
+        parent::tearDown();
+    }
 
-		$repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
-	}
+    /**
+     * @test
+     */
+    public function getRepositoryForPathTest() {
+        $repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
 
-	/**
-	 * @test
-	 */
-	public function getNamespacedRepositoryForPathWithVendorTest() {
-		$repository = $this->fixture->getRepositoryForPath('Vendor-MyExt-MyModel');
-		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
+        $repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+    }
 
-		$repository = $this->fixture->getRepositoryForPath('vendor-my_ext-my_model');
-		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
-	}
+    /**
+     * @test
+     */
+    public function getNamespacedRepositoryForPathTest() {
+        $repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
 
-	/**
-	 * @test
-	 */
-	public function getModelForPathTest() {
-		$model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+    }
 
-		$model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
-	}
+    /**
+     * @test
+     */
+    public function getNamespacedRepositoryForPathWithVendorTest() {
+        $repository = $this->fixture->getRepositoryForPath('Vendor-MyExt-MyModel');
+        $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 
-	/**
-	 * @test
-	 */
-	public function getNamespacedModelForPathTest() {
-		$model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-my_model');
+        $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
+    }
 
-		$model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
-		$this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
-	}
+    /**
+     * @test
+     */
+    public function getModelForPathTest() {
+        $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
 
-	/**
-	 * @test
-	 */
-	public function getNamespacedModelForPathWithVendorTest() {
-		$model = $this->fixture->getModelWithDataForPath(array(), 'Vendor-MyExt-MyModel');
-		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
+        $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+    }
 
-		$model = $this->fixture->getModelWithDataForPath(array(), 'vendor-my_ext-my_model');
-		$this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
-	}
+    /**
+     * @test
+     */
+    public function getNamespacedModelForPathTest() {
+        $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
 
-	/**
-	 * @test
-	 */
-	public function getModelWithEmptyDataTest() {
-		$data = array();
-		$path = 'MyExt-MyModel';
+        $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
+        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+    }
 
-		/** @var \Cundd\Rest\Test\Core\MyModel $model */
-		$model = $this->fixture->getModelWithDataForPath($data, $path);
-		$this->assertEquals('Initial value', $model->getName());
-	}
+    /**
+     * @test
+     */
+    public function getNamespacedModelForPathWithVendorTest() {
+        $model = $this->fixture->getModelWithDataForPath(array(), 'Vendor-MyExt-MyModel');
+        $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 
-	/**
-	 * The test is currently failing because of a missing type converter
-	 * @test
-	 */
-	public function getModelWithDataTest() {
-		$this->markTestSkipped('The test is currently failing because of a missing type converter');
-		$data = array('name' => 'Daniel Corn');
-		$path = 'MyExt-MyModel';
-		$model = $this->fixture->getModelWithDataForPath($data, $path);
-		$this->assertEquals('Daniel Corn', $model->getName());
-	}
+        $model = $this->fixture->getModelWithDataForPath(array(), 'vendor-my_ext-my_model');
+        $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
+    }
 
-	/**
-	 * The test is currently failing because of a missing type converter
-	 * @test
-	 */
-	public function getNewModelWithDataTest() {
-		$this->markTestSkipped('The test is currently failing because of a missing type converter');
-		$data = array('name' => 'Daniel Corn', '__identity' => 9);
-		$path = 'MyExt-MyModel';
-		$model = $this->fixture->getModelWithDataForPath($data, $path);
-		$this->assertEquals('Daniel Corn', $model->getName());
-		$this->assertEquals(9, $model->getUid());
-	}
+    /**
+     * @test
+     */
+    public function getModelWithEmptyDataTest() {
+        $data = array();
+        $path = 'MyExt-MyModel';
 
-	/**
-	 * @test
-	 */
-	public function getModelDataTest() {
-		$model = new MyModel();
-		$properties = $this->fixture->getModelData($model);
-		$this->assertEquals(
-			array(
-				'name' 		=> 'Initial value',
-				'uid' 		=> NULL,
-				'pid' 		=> NULL,
-				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
-			), $properties);
-	}
+        /** @var \Cundd\Rest\Test\Core\MyModel $model */
+        $model = $this->fixture->getModelWithDataForPath($data, $path);
+        $this->assertEquals('Initial value', $model->getName());
+    }
 
-	/**
-	 * @test
-	 */
-	public function getNestedModelDataTest() {
-		$testDate = new \DateTime();
-		$model = new MyNestedModel();
-		$model->setDate($testDate);
+    /**
+     * The test is currently failing because of a missing type converter
+     * @test
+     */
+    public function getModelWithDataTest() {
+        $this->markTestSkipped('The test is currently failing because of a missing type converter');
+        $data = array('name' => 'Daniel Corn');
+        $path = 'MyExt-MyModel';
+        $model = $this->fixture->getModelWithDataForPath($data, $path);
+        $this->assertEquals('Daniel Corn', $model->getName());
+    }
 
-		$properties = $this->fixture->getModelData($model);
-		$this->assertEquals(
-			array(
-				'base' 		=> 'Base',
-				'date' 		=> $testDate,
-				'uid' 		=> NULL,
-				'pid' 		=> NULL,
-				'child' 	=> array(
-					'name' 		=> 'Initial value',
-					'uid' 		=> NULL,
-					'pid' 		=> NULL,
-					'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
-				),
-				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyNestedModel'
-			), $properties);
-	}
+    /**
+     * The test is currently failing because of a missing type converter
+     * @test
+     */
+    public function getNewModelWithDataTest() {
+        $this->markTestSkipped('The test is currently failing because of a missing type converter');
+        $data = array('name' => 'Daniel Corn', '__identity' => 9);
+        $path = 'MyExt-MyModel';
+        $model = $this->fixture->getModelWithDataForPath($data, $path);
+        $this->assertEquals('Daniel Corn', $model->getName());
+        $this->assertEquals(9, $model->getUid());
+    }
 
-	/**
-	 * @test
-	 */
-	public function getJsonSerializeNestedModelDataTest() {
-		$model = new MyNestedJsonSerializeModel();
-		$properties = $this->fixture->getModelData($model);
-		$this->assertEquals(
-			array(
-				'base' 		=> 'Base',
-				'child' 	=> array(
-					'name' 		=> 'Initial value',
-					'uid' 		=> NULL,
-					'pid' 		=> NULL,
-					'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyModel'
-				),
-				'__class' 	=>'Cundd\\Rest\\Test\\Core\\MyNestedJsonSerializeModel'
-			), $properties);
-	}
+    /**
+     * @test
+     */
+    public function getModelDataTest() {
+        $model = new MyModel();
+        $properties = $this->fixture->getModelData($model);
+        $this->assertEquals(
+            array(
+                'name' => 'Initial value',
+                'uid' => NULL,
+                'pid' => NULL,
+                '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+            ), $properties);
+    }
+
+    /**
+     * @test
+     */
+    public function getNestedModelDataTest() {
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+
+        $properties = $this->fixture->getModelData($model);
+        $this->assertEquals(
+            array(
+                'base' => 'Base',
+                'date' => $testDate,
+                'uid' => NULL,
+                'pid' => NULL,
+                'child' => array(
+                    'name' => 'Initial value',
+                    'uid' => NULL,
+                    'pid' => NULL,
+                    '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+                ),
+                '__class' => 'Cundd\\Rest\\Test\\Core\\MyNestedModel'
+            ), $properties);
+    }
+
+    /**
+     * @test
+     */
+    public function getJsonSerializeNestedModelDataTest() {
+        $model = new MyNestedJsonSerializeModel();
+        $properties = $this->fixture->getModelData($model);
+        $this->assertEquals(
+            array(
+                'base' => 'Base',
+                'child' => array(
+                    'name' => 'Initial value',
+                    'uid' => NULL,
+                    'pid' => NULL,
+                    '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+                ),
+                '__class' => 'Cundd\\Rest\\Test\\Core\\MyNestedJsonSerializeModel'
+            ), $properties);
+    }
 
 }
+
 ?>
