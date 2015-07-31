@@ -24,6 +24,8 @@ matrix:
     - php: hhvm
 
   include:
+    - php: 5.3
+      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master
     - php: 5.4
       env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master
 
@@ -75,5 +77,5 @@ script:
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    ## find . -wholename '*typo3/sysext/*/Tests/Functional/*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
