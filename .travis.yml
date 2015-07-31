@@ -53,15 +53,13 @@ before_script:
     cd TYPO3.CMS;
     composer install;
     cd ..;
-
-  - >
+    #
     echo "Put target into ext folder";
     mkdir -p TYPO3.CMS/typo3conf/ext;
     mv $REPO TYPO3.CMS/typo3conf/ext/;
     #git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/;
     cd TYPO3.CMS/typo3conf/ext/$REPO/;
-
-  - >
+    #
     echo "Install dependencies";
     composer --version;
     COMPOSER=cundd_composer.json composer install --verbose;
@@ -78,6 +76,8 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     ls -hal .;
+    ls -hal ./travis/;
+    ls -hal $CLI_HOME;
     ls -hal ./typo3conf/ext/rest/Tests/*;
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
