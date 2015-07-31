@@ -48,7 +48,7 @@ before_script:
     echo "Install dependencies";
     composer --version;
     COMPOSER=cundd_composer.json composer install --verbose;
-    #
+
     ls -hal;
     ls -hal ..;
     cd ..;
@@ -57,7 +57,7 @@ before_script:
     cd TYPO3.CMS;
     composer install;
     cd ..;
-    #
+    
     mysql -e 'create database typo3_test;';
 
 script:
