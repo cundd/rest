@@ -23,9 +23,9 @@ matrix:
     - php: nightly
     - php: hhvm
 
-#  include:
-#    - php: 5.5
-#      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=master INTEGRATION=master
+  include:
+    - php: 5.5
+      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=master INTEGRATION=master
 
 sudo: false
 
@@ -42,10 +42,11 @@ before_script:
 #  - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
 
 # Install rudimentary TYPO3
+  - ls -hal
+
   - git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git
   - cd TYPO3.CMS
   - composer install
-  - ls -hal
   - git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
   - cd typo3conf/ext/$REPO/
   - composer --version
