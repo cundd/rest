@@ -77,5 +77,7 @@ script:
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
+    ls -hal .;
+    ls -hal ./typo3conf/ext/rest/Tests/*;
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
-    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
