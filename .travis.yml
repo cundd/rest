@@ -72,10 +72,12 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
 
+    ls -hal ./;
+
     mkdir -p ./typo3conf/ext/;
     ln -s $CLI_HOME ./typo3conf/ext/$REPO;
 
-    ls -hal ./typo3conf/ext/*;
+    ls -hal ./typo3conf/ext/;
 
 
     find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
