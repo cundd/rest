@@ -65,22 +65,18 @@ script:
   #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
   - >
+    cd TYPO3.CMS/;
+
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
 
-    mkdir -p ./TYPO3.CMS/typo3conf/ext/;
-    ln -s $CLI_HOME ./TYPO3.CMS/typo3conf/ext/$REPO;
+    mkdir -p ./typo3conf/ext/;
+    ln -s $CLI_HOME ./typo3conf/ext/$REPO;
 
-    ls -hal .;
-    ls -hal ./travis/;
-    ls -hal $CLI_HOME;
-    ls -hal ./TYPO3.CMS/*;
-    ls -hal ./TYPO3.CMS/typo3conf/*;
-    ls -hal ./TYPO3.CMS/typo3conf/ext/*;
-    ls -hal ./TYPO3.CMS/typo3conf/ext/rest/*;
-    ls -hal ./TYPO3.CMS/typo3conf/ext/rest/Tests/*;
+    ls -hal ./typo3conf/ext/*;
 
-    find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
-    find ./TYPO3.CMS/typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
+
+    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -print;
+    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' -exec ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {} \; ;
