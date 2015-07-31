@@ -65,6 +65,7 @@ script:
   #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
   - >
+    cd $CLI_HOME;
     if [ -d "TYPO3.CMS" ]; then
       echo "Go to TYPO3.CMS";
       cd TYPO3.CMS/;
