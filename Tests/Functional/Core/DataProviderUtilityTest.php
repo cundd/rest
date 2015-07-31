@@ -29,8 +29,6 @@ use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-require_once __DIR__ . '/../../FixtureClasses.php';
-
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -43,42 +41,56 @@ require_once __DIR__ . '/../../FixtureClasses.php';
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class DataProviderUtilityTest extends AbstractCase {
-	static public function setUpBeforeClass() {
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
+    public function setUp() {
+        parent::setUp();
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+        require_once __DIR__ . '/../../FixtureClasses.php';
+        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
+        }
+        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
+        }
 
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
-		class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
-	}
+        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
+        }
+        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+        }
 
-	/**
-	 * @test
-	 */
-	public function getClassNamePartsForPathTest() {
-		$this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
-	}
-
-	/**
-	 * @test
-	 */
-	public function getPathForClassNameTest() {
-		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
-		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
-		$this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
-
-		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
-		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
-		$this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
-	}
+        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+        }
+        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
+            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+        }
+    }
 
     /**
      * @test
      */
-    public function singularizeTest()
-    {
+    public function getClassNamePartsForPathTest() {
+        $this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
+    }
+
+    /**
+     * @test
+     */
+    public function getPathForClassNameTest() {
+        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
+        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
+        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
+
+        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
+        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
+        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
+    }
+
+    /**
+     * @test
+     */
+    public function singularizeTest() {
         $this->assertEquals('tree', Utility::singularize('trees'));
         $this->assertEquals('friend', Utility::singularize('friends'));
         $this->assertEquals('hobby', Utility::singularize('hobbies'));
@@ -88,4 +100,5 @@ class DataProviderUtilityTest extends AbstractCase {
         $this->assertEquals('series', Utility::singularize('series'));
     }
 }
+
 ?>

@@ -36,7 +36,6 @@ namespace Cundd\Rest\Test\Core;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-require_once __DIR__ . '/../../FixtureClasses.php';
 
 class ObjectManagerTest extends AbstractCase {
 
@@ -47,6 +46,7 @@ class ObjectManagerTest extends AbstractCase {
 
 	public function setUp() {
 		parent::setUp();
+		require_once __DIR__ . '/../../FixtureClasses.php';
 		$this->fixture = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
 	}
 
