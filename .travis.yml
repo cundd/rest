@@ -92,5 +92,3 @@ script:
       ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/$REPO/Tests/Functional;
     fi
 
-
-
