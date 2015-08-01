@@ -9,10 +9,26 @@
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.2.x/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../../Resources/phpunit/phpunit3.7" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/frontend" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/core" />
         </CLASSES>
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-6.2.x/typo3/sysext" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/extbase" />
+          <root url="file://$MODULE_DIR$/../../Resources/phpunit/phpunit3.7" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/frontend" />
+          <root url="file://$MODULE_DIR$/../web_typo3-6.2/typo3/sysext/core" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/../../Resources/phpunit/phpunit3.7/phpunit-lts.phar" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/../../Resources/phpunit/phpunit3.7/phpunit-lts.phar" />
         </SOURCES>
       </library>
     </orderEntry>
