@@ -22,7 +22,8 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
- 
+
 namespace Cundd\Rest\Access\Exception;
 
-class InvalidConfigurationException extends \LogicException {}
+class InvalidConfigurationException extends \LogicException {
+}

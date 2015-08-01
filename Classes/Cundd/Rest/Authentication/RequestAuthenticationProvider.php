@@ -33,11 +33,11 @@ namespace Cundd\Rest\Authentication;
  * @package Cundd\Rest\Authentication
  */
 class RequestAuthenticationProvider extends AbstractAuthenticationProvider {
-	/**
-	 * Tries to authenticate the current request
-	 * @return bool Returns if the authentication was successful
-	 */
-	public function authenticate() {
-		return (TRUE == ($GLOBALS['TSFE']->fe_user->user));
-	}
+    /**
+     * Tries to authenticate the current request
+     * @return bool Returns if the authentication was successful
+     */
+    public function authenticate() {
+        return (TRUE == ($GLOBALS['TSFE']->fe_user->user));
+    }
 }

@@ -14,7 +14,7 @@ namespace Cundd\Rest;
  * @package Cundd\Rest
  */
 class ResponseFactory {
-	static public function errorResponse($message, $code) {
+    static public function errorResponse($message, $code) {
 
-	}
+    }
 } 

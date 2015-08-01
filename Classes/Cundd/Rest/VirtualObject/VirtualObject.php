@@ -33,65 +33,65 @@ namespace Cundd\Rest\VirtualObject;
  * @package Cundd\Rest
  */
 class VirtualObject {
-	/**
-	 * The data
-	 *
-	 * @var array
-	 */
-	protected $data = array();
+    /**
+     * The data
+     *
+     * @var array
+     */
+    protected $data = array();
 
-	function __construct($data = array()) {
-		$this->data = $data;
-	}
+    function __construct($data = array()) {
+        $this->data = $data;
+    }
 
-	/**
-	 * Sets the data
-	 *
-	 * @param array $data
-	 * @return $this
-	 */
-	public function setData($data) {
-		$this->data = $data;
-		return $this;
-	}
+    /**
+     * Sets the data
+     *
+     * @param array $data
+     * @return $this
+     */
+    public function setData($data) {
+        $this->data = $data;
+        return $this;
+    }
 
-	/**
-	 * Returns the data
-	 *
-	 * @return array
-	 */
-	public function getData() {
-		return $this->data;
-	}
+    /**
+     * Returns the data
+     *
+     * @return array
+     */
+    public function getData() {
+        return $this->data;
+    }
 
-	/**
-	 * Returns the value for the given key
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function valueForKey($key) {
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
-	}
+    /**
+     * Returns the value for the given key
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function valueForKey($key) {
+        return isset($this->data[$key]) ? $this->data[$key] : NULL;
+    }
 
-	/**
-	 * Sets the value for the given key
-	 *
-	 * @param string $key
-	 * @param mixed  $value
-	 * @return $this
-	 */
-	public function setValueForKey($key, $value) {
-		$this->data[$key] = $value;
-		return $this;
-	}
+    /**
+     * Sets the value for the given key
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setValueForKey($key, $value) {
+        $this->data[$key] = $value;
+        return $this;
+    }
 
-	/**
-	 * Return the data if transformed to JSON
-	 *
-	 * @return array
-	 */
-	public function jsonSerialize() {
-		return $this->getData();
-	}
+    /**
+     * Return the data if transformed to JSON
+     *
+     * @return array
+     */
+    public function jsonSerialize() {
+        return $this->getData();
+    }
 }

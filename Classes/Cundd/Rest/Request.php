@@ -24,137 +24,137 @@
  */
 
 namespace Cundd\Rest;
-use Bullet\HTTP;
+
 use Bullet\Request as BaseRequest;
 
 class Request extends BaseRequest {
-	/**
-	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	protected $configurationProvider;
+    /**
+     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     */
+    protected $configurationProvider;
 
-	/**
-	 * @var string
-	 */
-	protected $path;
+    /**
+     * @var string
+     */
+    protected $path;
 
-	/**
-	 * @var string
-	 */
-	protected $originalPath = -1;
+    /**
+     * @var string
+     */
+    protected $originalPath = -1;
 
 
-	/**
-	 * @return string
-	 */
-	public function path() {
-		if (!$this->path) {
-			$uri = $this->url();
-			$this->originalPath = $this->path = strtok($uri, '/');
+    /**
+     * @return string
+     */
+    public function path() {
+        if (!$this->path) {
+            $uri = $this->url();
+            $this->originalPath = $this->path = strtok($uri, '/');
 
-			// Check for path aliases
-			$pathAlias = $this->getAliasForPath($this->path);
-			if ($pathAlias) {
-				$oldPath = $this->path;
+            // Check for path aliases
+            $pathAlias = $this->getAliasForPath($this->path);
+            if ($pathAlias) {
+                $oldPath = $this->path;
 
-				// Update the URL
-				$this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
-				$this->path = $pathAlias;
-			}
-		}
-		return $this->path;
-	}
+                // Update the URL
+                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
+                $this->path = $pathAlias;
+            }
+        }
+        return $this->path;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function originalPath() {
-		if ($this->originalPath === -1) {
-			return $this->path();
-		}
-		return $this->originalPath;
-	}
+    /**
+     * @return string
+     */
+    public function originalPath() {
+        if ($this->originalPath === -1) {
+            return $this->path();
+        }
+        return $this->originalPath;
+    }
 
-	/**
-	 * Format getter/setter
-	 *
-	 * If no $format is passed, returns the current format
-	 *
-	 * @param string $format
-	 * @return string Format
-	 */
-	public function format($format = null) {
-		if (NULL !== $format) {
-			// If using full mime type, we only need the extension
-			if(strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
-				$format = array_search($format, $this->_mimeTypes);
-			}
-			$this->_format = $this->_validateFormat($format) ? $format : NULL;
-		}
+    /**
+     * Format getter/setter
+     *
+     * If no $format is passed, returns the current format
+     *
+     * @param string $format
+     * @return string Format
+     */
+    public function format($format = null) {
+        if (NULL !== $format) {
+            // If using full mime type, we only need the extension
+            if (strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
+                $format = array_search($format, $this->_mimeTypes);
+            }
+            $this->_format = $this->_validateFormat($format) ? $format : NULL;
+        }
 
-		if (!$this->_format && $format === NULL) {
-			// Detect extension and assign it as the requested format (overrides 'Accept' header)
-			$dotPos = strpos($this->url(), '.');
-			if($dotPos !== FALSE) {
-				$ext = substr($this->url(), $dotPos+1);
-				$this->_format = $this->_validateFormat($ext) ? $ext : NULL;
-			}
+        if (!$this->_format && $format === NULL) {
+            // Detect extension and assign it as the requested format (overrides 'Accept' header)
+            $dotPos = strpos($this->url(), '.');
+            if ($dotPos !== FALSE) {
+                $ext = substr($this->url(), $dotPos + 1);
+                $this->_format = $this->_validateFormat($ext) ? $ext : NULL;
+            }
 
-			// Check the CONTENT_TYPE header
-			if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
-				$this->format(trim($_SERVER['CONTENT_TYPE']));
-			}
+            // Check the CONTENT_TYPE header
+            if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
+                $this->format(trim($_SERVER['CONTENT_TYPE']));
+            }
 
-			// Default to JSON
-			if (!$this->_format) {
-				$this->_format = 'json';
-			}
-		}
-		return $this->_format;
-	}
+            // Default to JSON
+            if (!$this->_format) {
+                $this->_format = 'json';
+            }
+        }
+        return $this->_format;
+    }
 
-	/**
-	 * Returns if the given format is valid
-	 *
-	 * @param $format
-	 * @return boolean
-	 */
-	protected function _validateFormat($format) {
-		return isset($this->_mimeTypes[$format]);
-	}
+    /**
+     * Returns if the given format is valid
+     *
+     * @param $format
+     * @return boolean
+     */
+    protected function _validateFormat($format) {
+        return isset($this->_mimeTypes[$format]);
+    }
 
-	/**
-	 * Check for an alias for the given path
-	 * @param string $path
-	 * @return string
-	 */
-	public function getAliasForPath($path) {
-		if (!$this->configurationProvider) {
-			return NULL;
-		}
-		return $this->configurationProvider->getSetting('aliases.' . $path);
-	}
+    /**
+     * Check for an alias for the given path
+     * @param string $path
+     * @return string
+     */
+    public function getAliasForPath($path) {
+        if (!$this->configurationProvider) {
+            return NULL;
+        }
+        return $this->configurationProvider->getSetting('aliases.' . $path);
+    }
 
-	/**
-	 * Returns if the request wants to write data
-	 * @return bool
-	 */
-	public function isWrite() {
-		return !$this->isRead();
-	}
+    /**
+     * Returns if the request wants to write data
+     * @return bool
+     */
+    public function isWrite() {
+        return !$this->isRead();
+    }
 
-	/**
-	 * Returns if the request wants to read data
-	 * @return bool
-	 */
-	public function isRead() {
-		return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
-	}
+    /**
+     * Returns if the request wants to read data
+     * @return bool
+     */
+    public function isRead() {
+        return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
+    }
 
-	/**
-	 * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
-	 */
-	public function injectConfigurationProvider($configurationProvider) {
-		$this->configurationProvider = $configurationProvider;
-	}
+    /**
+     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     */
+    public function injectConfigurationProvider($configurationProvider) {
+        $this->configurationProvider = $configurationProvider;
+    }
 }
