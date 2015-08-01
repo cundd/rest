@@ -45,9 +45,9 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
 	protected $fixture;
 
 	public function setUp() {
+		parent::setUp();
 		$this->fixture = new ObjectConverter();
 		$this->fixture->setConfiguration($this->getTestConfiguration());
-		parent::setUp();
 	}
 
 	public function tearDown() {

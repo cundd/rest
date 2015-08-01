@@ -1,19 +1,31 @@
 language: php
 php:
   - 5.5
+  - 5.6
+  - hhvm
+  - nightly
 
 env:
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=master INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_6-0 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
+  - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_6-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_6-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_4-7 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_4-5 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: hhvm
+
   include:
-    - php: 5.5
-      env: DB=mysql TYPO3=master INTEGRATION=master
+    - php: 5.3
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 5.4
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 sudo: false
 
@@ -30,25 +42,48 @@ before_script:
 #  - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
 
 # Install rudimentary TYPO3
-  - git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git
-  - cd TYPO3.CMS
-  - composer install
+  - >
+    echo "Install dependencies";
+    composer --version;
+    COMPOSER=cundd_composer.json composer install --verbose;
 
-  - git clone --single-branch --branch develop --depth 1 https://github.com/$VENDOR/$REPO typo3conf/ext/$REPO/
-  - cd typo3conf/ext/$REPO/
-  - composer --version
-  - COMPOSER=cundd_composer.json composer install --verbose
-  - cd ../../../
-  - mysql -u="root" -p="" -e 'create database typo3_test';
+    cd ..;
+    echo "Get TYPO3 source";
+    git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
+    cd TYPO3.CMS;
+    composer install;
+    rm -rf typo3/sysext/compatibility6;
+
+    mkdir -p ./typo3conf/ext/;
+    ln -s $CLI_HOME ./typo3conf/ext/$REPO;
+    cd ..;
+
+    mysql -e 'create database typo3_test;';
 
 script:
-  #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
-  #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
-  # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
   - >
-    export typo3DatabaseName="typo3";
-    export typo3DatabaseHost="localhost";
-    export typo3DatabaseUsername="root";
-    export typo3DatabasePassword="";
-    ## find . -wholename '*typo3/sysext/*/Tests/Functional/*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
-    find ./typo3conf/ext/rest/Tests/Functional -path '*Test.php' | parallel --gnu 'echo; echo "Running functional test suite {}"; ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+    cd $CLI_HOME;
+    if [ -d "../TYPO3.CMS" ]; then
+      cd ../TYPO3.CMS/;
+    else
+      echo "TYPO3.CMS folder not found";
+      exit 1;
+    fi;
+
+  - >
+    if [[ "$UNIT_TESTS" == "yes" ]]; then
+      echo;
+      echo "Running unit tests";
+      ./bin/phpunit --colors -c typo3/sysext/core/Build/UnitTests.xml typo3conf/ext/$REPO/Tests/Unit;
+    fi
+
+  - >
+    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
+      echo;
+      export typo3DatabaseName="typo3";
+      export typo3DatabaseHost="localhost";
+      export typo3DatabaseUsername="root";
+      export typo3DatabasePassword="";
+      ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/$REPO/Tests/Functional;
+    fi
+
