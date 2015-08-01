@@ -42,132 +42,132 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
  * @package Cundd\Rest\Test\VirtualObject
  */
 class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
-	/**
-	 * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
-	 */
-	protected $fixture;
+    /**
+     * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
+     */
+    protected $fixture;
 
-	protected $typoScriptDummyArray = array(
-		'mapping.' => array(
-			'identifier' => 'property1',
-			'tableName' => 'my_resource_table',
-			'properties.' => array(
-				'property1.' => array(
-					'type' => 'string',
-					'column' => 'property_one',
-				),
-				'property2.' => array(
-					'type' => 'float',
-					'column' => 'property_two',
-				),
-				'property3.' => array(
-					'type' => 'int',
-					'column' => 'property_three',
-				),
-				'property4.' => array(
-					'type' => 'integer',
-					'column' => 'property_four',
-				),
-				'property5.' => array(
-					'type' => 'bool',
-					'column' => 'property_five',
-				),
-				'property6.' => array(
-					'type' => 'boolean',
-					'column' => 'property_six',
-				),
-				'property_seven.' => array(
-					'type' => 'boolean',
-				),
-				'property_eight.' => 'boolean',
-			)
-		)
-	);
+    protected $typoScriptDummyArray = array(
+        'mapping.' => array(
+            'identifier' => 'property1',
+            'tableName' => 'my_resource_table',
+            'properties.' => array(
+                'property1.' => array(
+                    'type' => 'string',
+                    'column' => 'property_one',
+                ),
+                'property2.' => array(
+                    'type' => 'float',
+                    'column' => 'property_two',
+                ),
+                'property3.' => array(
+                    'type' => 'int',
+                    'column' => 'property_three',
+                ),
+                'property4.' => array(
+                    'type' => 'integer',
+                    'column' => 'property_four',
+                ),
+                'property5.' => array(
+                    'type' => 'bool',
+                    'column' => 'property_five',
+                ),
+                'property6.' => array(
+                    'type' => 'boolean',
+                    'column' => 'property_six',
+                ),
+                'property_seven.' => array(
+                    'type' => 'boolean',
+                ),
+                'property_eight.' => 'boolean',
+            )
+        )
+    );
 
-	public function setUp() {
-		parent::setUp();
-		$this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
+    public function setUp() {
+        parent::setUp();
+        $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
 
-		$typoScriptDummyArray = $this->typoScriptDummyArray;
+        $typoScriptDummyArray = $this->typoScriptDummyArray;
 
-		$typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
-		$typeScriptConfigurationStub->expects($this->any())
-			->method('getSetting')
-			->will($this->returnValue($typoScriptDummyArray));
+        $typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+        $typeScriptConfigurationStub->expects($this->any())
+            ->method('getSetting')
+            ->will($this->returnValue($typoScriptDummyArray));
 
-		$this->fixture->injectConfigurationProvider($typeScriptConfigurationStub);
-	}
+        $this->fixture->injectConfigurationProvider($typeScriptConfigurationStub);
+    }
 
-	public function tearDown() {
-		unset($this->fixture);
-		parent::tearDown();
-	}
+    public function tearDown() {
+        unset($this->fixture);
+        parent::tearDown();
+    }
 
-	/**
-	 * @test
-	 */
-	public function createTest() {
-		$this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $this->fixture->create());
-	}
+    /**
+     * @test
+     */
+    public function createTest() {
+        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $this->fixture->create());
+    }
 
-	/**
-	 * @test
-	 */
-	public function createFromArrayTest() {
-		$configurationObject = $this->fixture->createFromArrayForPath($this->getTestConfigurationData(), 'ResourceName');
-		$this->validateConfiguration($configurationObject);
-	}
+    /**
+     * @test
+     */
+    public function createFromArrayTest() {
+        $configurationObject = $this->fixture->createFromArrayForPath($this->getTestConfigurationData(), 'ResourceName');
+        $this->validateConfiguration($configurationObject);
+    }
 
-	/**
-	 * @test
-	 */
-	public function createWithConfigurationDataTest() {
-		$configurationData = $this->typoScriptDummyArray['mapping.'];
-		$configurationObject = $this->fixture->createWithConfigurationData($configurationData);
-		$this->validateConfiguration($configurationObject);
-	}
+    /**
+     * @test
+     */
+    public function createWithConfigurationDataTest() {
+        $configurationData = $this->typoScriptDummyArray['mapping.'];
+        $configurationObject = $this->fixture->createWithConfigurationData($configurationData);
+        $this->validateConfiguration($configurationObject);
+    }
 
-	/**
-	 * @test
-	 */
-	public function createFromTypoScriptForPathTest() {
-		$configurationObject = $this->fixture->createFromTypoScriptForPath('ResourceName');
-		$this->validateConfiguration($configurationObject);
-	}
+    /**
+     * @test
+     */
+    public function createFromTypoScriptForPathTest() {
+        $configurationObject = $this->fixture->createFromTypoScriptForPath('ResourceName');
+        $this->validateConfiguration($configurationObject);
+    }
 
-	/**
-	 * @test
-	 */
-	public function createFromJsonTest() {
-		$configurationObject = $this->fixture->createFromJsonForPath($this->getTestConfigurationJSONString(), 'ResourceName');
-		$this->validateConfiguration($configurationObject);
-	}
+    /**
+     * @test
+     */
+    public function createFromJsonTest() {
+        $configurationObject = $this->fixture->createFromJsonForPath($this->getTestConfigurationJSONString(), 'ResourceName');
+        $this->validateConfiguration($configurationObject);
+    }
 
 
-	/**
-	 * Runs the test on the given configuration
-	 *
-	 * @param ConfigurationInterface $configuration
-	 */
-	public function validateConfiguration($configuration) {
-		$this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $configuration);
+    /**
+     * Runs the test on the given configuration
+     *
+     * @param ConfigurationInterface $configuration
+     */
+    public function validateConfiguration($configuration) {
+        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $configuration);
 
-		$this->assertTrue($configuration->hasProperty('property1'));
+        $this->assertTrue($configuration->hasProperty('property1'));
 
-		$this->assertTrue($configuration->hasSourceKey('property_three'));
+        $this->assertTrue($configuration->hasSourceKey('property_three'));
 
-		$this->assertEquals('property3', $configuration->getPropertyForSourceKey('property_three'));
-		$this->assertEquals('property6', $configuration->getPropertyForSourceKey('property_six'));
-		$this->assertEquals('property_seven', $configuration->getPropertyForSourceKey('property_seven'));
-		$this->assertEquals('property_eight', $configuration->getPropertyForSourceKey('property_eight'));
-		$this->assertNull($configuration->getPropertyForSourceKey('propertyNotExists'));
+        $this->assertEquals('property3', $configuration->getPropertyForSourceKey('property_three'));
+        $this->assertEquals('property6', $configuration->getPropertyForSourceKey('property_six'));
+        $this->assertEquals('property_seven', $configuration->getPropertyForSourceKey('property_seven'));
+        $this->assertEquals('property_eight', $configuration->getPropertyForSourceKey('property_eight'));
+        $this->assertNull($configuration->getPropertyForSourceKey('propertyNotExists'));
 
-		$this->assertEquals('int', $configuration->getTypeForProperty('property3'));
-		$this->assertEquals('boolean', $configuration->getTypeForProperty('property6'));
-		$this->assertEquals('boolean', $configuration->getTypeForProperty('property_eight'));
-		$this->assertNull($configuration->getTypeForProperty('propertyNotExists'));
+        $this->assertEquals('int', $configuration->getTypeForProperty('property3'));
+        $this->assertEquals('boolean', $configuration->getTypeForProperty('property6'));
+        $this->assertEquals('boolean', $configuration->getTypeForProperty('property_eight'));
+        $this->assertNull($configuration->getTypeForProperty('propertyNotExists'));
 
-		$this->assertEquals('my_resource_table', $configuration->getSourceIdentifier());
-		$this->assertEquals('property1', $configuration->getIdentifier());
-	}
+        $this->assertEquals('my_resource_table', $configuration->getSourceIdentifier());
+        $this->assertEquals('property1', $configuration->getIdentifier());
+    }
 }

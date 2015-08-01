@@ -43,40 +43,40 @@ require_once __DIR__ . '/../AbstractCase.php';
  * @package Cundd\Rest\Test\VirtualObject
  */
 class AbstractVirtualObjectCase extends AbstractCase {
-	/**
-	 * @var array
-	 */
-	protected $testConfiguration = array();
+    /**
+     * @var array
+     */
+    protected $testConfiguration = array();
 
     /**
-	 * Returns the test configuration object
-	 * @return Configuration
-	 */
-	protected function getTestConfiguration() {
-		$testConfiguration = $this->getTestConfigurationData();
-		return new \Cundd\Rest\VirtualObject\Configuration(
-			\Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
-		);
-	}
+     * Returns the test configuration object
+     * @return Configuration
+     */
+    protected function getTestConfiguration() {
+        $testConfiguration = $this->getTestConfigurationData();
+        return new \Cundd\Rest\VirtualObject\Configuration(
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
+        );
+    }
 
-	/**
-	 * Returns the configuration data
-	 *
-	 * @return array
-	 */
-	protected function getTestConfigurationData() {
-		if ($this->testConfiguration) {
-			return $this->testConfiguration;
-		}
-		$this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), TRUE);
-		return $this->testConfiguration;
-	}
+    /**
+     * Returns the configuration data
+     *
+     * @return array
+     */
+    protected function getTestConfigurationData() {
+        if ($this->testConfiguration) {
+            return $this->testConfiguration;
+        }
+        $this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), TRUE);
+        return $this->testConfiguration;
+    }
 
-	/**
-	 * @return string
-	 */
-	protected function getTestConfigurationJSONString() {
-		return <<<CONFIGURATION
+    /**
+     * @return string
+     */
+    protected function getTestConfigurationJSONString() {
+        return <<<CONFIGURATION
 {
     "ResourceName": {
         "mapping": {
@@ -118,5 +118,5 @@ class AbstractVirtualObjectCase extends AbstractCase {
     }
 }
 CONFIGURATION;
-	}
+    }
 }

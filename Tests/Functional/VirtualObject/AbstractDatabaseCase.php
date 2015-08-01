@@ -43,60 +43,60 @@ use Cundd\Rest\VirtualObject\Configuration;
  * @package Cundd\Rest\Test\VirtualObject
  */
 class AbstractDatabaseCase extends AbstractVirtualObjectCase {
-	/**
-	 * Test database name
-	 *
-	 * @var string
-	 */
-	static protected $testDatabaseTable = 'tx_rest_domain_model_test';
+    /**
+     * Test database name
+     *
+     * @var string
+     */
+    static protected $testDatabaseTable = 'tx_rest_domain_model_test';
 
-	/**
-	 * Test data sets
-	 *
-	 * @var array
-	 */
-	static protected $testData = array(
-		array(
-			'uid'          => 100,
-			'title'        => 'Test entry',
-			'content'      => 'This is my text',
-			'content_time' => 1395678480
-		),
-		array(
-			'uid'          => 200,
-			'title'        => 'Test entry',
-			'content'      => 'This is my second text',
-			'content_time' => 1395678480
-		)
-	);
+    /**
+     * Test data sets
+     *
+     * @var array
+     */
+    static protected $testData = array(
+        array(
+            'uid' => 100,
+            'title' => 'Test entry',
+            'content' => 'This is my text',
+            'content_time' => 1395678480
+        ),
+        array(
+            'uid' => 200,
+            'title' => 'Test entry',
+            'content' => 'This is my second text',
+            'content_time' => 1395678480
+        )
+    );
 
-	/**
-	 * @var array
-	 */
-	protected $testConfiguration = array();
+    /**
+     * @var array
+     */
+    protected $testConfiguration = array();
 
-	/**
-	 * Returns the test configuration object
-	 * @return Configuration
-	 */
-	protected function getTestConfiguration() {
-		$testConfiguration = $this->getTestConfigurationData();
-		return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
-	}
+    /**
+     * Returns the test configuration object
+     * @return Configuration
+     */
+    protected function getTestConfiguration() {
+        $testConfiguration = $this->getTestConfigurationData();
+        return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
+    }
 
-	/**
-	 * Returns the configuration data
-	 *
-	 * @return array
-	 */
-	protected function getTestConfigurationData() {
-		if ($this->testConfiguration) {
-			return $this->testConfiguration;
-		}
+    /**
+     * Returns the configuration data
+     *
+     * @return array
+     */
+    protected function getTestConfigurationData() {
+        if ($this->testConfiguration) {
+            return $this->testConfiguration;
+        }
 
-		$testDatabaseTable = self::$testDatabaseTable;
+        $testDatabaseTable = self::$testDatabaseTable;
 
-		$testConfigurationJson = <<<CONFIGURATION
+        $testConfigurationJson = <<<CONFIGURATION
 {
     "ResourceName": {
         "mapping": {
@@ -126,27 +126,26 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase {
 }
 CONFIGURATION;
 
-		$this->testConfiguration = json_decode($testConfigurationJson, TRUE);
-		return $this->testConfiguration;
-	}
+        $this->testConfiguration = json_decode($testConfigurationJson, TRUE);
+        return $this->testConfiguration;
+    }
 
 
+    public function setUp() {
+        parent::setUp();
+        $this->createTable();
+        $this->insertData();
+    }
 
-	public function setUp() {
-		parent::setUp();
-		$this->createTable();
-		$this->insertData();
-	}
+    public function tearDown() {
+        $this->truncateTable();
+        $this->dropTable();
+        parent::tearDown();
+    }
 
-	public function tearDown() {
-		$this->truncateTable();
-		$this->dropTable();
-		parent::tearDown();
-	}
-
-	protected function createTable() {
-		$testDatabaseTable = self::$testDatabaseTable;
-		$createTableSQL    = <<<SQL
+    protected function createTable() {
+        $testDatabaseTable = self::$testDatabaseTable;
+        $createTableSQL = <<<SQL
 CREATE TABLE $testDatabaseTable (
 
 	uid int(11) NOT NULL AUTO_INCREMENT,
@@ -160,36 +159,36 @@ CREATE TABLE $testDatabaseTable (
 ) AUTO_INCREMENT=1;
 SQL;
 
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $this->getDatabaseConnection();
-		$databaseConnection->sql_query($createTableSQL);
-	}
+        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+        $databaseConnection = $this->getDatabaseConnection();
+        $databaseConnection->sql_query($createTableSQL);
+    }
 
-	protected function dropTable() {
-		$testDatabaseTable = self::$testDatabaseTable;
-		$dropTableSQL      = <<<SQL
+    protected function dropTable() {
+        $testDatabaseTable = self::$testDatabaseTable;
+        $dropTableSQL = <<<SQL
 		DROP TABLE IF EXISTS $testDatabaseTable;
 SQL;
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $this->getDatabaseConnection();
-		$databaseConnection->sql_query($dropTableSQL);
-	}
+        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+        $databaseConnection = $this->getDatabaseConnection();
+        $databaseConnection->sql_query($dropTableSQL);
+    }
 
-	protected function truncateTable() {
-		$testDatabaseTable = self::$testDatabaseTable;
-		$dropTableSQL      = <<<SQL
+    protected function truncateTable() {
+        $testDatabaseTable = self::$testDatabaseTable;
+        $dropTableSQL = <<<SQL
 		TRUNCATE TABLE  $testDatabaseTable
 
 SQL;
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $this->getDatabaseConnection();
-		$databaseConnection->sql_query($dropTableSQL);
-	}
+        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+        $databaseConnection = $this->getDatabaseConnection();
+        $databaseConnection->sql_query($dropTableSQL);
+    }
 
-	protected function insertData() {
-		/** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-		$databaseConnection = $this->getDatabaseConnection();
-		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
-		$databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
-	}
+    protected function insertData() {
+        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
+        $databaseConnection = $this->getDatabaseConnection();
+        $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
+        $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
+    }
 }

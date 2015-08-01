@@ -15,8 +15,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
      */
     protected $objectManager;
 
-    public function setUp()
-    {
+    public function setUp() {
         parent::setUp();
         $this->objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
     }
