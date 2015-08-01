@@ -6,26 +6,26 @@ php:
   - nightly
 
 env:
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=master INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_7-3 INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_7-0 INTEGRATION=master
-  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_6-2 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_6-1 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_6-0 INTEGRATION=master
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_4-7 INTEGRATION=TYPO3_4-7
-#  - VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_4-5 INTEGRATION=TYPO3_4-7
+  - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_6-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_6-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_4-7 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+#  - TYPO3=TYPO3_4-5 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 matrix:
+  fast_finish: true
   allow_failures:
-    - php: 5.3
     - php: nightly
     - php: hhvm
 
   include:
     - php: 5.3
-      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_6-2 INTEGRATION=master
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
     - php: 5.4
-      env: VENDOR="cundd" REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes TYPO3=TYPO3_6-2 INTEGRATION=master
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 sudo: false
 
@@ -47,8 +47,6 @@ before_script:
     composer --version;
     COMPOSER=cundd_composer.json composer install --verbose;
 
-    ls -hal;
-    ls -hal ..;
     cd ..;
     echo "Get TYPO3 source";
     git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
@@ -63,9 +61,6 @@ before_script:
     mysql -e 'create database typo3_test;';
 
 script:
-  #- $CLI_HOME/ext-phpunit/vendor/bin/phpcs --standard=TYPO3CMS --ignore=PEAR --warning-severity=0 --extensions=php,inc -sv $CLI_HOME/ext-phpunit
-  #- find -L ext-phpunit -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
-  # - php $CLI_HOME/typo3/cli_dispatch.phpsh phpunit typo3conf/ext/$REPO/Tests/Unit
   - >
     cd $CLI_HOME;
     if [ -d "../TYPO3.CMS" ]; then
