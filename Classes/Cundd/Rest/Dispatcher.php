@@ -43,6 +43,11 @@ use Cundd\Rest\Access\AccessControllerInterface;
  */
 class Dispatcher implements SingletonInterface {
     /**
+     * Path prefix for the Document Store
+     */
+    const API_PATH_DOCUMENT = 'Document';
+
+    /**
      * API path
      *
      * @var string
@@ -297,10 +302,11 @@ class Dispatcher implements SingletonInterface {
 
             /*
              * Transform Document URLs
-             * @Todo: Make this better
+             * @Todo: Make this more flexible
              */
-            if (substr($uri, 0, 9) === 'Document/') {
-                $uri = 'Document-' . substr($uri, 9);
+            $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
+            if (substr($uri, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '/') {
+                $uri = self::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
             }
             $this->request = new Request(NULL, $uri);
             $this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
@@ -411,8 +417,9 @@ class Dispatcher implements SingletonInterface {
          * Transform Document URLs
          * @Todo: Make this better
          */
-        if (substr($originalPath, 0, 9) === 'Document-') {
-            $originalPath = substr($originalPath, 9);
+        $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
+        if (substr($originalPath, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '-') {
+            $originalPath = substr($originalPath, $documentApiPathLength);
         }
         return $originalPath;
     }

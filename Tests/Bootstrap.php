@@ -1,8 +1,7 @@
 <?php
 /**
- * Unit Test bootstrapping and legacy API abstraction
+ * Unit Test bootstrapping
  */
-
 
 if (file_exists(__DIR__ . '/../vendor/')) {
     require_once __DIR__ . '/../vendor/autoload.php';

@@ -83,6 +83,26 @@ class AppTest extends AbstractCase {
     /**
      * @test
      */
+    public function getDocumentUriTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
+        $this->assertEquals('html', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getDocumentUriWithFormatTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
+        $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
     public function getPathTest() {
         $_GET['u'] = 'MyExt-MyModel/1';
         $path = $this->fixture->getPath();
@@ -96,6 +116,24 @@ class AppTest extends AbstractCase {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $path = $this->fixture->getPath();
         $this->assertEquals('MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getDocumentPathTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1';
+        $path = $this->fixture->getPath();
+        $this->assertEquals('Document-MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getDocumentPathWithFormatTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
+        $path = $this->fixture->getPath();
+        $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
     /**
