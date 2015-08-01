@@ -146,8 +146,6 @@ class Dispatcher implements SingletonInterface {
             // Let Bullet PHP do the hard work
             $response = $this->app->run($request);
 
-//			$response->content($response->content());
-
             // Handle exceptions
             if ($response->content() instanceof \Exception) {
                 $success = FALSE;
@@ -155,10 +153,10 @@ class Dispatcher implements SingletonInterface {
                 $exception = $response->content();
                 $this->logException($exception);
                 $response = $this->exceptionToResponse($exception);
+            } else {
+                // Cache the response
+                $cache->setCachedValueForRequest($request, $response);
             }
-
-            // Cache the response
-            $cache->setCachedValueForRequest($request, $response);
         }
 
         $responsePointer = $response;
@@ -203,7 +201,7 @@ class Dispatcher implements SingletonInterface {
      * @return Response
      */
     public function exceptionToResponse($exception) {
-        if ($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+        if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
             return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
         }
         return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);

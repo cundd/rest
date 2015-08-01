@@ -152,4 +152,84 @@ class ObjectManagerTest extends AbstractCase {
         $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
     }
 
+    /**
+     * @test
+     */
+    public function getHandlerForPathTest() {
+        $_GET['u'] = 'my_ext-my_model/1';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getHandlerForPathWithFormatTest() {
+        $_GET['u'] = 'my_ext-my_model/1.json';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getHandlerForPathUpperCamelCaseTest() {
+        $_GET['u'] = 'MyExt-MyModel/1';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getHandlerForPathUpperCamelCaseWithFormatTest() {
+        $_GET['u'] = 'MyExt-MyModel/1.json';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getNamespacedHandlerForPathTest() {
+        $_GET['u'] = 'vendor-my_second_ext-my_model/1';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getNamespacedHandlerForPathUpperCamelCaseTest() {
+        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getDefaultHandlerForPathTest() {
+        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Handler', $handler);
+    }
+
+    /**
+     * @test
+     */
+    public function getDefaultHandlerForPathWithFormatTest() {
+        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1.json';
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Handler', $handler);
+    }
+
 }

@@ -126,13 +126,11 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
                 $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
             }
 
-
             // Use the found Authentication Provider
             if (class_exists($authenticationProviderClass)) {
                 $this->authenticationProvider = $this->get($authenticationProviderClass);
             } else {
                 // Use the default Authentication Provider
-                #$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
                 $this->authenticationProvider = $this->get('Cundd\\Rest\\Authentication\\AuthenticationProviderCollection', array(
                     $this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
                     $this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
@@ -174,8 +172,11 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
      * @return HandlerInterface
      */
     public function getHandler() {
+        /** @var Dispatcher $dispatcher */
+        $dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
+
         /** @var \Cundd\Rest\HandlerInterface $handler */
-        list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+        list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
 
         // Check if an extension provides a Handler
         $handlerClass = 'Tx_' . $extension . '_Rest_Handler';
@@ -191,9 +192,7 @@ class ObjectManager extends BaseObjectManager implements ObjectManagerInterface,
                 $handlerClass = 'Cundd\\Rest\\HandlerInterface';
             }
         }
-        $handler = $this->get($handlerClass);
-        //$handler->setRequest($this->dispatcher->getRequest());
-        return $handler;
+        return $this->get($handlerClass);
     }
 
     /**

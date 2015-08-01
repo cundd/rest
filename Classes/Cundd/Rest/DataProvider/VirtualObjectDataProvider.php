@@ -183,8 +183,8 @@ class VirtualObjectDataProvider extends DataProvider {
     }
 
     /**
-     * Adds or updates the given model in the repository for the
-     * given API path
+     * Adds or updates the given model in the repository for the given API path
+     *
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
      * @param string $path The API path
      * @return void

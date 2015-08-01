@@ -25,6 +25,8 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\HandlerInterface;
+
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
     /**
      * @var string
@@ -123,5 +125,27 @@ class MyNestedJsonSerializeModel extends MyNestedModel {
     }
 }
 
+class MyHandler implements HandlerInterface {
+    /**
+     * @inheritDoc
+     */
+    public function setRequest($request) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRequest() {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function configureApiPaths() {
+    }
+}
+
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
+class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Tx_MyExt_Rest_Handler');
+class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Vendor\\MySecondExt\\Rest\\Handler');
