@@ -43,29 +43,51 @@ class Request extends BaseRequest {
      */
     protected $originalPath = -1;
 
+    /**
+     * Initialize the request with the given path and original path
+     * @param string $path
+     * @param string $originalPath
+     * @return $this
+     */
+    public function initWithPathAndOriginalPath($path, $originalPath) {
+        if (!is_string($path)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument 1 passed must be a string, %s given',
+                gettype($path)
+            ));
+        }
+        $this->path = $path;
+        $this->originalPath = $originalPath;
+        return $this;
+    }
+
 
     /**
+     * Returns the request path (eventually aliases have been mapped)
+     *
      * @return string
      */
     public function path() {
         if (!$this->path) {
-            $uri = $this->url();
-            $this->originalPath = $this->path = strtok($uri, '/');
-
-            // Check for path aliases
-            $pathAlias = $this->getAliasForPath($this->path);
-            if ($pathAlias) {
-                $oldPath = $this->path;
-
-                // Update the URL
-                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
-                $this->path = $pathAlias;
-            }
+//            $uri = $this->url();
+//            $this->originalPath = $this->path = strtok($uri, '/');
+//
+//            // Check for path aliases
+//            $pathAlias = $this->getAliasForPath($this->path);
+//            if ($pathAlias) {
+//                $oldPath = $this->path;
+//
+//                // Update the URL
+//                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
+//                $this->path = $pathAlias;
+//            }
         }
         return $this->path;
     }
 
     /**
+     * Returns the request path before mapping aliases
+     *
      * @return string
      */
     public function originalPath() {
@@ -114,29 +136,8 @@ class Request extends BaseRequest {
     }
 
     /**
-     * Returns if the given format is valid
-     *
-     * @param $format
-     * @return boolean
-     */
-    protected function _validateFormat($format) {
-        return isset($this->_mimeTypes[$format]);
-    }
-
-    /**
-     * Check for an alias for the given path
-     * @param string $path
-     * @return string
-     */
-    public function getAliasForPath($path) {
-        if (!$this->configurationProvider) {
-            return NULL;
-        }
-        return $this->configurationProvider->getSetting('aliases.' . $path);
-    }
-
-    /**
      * Returns if the request wants to write data
+     *
      * @return bool
      */
     public function isWrite() {
@@ -152,9 +153,35 @@ class Request extends BaseRequest {
     }
 
     /**
+     * Check for an alias for the given path
+     *
+     * @param string $path
+     * @return string
+     * @deprecated
+     */
+    public function getAliasForPath($path) {
+        if (!$this->configurationProvider) {
+            return NULL;
+        }
+        return $this->configurationProvider->getSetting('aliases.' . $path);
+    }
+
+    /**
      * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     * @internal
+     * @deprecated
      */
     public function injectConfigurationProvider($configurationProvider) {
-        $this->configurationProvider = $configurationProvider;
+//        $this->configurationProvider = $configurationProvider;
+    }
+
+    /**
+     * Returns if the given format is valid
+     *
+     * @param $format
+     * @return boolean
+     */
+    protected function _validateFormat($format) {
+        return isset($this->_mimeTypes[$format]);
     }
 }
