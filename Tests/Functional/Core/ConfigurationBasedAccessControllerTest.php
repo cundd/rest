@@ -66,8 +66,9 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
         );
         $configurationProvider->setSettings($settings);
 
-        $request = new Request(NULL, 'my_ext-my_model/4/usergroup');
-        $this->fixture->setRequest($request);
+        $this->fixture->setRequest(
+            $this->buildRequestWithUri('my_ext-my_model/4/usergroup')
+        );
     }
 
     /**
@@ -75,7 +76,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
      */
     public function getDefaultConfigurationForPathTest() {
         $uri = 'my_ext-my_default_model/1/';
-        $request = new Request(NULL, $uri);
+        $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
             'path' => 'all',
             'read' => 'allow',
@@ -90,7 +91,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
      */
     public function getConfigurationForPathWithoutWildcardTest() {
         $uri = 'my_ext-my_model/3/';
-        $request = new Request(NULL, $uri);
+        $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
             'path' => 'my_ext-my_model',
             'read' => 'allow',
@@ -105,7 +106,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
      */
     public function getConfigurationForPathWithWildcardTest() {
         $uri = 'my_secondext-my_model/34/';
-        $request = new Request(NULL, $uri);
+        $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
             'path' => 'my_secondext-*',
             'read' => 'deny',

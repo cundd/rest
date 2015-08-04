@@ -311,7 +311,7 @@ class Handler implements CrudHandlerInterface {
         $handler = $this;
 
 
-        $app->path($dispatcher->getPath(), function ($request) use ($handler, $app) {
+        $app->path($dispatcher->getRequest()->path(), function ($request) use ($handler, $app) {
             $handler->setRequest($request);
 
             /*
@@ -395,7 +395,6 @@ class Handler implements CrudHandlerInterface {
      * @return string
      */
     protected function getPath() {
-        return $this->getRequest() ? $this->getRequest()->path() : Dispatcher::getSharedDispatcher()->getPath();
+        return $this->getRequest() ? $this->getRequest()->path() : Dispatcher::getSharedDispatcher()->getRequest()->path();
     }
-
-} 
+}

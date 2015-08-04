@@ -164,7 +164,7 @@ class AuthHandler implements HandlerInterface {
         /** @var AuthHandler */
         $handler = $this;
 
-        $app->path($dispatcher->getPath(), function ($request) use ($handler, $app) {
+        $app->path($dispatcher->getRequest()->path(), function ($request) use ($handler, $app) {
             $handler->setRequest($request);
 
             $app->path('login', function ($request) use ($handler, $app) {

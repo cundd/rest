@@ -32,6 +32,7 @@ use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Main dispatcher of REST requests
@@ -48,13 +49,6 @@ class Dispatcher implements SingletonInterface {
     const API_PATH_DOCUMENT = 'Document';
 
     /**
-     * API path
-     *
-     * @var string
-     */
-    protected $uri;
-
-    /**
      * @var \Cundd\Rest\ObjectManager
      */
     protected $objectManager;
@@ -65,21 +59,14 @@ class Dispatcher implements SingletonInterface {
     protected $app;
 
     /**
-     * @var \Cundd\Rest\Request
+     * @var \Cundd\Rest\RequestFactory
      */
-    protected $request;
+    protected $requestFactory;
 
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
-
-    /**
-     * The response format
-     *
-     * @var string
-     */
-    protected $format;
 
     /**
      * The shared instance
@@ -93,8 +80,9 @@ class Dispatcher implements SingletonInterface {
      */
     public function __construct() {
         $this->app = new \Bullet\App();
-        $this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
-        $this->objectManager->setDispatcher($this);
+
+        $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+        $this->requestFactory = $this->objectManager->getRequestFactory();
 
         self::$sharedDispatcher = $this;
     }
@@ -108,13 +96,14 @@ class Dispatcher implements SingletonInterface {
      */
     public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
         if ($request) {
-            $this->request = $request;
+            $this->requestFactory->registerCurrentRequest($request);
             $this->objectManager->reassignRequest();
         } else {
-            $request = $this->getRequest();
+            $request = $this->requestFactory->getRequest();
         }
 
-        if (!$this->getPath()) {
+        $requestPath = $request->path();
+        if (!$requestPath) {
             return $this->greet();
         }
 
@@ -143,8 +132,8 @@ class Dispatcher implements SingletonInterface {
         if (!$response) {
 
             // If a path is given let the handler build up the routes
-            if ($this->getPath()) {
-                $this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
+            if ($requestPath) {
+                $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->method()));
                 $this->objectManager->getHandler()->configureApiPaths();
             }
 
@@ -178,7 +167,7 @@ class Dispatcher implements SingletonInterface {
      */
     public function greet() {
         /** @var \Cundd\Rest\Request $request */
-        $request = $this->getRequest();
+        $request = $this->requestFactory->getRequest();
 
         $this->app->path('/', function ($request) {
             $greeting = 'What\'s up?';
@@ -245,7 +234,7 @@ class Dispatcher implements SingletonInterface {
     protected function _createResponse($data, $status, $forceError = FALSE) {
         $body = NULL;
         $response = new Response(NULL, $status);
-        $format = $this->getRequest()->format();
+        $format = $this->requestFactory->getRequest()->format();
         if (!$format) {
             $format = 'json';
         }
@@ -284,7 +273,7 @@ class Dispatcher implements SingletonInterface {
                 // TODO: support more response formats
 
             default:
-                $body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->getRequest()->format());
+                $body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->requestFactory->getRequest()->format());
                 $response->content($body);
         }
         return $response;
@@ -293,43 +282,28 @@ class Dispatcher implements SingletonInterface {
     /**
      * Returns the request
      *
+     * Better use the RequestFactory::getRequest() instead
+     *
      * @return \Cundd\Rest\Request
      */
     public function getRequest() {
-        if (!$this->request) {
-            $format = '';
-            $uri = $this->getUri($format);
-
-            /*
-             * Transform Document URLs
-             * @Todo: Make this more flexible
-             */
-            $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
-            if (substr($uri, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '/') {
-                $uri = self::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
-            }
-            $this->request = new Request(NULL, $uri);
-            $this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
-            if ($format) {
-                $this->request->format($format);
-            }
-
-        }
-        return $this->request;
+        return $this->requestFactory->getRequest();
     }
 
     /**
      * @return string
+     * @deprecated use getRequest()->path() instead
      */
     public function getPath() {
-        return $this->getRequest()->path();
+        return $this->requestFactory->getRequest()->path();
     }
 
     /**
      * @return string
+     * @deprecated use getRequest()->originalPath() instead
      */
     public function getOriginalPath() {
-        return $this->getRequest()->originalPath();
+        return $this->requestFactory->getRequest()->originalPath();
     }
 
     /**
@@ -337,31 +311,10 @@ class Dispatcher implements SingletonInterface {
      *
      * @param string $format Reference to be filled with the request format
      * @return string
+     * @deprecated use the RequestFactory::getUri() instead
      */
     public function getUri(&$format = '') {
-        if (!$this->uri) {
-            $uri = $this->getArgument('u', FILTER_SANITIZE_URL);
-            if (!$uri) {
-                $uri = substr($_SERVER['REQUEST_URI'], 6);
-                $uri = filter_var($uri, FILTER_SANITIZE_URL);
-            }
-
-            // Strip the format from the URI
-            $resourceName = basename($uri);
-            $lastDotPosition = strrpos($resourceName, '.');
-            if ($lastDotPosition !== FALSE) {
-                $newUri = '';
-                if ($uri !== $resourceName) {
-                    $newUri = dirname($uri) . '/';
-                }
-                $newUri .= substr($resourceName, 0, $lastDotPosition);
-                $uri = $newUri;
-
-                $format = substr($resourceName, $lastDotPosition + 1);
-            }
-            $this->uri = $uri;
-        }
-        return $this->uri;
+        return $this->requestFactory->getUri($format);
     }
 
     /**
@@ -371,7 +324,7 @@ class Dispatcher implements SingletonInterface {
      * @return mixed
      */
     protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
-        $argument = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP($name);
+        $argument = GeneralUtility::_GP($name);
         $argument = filter_var($argument, $filter);
         if ($argument === NULL) {
             $argument = $default;
@@ -385,7 +338,7 @@ class Dispatcher implements SingletonInterface {
      * @return mixed
      */
     public function getSentData() {
-        $request = $this->getRequest();
+        $request = $this->requestFactory->getRequest();
 
         /** @var \Cundd\Rest\Request $request */
         $data = $request->post();
@@ -412,7 +365,7 @@ class Dispatcher implements SingletonInterface {
      * @return string
      */
     public function getRootObjectKey() {
-        $originalPath = $this->getOriginalPath();
+        $originalPath = $this->requestFactory->getRequest()->originalPath();
         /*
          * Transform Document URLs
          * @Todo: Make this better
@@ -440,7 +393,7 @@ class Dispatcher implements SingletonInterface {
      */
     public function getLogger() {
         if (!$this->logger) {
-            $this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
         return $this->logger;
     }
