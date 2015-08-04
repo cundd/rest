@@ -38,7 +38,6 @@ use Cundd\Rest\Test\AbstractCase;
 require_once __DIR__ . '/../AbstractCase.php';
 
 class ObjectManagerTest extends AbstractCase {
-
     /**
      * @var \Cundd\Rest\ObjectManager
      */
@@ -47,12 +46,22 @@ class ObjectManagerTest extends AbstractCase {
     public function setUp() {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
-        $this->fixture = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+        $this->fixture = new \Cundd\Rest\ObjectManager();
     }
 
     public function tearDown() {
+        // Reset the last request
+        $this->fixture->getRequestFactory()->resetRequest();
         unset($this->fixture);
         parent::tearDown();
+    }
+
+    /**
+     * @test
+     */
+    public function getRequestFactoryTest() {
+        $object = $this->fixture->getRequestFactory();
+        $this->assertInstanceOf('Cundd\\Rest\\RequestFactory', $object);
     }
 
     /**
