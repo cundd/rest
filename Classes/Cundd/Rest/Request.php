@@ -27,6 +27,11 @@ namespace Cundd\Rest;
 
 use Bullet\Request as BaseRequest;
 
+/**
+ * Specialized Request
+ *
+ * @package Cundd\Rest
+ */
 class Request extends BaseRequest {
     /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
@@ -45,6 +50,7 @@ class Request extends BaseRequest {
 
     /**
      * Initialize the request with the given path and original path
+     *
      * @param string $path
      * @param string $originalPath
      * @return $this
@@ -61,7 +67,6 @@ class Request extends BaseRequest {
         return $this;
     }
 
-
     /**
      * Returns the request path (eventually aliases have been mapped)
      *
@@ -69,18 +74,19 @@ class Request extends BaseRequest {
      */
     public function path() {
         if (!$this->path) {
-//            $uri = $this->url();
-//            $this->originalPath = $this->path = strtok($uri, '/');
-//
-//            // Check for path aliases
-//            $pathAlias = $this->getAliasForPath($this->path);
-//            if ($pathAlias) {
-//                $oldPath = $this->path;
-//
-//                // Update the URL
-//                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
-//                $this->path = $pathAlias;
-//            }
+            \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+            $uri = $this->url();
+            $this->originalPath = $this->path = strtok($uri, '/');
+
+            // Check for path aliases
+            $pathAlias = $this->getAliasForPath($this->path);
+            if ($pathAlias) {
+                $oldPath = $this->path;
+
+                // Update the URL
+                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
+                $this->path = $pathAlias;
+            }
         }
         return $this->path;
     }
@@ -153,6 +159,25 @@ class Request extends BaseRequest {
     }
 
     /**
+     * Returns the key to use for the root object if addRootObjectForCollection
+     * is enabled
+     *
+     * @return string
+     */
+    public function getRootObjectKey() {
+        $originalPath = $this->originalPath();
+        /*
+         * Transform Document URLs
+         * @Todo: Make this better
+         */
+        $documentApiPathLength = strlen(Dispatcher::API_PATH_DOCUMENT) + 1;
+        if (substr($originalPath, 0, $documentApiPathLength) === Dispatcher::API_PATH_DOCUMENT . '-') {
+            $originalPath = substr($originalPath, $documentApiPathLength);
+        }
+        return $originalPath;
+    }
+
+    /**
      * Check for an alias for the given path
      *
      * @param string $path
@@ -160,6 +185,7 @@ class Request extends BaseRequest {
      * @deprecated
      */
     public function getAliasForPath($path) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         if (!$this->configurationProvider) {
             return NULL;
         }
@@ -172,7 +198,8 @@ class Request extends BaseRequest {
      * @deprecated
      */
     public function injectConfigurationProvider($configurationProvider) {
-//        $this->configurationProvider = $configurationProvider;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        $this->configurationProvider = $configurationProvider;
     }
 
     /**

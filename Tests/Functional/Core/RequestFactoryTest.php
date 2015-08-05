@@ -114,6 +114,42 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
+    public function getOriginalPathTest() {
+        $_GET['u'] = 'MyExt-MyModel/1';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->originalPath());
+    }
+
+    /**
+     * @test
+     */
+    public function getOriginalPathWithFormatTest() {
+        $_GET['u'] = 'MyExt-MyModel/2.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->originalPath());
+    }
+
+    /**
+     * @test
+     */
+    public function getRootObjectKeyTest() {
+        $_GET['u'] = 'MyExt-MyModel/1';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
+    }
+
+    /**
+     * @test
+     */
+    public function getRootObjectKeyWithFormatTest() {
+        $_GET['u'] = 'MyExt-MyModel/2.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
+    }
+
+    /**
+     * @test
+     */
     public function getDocumentUriTest() {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
@@ -165,6 +201,42 @@ class RequestFactoryTest extends AbstractCase {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getOriginalPathWithDocumentTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1';
+        $path = $this->fixture->getRequest()->originalPath();
+        $this->assertEquals('Document-MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getOriginalPathWithDocumentWithFormatTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
+        $path = $this->fixture->getRequest()->originalPath();
+        $this->assertEquals('Document-MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getRootObjectKeyWithDocumentTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1';
+        $path = $this->fixture->getRequest()->getRootObjectKey();
+        $this->assertEquals('MyExt-MyModel', $path);
+    }
+
+    /**
+     * @test
+     */
+    public function getRootObjectKeyWithDocumentWithFormatTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
+        $path = $this->fixture->getRequest()->getRootObjectKey();
+        $this->assertEquals('MyExt-MyModel', $path);
     }
 
     /**

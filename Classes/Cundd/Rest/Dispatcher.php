@@ -295,6 +295,7 @@ class Dispatcher implements SingletonInterface {
      * @deprecated use getRequest()->path() instead
      */
     public function getPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->path();
     }
 
@@ -303,6 +304,7 @@ class Dispatcher implements SingletonInterface {
      * @deprecated use getRequest()->originalPath() instead
      */
     public function getOriginalPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->originalPath();
     }
 
@@ -314,6 +316,7 @@ class Dispatcher implements SingletonInterface {
      * @deprecated use the RequestFactory::getUri() instead
      */
     public function getUri(&$format = '') {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getUri($format);
     }
 
@@ -363,18 +366,11 @@ class Dispatcher implements SingletonInterface {
      * is enabled
      *
      * @return string
+     * @deprecated use the request's getRootObjectKey()
      */
     public function getRootObjectKey() {
-        $originalPath = $this->requestFactory->getRequest()->originalPath();
-        /*
-         * Transform Document URLs
-         * @Todo: Make this better
-         */
-        $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
-        if (substr($originalPath, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '-') {
-            $originalPath = substr($originalPath, $documentApiPathLength);
-        }
-        return $originalPath;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getRootObjectKey();
     }
 
     /**
