@@ -16,6 +16,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
      * @var Request
      */
     protected $fixture;
+
     /**
      * @inheritDoc
      */
@@ -24,8 +25,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
 
         $uri = 'MyAliasedModel' . time();
         $path = strtok($uri, '/');
-        $request = new \Cundd\Rest\Request(NULL, $uri);
-        $request->initWithPathAndOriginalPath($path, $path);
+        $this->fixture = new \Cundd\Rest\Request(NULL, $uri);
+        $this->fixture->initWithPathAndOriginalPath($path, $path);
     }
 
     /**
@@ -33,10 +34,12 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
      */
     public function getSentDataTest() {
         $testData = array(
-            'name' => 'Blur',
-            'time' => time()
+            'myData' => array(
+                'name' => 'Blur',
+                'time' => time(),
+            )
         );
-        $_POST['myData'] = $testData;
+        $_POST['myData'] = $testData['myData'];
         $this->assertSame($testData, $this->fixture->getSentData());
     }
 }
