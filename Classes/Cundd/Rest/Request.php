@@ -26,6 +26,7 @@
 namespace Cundd\Rest;
 
 use Bullet\Request as BaseRequest;
+use Cundd\Rest\DataProvider\Utility;
 
 /**
  * Specialized Request
@@ -101,6 +102,29 @@ class Request extends BaseRequest {
             return $this->path();
         }
         return $this->originalPath;
+    }
+
+    /**
+     * Returns the sent data
+     *
+     * @return mixed
+     */
+    public function getSentData() {
+        $data = $this->post();
+        /*
+         * If no form url-encoded body is sent check if a JSON
+         * payload is sent with the singularized root object key as
+         * the payload's root object key
+         */
+        if (!$data) {
+            $data = $this->get(
+                Utility::singularize($this->getRootObjectKey())
+            );
+            if (!$data) {
+                $data = json_decode($this->raw(), TRUE);
+            }
+        }
+        return $data;
     }
 
     /**

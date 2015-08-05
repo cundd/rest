@@ -30,22 +30,6 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
     public function buildRequestWithUri($uri, $format = null) {
         $uri = filter_var($uri, FILTER_SANITIZE_URL);
 
-//        // Strip the format from the URI
-//        $resourceName = basename($uri);
-//        $lastDotPosition = strrpos($resourceName, '.');
-//        if ($lastDotPosition !== FALSE) {
-//            $newUri = '';
-//            if ($uri !== $resourceName) {
-//                $newUri = dirname($uri) . '/';
-//            }
-//            $newUri .= substr($resourceName, 0, $lastDotPosition);
-//            $uri = $newUri;
-//
-//            $format = substr($resourceName, $lastDotPosition + 1);
-//        }
-
-
-
         $path = strtok($uri, '/');
 
         $request = new \Cundd\Rest\Request(NULL, $uri);

@@ -339,26 +339,11 @@ class Dispatcher implements SingletonInterface {
      * Returns the sent data
      *
      * @return mixed
+     * @deprecated use the request's getSentData()
      */
     public function getSentData() {
-        $request = $this->requestFactory->getRequest();
-
-        /** @var \Cundd\Rest\Request $request */
-        $data = $request->post();
-        /*
-         * If no form url-encoded body is sent check if a JSON
-         * payload is sent with the singularized root object key as
-         * the payload's root object key
-         */
-        if (!$data) {
-            $data = $request->get(
-                Utility::singularize($this->getRootObjectKey())
-            );
-            if (!$data) {
-                $data = json_decode($request->raw(), TRUE);
-            }
-        }
-        return $data;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getSentData();
     }
 
     /**
