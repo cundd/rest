@@ -108,9 +108,6 @@ class RequestFactory implements SingletonInterface {
      * @return string
      */
     public function getAliasForPath($path) {
-        if (!$this->configurationProvider) {
-            return NULL;
-        }
         return $this->configurationProvider->getSetting('aliases.' . $path);
     }
 

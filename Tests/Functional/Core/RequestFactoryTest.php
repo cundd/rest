@@ -48,10 +48,21 @@ class RequestFactoryTest extends AbstractCase {
     public function setUp() {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
-        $this->fixture = new \Cundd\Rest\RequestFactory();
-        $this->fixture->injectConfigurationProvider(
-            $this->objectManager->get('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
+
+        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProviderMock */
+        $configurationProviderMock = $this->getMockBuilder('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
+            ->getMock();
+
+        $valueMap = array(
+            array('aliases.myAlias', 'MyExt-MyModel'),
         );
+        $configurationProviderMock
+            ->expects($this->any())
+            ->method('getSetting')
+            ->will($this->returnValueMap($valueMap));
+
+        $this->fixture = new \Cundd\Rest\RequestFactory();
+        $this->fixture->injectConfigurationProvider($configurationProviderMock);
     }
 
     public function tearDown() {
@@ -75,6 +86,26 @@ class RequestFactoryTest extends AbstractCase {
      */
     public function getUriWithFormatTest() {
         $_GET['u'] = 'MyExt-MyModel/2.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel/2', $request->url());
+        $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getAliasUriTest() {
+        $_GET['u'] = 'myAlias/1';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $this->assertEquals('html', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getAliasUriWithFormatTest() {
+        $_GET['u'] = 'myAlias/2.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/2', $request->url());
         $this->assertEquals('json', $request->format());
