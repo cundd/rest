@@ -35,6 +35,7 @@ namespace Cundd\Rest;
 use Bullet\App;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Traversable;
 
 /**
  * Handler for requests
@@ -90,6 +91,9 @@ class Handler implements CrudHandlerInterface {
      * @return \Cundd\Rest\Request
      */
     public function getRequest() {
+        if (!$this->request) {
+            return $this->objectManager->getRequestFactory()->getRequest();
+        }
         return $this->request;
     }
 
@@ -138,7 +142,6 @@ class Handler implements CrudHandlerInterface {
         /* SHOW
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         //$getCallback = function($request) use($uid, $dispatcher, $app) {
-        $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
@@ -147,7 +150,7 @@ class Handler implements CrudHandlerInterface {
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($dispatcher->getRootObjectKey()) => $result
+                Utility::singularize($this->getRequest()->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -162,14 +165,14 @@ class Handler implements CrudHandlerInterface {
         $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
-        /** @var \Cundd\Rest\Request $request */
-        $data = $dispatcher->getSentData();
+        $request = $this->getRequest();
+        $data = $request->getSentData();
         $data['__identity'] = $this->getIdentifier();
         $dispatcher->logRequest('update request', array('body' => $data));
 
         $oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$oldModel) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
+            return $dispatcher->createSuccessResponse(NULL, 404);
         }
 
         /**
@@ -177,14 +180,14 @@ class Handler implements CrudHandlerInterface {
          */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 400);
+            return $dispatcher->createSuccessResponse(NULL, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($dispatcher->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -199,22 +202,22 @@ class Handler implements CrudHandlerInterface {
         $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
-        /** @var \Cundd\Rest\Request $request */
-        $data = $dispatcher->getSentData();
+        $request = $this->getRequest();
+        $data = $request->getSentData();
         $data['__identity'] = $this->getIdentifier();
         $dispatcher->logRequest('update request', array('body' => $data));
 
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
+            return $dispatcher->createSuccessResponse(NULL, 404);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($dispatcher->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -250,8 +253,8 @@ class Handler implements CrudHandlerInterface {
         $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
-        /** @var \Cundd\Rest\Request $request */
-        $data = $dispatcher->getSentData();
+        $request = $this->getRequest();
+        $data = $request->getSentData();
         $dispatcher->logRequest('create request', array('body' => $data));
 
         /**
@@ -259,14 +262,14 @@ class Handler implements CrudHandlerInterface {
          */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 400);
+            return $dispatcher->createSuccessResponse(NULL, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($dispatcher->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -281,18 +284,17 @@ class Handler implements CrudHandlerInterface {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* LIST 																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
         $allModels = $dataProvider->getAllModelsForPath($this->getPath());
-        if (!is_array($allModels)) {
+        if (!is_array($allModels) && $allModels instanceof Traversable) {
             $allModels = iterator_to_array($allModels);
         }
 
         $result = array_map(array($dataProvider, 'getModelData'), $allModels);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                $dispatcher->getRootObjectKey() => $result
+                $this->getRequest()->getRootObjectKey() => $result
             );
         }
         return $result;
@@ -390,11 +392,11 @@ class Handler implements CrudHandlerInterface {
     }
 
     /**
-     * Returns the current request path
+     * Returns the current request's path
      *
      * @return string
      */
     protected function getPath() {
-        return $this->getRequest() ? $this->getRequest()->path() : Dispatcher::getSharedDispatcher()->getRequest()->path();
+        return $this->getRequest()->path();
     }
 }
