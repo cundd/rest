@@ -93,7 +93,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      *
      * @param Request $request
      * @return $this
-     * @internal
      */
     public function registerCurrentRequest($request) {
         $this->resetRequest();

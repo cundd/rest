@@ -33,7 +33,6 @@ interface RequestFactoryInterface {
      *
      * @param Request $request
      * @return $this
-     * @internal
      */
     public function registerCurrentRequest($request);
 
