@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
@@ -55,7 +56,7 @@ class DispatcherTest extends AbstractCase {
     }
 
     public function tearDown() {
-        /** @var \Cundd\Rest\RequestFactory $requestFactory */
+        /** @var RequestFactoryInterface $requestFactory */
         $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
         $requestFactory->resetRequest();
         unset($this->fixture);

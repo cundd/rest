@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
@@ -41,7 +42,7 @@ require_once __DIR__ . '/../AbstractCase.php';
  */
 class RequestFactoryTest extends AbstractCase {
     /**
-     * @var \Cundd\Rest\RequestFactory
+     * @var RequestFactoryInterface
      */
     protected $fixture;
 

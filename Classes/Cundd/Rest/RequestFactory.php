@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package Cundd\Rest
  */
-class RequestFactory implements SingletonInterface {
+class RequestFactory implements SingletonInterface, RequestFactoryInterface {
     /**
      * API path
      *

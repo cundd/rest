@@ -73,7 +73,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the configuration provider
      *
-     * @return \Cundd\Rest\RequestFactory
+     * @return RequestFactoryInterface
      */
     public function getRequestFactory() {
         return $this->get('Cundd\\Rest\\RequestFactory');
