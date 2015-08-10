@@ -61,7 +61,17 @@ class ObjectManagerTest extends AbstractCase {
      */
     public function getRequestFactoryTest() {
         $object = $this->fixture->getRequestFactory();
+        $this->assertInstanceOf('Cundd\\Rest\\RequestFactoryInterface', $object);
         $this->assertInstanceOf('Cundd\\Rest\\RequestFactory', $object);
+    }
+
+    /**
+     * @test
+     */
+    public function getResponseFactoryTest() {
+        $object = $this->fixture->getResponseFactory();
+        $this->assertInstanceOf('Cundd\\Rest\\ResponseFactoryInterface', $object);
+        $this->assertInstanceOf('Cundd\\Rest\\ResponseFactory', $object);
     }
 
     /**

@@ -49,6 +49,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
     /**
      * Configuration provider
+     *
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
@@ -71,12 +72,21 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     }
 
     /**
-     * Returns the configuration provider
+     * Returns the Request Factory
      *
      * @return RequestFactoryInterface
      */
     public function getRequestFactory() {
-        return $this->get('Cundd\\Rest\\RequestFactory');
+        return $this->get('Cundd\\Rest\\RequestFactoryInterface');
+    }
+
+    /**
+     * Returns the Response Factory
+     *
+     * @return ResponseFactoryInterface
+     */
+    public function getResponseFactory() {
+        return $this->get('Cundd\\Rest\\ResponseFactoryInterface');
     }
 
     /**
@@ -108,6 +118,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
     /**
      * Returns the Authentication Provider
+     *
      * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
      */
     public function getAuthenticationProvider() {
@@ -138,6 +149,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
     /**
      * Returns the Access Controller
+     *
      * @return \Cundd\Rest\Access\AccessControllerInterface
      */
     public function getAccessController() {

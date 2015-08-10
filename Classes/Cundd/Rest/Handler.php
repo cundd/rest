@@ -65,12 +65,24 @@ class Handler implements CrudHandlerInterface {
     protected $objectManager;
 
     /**
+     * @var \Cundd\Rest\ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
+    /**
      * Inject the object manager instance
      *
      * @param \Cundd\Rest\ObjectManager $objectManager
      */
     public function injectObjectManager(\Cundd\Rest\ObjectManager $objectManager) {
         $this->objectManager = $objectManager;
+    }
+
+    /**
+     * @param \Cundd\Rest\ResponseFactoryInterface $responseFactory
+     */
+    public function injectResponseFActory(\Cundd\Rest\ResponseFactoryInterface $responseFactory) {
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -127,7 +139,7 @@ class Handler implements CrudHandlerInterface {
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
         return $dataProvider->getModelProperty($model, $propertyKey);
     }
@@ -145,7 +157,7 @@ class Handler implements CrudHandlerInterface {
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
@@ -172,7 +184,7 @@ class Handler implements CrudHandlerInterface {
 
         $oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$oldModel) {
-            return $dispatcher->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
 
         /**
@@ -180,7 +192,7 @@ class Handler implements CrudHandlerInterface {
          */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return $dispatcher->createSuccessResponse(NULL, 400);
+            return $this->responseFactory->createSuccessResponse(NULL, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
@@ -210,7 +222,7 @@ class Handler implements CrudHandlerInterface {
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
         if (!$model) {
-            return $dispatcher->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
@@ -235,10 +247,10 @@ class Handler implements CrudHandlerInterface {
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
         $dataProvider->removeModelForPath($model, $this->getPath());
-        return Dispatcher::getSharedDispatcher()->createSuccessResponse(NULL, 200);
+        return $this->responseFactory->createSuccessResponse(NULL, 200);
     }
 
     /**
@@ -262,7 +274,7 @@ class Handler implements CrudHandlerInterface {
          */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return $dispatcher->createSuccessResponse(NULL, 400);
+            return $this->responseFactory->createSuccessResponse(NULL, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());

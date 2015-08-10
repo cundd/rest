@@ -10,6 +10,7 @@ namespace Cundd\Rest;
 
 /**
  * Interface for the specialized Object Manager
+ *
  * @package Cundd\Rest
  */
 interface ObjectManagerInterface {
@@ -28,21 +29,29 @@ interface ObjectManagerInterface {
     public function getRequestFactory();
 
     /**
+     * Returns the Response Factory
+     *
+     * @return ResponseFactoryInterface
+     */
+    public function getResponseFactory();
+
+    /**
      * Returns the data provider
      *
-     * @throws Exception if the dispatcher is not set
      * @return \Cundd\Rest\DataProvider\DataProviderInterface
      */
     public function getDataProvider();
 
     /**
      * Returns the Authentication Provider
+     *
      * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
      */
     public function getAuthenticationProvider();
 
     /**
      * Returns the Access Controller
+     *
      * @return \Cundd\Rest\Access\AccessControllerInterface
      */
     public function getAccessController();

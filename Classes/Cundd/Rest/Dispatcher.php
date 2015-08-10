@@ -63,6 +63,11 @@ class Dispatcher implements SingletonInterface {
     protected $requestFactory;
 
     /**
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
+    /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
@@ -82,6 +87,7 @@ class Dispatcher implements SingletonInterface {
 
         $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
         $this->requestFactory = $this->objectManager->getRequestFactory();
+        $this->responseFactory = $this->objectManager->getResponseFactory();
 
         self::$sharedDispatcher = $this;
     }
@@ -112,12 +118,12 @@ class Dispatcher implements SingletonInterface {
                 break;
 
             case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-                echo $this->createErrorResponse('Unauthorized', 401);
+                echo $this->responseFactory->createErrorResponse('Unauthorized', 401);
                 return FALSE;
 
             case AccessControllerInterface::ACCESS_DENY:
             default:
-                echo $this->createErrorResponse('Forbidden', 403);
+                echo $this->responseFactory->createErrorResponse('Forbidden', 403);
                 return FALSE;
         }
 
@@ -195,9 +201,9 @@ class Dispatcher implements SingletonInterface {
      */
     public function exceptionToResponse($exception) {
         if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
-            return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+            return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
         }
-        return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+        return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
     }
 
     /**
@@ -206,9 +212,11 @@ class Dispatcher implements SingletonInterface {
      * @param string|array $data
      * @param int $status
      * @return Response
+     * @deprecated use ResponseFactory->createErrorResponse()
      */
     public function createErrorResponse($data, $status) {
-        return $this->_createResponse($data, $status, TRUE);
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createErrorResponse($data, $status);
     }
 
     /**
@@ -217,9 +225,11 @@ class Dispatcher implements SingletonInterface {
      * @param string|array $data
      * @param int $status
      * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse()
      */
     public function createSuccessResponse($data, $status) {
-        return $this->_createResponse($data, $status);
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createSuccessResponse($data, $status);
     }
 
     /**
@@ -229,53 +239,13 @@ class Dispatcher implements SingletonInterface {
      * @param int $status Status code of the response
      * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
      * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
      */
     protected function _createResponse($data, $status, $forceError = FALSE) {
-        $body = NULL;
-        $response = new Response(NULL, $status);
-        $format = $this->requestFactory->getRequest()->format();
-        if (!$format) {
-            $format = 'json';
-        }
-
-        $messageKey = 'message';
-        if ($forceError || $status >= 400) {
-            $messageKey = 'error';
-        }
-
-        switch ($format) {
-            case 'json':
-
-                switch (gettype($data)) {
-                    case 'string':
-                        $body = array(
-                            $messageKey => $data
-                        );
-                        break;
-
-                    case 'array':
-                        $body = $data;
-                        break;
-
-                    case 'NULL':
-                        $body = array(
-                            $messageKey => $response->statusText($status)
-                        );
-                        break;
-                }
-
-                $response->contentType('application/json');
-                $response->content(json_encode($body));
-                break;
-
-            case 'xml':
-                // TODO: support more response formats
-
-            default:
-                $body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->requestFactory->getRequest()->format());
-                $response->content($body);
-        }
-        return $response;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->responseFactory;
+        return $responseFactory->createResponse($data, $status, $forceError);
     }
 
     /**
