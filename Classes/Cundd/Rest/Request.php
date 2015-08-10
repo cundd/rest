@@ -222,7 +222,6 @@ class Request extends BaseRequest {
      * @deprecated
      */
     public function injectConfigurationProvider($configurationProvider) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         $this->configurationProvider = $configurationProvider;
     }
 
