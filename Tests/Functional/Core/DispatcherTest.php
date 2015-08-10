@@ -30,9 +30,6 @@ use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
-class DummyObject {
-}
-
 /**
  * Test case for class new \Cundd\Rest\App
  *

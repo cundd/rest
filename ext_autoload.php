@@ -36,4 +36,3 @@ $extensionPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('re
 return array(
 	'Cundd\\Rest\\Command\\RestCommandController' => $extensionPath . 'Classes/Cundd/Rest/Command/RestCommandController.php',
 );
-?>

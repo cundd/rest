@@ -26,7 +26,7 @@
 namespace Cundd\Rest\Test\Core;
 
 require_once __DIR__ . '/../AbstractCase.php';
-use Cundd\Rest\Request;
+
 use Cundd\Rest\Test\AbstractCase;
 
 

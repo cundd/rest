@@ -173,9 +173,12 @@ class AuthHandler implements HandlerInterface {
                 };
                 $app->get($getCallback);
 
+                /**
+                 * @param Request $request
+                 * @return array
+                 */
                 $loginCallback = function ($request) use ($handler) {
-                    $dispatcher = Dispatcher::getSharedDispatcher();
-                    return $handler->checkLogin($dispatcher->getSentData());
+                    return $handler->checkLogin($request->getSentData());
                 };
                 $app->post($loginCallback);
             });
