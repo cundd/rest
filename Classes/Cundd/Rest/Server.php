@@ -77,7 +77,7 @@ class Server {
         $httpServer->on('request', array($this, 'serverCallback'));
         $socketServer->listen($this->port, $this->host);
 
-        fwrite(STDOUT, 'Starting server at ' . $this->host . ':' . $this->port);
+        fwrite(STDOUT, 'Starting experimental server at ' . $this->host . ':' . $this->port);
 
         $loop->run();
     }
@@ -96,8 +96,17 @@ class Server {
             return;
         }
 
-        /** @var \Cundd\Rest\Request $restRequest */
-        $restRequest = new \Cundd\Rest\Request($request->getMethod(), $this->sanitizePath($request->getPath()));
+        $requestPath = $this->sanitizePath($request->getPath());
+        $requestPath = substr($requestPath, 5);
+        /** @var Request $restRequest */
+        $restRequest = new Request(
+            $request->getMethod(),
+            $requestPath,
+            $request->getQuery(),
+            $request->getHeaders()
+        );
+        $path = '' . strtok($requestPath, '/');
+        $restRequest->initWithPathAndOriginalPath($path, $path);
         $this->setServerGlobals($request);
 
         /** @var \Bullet\Response $restResponse */
@@ -105,10 +114,15 @@ class Server {
 
         ob_start();
         $this->app->dispatch($restRequest, $restResponse);
-        ob_end_clean();
+        $responseString = ob_get_clean();
 
-        $response->writeHead($restResponse->status(), $this->getHeadersFromResponse($restResponse));
-        $response->end($restResponse->content());
+        if (!$restResponse) {
+            $response->writeHead(200);
+            $response->end($responseString);
+        } else {
+            $response->writeHead($restResponse->status(), $this->getHeadersFromResponse($restResponse));
+            $response->end($restResponse->content());
+        }
 
         unset($restRequest);
         unset($restResponse);
