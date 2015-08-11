@@ -28,10 +28,10 @@
  * Created 10.12.13 09:21
  */
 
-namespace Cundd\Rest\Test\Core;
+namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Cache\Cache;
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -124,6 +124,7 @@ class CacheTest extends AbstractCase {
         $uri = 'MyAliasedModel' . time();
         $request = $this->buildRequestWithUri($uri);
 
+        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
         $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
         $this->fixture->setCacheInstance($cacheInstance);
         $cachedValue = $this->fixture->getCachedValueForRequest($request);
@@ -145,6 +146,7 @@ class CacheTest extends AbstractCase {
 
         $request = $this->buildRequestWithUri($uri);
 
+        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
         $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
         $cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
         $this->fixture->setCacheInstance($cacheInstance);
@@ -163,6 +165,7 @@ class CacheTest extends AbstractCase {
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
 
+        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
         $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
         $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
         $this->fixture->setCacheInstance($cacheInstance);

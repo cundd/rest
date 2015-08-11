@@ -6,7 +6,7 @@
  * Time: 12:45
  */
 
-namespace Cundd\Rest\Test;
+namespace Cundd\Rest\Tests\Functional;
 
 require_once __DIR__ . '/../Bootstrap.php';
 

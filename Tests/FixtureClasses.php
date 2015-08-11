@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Test\Core;
+namespace Cundd\Rest\Tests;
 
 use Cundd\Rest\HandlerInterface;
 
@@ -63,7 +63,7 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     protected $date = NULL;
 
     /**
-     * @var \Cundd\Rest\Test\Core\MyModel
+     * @var \Cundd\Rest\Tests\MyModel
      */
     protected $child = NULL;
 
@@ -88,14 +88,14 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     }
 
     /**
-     * @param \Cundd\Rest\Test\Core\MyModel $child
+     * @param \Cundd\Rest\Tests\MyModel $child
      */
     public function setChild($child) {
         $this->child = $child;
     }
 
     /**
-     * @return \Cundd\Rest\Test\Core\MyModel
+     * @return \Cundd\Rest\Tests\MyModel
      */
     public function getChild() {
         return $this->child;
@@ -147,5 +147,5 @@ class MyHandler implements HandlerInterface {
 
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
-class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Tx_MyExt_Rest_Handler');
-class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Vendor\\MySecondExt\\Rest\\Handler');
+class_alias('Cundd\\Rest\\Tests\\MyHandler', 'Tx_MyExt_Rest_Handler');
+class_alias('Cundd\\Rest\\Tests\\MyHandler', 'Vendor\\MySecondExt\\Rest\\Handler');

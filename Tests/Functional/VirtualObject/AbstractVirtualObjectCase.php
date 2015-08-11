@@ -30,9 +30,9 @@
  * Time: 12:27
  */
 
-namespace Cundd\Rest\Test\VirtualObject;
+namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\VirtualObject\Configuration;
 
 require_once __DIR__ . '/../AbstractCase.php';

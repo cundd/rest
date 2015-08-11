@@ -6,11 +6,11 @@
  * Time: 15:03
  */
 
-namespace Cundd\Rest\Test\Authentication;
+namespace Cundd\Rest\Tests\Functional\Authentication;
 
 use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 

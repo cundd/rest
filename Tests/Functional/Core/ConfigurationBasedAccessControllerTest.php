@@ -23,11 +23,11 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Test\Core;
+namespace Cundd\Rest\Tests\Functional\Core;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 
 
 class ConfigurationBasedAccessControllerTest extends AbstractCase {

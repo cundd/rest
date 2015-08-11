@@ -30,7 +30,7 @@
  * Time: 12:27
  */
 
-namespace Cundd\Rest\Test\VirtualObject;
+namespace Cundd\Rest\Tests\Unit\VirtualObject;
 
 use Cundd\Rest\VirtualObject\VirtualObject;
 

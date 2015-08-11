@@ -6,7 +6,7 @@
  * Time: 22:03
  */
 
-namespace Cundd\Rest\Test;
+namespace Cundd\Rest\Tests\Unit\Core;
 
 
 use Cundd\Rest\Request;

@@ -31,9 +31,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace Cundd\Rest\Test\Core;
+namespace Cundd\Rest\Tests\Functional\Core;
 
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 

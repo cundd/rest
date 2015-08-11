@@ -30,7 +30,7 @@
  * Time: 16:11
  */
 
-namespace Cundd\Rest\Test\VirtualObject;
+namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 

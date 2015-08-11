@@ -30,7 +30,7 @@
  * Time: 11:09
  */
 
-namespace Cundd\Rest\Test\VirtualObject;
+namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 
@@ -90,6 +90,7 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
 
         $typoScriptDummyArray = $this->typoScriptDummyArray;
 
+        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $typeScriptConfigurationStub */
         $typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
         $typeScriptConfigurationStub->expects($this->any())
             ->method('getSetting')

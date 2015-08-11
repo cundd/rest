@@ -23,9 +23,12 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Test\Core;
+namespace Cundd\Rest\Tests\Functional\Core;
 
-use Cundd\Rest\Test\AbstractCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\MyModel;
+use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
+use Cundd\Rest\Tests\MyNestedModel;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -45,33 +48,29 @@ class DataProviderTest extends AbstractCase {
      */
     protected $fixture;
 
-    static public function setUpBeforeClass() {
-
-    }
-
     public function setUp() {
         parent::setUp();
 
         require_once __DIR__ . '/../../FixtureClasses.php';
         if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
-            class_alias('\\Cundd\\Rest\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
         }
         if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
         }
 
         if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
         }
         if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
         }
 
         if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
         }
         if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+            class_alias('\\Cundd\\Rest\\Tests\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
         }
 
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
@@ -87,10 +86,11 @@ class DataProviderTest extends AbstractCase {
      */
     public function getRepositoryForPathTest() {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
+
 
         $repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
     }
 
     /**
@@ -98,10 +98,10 @@ class DataProviderTest extends AbstractCase {
      */
     public function getNamespacedRepositoryForPathTest() {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
 
         $repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
     }
 
     /**
@@ -120,10 +120,10 @@ class DataProviderTest extends AbstractCase {
      */
     public function getModelForPathTest() {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
 
         $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
     }
 
     /**
@@ -131,10 +131,10 @@ class DataProviderTest extends AbstractCase {
      */
     public function getNamespacedModelForPathTest() {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
 
         $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Test\\Core\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
     }
 
     /**
@@ -155,7 +155,7 @@ class DataProviderTest extends AbstractCase {
         $data = array();
         $path = 'MyExt-MyModel';
 
-        /** @var \Cundd\Rest\Test\Core\MyModel $model */
+        /** @var \Cundd\Rest\Tests\MyModel $model */
         $model = $this->fixture->getModelWithDataForPath($data, $path);
         $this->assertEquals('Initial value', $model->getName());
     }
@@ -169,7 +169,7 @@ class DataProviderTest extends AbstractCase {
         $data = array('name' => 'Daniel Corn');
         $path = 'MyExt-MyModel';
 
-        /** @var \Cundd\Rest\Test\Core\MyModel $model */
+        /** @var \Cundd\Rest\Tests\MyModel $model */
         $model = $this->fixture->getModelWithDataForPath($data, $path);
         $this->assertEquals('Daniel Corn', $model->getName());
     }
@@ -183,7 +183,7 @@ class DataProviderTest extends AbstractCase {
         $data = array('name' => 'Daniel Corn', '__identity' => 9);
         $path = 'MyExt-MyModel';
 
-        /** @var \Cundd\Rest\Test\Core\MyModel $model */
+        /** @var \Cundd\Rest\Tests\MyModel $model */
         $model = $this->fixture->getModelWithDataForPath($data, $path);
         $this->assertEquals('Daniel Corn', $model->getName());
         $this->assertEquals(9, $model->getUid());
@@ -200,7 +200,7 @@ class DataProviderTest extends AbstractCase {
                 'name' => 'Initial value',
                 'uid' => NULL,
                 'pid' => NULL,
-                '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+                '__class' => 'Cundd\\Rest\\Tests\\MyModel'
             ), $properties);
     }
 
@@ -223,9 +223,9 @@ class DataProviderTest extends AbstractCase {
                     'name' => 'Initial value',
                     'uid' => NULL,
                     'pid' => NULL,
-                    '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+                    '__class' => 'Cundd\\Rest\\Tests\\MyModel'
                 ),
-                '__class' => 'Cundd\\Rest\\Test\\Core\\MyNestedModel'
+                '__class' => 'Cundd\\Rest\\Tests\\MyNestedModel'
             ), $properties);
     }
 
@@ -242,9 +242,9 @@ class DataProviderTest extends AbstractCase {
                     'name' => 'Initial value',
                     'uid' => NULL,
                     'pid' => NULL,
-                    '__class' => 'Cundd\\Rest\\Test\\Core\\MyModel'
+                    '__class' => 'Cundd\\Rest\\Tests\\MyModel'
                 ),
-                '__class' => 'Cundd\\Rest\\Test\\Core\\MyNestedJsonSerializeModel'
+                '__class' => 'Cundd\\Rest\\Tests\\MyNestedJsonSerializeModel'
             ), $properties);
     }
 
