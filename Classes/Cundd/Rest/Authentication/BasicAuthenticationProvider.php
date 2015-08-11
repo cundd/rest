@@ -32,33 +32,37 @@ namespace Cundd\Rest\Authentication;
  * @package Cundd\Rest\Authentication
  */
 class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
-    /**
-     * Provider that will check the user credentials
-     *
-     * @var \Cundd\Rest\Authentication\UserProviderInterface
-     * @inject
-     */
-    protected $userProvider;
+	/**
+	 * Provider that will check the user credentials
+	 *
+	 * @var \Cundd\Rest\Authentication\UserProviderInterface
+	 * @inject
+	 */
+	protected $userProvider;
 
-    /**
-     * Tries to authenticate the current request
-     * @return bool Returns if the authentication was successful
-     */
-    public function authenticate() {
-        $username = NULL;
-        $password = NULL;
+	/**
+	 * Tries to authenticate the current request
+	 * @return bool Returns if the authentication was successful
+	 */
+	public function authenticate() {
+		$username = NULL;
+		$password = NULL;
 
-        // mod_php
-        if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $username = $_SERVER['PHP_AUTH_USER'];
-            $password = $_SERVER['PHP_AUTH_PW'];
+		// mod_php
+		if (isset($_SERVER['PHP_AUTH_USER'])) {
+			$username = $_SERVER['PHP_AUTH_USER'];
+			$password = $_SERVER['PHP_AUTH_PW'];
 
-            // most other servers
-        } elseif (isset($_SERVER['HTTP_AUTHENTICATION'])) {
-            if (strpos(strtolower($_SERVER['HTTP_AUTHENTICATION']), 'basic') === 0) {
-                list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHENTICATION'], 6)));
-            }
-        }
-        return $this->userProvider->checkCredentials($username, $password);
-    }
+		// most other servers
+		} elseif (isset($_SERVER['HTTP_AUTHENTICATION'])) {
+			if (strpos(strtolower($_SERVER['HTTP_AUTHENTICATION']), 'basic') === 0) {
+				list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHENTICATION'], 6)));
+			}
+		} elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+			if (strpos(strtolower($_SERVER['REDIRECT_HTTP_AUTHORIZATION']), 'basic') === 0) {
+				list($username, $password) = explode(':', base64_decode(substr($_SERVER['REDIRECT_HTTP_AUTHORIZATION'], 6)));
+			}
+		}
+		return $this->userProvider->checkCredentials($username, $password);
+	}
 }

@@ -7,7 +7,6 @@ php:
 
 env:
   - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-  - TYPO3=TYPO3_7-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes

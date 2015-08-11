@@ -55,7 +55,7 @@ class RequestFactoryTest extends AbstractCase {
             ->getMock();
 
         $valueMap = array(
-            array('aliases.myAlias', 'MyExt-MyModel'),
+            array('aliases.myAlias', null, 'MyExt-MyModel'),
         );
         $configurationProviderMock
             ->expects($this->any())

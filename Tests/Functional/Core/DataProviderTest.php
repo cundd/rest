@@ -168,8 +168,6 @@ class DataProviderTest extends AbstractCase {
         $this->markTestSkipped('The test is currently failing because of a missing type converter');
         $data = array('name' => 'Daniel Corn');
         $path = 'MyExt-MyModel';
-
-        /** @var \Cundd\Rest\Test\Core\MyModel $model */
         $model = $this->fixture->getModelWithDataForPath($data, $path);
         $this->assertEquals('Daniel Corn', $model->getName());
     }
@@ -182,8 +180,6 @@ class DataProviderTest extends AbstractCase {
         $this->markTestSkipped('The test is currently failing because of a missing type converter');
         $data = array('name' => 'Daniel Corn', '__identity' => 9);
         $path = 'MyExt-MyModel';
-
-        /** @var \Cundd\Rest\Test\Core\MyModel $model */
         $model = $this->fixture->getModelWithDataForPath($data, $path);
         $this->assertEquals('Daniel Corn', $model->getName());
         $this->assertEquals(9, $model->getUid());
