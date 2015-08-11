@@ -32,9 +32,14 @@ use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
+/**
+ * DataProvider instance
+ *
+ * @package Cundd\Rest\DataProvider
+ */
 class DataProvider implements DataProviderInterface {
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var \Cundd\Rest\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
@@ -90,6 +95,7 @@ class DataProvider implements DataProviderInterface {
 	 */
 	public function getRepositoryForPath($path) {
 		$repositoryClass = $this->getRepositoryClassForPath($path);
+		/** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
 		$repository = $this->objectManager->get($repositoryClass);
 		$repository->setDefaultQuerySettings($this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings'));
 		return $repository;
@@ -215,7 +221,7 @@ class DataProvider implements DataProviderInterface {
 	 * @return array<mixed>
 	 */
 	public function getModelData($model) {
-		$doNotAddClass = (bool)$this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider()->getSetting('doNotAddClass', 0);
+		$doNotAddClass = (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0);
 		$properties = NULL;
 		if (is_object($model)) {
 			// Get the data from the model
