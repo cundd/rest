@@ -191,4 +191,16 @@ SQL;
         $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
         $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
     }
+
+    /**
+     * Get DatabaseConnection instance - $GLOBALS['TYPO3_DB']
+     *
+     * This method should be used instead of direct access to
+     * $GLOBALS['TYPO3_DB'] for easy IDE auto completion.
+     *
+     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     */
+    protected function getDatabaseConnection() {
+        return $GLOBALS['TYPO3_DB'];
+    }
 }

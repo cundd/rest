@@ -113,7 +113,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      */
     public function setRequest(\Cundd\Rest\Request $request) {
         parent::setRequest($request);
-        $this->write = -1;
     }
 
 

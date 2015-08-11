@@ -82,6 +82,12 @@ class AuthHandler implements HandlerInterface {
     protected $userProvider;
 
     /**
+     * @var \Cundd\Rest\RequestFactoryInterface
+     * @inject
+     */
+    protected $requestFactory;
+
+    /**
      * Sets the current request
      *
      * @param \Cundd\Rest\Request $request
@@ -98,6 +104,9 @@ class AuthHandler implements HandlerInterface {
      * @return \Cundd\Rest\Request
      */
     public function getRequest() {
+        if (!$this->request) {
+            return $this->requestFactory->getRequest();
+        }
         return $this->request;
     }
 
@@ -164,7 +173,7 @@ class AuthHandler implements HandlerInterface {
         /** @var AuthHandler */
         $handler = $this;
 
-        $app->path($dispatcher->getPath(), function ($request) use ($handler, $app) {
+        $app->path($this->getRequest()->path(), function ($request) use ($handler, $app) {
             $handler->setRequest($request);
 
             $app->path('login', function ($request) use ($handler, $app) {
@@ -173,9 +182,12 @@ class AuthHandler implements HandlerInterface {
                 };
                 $app->get($getCallback);
 
+                /**
+                 * @param Request $request
+                 * @return array
+                 */
                 $loginCallback = function ($request) use ($handler) {
-                    $dispatcher = Dispatcher::getSharedDispatcher();
-                    return $handler->checkLogin($dispatcher->getSentData());
+                    return $handler->checkLogin($request->getSentData());
                 };
                 $app->post($loginCallback);
             });

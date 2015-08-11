@@ -25,12 +25,10 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Test\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
-
-class DummyObject {
-}
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -42,7 +40,7 @@ class DummyObject {
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class AppTest extends AbstractCase {
+class DispatcherTest extends AbstractCase {
     /**
      * @var \Cundd\Rest\Dispatcher
      */
@@ -51,10 +49,13 @@ class AppTest extends AbstractCase {
     public function setUp() {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
-        $this->fixture = new \Cundd\Rest\Dispatcher;
+        $this->fixture = new \Cundd\Rest\Dispatcher();
     }
 
     public function tearDown() {
+        /** @var RequestFactoryInterface $requestFactory */
+        $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
+        $requestFactory->resetRequest();
         unset($this->fixture);
         unset($_GET['u']);
         parent::tearDown();
@@ -105,7 +106,7 @@ class AppTest extends AbstractCase {
      */
     public function getPathTest() {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -114,7 +115,7 @@ class AppTest extends AbstractCase {
      */
     public function getPathWithFormatTest() {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -123,7 +124,7 @@ class AppTest extends AbstractCase {
      */
     public function getDocumentPathTest() {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
@@ -132,7 +133,7 @@ class AppTest extends AbstractCase {
      */
     public function getDocumentPathWithFormatTest() {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
@@ -141,7 +142,7 @@ class AppTest extends AbstractCase {
      */
     public function getUnderscoredPathWithFormatAndIdTest() {
         $_GET['u'] = 'my_ext-my_model/1.json';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
@@ -150,7 +151,7 @@ class AppTest extends AbstractCase {
      */
     public function getUnderscoredPathWithFormatTest2() {
         $_GET['u'] = 'my_ext-my_model.json';
-        $path = $this->fixture->getPath();
+        $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
     }
 

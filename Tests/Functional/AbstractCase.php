@@ -19,4 +19,25 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
         parent::setUp();
         $this->objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
     }
+
+    /**
+     * Build a new request with the given URI
+     *
+     * @param string $uri
+     * @param string $format
+     * @return \Cundd\Rest\Request
+     */
+    public function buildRequestWithUri($uri, $format = null) {
+        $uri = filter_var($uri, FILTER_SANITIZE_URL);
+
+        $path = strtok($uri, '/');
+
+        $request = new \Cundd\Rest\Request(NULL, $uri);
+        $request->initWithPathAndOriginalPath($path, $path);
+        $request->injectConfigurationProvider($this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider());
+        if ($format) {
+            $request->format($format);
+        }
+        return $request;
+    }
 }

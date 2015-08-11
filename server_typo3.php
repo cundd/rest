@@ -54,4 +54,3 @@ if (isset($argv[3])) {
 }
 $restServer = new \Cundd\Rest\Server($port, $host);
 $restServer->start();
-?>
