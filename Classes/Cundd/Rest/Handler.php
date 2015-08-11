@@ -325,7 +325,7 @@ class Handler implements CrudHandlerInterface {
         $handler = $this;
 
 
-        $app->path($dispatcher->getRequest()->path(), function ($request) use ($handler, $app) {
+        $app->path($this->getPath(), function ($request) use ($handler, $app) {
             $handler->setRequest($request);
 
             /*
