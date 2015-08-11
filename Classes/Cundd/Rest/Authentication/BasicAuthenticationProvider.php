@@ -26,9 +26,6 @@
 namespace Cundd\Rest\Authentication;
 
 
-use Cundd\Rest\Handler\AuthHandler;
-use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
-
 /**
  * Authentication Provider for login data sent through Basic Auth
  *

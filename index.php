@@ -20,4 +20,3 @@ $bootstrap = new \Cundd\Rest\Bootstrap;
 $bootstrap->init();
 $app = new \Cundd\Rest\Dispatcher;
 $app->dispatch();
-?>

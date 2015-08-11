@@ -29,6 +29,7 @@
  */
 
 namespace Cundd\Rest\Test\Core;
+
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Test\AbstractCase;
 
@@ -40,158 +41,131 @@ require_once __DIR__ . '/../AbstractCase.php';
  * @package Cundd\Rest\Test\Core
  */
 class CacheTest extends AbstractCase {
-	/**
-	 * @var \Cundd\Rest\Cache\Cache
-	 */
-	protected $fixture;
+    /**
+     * @var \Cundd\Rest\Cache\Cache
+     */
+    protected $fixture;
 
-	public function setUp() {
-		parent::setUp();
+    public function setUp() {
+        parent::setUp();
 
-		/** @var Cache $fixture */
-		$fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
-		$fixture->setCacheLifeTime(10);
-		$fixture->setExpiresHeaderLifeTime(5);
-		$this->fixture = $fixture;
-	}
+        /** @var Cache $fixture */
+        $fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
+        $fixture->setCacheLifeTime(10);
+        $fixture->setExpiresHeaderLifeTime(5);
+        $this->fixture = $fixture;
+    }
 
-	protected function tearDown() {
-		unset($this->fixture);
-		parent::tearDown();
-	}
+    protected function tearDown() {
+        unset($this->fixture);
+        parent::tearDown();
+    }
 
-	/**
-	 * @test
-	 */
-	public function getCacheKeyForRequestTest() {
-		$uri = 'MyExt-MyModel/1';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('44a16b7f79c92d97a55281bbfb4439ff310607ec', $cacheKey, 'Failed for URI ' . $uri);
+    /**
+     * @test
+     */
+    public function getCacheKeyForRequestTest() {
+        $uri = 'MyExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri);
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('44a16b7f79c92d97a55281bbfb4439ff310607ec', $cacheKey, 'Failed for URI ' . $uri);
 
-		$uri = 'MyExt-MyModel/1.blur';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
+        $uri = 'MyExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri, 'blur');
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
 
-		$uri = 'MyExt-MyModel/1.json';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
+        $uri = 'MyExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri, 'json');
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
 
-		$uri = 'my_ext-my_model/1.json';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('5c82b501dbbff50f5d15ddad1e3f68c86431bbc8', $cacheKey, 'Failed for URI ' . $uri);
-
-
-		$uri = 'my_ext-my_model.json';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('6216096e7394211b2d35fe9787d252b10963cf04', $cacheKey, 'Failed for URI ' . $uri);
-
-		$uri = 'vendor-my_second_ext-my_model/1';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('5f498749f876b6653099272efe7b827acfbc1ca6', $cacheKey, 'Failed for URI ' . $uri);
-
-		$uri = 'Vendor-MySecondExt-MyModel/1';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('3715e64cc29448acdc0df19777da794da2804d19', $cacheKey, 'Failed for URI ' . $uri);
-
-		$uri = 'Vendor-NotExistingExt-MyModel/1';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('b40dc716cf22179ebab528dd365f87afd3a4ffa7', $cacheKey, 'Failed for URI ' . $uri);
-
-		$uri = 'Vendor-NotExistingExt-MyModel/1.json';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('edc589820622a8d127f335b6439d34f6b37016cf', $cacheKey, 'Failed for URI ' . $uri);
-
-		$uri = 'MyAliasedModel';
-		$request = $this->buildRequestWithUri($uri);
-		$cacheKey = $this->fixture->getCacheKeyForRequest($request);
-		$this->assertEquals('1eb5c867cb67a0c4f7eada2e5b1f3ed8f1c93350', $cacheKey, 'Failed for URI ' . $uri);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getCachedInitialValueForRequestTest() {
-		$uri = 'MyAliasedModel' . time();
-		$request = $this->buildRequestWithUri($uri);
-
-		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
-		$this->fixture->setCacheInstance($cacheInstance);
-		$cachedValue = $this->fixture->getCachedValueForRequest($request);
-		$this->assertNull($cachedValue);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getCachedValueForRequestTest() {
-		$uri = 'MyAliasedModel' . time();
-		$responseArray = array(
-			'content' => 'the content',
-			'status' => 200,
-			'content-type' => null,
-			'encoding' => null,
-			'last-modified' => null,
-		);
-
-		$request = $this->buildRequestWithUri($uri);
-
-		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
-		$cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
-		$this->fixture->setCacheInstance($cacheInstance);
-		$response = $this->fixture->getCachedValueForRequest($request);
-		$this->assertInstanceOf('Bullet\\Response', $response);
-		$this->assertSame($responseArray['content'], $response->content());
-		$this->assertSame($responseArray['status'], $response->status());
-	}
-
-	/**
-	 * @test
-	 */
-	public function setCachedValueForRequestTest() {
-		$response = new \Bullet\Response();
-		$response->content('Test content');
-		$uri = 'MyAliasedModel';
-		$request = $this->buildRequestWithUri($uri);
-
-		$cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
-		$cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
-		$this->fixture->setCacheInstance($cacheInstance);
-		$this->fixture->setCachedValueForRequest($request, $response);
-	}
-
-	public function buildRequestWithUri($uri) {
-		$format = '';
-		$uri = filter_var($uri, FILTER_SANITIZE_URL);
-
-		// Strip the format from the URI
-		$resourceName = basename($uri);
-		$lastDotPosition = strrpos($resourceName, '.');
-		if ($lastDotPosition !== FALSE) {
-			$newUri = '';
-			if ($uri !== $resourceName) {
-				$newUri = dirname($uri) . '/';
-			}
-			$newUri .= substr($resourceName, 0, $lastDotPosition);
-			$uri = $newUri;
-
-			$format = substr($resourceName, $lastDotPosition + 1);
-		}
+        $uri = 'my_ext-my_model/1';
+        $request = $this->buildRequestWithUri($uri, 'json');
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('5c82b501dbbff50f5d15ddad1e3f68c86431bbc8', $cacheKey, 'Failed for URI ' . $uri);
 
 
-		$request = new \Cundd\Rest\Request(NULL, $uri);
-		$request->injectConfigurationProvider($this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider());
-		if ($format) {
-			$request->format($format);
-		}
-		return $request;
-	}
+        $uri = 'my_ext-my_model';
+        $request = $this->buildRequestWithUri($uri, 'json');
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('6216096e7394211b2d35fe9787d252b10963cf04', $cacheKey, 'Failed for URI ' . $uri);
+
+        $uri = 'vendor-my_second_ext-my_model/1';
+        $request = $this->buildRequestWithUri($uri);
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('5f498749f876b6653099272efe7b827acfbc1ca6', $cacheKey, 'Failed for URI ' . $uri);
+
+        $uri = 'Vendor-MySecondExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri);
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('3715e64cc29448acdc0df19777da794da2804d19', $cacheKey, 'Failed for URI ' . $uri);
+
+        $uri = 'Vendor-NotExistingExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri);
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('b40dc716cf22179ebab528dd365f87afd3a4ffa7', $cacheKey, 'Failed for URI ' . $uri);
+
+        $uri = 'Vendor-NotExistingExt-MyModel/1';
+        $request = $this->buildRequestWithUri($uri, 'json');
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('edc589820622a8d127f335b6439d34f6b37016cf', $cacheKey, 'Failed for URI ' . $uri);
+
+        $uri = 'MyAliasedModel';
+        $request = $this->buildRequestWithUri($uri);
+        $cacheKey = $this->fixture->getCacheKeyForRequest($request);
+        $this->assertEquals('1eb5c867cb67a0c4f7eada2e5b1f3ed8f1c93350', $cacheKey, 'Failed for URI ' . $uri);
+    }
+
+    /**
+     * @test
+     */
+    public function getCachedInitialValueForRequestTest() {
+        $uri = 'MyAliasedModel' . time();
+        $request = $this->buildRequestWithUri($uri);
+
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $this->fixture->setCacheInstance($cacheInstance);
+        $cachedValue = $this->fixture->getCachedValueForRequest($request);
+        $this->assertNull($cachedValue);
+    }
+
+    /**
+     * @test
+     */
+    public function getCachedValueForRequestTest() {
+        $uri = 'MyAliasedModel' . time();
+        $responseArray = array(
+            'content' => 'the content',
+            'status' => 200,
+            'content-type' => null,
+            'encoding' => null,
+            'last-modified' => null,
+        );
+
+        $request = $this->buildRequestWithUri($uri);
+
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
+        $this->fixture->setCacheInstance($cacheInstance);
+        $response = $this->fixture->getCachedValueForRequest($request);
+        $this->assertInstanceOf('Bullet\\Response', $response);
+        $this->assertSame($responseArray['content'], $response->content());
+        $this->assertSame($responseArray['status'], $response->status());
+    }
+
+    /**
+     * @test
+     */
+    public function setCachedValueForRequestTest() {
+        $response = new \Bullet\Response();
+        $response->content('Test content');
+        $uri = 'MyAliasedModel';
+        $request = $this->buildRequestWithUri($uri);
+
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
+        $this->fixture->setCacheInstance($cacheInstance);
+        $this->fixture->setCachedValueForRequest($request, $response);
+    }
 }

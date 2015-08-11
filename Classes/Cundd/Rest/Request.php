@@ -24,137 +24,214 @@
  */
 
 namespace Cundd\Rest;
-use Bullet\HTTP;
+
 use Bullet\Request as BaseRequest;
+use Cundd\Rest\DataProvider\Utility;
 
+/**
+ * Specialized Request
+ *
+ * @package Cundd\Rest
+ */
 class Request extends BaseRequest {
-	/**
-	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	protected $configurationProvider;
+    /**
+     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     */
+    protected $configurationProvider;
 
-	/**
-	 * @var string
-	 */
-	protected $path;
+    /**
+     * @var string
+     */
+    protected $path;
 
-	/**
-	 * @var string
-	 */
-	protected $originalPath = -1;
+    /**
+     * @var string
+     */
+    protected $originalPath = -1;
 
+    /**
+     * Initialize the request with the given path and original path
+     *
+     * @param string $path
+     * @param string $originalPath
+     * @return $this
+     */
+    public function initWithPathAndOriginalPath($path, $originalPath) {
+        if (!is_string($path)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument 1 passed must be a string, %s given',
+                gettype($path)
+            ));
+        }
+        $this->path = $path;
+        $this->originalPath = $originalPath;
+        return $this;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function path() {
-		if (!$this->path) {
-			$uri = $this->url();
-			$this->originalPath = $this->path = strtok($uri, '/');
+    /**
+     * Returns the request path (eventually aliases have been mapped)
+     *
+     * @return string
+     */
+    public function path() {
+        if (!$this->path) {
+            \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+            $uri = $this->url();
+            $this->originalPath = $this->path = strtok($uri, '/');
 
-			// Check for path aliases
-			$pathAlias = $this->getAliasForPath($this->path);
-			if ($pathAlias) {
-				$oldPath = $this->path;
+            // Check for path aliases
+            $pathAlias = $this->getAliasForPath($this->path);
+            if ($pathAlias) {
+                $oldPath = $this->path;
 
-				// Update the URL
-				$this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
-				$this->path = $pathAlias;
-			}
-		}
-		return $this->path;
-	}
+                // Update the URL
+                $this->_url = preg_replace('!' . $oldPath . '!', $pathAlias, $this->_url, 1);
+                $this->path = $pathAlias;
+            }
+        }
+        return $this->path;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function originalPath() {
-		if ($this->originalPath === -1) {
-			return $this->path();
-		}
-		return $this->originalPath;
-	}
+    /**
+     * Returns the request path before mapping aliases
+     *
+     * @return string
+     */
+    public function originalPath() {
+        if ($this->originalPath === -1) {
+            return $this->path();
+        }
+        return $this->originalPath;
+    }
 
-	/**
-	 * Format getter/setter
-	 *
-	 * If no $format is passed, returns the current format
-	 *
-	 * @param string $format
-	 * @return string Format
-	 */
-	public function format($format = null) {
-		if (NULL !== $format) {
-			// If using full mime type, we only need the extension
-			if(strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
-				$format = array_search($format, $this->_mimeTypes);
-			}
-			$this->_format = $this->_validateFormat($format) ? $format : NULL;
-		}
+    /**
+     * Returns the sent data
+     *
+     * @return mixed
+     */
+    public function getSentData() {
+        $data = $this->post();
+        /*
+         * If no form url-encoded body is sent check if a JSON
+         * payload is sent with the singularized root object key as
+         * the payload's root object key
+         */
+        if (!$data) {
+            $data = $this->get(
+                Utility::singularize($this->getRootObjectKey())
+            );
+            if (!$data) {
+                $data = json_decode($this->raw(), TRUE);
+            }
+        }
+        return $data;
+    }
 
-		if (!$this->_format && $format === NULL) {
-			// Detect extension and assign it as the requested format (overrides 'Accept' header)
-			$dotPos = strpos($this->url(), '.');
-			if($dotPos !== FALSE) {
-				$ext = substr($this->url(), $dotPos+1);
-				$this->_format = $this->_validateFormat($ext) ? $ext : NULL;
-			}
+    /**
+     * Format getter/setter
+     *
+     * If no $format is passed, returns the current format
+     *
+     * @param string $format
+     * @return string Format
+     */
+    public function format($format = null) {
+        if (NULL !== $format) {
+            // If using full mime type, we only need the extension
+            if (strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
+                $format = array_search($format, $this->_mimeTypes);
+            }
+            $this->_format = $this->_validateFormat($format) ? $format : NULL;
+        }
 
-			// Check the CONTENT_TYPE header
-			if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
-				$this->format(trim($_SERVER['CONTENT_TYPE']));
-			}
+        if (!$this->_format && $format === NULL) {
+            // Detect extension and assign it as the requested format (overrides 'Accept' header)
+            $dotPos = strpos($this->url(), '.');
+            if ($dotPos !== FALSE) {
+                $ext = substr($this->url(), $dotPos + 1);
+                $this->_format = $this->_validateFormat($ext) ? $ext : NULL;
+            }
 
-			// Default to JSON
-			if (!$this->_format) {
-				$this->_format = 'json';
-			}
-		}
-		return $this->_format;
-	}
+            // Check the CONTENT_TYPE header
+            if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
+                $this->format(trim($_SERVER['CONTENT_TYPE']));
+            }
 
-	/**
-	 * Returns if the given format is valid
-	 *
-	 * @param $format
-	 * @return boolean
-	 */
-	protected function _validateFormat($format) {
-		return isset($this->_mimeTypes[$format]);
-	}
+            // Default to JSON
+            if (!$this->_format) {
+                $this->_format = 'json';
+            }
+        }
+        return $this->_format;
+    }
 
-	/**
-	 * Check for an alias for the given path
-	 * @param string $path
-	 * @return string
-	 */
-	public function getAliasForPath($path) {
-		if (!$this->configurationProvider) {
-			return NULL;
-		}
-		return $this->configurationProvider->getSetting('aliases.' . $path);
-	}
+    /**
+     * Returns if the request wants to write data
+     *
+     * @return bool
+     */
+    public function isWrite() {
+        return !$this->isRead();
+    }
 
-	/**
-	 * Returns if the request wants to write data
-	 * @return bool
-	 */
-	public function isWrite() {
-		return !$this->isRead();
-	}
+    /**
+     * Returns if the request wants to read data
+     * @return bool
+     */
+    public function isRead() {
+        return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
+    }
 
-	/**
-	 * Returns if the request wants to read data
-	 * @return bool
-	 */
-	public function isRead() {
-		return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
-	}
+    /**
+     * Returns the key to use for the root object if addRootObjectForCollection
+     * is enabled
+     *
+     * @return string
+     */
+    public function getRootObjectKey() {
+        $originalPath = $this->originalPath();
+        /*
+         * Transform Document URLs
+         * @Todo: Make this better
+         */
+        $documentApiPathLength = strlen(Dispatcher::API_PATH_DOCUMENT) + 1;
+        if (substr($originalPath, 0, $documentApiPathLength) === Dispatcher::API_PATH_DOCUMENT . '-') {
+            $originalPath = substr($originalPath, $documentApiPathLength);
+        }
+        return $originalPath;
+    }
 
-	/**
-	 * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
-	 */
-	public function injectConfigurationProvider($configurationProvider) {
-		$this->configurationProvider = $configurationProvider;
-	}
+    /**
+     * Check for an alias for the given path
+     *
+     * @param string $path
+     * @return string
+     * @deprecated
+     */
+    public function getAliasForPath($path) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        if (!$this->configurationProvider) {
+            return NULL;
+        }
+        return $this->configurationProvider->getSetting('aliases.' . $path);
+    }
+
+    /**
+     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     * @internal
+     * @deprecated
+     */
+    public function injectConfigurationProvider($configurationProvider) {
+        $this->configurationProvider = $configurationProvider;
+    }
+
+    /**
+     * Returns if the given format is valid
+     *
+     * @param $format
+     * @return boolean
+     */
+    protected function _validateFormat($format) {
+        return isset($this->_mimeTypes[$format]);
+    }
 }

@@ -211,7 +211,7 @@ class DataProvider implements DataProviderInterface {
 	/**
 	 * Returns the data from the given model
 	 *
-	 * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
 	 * @return array<mixed>
 	 */
 	public function getModelData($model) {
@@ -269,7 +269,7 @@ class DataProvider implements DataProviderInterface {
 			$returnData = array();
 
 			// Collect each object of the lazy object storage
-			foreach($lazyObjectStorage as $subObject) {
+            foreach ($lazyObjectStorage as $subObject) {
 				$returnData[] = $this->getModelData($subObject);
 			}
 			$this->currentModelDataDepth--;

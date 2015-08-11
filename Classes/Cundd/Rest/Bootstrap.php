@@ -24,111 +24,101 @@
  */
 
 namespace Cundd\Rest;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
 
 class Bootstrap {
-	/**
-	 * Initializes the TYPO3 environment.
-	 *
-	 * @return	void
-	 */
-	public function init() {
-		if (version_compare(TYPO3_version, '6.0.0') < 0) {
-			require_once __DIR__ . '/../../../legacy.php';
-		}
+    /**
+     * Initializes the TYPO3 environment.
+     *
+     * @return    void
+     */
+    public function init() {
+        if (version_compare(TYPO3_version, '6.0.0') < 0) {
+            require_once __DIR__ . '/../../../legacy.php';
+        }
 
-		if (method_exists('TYPO3\CMS\Frontend\Utility\EidUtility', 'connectDB')) {
-			EidUtility::connectDB();
-		}
-		$this->initTSFE();
-	}
+        if (method_exists('TYPO3\CMS\Frontend\Utility\EidUtility', 'connectDB')) {
+            EidUtility::connectDB();
+        }
+        $this->initTSFE();
+    }
 
-	/**
-	 * Initialize the TSFE.
-	 *
-	 * @param	integer	$pageUid	 The page UID
-	 * @param	boolean	$overrule
-	 * @return	void
-	 */
-	public function initTSFE($pageUid = -1, $overrule = FALSE) {
-		$rootLine = NULL;
-		$typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
-		if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
-			$pageUid = intval(GeneralUtility::_GP('pid'));
-		}
-		if ($pageUid === -1) {
-			$pageUid = 0;
-		}
+    /**
+     * Initialize the TSFE.
+     *
+     * @param    integer $pageUid The page UID
+     * @param    boolean $overrule
+     * @return    void
+     */
+    public function initTSFE($pageUid = -1, $overrule = FALSE) {
+        $rootLine = NULL;
+        $typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
+        if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
+            $pageUid = intval(GeneralUtility::_GP('pid'));
+        }
+        if ($pageUid === -1) {
+            $pageUid = 0;
+        }
 
-		#$typo3confVariables['EXT']['extList'] = str_replace('tq_seo', '', $typo3confVariables['EXT']['extList']);
-		#$typo3confVariables['EXT']['extList_FE'] = str_replace('tq_seo', '', $typo3confVariables['EXT']['extList_FE']);
+        // begin
+        if (!is_object($GLOBALS['TT']) || $overrule === TRUE) {
+            $GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\TimeTracker();
+            $GLOBALS['TT']->start();
+        }
 
-		// declare
-		//$temp_TSFEclassName = t3lib_div::makeInstance('tslib_fe');
+        if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === TRUE) && is_int($pageUid)) {
+            // builds TSFE object
+            $GLOBALS['TSFE'] = new \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController(
+                $typo3confVariables,
+                $pageUid,
+                0,  // Type
+                0,  // no_cache
+                '', // cHash
+                '', // jumpurl
+                '', // MP,
+                ''  // RDCT
+            );
 
-		// begin
-		if (!is_object($GLOBALS['TT']) || $overrule === TRUE) {
-			$GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\TimeTracker();
-			$GLOBALS['TT']->start();
-		}
+            // builds rootline
+            if ($pageUid > 0) {
+                $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+                /** @var RootlineUtility $rootLine */
+                $rootLineUtility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $pageUid);
+                $rootLine = $rootLineUtility->get();
+                $GLOBALS['TSFE']->rootLine = $rootLine;
+            }
 
-		if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === TRUE) && is_int($pageUid)) {
-			// builds TSFE object
-			$GLOBALS['TSFE'] = new \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController(
-				$typo3confVariables,
-				$pageUid,
-				0, 		// Type
-				0, 		// no_cache
-				'', 	// cHash
-				'', 	// jumpurl
-				'', 	// MP,
-				'' 		// RDCT
-				);
+            // Init template
+            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
+            $GLOBALS['TSFE']->tmpl->tt_track = 0;// Do not log time-performance information
+            $GLOBALS['TSFE']->tmpl->init();
 
-//			$start = microtime(TRUE);
+            // this generates the constants/config + hierarchy info for the template.
+            if ($rootLine && $pageUid > 0) {
+                $GLOBALS['TSFE']->tmpl->runThroughTemplates(
+                    $rootLine,
+                    0 // start_template_uid
+                );
+            }
+            $GLOBALS['TSFE']->tmpl->generateConfig();
+            $GLOBALS['TSFE']->tmpl->loaded = 1;
 
-			// builds rootline
-			if ($pageUid > 0) {
-				$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
-				//$rootLine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', 0, '', $this);
-				/** @var RootlineUtility $rootLine */
-				$rootLineUtility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $pageUid);
-				$rootLine = $rootLineUtility->get();
-//				$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pageUid);
-				$GLOBALS['TSFE']->rootLine = $rootLine;
-			}
-
-			// Init template
-			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
-			$GLOBALS['TSFE']->tmpl->tt_track = 0;// Do not log time-performance information
-			$GLOBALS['TSFE']->tmpl->init();
-
-			// this generates the constants/config + hierarchy info for the template.
-			if ($rootLine && $pageUid > 0) {
-				$GLOBALS['TSFE']->tmpl->runThroughTemplates(
-					$rootLine,
-					0 // start_template_uid
-				);
-			}
-			$GLOBALS['TSFE']->tmpl->generateConfig();
-			$GLOBALS['TSFE']->tmpl->loaded = 1;
-
-			// builds a cObj
-            if(is_array($GLOBALS['TSFE']->page) === FALSE){
+            // builds a cObj
+            if (is_array($GLOBALS['TSFE']->page) === FALSE) {
                 $GLOBALS['TSFE']->page = array();
             }
-			$GLOBALS['TSFE']->newCObj();
+            $GLOBALS['TSFE']->newCObj();
 
-			// Add the FE user
-			$GLOBALS['TSFE']->fe_user = EidUtility::initFeUser();
+            // Add the FE user
+            $GLOBALS['TSFE']->fe_user = EidUtility::initFeUser();
 
-//			$start = microtime(TRUE);
-			$GLOBALS['TSFE']->determineId();
-			$GLOBALS['TSFE']->getConfigArray();
-//			echo 'Time: ' . (microtime(TRUE) - $start);
-		}
-	}
+            $GLOBALS['TSFE']->determineId();
+            $GLOBALS['TSFE']->getConfigArray();
+        }
+    }
 }
+
 ?>

@@ -131,7 +131,6 @@ CONFIGURATION;
 	}
 
 
-
 	public function setUp() {
 		parent::setUp();
 		$this->createTable();

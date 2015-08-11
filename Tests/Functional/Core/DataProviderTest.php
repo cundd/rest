@@ -245,5 +245,3 @@ class DataProviderTest extends AbstractCase {
     }
 
 }
-
-?>

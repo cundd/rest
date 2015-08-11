@@ -28,10 +28,10 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
-use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Main dispatcher of REST requests
@@ -43,11 +43,9 @@ use Cundd\Rest\Access\AccessControllerInterface;
  */
 class Dispatcher implements SingletonInterface {
 	/**
-	 * API path
-	 *
-	 * @var string
+     * Path prefix for the Document Store
 	 */
-	protected $uri;
+    const API_PATH_DOCUMENT = 'Document';
 
 	/**
 	 * @var \Cundd\Rest\ObjectManager
@@ -60,21 +58,19 @@ class Dispatcher implements SingletonInterface {
 	protected $app;
 
 	/**
-	 * @var \Cundd\Rest\Request
+     * @var RequestFactoryInterface
 	 */
-	protected $request;
+    protected $requestFactory;
 
 	/**
-	 * @var \TYPO3\CMS\Core\Log\Logger
+     * @var ResponseFactoryInterface
 	 */
-	protected $logger;
+    protected $responseFactory;
 
 	/**
-	 * The response format
-	 *
-	 * @var string
+     * @var \TYPO3\CMS\Core\Log\Logger
 	 */
-	protected $format;
+    protected $logger;
 
 	/**
 	 * The shared instance
@@ -88,8 +84,10 @@ class Dispatcher implements SingletonInterface {
 	 */
 	public function __construct() {
 		$this->app           = new \Bullet\App();
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
-		$this->objectManager->setDispatcher($this);
+
+        $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+        $this->requestFactory = $this->objectManager->getRequestFactory();
+        $this->responseFactory = $this->objectManager->getResponseFactory();
 
 		self::$sharedDispatcher = $this;
 	}
@@ -103,13 +101,14 @@ class Dispatcher implements SingletonInterface {
 	 */
 	public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
 		if ($request) {
-			$this->request = $request;
+            $this->requestFactory->registerCurrentRequest($request);
 			$this->objectManager->reassignRequest();
 		} else {
-			$request = $this->getRequest();
+            $request = $this->requestFactory->getRequest();
 		}
 
-		if (!$this->getPath()) {
+        $requestPath = $request->path();
+        if (!$requestPath) {
 			return $this->greet();
 		}
 
@@ -119,12 +118,12 @@ class Dispatcher implements SingletonInterface {
 				break;
 
 			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-				echo $this->createErrorResponse('Unauthorized', 401);
+                echo $this->responseFactory->createErrorResponse('Unauthorized', 401);
 				return FALSE;
 
 			case AccessControllerInterface::ACCESS_DENY:
 			default:
-				echo $this->createErrorResponse('Forbidden', 403);
+                echo $this->responseFactory->createErrorResponse('Forbidden', 403);
 				return FALSE;
 		}
 
@@ -138,15 +137,13 @@ class Dispatcher implements SingletonInterface {
 		if (!$response) {
 
 			// If a path is given let the handler build up the routes
-			if ($this->getPath()) {
-				$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
+            if ($requestPath) {
+                $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->method()));
 				$this->objectManager->getHandler()->configureApiPaths();
 			}
 
 			// Let Bullet PHP do the hard work
 			$response = $this->app->run($request);
-
-//			$response->content($response->content());
 
 			// Handle exceptions
 			if ($response->content() instanceof \Exception) {
@@ -155,11 +152,11 @@ class Dispatcher implements SingletonInterface {
 				$exception = $response->content();
 				$this->logException($exception);
 				$response = $this->exceptionToResponse($exception);
-			}
-
+            } else {
 			// Cache the response
 			$cache->setCachedValueForRequest($request, $response);
 		}
+        }
 
 		$responsePointer = $response;
 		$responseString  = (string)$response;
@@ -175,7 +172,7 @@ class Dispatcher implements SingletonInterface {
 	 */
 	public function greet() {
 		/** @var \Cundd\Rest\Request $request */
-		$request = $this->getRequest();
+        $request = $this->requestFactory->getRequest();
 
 		$this->app->path('/', function ($request) {
 			$greeting = 'What\'s up?';
@@ -203,10 +200,10 @@ class Dispatcher implements SingletonInterface {
 	 * @return Response
 	 */
 	public function exceptionToResponse($exception) {
-		if ($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
-			return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+        if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+            return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
 		}
-		return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+        return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
 	}
 
 	/**
@@ -215,9 +212,11 @@ class Dispatcher implements SingletonInterface {
 	 * @param string|array $data
 	 * @param int          $status
 	 * @return Response
+     * @deprecated use ResponseFactory->createErrorResponse()
 	 */
 	public function createErrorResponse($data, $status) {
-		return $this->_createResponse($data, $status, TRUE);
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createErrorResponse($data, $status);
 	}
 
 	/**
@@ -226,9 +225,11 @@ class Dispatcher implements SingletonInterface {
 	 * @param string|array $data
 	 * @param int          $status
 	 * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse()
 	 */
 	public function createSuccessResponse($data, $status) {
-		return $this->_createResponse($data, $status);
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createSuccessResponse($data, $status);
 	}
 
 	/**
@@ -238,94 +239,42 @@ class Dispatcher implements SingletonInterface {
 	 * @param int          $status Status code of the response
 	 * @param bool         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
 	 * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
 	 */
 	protected function _createResponse($data, $status, $forceError = FALSE) {
-		$body     = NULL;
-		$response = new Response(NULL, $status);
-		$format   = $this->getRequest()->format();
-		if (!$format) {
-			$format = 'json';
-		}
-
-		$messageKey = 'message';
-		if ($forceError || $status >= 400) {
-			$messageKey = 'error';
-		}
-
-		switch ($format) {
-			case 'json':
-
-				switch (gettype($data)) {
-					case 'string':
-						$body = array(
-							$messageKey => $data
-						);
-						break;
-
-					case 'array':
-						$body = $data;
-						break;
-
-					case 'NULL':
-						$body = array(
-							$messageKey => $response->statusText($status)
-						);
-						break;
-				}
-
-				$response->contentType('application/json');
-				$response->content(json_encode($body));
-				break;
-
-			case 'xml':
-				// TODO: support more response formats
-
-			default:
-				$body = sprintf('Unsupported format: %s. Please set the Accept header to application/json', $this->getRequest()->format());
-				$response->content($body);
-		}
-		return $response;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->responseFactory;
+        return $responseFactory->createResponse($data, $status, $forceError);
 	}
 
 	/**
 	 * Returns the request
 	 *
+     * Better use the RequestFactory::getRequest() instead
+     *
 	 * @return \Cundd\Rest\Request
 	 */
 	public function getRequest() {
-		if (!$this->request) {
-			$format = '';
-			$uri    = $this->getUri($format);
-
-			/*
-			 * Transform Document URLs
-			 * @Todo: Make this better
-			 */
-			if (substr($uri, 0, 9) === 'Document/') {
-				$uri = 'Document-' . substr($uri, 9);
-			}
-			$this->request = new Request(NULL, $uri);
-			$this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
-			if ($format) {
-				$this->request->format($format);
-			}
-
-		}
-		return $this->request;
+        return $this->requestFactory->getRequest();
 	}
 
 	/**
 	 * @return string
+     * @deprecated use getRequest()->path() instead
 	 */
 	public function getPath() {
-		return $this->getRequest()->path();
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->path();
 	}
 
 	/**
 	 * @return string
+     * @deprecated use getRequest()->originalPath() instead
 	 */
 	public function getOriginalPath() {
-		return $this->getRequest()->originalPath();
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->originalPath();
 	}
 
 	/**
@@ -333,31 +282,11 @@ class Dispatcher implements SingletonInterface {
 	 *
 	 * @param string $format Reference to be filled with the request format
 	 * @return string
+     * @deprecated use the RequestFactory::getUri() instead
 	 */
 	public function getUri(&$format = '') {
-		if (!$this->uri) {
-			$uri = $this->getArgument('u', FILTER_SANITIZE_URL);
-			if (!$uri) {
-				$uri = substr($_SERVER['REQUEST_URI'], 6);
-				$uri = filter_var($uri, FILTER_SANITIZE_URL);
-			}
-
-			// Strip the format from the URI
-			$resourceName    = basename($uri);
-			$lastDotPosition = strrpos($resourceName, '.');
-			if ($lastDotPosition !== FALSE) {
-				$newUri = '';
-				if ($uri !== $resourceName) {
-					$newUri = dirname($uri) . '/';
-				}
-				$newUri .= substr($resourceName, 0, $lastDotPosition);
-				$uri = $newUri;
-
-				$format = substr($resourceName, $lastDotPosition + 1);
-			}
-			$this->uri = $uri;
-		}
-		return $this->uri;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getUri($format);
 	}
 
 	/**
@@ -367,7 +296,7 @@ class Dispatcher implements SingletonInterface {
 	 * @return mixed
 	 */
 	protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
-		$argument = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP($name);
+        $argument = GeneralUtility::_GP($name);
 		$argument = filter_var($argument, $filter);
 		if ($argument === NULL) {
 			$argument = $default;
@@ -379,26 +308,11 @@ class Dispatcher implements SingletonInterface {
 	 * Returns the sent data
 	 *
 	 * @return mixed
+     * @deprecated use the request's getSentData()
 	 */
 	public function getSentData() {
-		$request = $this->getRequest();
-
-		/** @var \Cundd\Rest\Request $request */
-		$data = $request->post();
-		/*
-		 * If no form url-encoded body is sent check if a JSON
-		 * payload is sent with the singularized root object key as
-		 * the payload's root object key
-		 */
-		if (!$data) {
-			$data = $request->get(
-				Utility::singularize($this->getRootObjectKey())
-			);
-			if (!$data) {
-				$data = json_decode($request->raw(), TRUE);
-			}
-		}
-		return $data;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getSentData();
 	}
 
 	/**
@@ -406,17 +320,11 @@ class Dispatcher implements SingletonInterface {
 	 * is enabled
 	 *
 	 * @return string
+     * @deprecated use the request's getRootObjectKey()
 	 */
 	public function getRootObjectKey() {
-		$originalPath = $this->getOriginalPath();
-		/*
-		 * Transform Document URLs
-		 * @Todo: Make this better
-		 */
-		if (substr($originalPath, 0, 9) === 'Document-') {
-			$originalPath = substr($originalPath, 9);
-		}
-		return $originalPath;
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getRootObjectKey();
 	}
 
 	/**
@@ -435,7 +343,7 @@ class Dispatcher implements SingletonInterface {
 	 */
 	public function getLogger() {
 		if (!$this->logger) {
-			$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
 		}
 		return $this->logger;
 	}

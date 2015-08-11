@@ -49,6 +49,3 @@ $TCA['tx_rest_domain_model_document'] = array(
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/document.gif'
 	),
 );
-
-
-?>

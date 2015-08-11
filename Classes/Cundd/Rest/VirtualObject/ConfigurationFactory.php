@@ -33,164 +33,164 @@ use TYPO3\CMS\Core\SingletonInterface;
  * @package Cundd\Rest\VirtualObject
  */
 class ConfigurationFactory implements SingletonInterface {
-	/**
-	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	protected $configurationProvider;
+    /**
+     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     */
+    protected $configurationProvider;
 
-	/**
-	 * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
-	 */
-	public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
-		$this->configurationProvider = $configurationProvider;
-	}
+    /**
+     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     */
+    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
+        $this->configurationProvider = $configurationProvider;
+    }
 
-	/**
-	 * Returns a new "empty" Configuration instance
-	 *
-	 * @return ConfigurationInterface
-	 */
-	public function create() {
-		return $this->_createWithConfigurationData(array());
-	}
+    /**
+     * Returns a new "empty" Configuration instance
+     *
+     * @return ConfigurationInterface
+     */
+    public function create() {
+        return $this->_createWithConfigurationData(array());
+    }
 
-	/**
-	 * Tries to read the configuration from the given array
-	 *
-	 * @param array $configurationArray
-	 * @param       $path
-	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-	 */
-	public function createFromArrayForPath($configurationArray, $path) {
-		$configurationData = NULL;
-		if (
-			isset($configurationArray[$path]) && is_array($configurationArray[$path])
-			&& isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
-		) {
-			return $this->_createWithConfigurationData($configurationArray[$path]['mapping']);
-		}
-		return NULL;
-	}
+    /**
+     * Tries to read the configuration from the given array
+     *
+     * @param array $configurationArray
+     * @param       $path
+     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     */
+    public function createFromArrayForPath($configurationArray, $path) {
+        $configurationData = NULL;
+        if (
+            isset($configurationArray[$path]) && is_array($configurationArray[$path])
+            && isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
+        ) {
+            return $this->_createWithConfigurationData($configurationArray[$path]['mapping']);
+        }
+        return NULL;
+    }
 
-	/**
-	 * Tries to read the configuration from TypoScript
-	 *
-	 * @param string $path
-	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-	 */
-	public function createFromTypoScriptForPath($path) {
-		$configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $path);
-		if (!isset($configurationData['mapping.'])) {
-			return NULL;
-		}
-		$mapping = $configurationData['mapping.'];
+    /**
+     * Tries to read the configuration from TypoScript
+     *
+     * @param string $path
+     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     */
+    public function createFromTypoScriptForPath($path) {
+        $configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $path);
+        if (!isset($configurationData['mapping.'])) {
+            return NULL;
+        }
+        $mapping = $configurationData['mapping.'];
 
-		if (!isset($mapping['properties.'])) {
-			return NULL;
-		}
+        if (!isset($mapping['properties.'])) {
+            return NULL;
+        }
 
-		$mergedConfigurationData = array(
-			'identifier' => $mapping['identifier'],
-			'tableName' => $mapping['tableName'],
-			'properties' => $mapping['properties.']
-		);
+        $mergedConfigurationData = array(
+            'identifier' => $mapping['identifier'],
+            'tableName' => $mapping['tableName'],
+            'properties' => $mapping['properties.']
+        );
 
-		if (isset($mapping['skipUnknownProperties'])) {
-			$mergedConfigurationData['skipUnknownProperties'] = $mapping['skipUnknownProperties'];
-		}
-		return $this->_createWithConfigurationData($mergedConfigurationData);
-	}
+        if (isset($mapping['skipUnknownProperties'])) {
+            $mergedConfigurationData['skipUnknownProperties'] = $mapping['skipUnknownProperties'];
+        }
+        return $this->_createWithConfigurationData($mergedConfigurationData);
+    }
 
-	/**
-	 * Tries to read the configuration from the given JSON string
-	 *
-	 * @param string $jsonString
-	 * @param        $path
-	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-	 */
-	public function createFromJsonForPath($jsonString, $path) {
-		$configurationData = json_decode($jsonString, TRUE);
-		if ($configurationData) {
-			return $this->createFromArrayForPath($configurationData, $path);
-		}
-		return NULL;
-	}
+    /**
+     * Tries to read the configuration from the given JSON string
+     *
+     * @param string $jsonString
+     * @param        $path
+     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     */
+    public function createFromJsonForPath($jsonString, $path) {
+        $configurationData = json_decode($jsonString, TRUE);
+        if ($configurationData) {
+            return $this->createFromArrayForPath($configurationData, $path);
+        }
+        return NULL;
+    }
 
-	/**
-	 * Returns a new Configuration instance with the given data
-	 *
-	 * @param array $configurationData
-	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-	 */
-	public function createWithConfigurationData($configurationData) {
-		return $this->_createWithConfigurationData($configurationData);
-	}
+    /**
+     * Returns a new Configuration instance with the given data
+     *
+     * @param array $configurationData
+     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     */
+    public function createWithConfigurationData($configurationData) {
+        return $this->_createWithConfigurationData($configurationData);
+    }
 
-	/**
-	 * Returns a new Configuration instance with the given data
-	 *
-	 * @param array $configurationData
-	 * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-	 */
-	protected function _createWithConfigurationData($configurationData) {
-		$configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
+    /**
+     * Returns a new Configuration instance with the given data
+     *
+     * @param array $configurationData
+     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     */
+    protected function _createWithConfigurationData($configurationData) {
+        $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
-		if (isset($configurationData['skipUnknownProperties'])) {
-			$configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
-		}
-		return $configurationObject;
-	}
+        if (isset($configurationData['skipUnknownProperties'])) {
+            $configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
+        }
+        return $configurationObject;
+    }
 
-	/**
-	 * Prepares the given property mapping
-	 *
-	 * @param array $mapping
-	 * @return array
-	 */
-	static public function preparePropertyMapping($mapping) {
-		/**
-		 * Remove the last character form the property key (used when imported from TypoScript)
-		 *
-		 * @var boolean $removeLastCharacter
-		 */
-		$removeLastCharacter = -1;
+    /**
+     * Prepares the given property mapping
+     *
+     * @param array $mapping
+     * @return array
+     */
+    static public function preparePropertyMapping($mapping) {
+        /**
+         * Remove the last character form the property key (used when imported from TypoScript)
+         *
+         * @var boolean $removeLastCharacter
+         */
+        $removeLastCharacter = -1;
 
-		if (isset($mapping['properties']) || isset($mapping['properties.'])) {
-			if (isset($mapping['properties.'])) {
-				$propertyMapping = $mapping['properties.'];
-				unset($mapping['properties.']);
-			} else {
-				$propertyMapping = $mapping['properties'];
-			}
+        if (isset($mapping['properties']) || isset($mapping['properties.'])) {
+            if (isset($mapping['properties.'])) {
+                $propertyMapping = $mapping['properties.'];
+                unset($mapping['properties.']);
+            } else {
+                $propertyMapping = $mapping['properties'];
+            }
 
-			$propertyMappingPrepared = array();
-			foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
-				// If the last character is a dot (".") remove the last character of all property keys
-				if ($removeLastCharacter === -1) {
-					$removeLastCharacter = substr($propertyKey, -1) === '.';
-				}
+            $propertyMappingPrepared = array();
+            foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
+                // If the last character is a dot (".") remove the last character of all property keys
+                if ($removeLastCharacter === -1) {
+                    $removeLastCharacter = substr($propertyKey, -1) === '.';
+                }
 
-				if ($removeLastCharacter) {
-					$propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
-				}
+                if ($removeLastCharacter) {
+                    $propertyKey = substr($propertyKey, 0, -1); // Strip the trailing "."
+                }
 
-				// If the current property configuration is a string, it defines the type
-				if (is_string($propertyConfiguration)) {
-					$type = $propertyConfiguration;
-					$column = $propertyKey;
-				} else {
-					// else it has to be an array
-					$type = $propertyConfiguration['type'];
-					$column = isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey;
-				}
+                // If the current property configuration is a string, it defines the type
+                if (is_string($propertyConfiguration)) {
+                    $type = $propertyConfiguration;
+                    $column = $propertyKey;
+                } else {
+                    // else it has to be an array
+                    $type = $propertyConfiguration['type'];
+                    $column = isset($propertyConfiguration['column']) ? $propertyConfiguration['column'] : $propertyKey;
+                }
 
-				$propertyMappingPrepared[$propertyKey] = array(
-					'type' => $type,
-					'column' => $column,
-				);
-			}
-			$mapping['properties'] = $propertyMappingPrepared;
-		}
-		return $mapping;
-	}
+                $propertyMappingPrepared[$propertyKey] = array(
+                    'type' => $type,
+                    'column' => $column,
+                );
+            }
+            $mapping['properties'] = $propertyMappingPrepared;
+        }
+        return $mapping;
+    }
 }

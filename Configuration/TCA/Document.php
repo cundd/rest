@@ -113,5 +113,3 @@ $TCA['tx_rest_domain_model_document'] = array(
 		),
 	),
 );
-
-?>

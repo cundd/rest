@@ -28,13 +28,13 @@
  * Created 06.12.13 12:34
  */
 
-
 namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 
 /**
  * The class caches responses of requests

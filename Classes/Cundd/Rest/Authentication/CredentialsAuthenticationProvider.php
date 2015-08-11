@@ -25,9 +25,8 @@
 
 namespace Cundd\Rest\Authentication;
 
-
 use Cundd\Rest\Handler\AuthHandler;
-use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
+
 
 /**
  * Authentication Provider for requests authenticated through the login route (/auth/login)
@@ -35,17 +34,17 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
  * @package Cundd\Rest\Authentication
  */
 class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider {
-	/**
-	 * @var \Cundd\Rest\SessionManager
-	 * @inject
-	 */
-	protected $sessionManager;
+    /**
+     * @var \Cundd\Rest\SessionManager
+     * @inject
+     */
+    protected $sessionManager;
 
-	/**
-	 * Tries to authenticate the current request
-	 * @return bool Returns if the authentication was successful
-	 */
-	public function authenticate() {
-		return $this->sessionManager->valueForKey('loginStatus') === AuthHandler::STATUS_LOGGED_IN;
-	}
+    /**
+     * Tries to authenticate the current request
+     * @return bool Returns if the authentication was successful
+     */
+    public function authenticate() {
+        return $this->sessionManager->valueForKey('loginStatus') === AuthHandler::STATUS_LOGGED_IN;
+    }
 }

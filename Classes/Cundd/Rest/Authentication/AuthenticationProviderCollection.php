@@ -26,103 +26,100 @@
 namespace Cundd\Rest\Authentication;
 
 
-use Cundd\Rest\Handler\AuthHandler;
-use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
-
 /**
  * Authentication Provider that tests a collection of Authentication Providers
  *
  * @package Cundd\Rest\Authentication
  */
 class AuthenticationProviderCollection implements AuthenticationProviderInterface {
-	/**
-	 * Collection of Authentication Providers
-	 *
-	 * @var \SplObjectStorage<AuthenticationProviderInterface>
-	 */
-	protected $providers;
+    /**
+     * Collection of Authentication Providers
+     *
+     * @var \SplObjectStorage<AuthenticationProviderInterface>
+     */
+    protected $providers;
 
-	/**
-	 * Create a new Authentication Provider collection with the given providers
-	 *
-	 * @param array<AuthenticationProviderInterface>|\SplObjectStorage<AuthenticationProviderInterface> $providers
-	 */
-	function __construct($providers) {
-		$this->providers = new \SplObjectStorage();
-		if (is_array($providers)) {
-			foreach ($providers as $provider) {
-				$this->addProvider($provider);
-			}
-		} else if ($providers instanceof \SplObjectStorage) {
-			$this->providers = $providers;
-		}
-	}
+    /**
+     * Create a new Authentication Provider collection with the given providers
+     *
+     * @param array <AuthenticationProviderInterface>|\SplObjectStorage<AuthenticationProviderInterface> $providers
+     */
+    function __construct($providers) {
+        $this->providers = new \SplObjectStorage();
+        if (is_array($providers)) {
+            foreach ($providers as $provider) {
+                $this->addProvider($provider);
+            }
+        } else if ($providers instanceof \SplObjectStorage) {
+            $this->providers = $providers;
+        }
+    }
 
-	/**
-	 * Loops through each Authentication Provider in the collection and tries to authenticate the current request
-	 *
-	 * @return bool Returns if the authentication was successful
-	 */
-	public function authenticate() {
-		/** @var AuthenticationProviderInterface $authenticationProvider */
-		foreach ($this->providers as $authenticationProvider) {
-			if ($authenticationProvider->authenticate()) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
+    /**
+     * Loops through each Authentication Provider in the collection and tries to authenticate the current request
+     *
+     * @return bool Returns if the authentication was successful
+     */
+    public function authenticate() {
+        /** @var AuthenticationProviderInterface $authenticationProvider */
+        foreach ($this->providers as $authenticationProvider) {
+            if ($authenticationProvider->authenticate()) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
 
-	/**
-	 * @param \Bullet\Request|\Cundd\Rest\Request $request
-	 * @return mixed|void
-	 */
-	public function setRequest(\Cundd\Rest\Request $request) {
-		/** @var AuthenticationProviderInterface $authenticationProvider */
-		foreach ($this->providers as $authenticationProvider) {
-			$authenticationProvider->setRequest($request);
-		}
-	}
+    /**
+     * @param \Bullet\Request|\Cundd\Rest\Request $request
+     * @return mixed|void
+     */
+    public function setRequest(\Cundd\Rest\Request $request) {
+        /** @var AuthenticationProviderInterface $authenticationProvider */
+        foreach ($this->providers as $authenticationProvider) {
+            $authenticationProvider->setRequest($request);
+        }
+    }
 
-	/**
-	 * Sets the used Authentication Providers
-	 *
-	 * @param \SplObjectStorage $providers
-	 * @return $this
-	 */
-	public function setProviders($providers) {
-		$this->providers = $providers;
-		return $this;
-	}
+    /**
+     * Sets the used Authentication Providers
+     *
+     * @param \SplObjectStorage $providers
+     * @return $this
+     */
+    public function setProviders($providers) {
+        $this->providers = $providers;
+        return $this;
+    }
 
-	/**
-	 * Returns the used Authentication Providers
-	 *
-	 * @return \SplObjectStorage
-	 */
-	public function getProviders() {
-		return $this->providers;
-	}
+    /**
+     * Returns the used Authentication Providers
+     *
+     * @return \SplObjectStorage
+     */
+    public function getProviders() {
+        return $this->providers;
+    }
 
-	/**
-	 * Adds the given Authentication Provider
-	 *
-	 * @param AuthenticationProviderInterface $provider
-	 * @return $this
-	 */
-	public function addProvider(AuthenticationProviderInterface $provider) {
-		$this->providers->attach($provider);
-		return $this;
-	}
+    /**
+     * Adds the given Authentication Provider
+     *
+     * @param AuthenticationProviderInterface $provider
+     * @return $this
+     */
+    public function addProvider(AuthenticationProviderInterface $provider) {
+        $this->providers->attach($provider);
+        return $this;
+    }
 
-	/**
-	 * Removes the given Authentication Provider
-	 *
-	 * @param AuthenticationProviderInterface $provider
-	 * @return $this
-	 */
-	public function removeProvider(AuthenticationProviderInterface $provider) {
-		$this->providers->detach($provider);
-		return $this;
-	}
+    /**
+     * Removes the given Authentication Provider
+     *
+     * @param AuthenticationProviderInterface $provider
+     * @return $this
+     */
+    public function removeProvider(AuthenticationProviderInterface $provider) {
+        $this->providers->detach($provider);
+        return $this;
+    }
 }

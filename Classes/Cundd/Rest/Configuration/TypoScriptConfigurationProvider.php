@@ -24,6 +24,7 @@
  */
 
 namespace Cundd\Rest\Configuration;
+
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
@@ -31,7 +32,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
  * Class TypoScriptConfigurationProvider
  * @package Cundd\Rest\Configuration
  */
-class TypoScriptConfigurationProvider implements SingletonInterface{
+class TypoScriptConfigurationProvider implements SingletonInterface {
 	/**
 	 * Settings read from the TypoScript
 	 * @var array
@@ -86,7 +87,8 @@ class TypoScriptConfigurationProvider implements SingletonInterface{
 			$typoScript = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 			if (isset($typoScript['plugin.'])
 				&& isset($typoScript['plugin.']['tx_rest.'])
-				&& isset($typoScript['plugin.']['tx_rest.']['settings.'])) {
+                && isset($typoScript['plugin.']['tx_rest.']['settings.'])
+            ) {
 				$this->settings = $typoScript['plugin.']['tx_rest.']['settings.'];
 			}
 		}

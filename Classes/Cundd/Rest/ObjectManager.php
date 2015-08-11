@@ -27,208 +27,214 @@ namespace Cundd\Rest;
 
 
 use Cundd\Rest\DataProvider\Utility;
-use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
+/**
+ * Specialized Object Manager
+ *
+ * @package Cundd\Rest
+ */
+class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInterface, ObjectManagerInterface, SingletonInterface {
+    /**
+     * @var \Cundd\Rest\DataProvider\DataProviderInterface
+     */
+    protected $dataProvider;
 
+    /**
+     * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
+     */
+    protected $authenticationProvider;
 
-class ObjectManager extends BaseObjectManager implements ObjectManagerInterface, SingletonInterface {
-	/**
-	 * @var \Cundd\Rest\Dispatcher
-	 */
-	protected $dispatcher;
+    /**
+     * Configuration provider
+     *
+     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     */
+    protected $configurationProvider;
 
-	/**
-	 * @var \Cundd\Rest\DataProvider\DataProviderInterface
-	 */
-	protected $dataProvider;
+    /**
+     * @var \Cundd\Rest\Access\AccessControllerInterface
+     */
+    protected $accessController;
 
-	/**
-	 * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
-	 */
-	protected $authenticationProvider;
+    /**
+     * Returns the configuration provider
+     *
+     * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     */
+    public function getConfigurationProvider() {
+        if (!$this->configurationProvider) {
+            $this->configurationProvider = $this->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+        }
+        return $this->configurationProvider;
+    }
 
-	/**
-	 * Configuration provider
-	 * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	protected $configurationProvider;
+    /**
+     * Returns the Request Factory
+     *
+     * @return RequestFactoryInterface
+     */
+    public function getRequestFactory() {
+        return $this->get('Cundd\\Rest\\RequestFactoryInterface');
+    }
 
-	/**
-	 * @var \Cundd\Rest\Access\AccessControllerInterface
-	 */
-	protected $accessController;
+    /**
+     * Returns the Response Factory
+     *
+     * @return ResponseFactoryInterface
+     */
+    public function getResponseFactory() {
+        return $this->get('Cundd\\Rest\\ResponseFactoryInterface');
+    }
 
-	/**
-	 * Injects the dispatcher
-	 *
-	 * @param \Cundd\Rest\Dispatcher $dispatcher
-	 */
-	public function setDispatcher($dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
+    /**
+     * Returns the data provider
+     *
+     * @return \Cundd\Rest\DataProvider\DataProviderInterface
+     */
+    public function getDataProvider() {
+        if (!$this->dataProvider) {
+            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-	/**
-	 * Returns the configuration provider
-	 *
-	 * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-	 */
-	public function getConfigurationProvider() {
-		if (!$this->configurationProvider) {
-			$this->configurationProvider = $this->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
-		}
-		return $this->configurationProvider;
-	}
+            // Check if an extension provides a Data Provider
+            $dataProviderClass = 'Tx_' . $extension . '_Rest_DataProvider';
+            if (!class_exists($dataProviderClass)) {
+                $dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
+            }
+            // Get the specific builtin Data Provider
+            if (!class_exists($dataProviderClass)) {
+                $dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
+                // Get the default Data Provider
+                if (!class_exists($dataProviderClass)) {
+                    $dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
+                }
+            }
+            $this->dataProvider = $this->get($dataProviderClass);
+        }
+        return $this->dataProvider;
+    }
 
-	/**
-	 * Returns the data provider
-	 *
-	 * @throws Exception if the dispatcher is not set
-	 * @return \Cundd\Rest\DataProvider\DataProviderInterface
-	 */
-	public function getDataProvider() {
-		if (!$this->dataProvider) {
-			/** @var Dispatcher $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
+    /**
+     * Returns the Authentication Provider
+     *
+     * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
+     */
+    public function getAuthenticationProvider() {
+        if (!$this->authenticationProvider) {
+            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-			// Check if an extension provides a Data Provider
-			$dataProviderClass  = 'Tx_' . $extension . '_Rest_DataProvider';
-			if (!class_exists($dataProviderClass)) {
-				$dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
-			}
-			// Get the specific builtin Data Provider
-			if (!class_exists($dataProviderClass)) {
-				$dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
-				// Get the default Data Provider
-				if (!class_exists($dataProviderClass)) {
-					$dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
-				}
-			}
-			$this->dataProvider = $this->get($dataProviderClass);
-		}
-		return $this->dataProvider;
-	}
+            // Check if an extension provides a Authentication Provider
+            $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
+            if (!class_exists($authenticationProviderClass)) {
+                $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
+            }
 
-	/**
-	 * Returns the Authentication Provider
-	 * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
-	 */
-	public function getAuthenticationProvider() {
-		if (!$this->authenticationProvider) {
-			/** @var Dispatcher $dispatcher */
-			$dispatcher = $this->dispatcher ? $this->dispatcher : Dispatcher::getSharedDispatcher();
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($dispatcher->getPath());
+            // Use the found Authentication Provider
+            if (class_exists($authenticationProviderClass)) {
+                $this->authenticationProvider = $this->get($authenticationProviderClass);
+            } else {
+                // Use the default Authentication Provider
+                $this->authenticationProvider = $this->get('Cundd\\Rest\\Authentication\\AuthenticationProviderCollection', array(
+                    $this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
+                    $this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
+                ));
+            }
 
-			// Check if an extension provides a Authentication Provider
-			$authenticationProviderClass  = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
-			if (!class_exists($authenticationProviderClass)) {
-				$authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
-			}
+            $this->authenticationProvider->setRequest($this->getRequest());
+        }
+        return $this->authenticationProvider;
+    }
 
+    /**
+     * Returns the Access Controller
+     *
+     * @return \Cundd\Rest\Access\AccessControllerInterface
+     */
+    public function getAccessController() {
+        if (!$this->accessController) {
+            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-			// Use the found Authentication Provider
-			if (class_exists($authenticationProviderClass)) {
-				$this->authenticationProvider = $this->get($authenticationProviderClass);
-			} else {
-				// Use the default Authentication Provider
-				#$authenticationProviderClass = 'Cundd\\Rest\\Authentication\\BasicAuthenticationProvider';
-				$this->authenticationProvider = $this->get('Cundd\\Rest\\Authentication\\AuthenticationProviderCollection', array(
-					$this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
-					$this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
-				));
-			}
+            // Check if an extension provides a Authentication Provider
+            $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
+            if (!class_exists($accessControllerClass)) {
+                $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
+            }
 
-			$this->authenticationProvider->setRequest($dispatcher->getRequest());
-		}
-		return $this->authenticationProvider;
-	}
+            // Use the configuration based Authentication Provider
+            if (!class_exists($accessControllerClass)) {
+                $accessControllerClass = 'Cundd\\Rest\\Access\\ConfigurationBasedAccessController';
+            }
+            $this->accessController = $this->get($accessControllerClass);
+            $this->accessController->setRequest($this->getRequest());
+        }
+        return $this->accessController;
+    }
 
-	/**
-	 * Returns the Access Controller
-	 * @return \Cundd\Rest\Access\AccessControllerInterface
-	 */
-	public function getAccessController() {
-		if (!$this->accessController) {
-			list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+    /**
+     * Returns the Handler which is responsible for handling the current request
+     *
+     * @return HandlerInterface
+     */
+    public function getHandler() {
+        /** @var \Cundd\Rest\HandlerInterface $handler */
+        list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-			// Check if an extension provides a Authentication Provider
-			$accessControllerClass  = 'Tx_' . $extension . '_Rest_AccessController';
-			if (!class_exists($accessControllerClass)) {
-				$accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
-			}
+        // Check if an extension provides a Handler
+        $handlerClass = 'Tx_' . $extension . '_Rest_Handler';
+        if (!class_exists($handlerClass)) {
+            $handlerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
+        }
 
-			// Use the configuration based Authentication Provider
-			if (!class_exists($accessControllerClass)) {
-				$accessControllerClass = 'Cundd\\Rest\\Access\\ConfigurationBasedAccessController';
-			}
-			$this->accessController = $this->get($accessControllerClass);
-			$this->accessController->setRequest($this->dispatcher->getRequest());
-		}
-		return $this->accessController;
-	}
+        // Get the specific builtin handler
+        if (!class_exists($handlerClass)) {
+            $handlerClass = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
+            // Get the default handler
+            if (!class_exists($handlerClass)) {
+                $handlerClass = 'Cundd\\Rest\\HandlerInterface';
+            }
+        }
+        return $this->get($handlerClass);
+    }
 
-	/**
-	 * Returns the Handler which is responsible for handling the current request
-	 *
-	 * @return HandlerInterface
-	 */
-	public function getHandler() {
-		/** @var \Cundd\Rest\HandlerInterface $handler */
-		list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->dispatcher->getPath());
+    /**
+     * Returns the Cache instance
+     *
+     * @return \Cundd\Rest\Cache\Cache
+     */
+    public function getCache() {
+        return $this->get('Cundd\\Rest\\Cache\\Cache');
+    }
 
-		// Check if an extension provides a Handler
-		$handlerClass  = 'Tx_' . $extension . '_Rest_Handler';
-		if (!class_exists($handlerClass)) {
-			$handlerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
-		}
+    /**
+     * Returns the correct class name of the Persistence Manager for the current TYPO3 version
+     *
+     * @return string
+     */
+    static public function getPersistenceManagerClassName() {
+        if (version_compare(TYPO3_version, '6.0.0') < 0) {
+            return 'Tx_Extbase_Persistence_Manager';
+        }
+        return 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
+    }
 
-		// Get the specific builtin handler
-		if (!class_exists($handlerClass)) {
-			$handlerClass = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
-			// Get the default handler
-			if (!class_exists($handlerClass)) {
-				$handlerClass = 'Cundd\\Rest\\HandlerInterface';
-			}
-		}
-		$handler = $this->get($handlerClass);
-		//$handler->setRequest($this->dispatcher->getRequest());
-		return $handler;
-	}
+    /**
+     * Returns the current request
+     *
+     * @return Request
+     */
+    protected function getRequest() {
+        return $this->getRequestFactory()->getRequest();
+    }
 
-	/**
-	 * Returns the correct class name of the Persistence Manager for the current TYPO3 version
-	 *
-	 * @return string
-	 */
-	static public function getPersistenceManagerClassName() {
-		if (version_compare(TYPO3_version, '6.0.0') < 0) {
-			return 'Tx_Extbase_Persistence_Manager';
-		}
-		return 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
-	}
-
-	/**
-	 * Returns the Cache instance
-	 *
-	 * @return \Cundd\Rest\Cache\Cache
-	 */
-	public function getCache() {
-		return $this->get('Cundd\\Rest\\Cache\\Cache');
-	}
-
-	/**
-	 * Resets the managed objects
-	 */
-	public function reassignRequest() {
-		$request = $this->dispatcher->getRequest();
-		if ($this->authenticationProvider) {
-			$this->authenticationProvider->setRequest($request);
-		}
-		if ($this->accessController) {
-			$this->accessController->setRequest($request);
-		}
-	}
+    /**
+     * Resets the managed objects
+     */
+    public function reassignRequest() {
+        $this->dataProvider = null;
+        $this->authenticationProvider = null;
+        $this->configurationProvider = null;
+        $this->accessController = null;
+    }
 }

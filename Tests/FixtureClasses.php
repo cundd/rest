@@ -25,101 +25,127 @@
 
 namespace Cundd\Rest\Test\Core;
 
+use Cundd\Rest\HandlerInterface;
+
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $name = 'Initial value';
+    /**
+     * @var string
+     */
+    protected $name = 'Initial value';
 
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName($name) {
+        $this->name = $name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
+    /**
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
+    }
 }
-class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {}
+
+class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+}
 
 class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
-	/**
-	 * @var string
-	 */
-	protected $base = 'Base';
+    /**
+     * @var string
+     */
+    protected $base = 'Base';
 
-	/**
-	 * @var \DateTime
-	 */
-	protected $date = NULL;
+    /**
+     * @var \DateTime
+     */
+    protected $date = NULL;
 
-	/**
-	 * @var \Cundd\Rest\Test\Core\MyModel
-	 */
-	protected $child = NULL;
+    /**
+     * @var \Cundd\Rest\Test\Core\MyModel
+     */
+    protected $child = NULL;
 
-	function __construct() {
-		$this->child = new MyModel();
-		$this->date = new \DateTime();
-	}
+    function __construct() {
+        $this->child = new MyModel();
+        $this->date = new \DateTime();
+    }
 
 
-	/**
-	 * @param string $base
-	 */
-	public function setBase($base) {
-		$this->base = $base;
-	}
+    /**
+     * @param string $base
+     */
+    public function setBase($base) {
+        $this->base = $base;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getBase() {
-		return $this->base;
-	}
+    /**
+     * @return string
+     */
+    public function getBase() {
+        return $this->base;
+    }
 
-	/**
-	 * @param \Cundd\Rest\Test\Core\MyModel $child
-	 */
-	public function setChild($child) {
-		$this->child = $child;
-	}
+    /**
+     * @param \Cundd\Rest\Test\Core\MyModel $child
+     */
+    public function setChild($child) {
+        $this->child = $child;
+    }
 
-	/**
-	 * @return \Cundd\Rest\Test\Core\MyModel
-	 */
-	public function getChild() {
-		return $this->child;
-	}
+    /**
+     * @return \Cundd\Rest\Test\Core\MyModel
+     */
+    public function getChild() {
+        return $this->child;
+    }
 
-	/**
-	 * @param \DateTime $date
-	 */
-	public function setDate($date) {
-		$this->date = $date;
-	}
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate($date) {
+        $this->date = $date;
+    }
 
-	/**
-	 * @return \DateTime
-	 */
-	public function getDate() {
-		return $this->date;
-	}
+    /**
+     * @return \DateTime
+     */
+    public function getDate() {
+        return $this->date;
+    }
 }
 
 class MyNestedJsonSerializeModel extends MyNestedModel {
-	public function jsonSerialize() {
-		return array(
-			'base' 	=> $this->base,
-			'child'	=> $this->child
-		);
-	}
+    public function jsonSerialize() {
+        return array(
+            'base' => $this->base,
+            'child' => $this->child
+        );
+    }
+}
+
+class MyHandler implements HandlerInterface {
+    /**
+     * @inheritDoc
+     */
+    public function setRequest($request) {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRequest() {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function configureApiPaths() {
+    }
 }
 
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
 class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
+class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Tx_MyExt_Rest_Handler');
+class_alias('Cundd\\Rest\\Test\\Core\\MyHandler', 'Vendor\\MySecondExt\\Rest\\Handler');
