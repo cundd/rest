@@ -82,7 +82,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
                 } elseif (isset($column['is-NULL']) && ($column['is-NULL'] === 'yes')) {
                     $columnValue = NULL;
                 } else {
-                    $columnValue = (string) $table->$columnName;
+                    $columnValue = (string)$table->$columnName;
                 }
 
                 $insertArray[$columnName] = $columnValue;
@@ -101,7 +101,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
                 );
             }
             if (isset($table['id'])) {
-                $elementId = (string) $table['id'];
+                $elementId = (string)$table['id'];
                 $foreignKeys[$tableName][$elementId] = $database->sql_insert_id();
             }
         }

@@ -6,6 +6,7 @@
  * Time: 12:01
  */
 namespace Cundd\Rest;
+
 use Bullet\Response;
 
 

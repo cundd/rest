@@ -100,6 +100,7 @@ interface DataProviderInterface extends SingletonInterface {
     /**
      * Adds or updates the given model in the repository for the
      * given API path
+     *
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
      * @param string $path The API path
      * @return void
@@ -109,6 +110,7 @@ interface DataProviderInterface extends SingletonInterface {
     /**
      * Tells the Data Provider to replace the given old model with the new one
      * in the repository for the given API path
+     *
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
      * @param string $path The API path
@@ -119,6 +121,7 @@ interface DataProviderInterface extends SingletonInterface {
     /**
      * Adds or updates the given model in the repository for the
      * given API path
+     *
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
      * @param string $path The API path
      * @return void

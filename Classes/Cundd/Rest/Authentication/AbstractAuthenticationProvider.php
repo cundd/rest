@@ -28,12 +28,14 @@ namespace Cundd\Rest\Authentication;
 abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface {
     /**
      * The current request
+     *
      * @var \Cundd\Rest\Request
      */
     protected $request;
 
     /**
      * Tries to authenticate the current request
+     *
      * @return bool Returns if the authentication was successful
      */
     public function authenticate() {

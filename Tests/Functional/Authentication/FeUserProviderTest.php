@@ -30,7 +30,7 @@ class FeUserProviderTest extends AbstractCase {
         $this->fixture = new FeUserProvider();
 
         $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query('ALTER TABLE fe_users ADD tx_rest_apikey tinytext;');
+        $databaseConnection->sql_query('ALTER TABLE fe_users ADD tx_rest_apikey TINYTEXT;');
         if ($databaseConnection->sql_errno() && $databaseConnection->sql_errno() != 1060) {
             throw new \Exception($databaseConnection->sql_error());
         }

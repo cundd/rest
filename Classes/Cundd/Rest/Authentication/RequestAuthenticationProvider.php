@@ -35,6 +35,7 @@ namespace Cundd\Rest\Authentication;
 class RequestAuthenticationProvider extends AbstractAuthenticationProvider {
     /**
      * Tries to authenticate the current request
+     *
      * @return bool Returns if the authentication was successful
      */
     public function authenticate() {

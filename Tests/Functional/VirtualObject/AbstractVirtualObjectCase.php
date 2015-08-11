@@ -50,6 +50,7 @@ class AbstractVirtualObjectCase extends AbstractCase {
 
     /**
      * Returns the test configuration object
+     *
      * @return Configuration
      */
     protected function getTestConfiguration() {

@@ -38,6 +38,7 @@ use Cundd\Rest\Dispatcher;
 abstract class AbstractAccessController implements AccessControllerInterface {
     /**
      * The current request
+     *
      * @var \Cundd\Rest\Request
      */
     protected $request;

@@ -96,6 +96,7 @@ class FeUserProvider implements UserProviderInterface {
 
     /**
      * Returns an array containing the prepared password and table column
+     *
      * @param string $password
      * @return array
      */
@@ -105,6 +106,7 @@ class FeUserProvider implements UserProviderInterface {
 
     /**
      * Returns the database adapter
+     *
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
     protected function getDatabaseAdapter() {

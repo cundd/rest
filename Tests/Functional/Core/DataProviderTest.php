@@ -162,6 +162,7 @@ class DataProviderTest extends AbstractCase {
 
     /**
      * The test is currently failing because of a missing type converter
+     *
      * @test
      */
     public function getModelWithDataTest() {
@@ -176,6 +177,7 @@ class DataProviderTest extends AbstractCase {
 
     /**
      * The test is currently failing because of a missing type converter
+     *
      * @test
      */
     public function getNewModelWithDataTest() {

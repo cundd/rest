@@ -176,6 +176,7 @@ class Request extends BaseRequest {
 
     /**
      * Returns if the request wants to read data
+     *
      * @return bool
      */
     public function isRead() {

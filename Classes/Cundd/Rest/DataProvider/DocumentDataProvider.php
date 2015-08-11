@@ -71,6 +71,7 @@ class DocumentDataProvider extends DataProvider {
     /**
      * Adds or updates the given model in the repository for the
      * given API path
+     *
      * @param Document $model
      * @param string $path The API path
      * @return void

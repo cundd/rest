@@ -50,6 +50,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
     /**
      * Inject the configuration provider
+     *
      * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
      */
     public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
@@ -118,6 +119,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
     /**
      * Returns if the request wants to write data
+     *
      * @return bool
      */
     public function isWrite() {
@@ -126,6 +128,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
     /**
      * Returns the configuration matching the current request's path
+     *
      * @return string
      * @throws \UnexpectedValueException if the request is not set
      */
@@ -138,6 +141,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
     /**
      * Returns the configuration matching the given request path
+     *
      * @param string $path
      * @return string
      */
@@ -161,6 +165,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
     /**
      * Returns the paths configured in the settings
+     *
      * @return array
      */
     public function getConfiguredPaths() {
