@@ -36,7 +36,12 @@ use Cundd\CunddComposer\Autoloader;
 use Cundd\Rest\Domain\Model\Document;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
-Autoloader::register();
+
+if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
+    require_once __DIR__ . '/../../../../vendor/autoload.php';
+} else {
+    Autoloader::register();
+}
 
 class RestCommandController extends CommandController {
     /**
@@ -70,18 +75,17 @@ class RestCommandController extends CommandController {
     /**
      * List all Documents
      *
-     *
      * @param string $database Name of the database to list
-     * @param boolean $v Display the Documents body
+     * @param bool $full Display the Documents body
      */
-    public function showDocumentsCommand($database = '', $v = FALSE) {
+    public function showDocumentsCommand($database = '', $full = FALSE) {
         if ($database) {
             $documents = $this->documentRepository->findByDatabase($database);
         } else {
             $documents = $this->documentRepository->findAllIgnoreDatabase();
         }
         foreach ($documents as $document) {
-            $this->showDocument($document, $v);
+            $this->showDocument($document, $full);
         }
     }
 
