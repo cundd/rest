@@ -36,6 +36,11 @@ namespace Cundd\Rest\Authentication\UserProvider;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
 
+/**
+ * User Provider implementation for FeUsers
+ *
+ * @package Cundd\Rest\Authentication\UserProvider
+ */
 class FeUserProvider implements UserProviderInterface {
     /**
      * Name of the password column
@@ -64,6 +69,7 @@ class FeUserProvider implements UserProviderInterface {
 
     /**
      * Builds the where statement from the given properties
+     *
      * @param array $properties
      * @return string
      */
@@ -74,9 +80,17 @@ class FeUserProvider implements UserProviderInterface {
             if ($key === 'password') {
                 list($value, $key) = $this->preparePassword($value);
             }
-            $whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
+            if (is_int($value)) {
+                $whereParts[] = '`' . $key . '`=' . $value;
+            } else {
+                $whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
+            }
         }
         $whereParts[] = '`' . self::PASSWORD_COLUMN_NAME . '`<>\'\'';
+        $whereParts[] = '(`disable`=0)';
+        $whereParts[] = '(`deleted`=0)';
+        $whereParts[] = sprintf('(`starttime`<=%d)', time());
+        $whereParts[] = sprintf('(endtime=0 OR endtime>%d)', time());
         return implode(' AND ', $whereParts);
     }
 
