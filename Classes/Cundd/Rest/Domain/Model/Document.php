@@ -346,5 +346,3 @@ class Document extends AbstractEntity implements \ArrayAccess {
 
 
 }
-
-?>

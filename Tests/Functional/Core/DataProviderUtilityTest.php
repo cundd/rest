@@ -41,32 +41,6 @@ require_once __DIR__ . '/../AbstractCase.php';
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class DataProviderUtilityTest extends AbstractCase {
-    public function setUp() {
-        parent::setUp();
-
-        require_once __DIR__ . '/../../FixtureClasses.php';
-        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Tx_MyExt_Domain_Model_MyModel');
-        }
-        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Tx_MyExt_Domain_Repository_MyModelRepository');
-        }
-
-        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'MyExt\\Domain\\Model\\MySecondModel');
-        }
-        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'MyExt\\Domain\\Repository\\MySecondModelRepository');
-        }
-
-        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModel', 'Vendor\\MyExt\\Domain\\Model\\MyModel');
-        }
-        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
-            class_alias('\\Cundd\\Rest\\Test\\Core\\MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
-        }
-    }
-
     /**
      * @test
      */
@@ -100,5 +74,3 @@ class DataProviderUtilityTest extends AbstractCase {
         $this->assertEquals('series', Utility::singularize('series'));
     }
 }
-
-?>

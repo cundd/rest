@@ -241,5 +241,3 @@ class DispatcherTest extends AbstractCase {
 
 
 }
-
-?>
