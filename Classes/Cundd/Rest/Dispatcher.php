@@ -285,21 +285,6 @@ class Dispatcher implements SingletonInterface {
     }
 
     /**
-     * @param string $name Argument name
-     * @param int $filter Filter for the input
-     * @param mixed $default Default value to use if no argument with the given name exists
-     * @return mixed
-     */
-    protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
-        $argument = GeneralUtility::_GP($name);
-        $argument = filter_var($argument, $filter);
-        if ($argument === NULL) {
-            $argument = $default;
-        }
-        return $argument;
-    }
-
-    /**
      * Returns the sent data
      *
      * @return mixed
