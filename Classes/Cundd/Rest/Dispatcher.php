@@ -428,5 +428,3 @@ class Dispatcher implements SingletonInterface {
         return self::$sharedDispatcher;
     }
 }
-
-?>
