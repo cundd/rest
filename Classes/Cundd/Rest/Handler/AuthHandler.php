@@ -32,8 +32,6 @@
 
 namespace Cundd\Rest\Handler;
 
-
-use Bullet\App;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Handler;
 use Cundd\Rest\HandlerInterface;
@@ -167,20 +165,17 @@ class AuthHandler implements HandlerInterface {
     public function configureApiPaths() {
         $dispatcher = Dispatcher::getSharedDispatcher();
 
-        /** @var App $app */
-        $app = $dispatcher->getApp();
-
         /** @var AuthHandler */
         $handler = $this;
 
-        $app->path($this->getRequest()->path(), function ($request) use ($handler, $app) {
+        $dispatcher->registerPath($this->getRequest()->path(), function ($request) use ($handler, $dispatcher) {
             $handler->setRequest($request);
 
-            $app->path('login', function ($request) use ($handler, $app) {
+            $dispatcher->registerPath('login', function ($request) use ($handler, $dispatcher) {
                 $getCallback = function ($request) use ($handler) {
                     return $handler->getStatus();
                 };
-                $app->get($getCallback);
+                $dispatcher->registerGetMethod($getCallback);
 
                 /**
                  * @param Request $request
@@ -189,15 +184,15 @@ class AuthHandler implements HandlerInterface {
                 $loginCallback = function ($request) use ($handler) {
                     return $handler->checkLogin($request->getSentData());
                 };
-                $app->post($loginCallback);
+                $dispatcher->registerPostMethod($loginCallback);
             });
 
-            $app->path('logout', function ($request) use ($handler, $app) {
+            $dispatcher->registerPath('logout', function ($request) use ($handler, $dispatcher) {
                 $postCallback = function ($request) use ($handler) {
                     return $handler->logout();
                 };
-                $app->get($postCallback);
-                $app->post($postCallback);
+                $dispatcher->registerGetMethod($postCallback);
+                $dispatcher->registerPostMethod($postCallback);
             });
         });
     }

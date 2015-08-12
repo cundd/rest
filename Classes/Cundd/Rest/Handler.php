@@ -32,7 +32,6 @@
 
 namespace Cundd\Rest;
 
-use Bullet\App;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Traversable;
@@ -153,7 +152,6 @@ class Handler implements CrudHandlerInterface {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* SHOW
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        //$getCallback = function($request) use($uid, $dispatcher, $app) {
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
@@ -174,22 +172,19 @@ class Handler implements CrudHandlerInterface {
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function replace() {
-        $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
         $request = $this->getRequest();
         $data = $request->getSentData();
         $data['__identity'] = $this->getIdentifier();
-        $dispatcher->logRequest('update request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
         $oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$oldModel) {
             return $this->responseFactory->createSuccessResponse(NULL, 404);
         }
 
-        /**
-         * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-         */
+        /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(NULL, 400);
@@ -211,13 +206,12 @@ class Handler implements CrudHandlerInterface {
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function update() {
-        $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
         $request = $this->getRequest();
         $data = $request->getSentData();
         $data['__identity'] = $this->getIdentifier();
-        $dispatcher->logRequest('update request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
@@ -262,12 +256,11 @@ class Handler implements CrudHandlerInterface {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* CREATE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        $dispatcher = Dispatcher::getSharedDispatcher();
         $dataProvider = $this->getDataProvider();
 
         $request = $this->getRequest();
         $data = $request->getSentData();
-        $dispatcher->logRequest('create request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('create request', array('body' => $data));
 
         /**
          * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -318,20 +311,16 @@ class Handler implements CrudHandlerInterface {
     public function configureApiPaths() {
         $dispatcher = Dispatcher::getSharedDispatcher();
 
-        /** @var App $app */
-        $app = $dispatcher->getApp();
-
         /** @var HandlerInterface */
         $handler = $this;
 
-
-        $app->path($this->getPath(), function ($request) use ($handler, $app) {
+        $dispatcher->registerPath($this->getPath(), function ($request) use ($handler, $dispatcher) {
             $handler->setRequest($request);
 
             /*
              * Handle a specific Model
              */
-            $app->param('slug', function ($request, $identifier) use ($handler, $app) {
+            $dispatcher->registerParameter('slug', function ($request, $identifier) use ($handler, $dispatcher) {
                 $handler->setIdentifier($identifier);
 
                 /*
@@ -340,7 +329,7 @@ class Handler implements CrudHandlerInterface {
                 $getPropertyCallback = function ($request, $propertyKey) use ($handler) {
                     return $handler->getProperty($propertyKey);
                 };
-                $app->param('slug', $getPropertyCallback);
+                $dispatcher->registerParameter('slug', $getPropertyCallback);
 
                 /*
                  * Show a single Model
@@ -348,7 +337,7 @@ class Handler implements CrudHandlerInterface {
                 $getCallback = function ($request) use ($handler) {
                     return $handler->show();
                 };
-                $app->get($getCallback);
+                $dispatcher->registerGetMethod($getCallback);
 
                 /*
                  * Replace a Model
@@ -356,8 +345,8 @@ class Handler implements CrudHandlerInterface {
                 $replaceCallback = function ($request) use ($handler) {
                     return $handler->replace();
                 };
-                $app->put($replaceCallback);
-                $app->post($replaceCallback);
+                $dispatcher->registerPutMethod($replaceCallback);
+                $dispatcher->registerPostMethod($replaceCallback);
 
                 /*
                  * Update a Model
@@ -365,7 +354,7 @@ class Handler implements CrudHandlerInterface {
                 $updateCallback = function ($request) use ($handler) {
                     return $handler->update();
                 };
-                $app->patch($updateCallback);
+                $dispatcher->registerPatchMethod($updateCallback);
 
                 /*
                  * Delete a Model
@@ -373,7 +362,7 @@ class Handler implements CrudHandlerInterface {
                 $deleteCallback = function ($request) use ($handler) {
                     return $handler->delete();
                 };
-                $app->delete($deleteCallback);
+                $dispatcher->registerDeleteMethod($deleteCallback);
             });
 
             /*
@@ -382,7 +371,7 @@ class Handler implements CrudHandlerInterface {
             $createCallback = function ($request) use ($handler) {
                 return $handler->create();
             };
-            $app->post($createCallback);
+            $dispatcher->registerPostMethod($createCallback);
 
             /*
              * List all Models
@@ -390,7 +379,7 @@ class Handler implements CrudHandlerInterface {
             $listCallback = function ($request) use ($handler) {
                 return $handler->listAll();
             };
-            $app->get($listCallback);
+            $dispatcher->registerGetMethod($listCallback);
         });
     }
 

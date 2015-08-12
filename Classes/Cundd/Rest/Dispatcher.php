@@ -28,6 +28,8 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
+use Cundd\Rest\Dispatcher\DispatcherInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
@@ -41,7 +43,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @package Cundd\Rest
  */
-class Dispatcher implements SingletonInterface {
+class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface {
     /**
      * @var \Cundd\Rest\ObjectManager
      */
@@ -310,10 +312,103 @@ class Dispatcher implements SingletonInterface {
     /**
      * Returns the Bullet App
      *
+     * Use one of the register*() methods if applicable
+     *
      * @return \Bullet\App
      */
     public function getApp() {
         return $this->app;
+    }
+
+    /**
+     * Register the callback for the given parameter
+     *
+     * @param string $param
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerParameter($param, \Closure $callback) {
+        $this->app->param($param, $callback);
+        return $this;
+    }
+
+    /**
+     * Register the callback for the given path segment
+     *
+     * @param string $path
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPath($path, \Closure $callback) {
+        $this->app->path($path, $callback);
+        return $this;
+    }
+
+    /**
+     * Handle GET method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerGetMethod(\Closure $callback) {
+        $this->app->method('GET', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle POST method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPostMethod(\Closure $callback) {
+        $this->app->method('POST', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle PUT method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPutMethod(\Closure $callback) {
+        $this->app->method('PUT', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle DELETE method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerDeleteMethod(\Closure $callback) {
+        $this->app->method('DELETE', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle PATCH method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPatchMethod(\Closure $callback) {
+        $this->app->method('PATCH', $callback);
+        return $this;
+    }
+
+    /**
+     * Register the callback for the given HTTP method(s)
+     *
+     * @param string]string[] $method
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerHttpMethod($methods, \Closure $callback) {
+        $this->app->method($methods, $callback);
+        return $this;
     }
 
     /**

@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Functional\Dispatcher;
 
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
@@ -238,6 +238,4 @@ class DispatcherTest extends AbstractCase {
         $this->assertEquals(404, $response->status());
         $this->assertEquals('{"error":"Not Found"}', $response->content());
     }
-
-
 }
