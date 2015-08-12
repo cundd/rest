@@ -28,6 +28,7 @@ namespace Cundd\Rest;
 use React\EventLoop\Factory;
 use React\Socket\Server as SocketServer;
 use React\Http\Server as HttpServer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 
 class Server {
@@ -46,11 +47,11 @@ class Server {
     protected $host = '127.0.0.1';
 
     /**
-     * Rest app
+     * Rest dispatcher
      *
      * @var \Cundd\Rest\Dispatcher
      */
-    protected $app;
+    protected $dispatcher;
 
 
     function __construct($port = NULL, $host = NULL) {
@@ -64,7 +65,8 @@ class Server {
             $this->host = $host;
         }
 
-        $this->app = new \Cundd\Rest\Dispatcher();
+        /** @var \Cundd\Rest\Dispatcher $app */
+        $this->dispatcher = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager')->get('Cundd\\Rest\\Dispatcher');
     }
 
     /**
@@ -113,7 +115,7 @@ class Server {
         $restResponse = NULL;
 
         ob_start();
-        $this->app->dispatch($restRequest, $restResponse);
+        $this->dispatcher->dispatch($restRequest, $restResponse);
         $responseString = ob_get_clean();
 
         if (!$restResponse) {

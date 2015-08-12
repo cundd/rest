@@ -28,6 +28,8 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
+use Cundd\Rest\Dispatcher\DispatcherInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
@@ -41,7 +43,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @package Cundd\Rest
  */
-class Dispatcher implements SingletonInterface {
+class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface {
     /**
      * @var \Cundd\Rest\ObjectManager
      */
@@ -202,48 +204,6 @@ class Dispatcher implements SingletonInterface {
     }
 
     /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data
-     * @param int $status
-     * @return Response
-     * @deprecated use ResponseFactory->createErrorResponse()
-     */
-    public function createErrorResponse($data, $status) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->responseFactory->createErrorResponse($data, $status);
-    }
-
-    /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data
-     * @param int $status
-     * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse()
-     */
-    public function createSuccessResponse($data, $status) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->responseFactory->createSuccessResponse($data, $status);
-    }
-
-    /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data Data to send
-     * @param int $status Status code of the response
-     * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
-     * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
-     */
-    protected function _createResponse($data, $status, $forceError = FALSE) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        /** @var ResponseFactory $responseFactory */
-        $responseFactory = $this->responseFactory;
-        return $responseFactory->createResponse($data, $status, $forceError);
-    }
-
-    /**
      * Returns the request
      *
      * Better use the RequestFactory::getRequest() instead
@@ -255,65 +215,105 @@ class Dispatcher implements SingletonInterface {
     }
 
     /**
-     * @return string
-     * @deprecated use getRequest()->path() instead
-     */
-    public function getPath() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->path();
-    }
-
-    /**
-     * @return string
-     * @deprecated use getRequest()->originalPath() instead
-     */
-    public function getOriginalPath() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->originalPath();
-    }
-
-    /**
-     * Returns the URI
-     *
-     * @param string $format Reference to be filled with the request format
-     * @return string
-     * @deprecated use the RequestFactory::getUri() instead
-     */
-    public function getUri(&$format = '') {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getUri($format);
-    }
-
-    /**
-     * Returns the sent data
-     *
-     * @return mixed
-     * @deprecated use the request's getSentData()
-     */
-    public function getSentData() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->getSentData();
-    }
-
-    /**
-     * Returns the key to use for the root object if addRootObjectForCollection
-     * is enabled
-     *
-     * @return string
-     * @deprecated use the request's getRootObjectKey()
-     */
-    public function getRootObjectKey() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->getRootObjectKey();
-    }
-
-    /**
      * Returns the Bullet App
+     *
+     * Use one of the register*() methods if applicable
      *
      * @return \Bullet\App
      */
     public function getApp() {
         return $this->app;
+    }
+
+    /**
+     * Register the callback for the given parameter
+     *
+     * @param string $param
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerParameter($param, \Closure $callback) {
+        $this->app->param($param, $callback);
+        return $this;
+    }
+
+    /**
+     * Register the callback for the given path segment
+     *
+     * @param string $path
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPath($path, \Closure $callback) {
+        $this->app->path($path, $callback);
+        return $this;
+    }
+
+    /**
+     * Handle GET method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerGetMethod(\Closure $callback) {
+        $this->app->method('GET', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle POST method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPostMethod(\Closure $callback) {
+        $this->app->method('POST', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle PUT method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPutMethod(\Closure $callback) {
+        $this->app->method('PUT', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle DELETE method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerDeleteMethod(\Closure $callback) {
+        $this->app->method('DELETE', $callback);
+        return $this;
+    }
+
+    /**
+     * Handle PATCH method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPatchMethod(\Closure $callback) {
+        $this->app->method('PATCH', $callback);
+        return $this;
+    }
+
+    /**
+     * Register the callback for the given HTTP method(s)
+     *
+     * @param string]string[] $method
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerHttpMethod($methods, \Closure $callback) {
+        $this->app->method($methods, $callback);
+        return $this;
     }
 
     /**
@@ -374,6 +374,101 @@ class Dispatcher implements SingletonInterface {
         } else {
             $this->getLogger()->log(LogLevel::DEBUG, $message);
         }
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createErrorResponse()
+     */
+    public function createErrorResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createErrorResponse($data, $status);
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse()
+     */
+    public function createSuccessResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createSuccessResponse($data, $status);
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data Data to send
+     * @param int $status Status code of the response
+     * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
+     */
+    protected function _createResponse($data, $status, $forceError = FALSE) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->responseFactory;
+        return $responseFactory->createResponse($data, $status, $forceError);
+    }
+
+    /**
+     * @return string
+     * @deprecated use getRequest()->path() instead
+     */
+    public function getPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->path();
+    }
+
+    /**
+     * @return string
+     * @deprecated use getRequest()->originalPath() instead
+     */
+    public function getOriginalPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->originalPath();
+    }
+
+    /**
+     * Returns the URI
+     *
+     * @param string $format Reference to be filled with the request format
+     * @return string
+     * @deprecated use the RequestFactory::getUri() instead
+     */
+    public function getUri(&$format = '') {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getUri($format);
+    }
+
+    /**
+     * Returns the sent data
+     *
+     * @return mixed
+     * @deprecated use the request's getSentData()
+     */
+    public function getSentData() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getSentData();
+    }
+
+    /**
+     * Returns the key to use for the root object if addRootObjectForCollection
+     * is enabled
+     *
+     * @return string
+     * @deprecated use the request's getRootObjectKey()
+     */
+    public function getRootObjectKey() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getRootObjectKey();
     }
 
     /**

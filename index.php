@@ -18,5 +18,6 @@ if (!class_exists('Cundd\\Rest\\Bootstrap')) {
 
 $bootstrap = new \Cundd\Rest\Bootstrap;
 $bootstrap->init();
-$app = new \Cundd\Rest\Dispatcher;
-$app->dispatch();
+/** @var \Cundd\Rest\Dispatcher $dispatcher */
+$dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager')->get('Cundd\\Rest\\Dispatcher');
+$dispatcher->dispatch();
