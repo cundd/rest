@@ -204,48 +204,6 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     }
 
     /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data
-     * @param int $status
-     * @return Response
-     * @deprecated use ResponseFactory->createErrorResponse()
-     */
-    public function createErrorResponse($data, $status) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->responseFactory->createErrorResponse($data, $status);
-    }
-
-    /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data
-     * @param int $status
-     * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse()
-     */
-    public function createSuccessResponse($data, $status) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->responseFactory->createSuccessResponse($data, $status);
-    }
-
-    /**
-     * Returns a response with the given message and status code
-     *
-     * @param string|array $data Data to send
-     * @param int $status Status code of the response
-     * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
-     * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
-     */
-    protected function _createResponse($data, $status, $forceError = FALSE) {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        /** @var ResponseFactory $responseFactory */
-        $responseFactory = $this->responseFactory;
-        return $responseFactory->createResponse($data, $status, $forceError);
-    }
-
-    /**
      * Returns the request
      *
      * Better use the RequestFactory::getRequest() instead
@@ -254,59 +212,6 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      */
     public function getRequest() {
         return $this->requestFactory->getRequest();
-    }
-
-    /**
-     * @return string
-     * @deprecated use getRequest()->path() instead
-     */
-    public function getPath() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->path();
-    }
-
-    /**
-     * @return string
-     * @deprecated use getRequest()->originalPath() instead
-     */
-    public function getOriginalPath() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->originalPath();
-    }
-
-    /**
-     * Returns the URI
-     *
-     * @param string $format Reference to be filled with the request format
-     * @return string
-     * @deprecated use the RequestFactory::getUri() instead
-     */
-    public function getUri(&$format = '') {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getUri($format);
-    }
-
-    /**
-     * Returns the sent data
-     *
-     * @return mixed
-     * @deprecated use the request's getSentData()
-     */
-    public function getSentData() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->getSentData();
-    }
-
-    /**
-     * Returns the key to use for the root object if addRootObjectForCollection
-     * is enabled
-     *
-     * @return string
-     * @deprecated use the request's getRootObjectKey()
-     */
-    public function getRootObjectKey() {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
-        return $this->requestFactory->getRequest()->getRootObjectKey();
     }
 
     /**
@@ -469,6 +374,101 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         } else {
             $this->getLogger()->log(LogLevel::DEBUG, $message);
         }
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createErrorResponse()
+     */
+    public function createErrorResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createErrorResponse($data, $status);
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse()
+     */
+    public function createSuccessResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createSuccessResponse($data, $status);
+    }
+
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data Data to send
+     * @param int $status Status code of the response
+     * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
+     */
+    protected function _createResponse($data, $status, $forceError = FALSE) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->responseFactory;
+        return $responseFactory->createResponse($data, $status, $forceError);
+    }
+
+    /**
+     * @return string
+     * @deprecated use getRequest()->path() instead
+     */
+    public function getPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->path();
+    }
+
+    /**
+     * @return string
+     * @deprecated use getRequest()->originalPath() instead
+     */
+    public function getOriginalPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->originalPath();
+    }
+
+    /**
+     * Returns the URI
+     *
+     * @param string $format Reference to be filled with the request format
+     * @return string
+     * @deprecated use the RequestFactory::getUri() instead
+     */
+    public function getUri(&$format = '') {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getUri($format);
+    }
+
+    /**
+     * Returns the sent data
+     *
+     * @return mixed
+     * @deprecated use the request's getSentData()
+     */
+    public function getSentData() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getSentData();
+    }
+
+    /**
+     * Returns the key to use for the root object if addRootObjectForCollection
+     * is enabled
+     *
+     * @return string
+     * @deprecated use the request's getRootObjectKey()
+     */
+    public function getRootObjectKey() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getRootObjectKey();
     }
 
     /**
