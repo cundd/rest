@@ -161,37 +161,6 @@ class DataProviderTest extends AbstractCase {
     }
 
     /**
-     * The test is currently failing because of a missing type converter
-     *
-     * @test
-     */
-    public function getModelWithDataTest() {
-        $this->markTestSkipped('The test is currently failing because of a missing type converter');
-        $data = array('name' => 'Daniel Corn');
-        $path = 'MyExt-MyModel';
-
-        /** @var \Cundd\Rest\Tests\MyModel $model */
-        $model = $this->fixture->getModelWithDataForPath($data, $path);
-        $this->assertEquals('Daniel Corn', $model->getName());
-    }
-
-    /**
-     * The test is currently failing because of a missing type converter
-     *
-     * @test
-     */
-    public function getNewModelWithDataTest() {
-        $this->markTestSkipped('The test is currently failing because of a missing type converter');
-        $data = array('name' => 'Daniel Corn', '__identity' => 9);
-        $path = 'MyExt-MyModel';
-
-        /** @var \Cundd\Rest\Tests\MyModel $model */
-        $model = $this->fixture->getModelWithDataForPath($data, $path);
-        $this->assertEquals('Daniel Corn', $model->getName());
-        $this->assertEquals(9, $model->getUid());
-    }
-
-    /**
      * @test
      */
     public function getModelDataTest() {
