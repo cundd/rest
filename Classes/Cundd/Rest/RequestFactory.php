@@ -56,9 +56,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
              * Transform Document URLs
              * @Todo: Make this more flexible
              */
-            $documentApiPathLength = strlen(Dispatcher::API_PATH_DOCUMENT) + 1;
-            if (substr($uri, 0, $documentApiPathLength) === Dispatcher::API_PATH_DOCUMENT . '/') {
-                $uri = Dispatcher::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
+            $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
+            if (substr($uri, 0, $documentApiPathLength) === Request::API_PATH_DOCUMENT . '/') {
+                $uri = Request::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
             }
 
             list($uri, $originalPath, $path) = $this->getRequestPathAndUriForUri($uri);

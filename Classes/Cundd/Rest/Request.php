@@ -35,6 +35,11 @@ use Cundd\Rest\DataProvider\Utility;
  */
 class Request extends BaseRequest {
     /**
+     * Path prefix for the Document Store
+     */
+    const API_PATH_DOCUMENT = 'Document';
+
+    /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
@@ -195,8 +200,8 @@ class Request extends BaseRequest {
          * Transform Document URLs
          * @Todo: Make this better
          */
-        $documentApiPathLength = strlen(Dispatcher::API_PATH_DOCUMENT) + 1;
-        if (substr($originalPath, 0, $documentApiPathLength) === Dispatcher::API_PATH_DOCUMENT . '-') {
+        $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
+        if (substr($originalPath, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '-') {
             $originalPath = substr($originalPath, $documentApiPathLength);
         }
         return $originalPath;

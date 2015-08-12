@@ -43,11 +43,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Dispatcher implements SingletonInterface {
     /**
-     * Path prefix for the Document Store
-     */
-    const API_PATH_DOCUMENT = 'Document';
-
-    /**
      * @var \Cundd\Rest\ObjectManager
      */
     protected $objectManager;
