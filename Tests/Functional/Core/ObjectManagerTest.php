@@ -251,4 +251,42 @@ class ObjectManagerTest extends AbstractCase {
         $this->assertInstanceOf('\\Cundd\\Rest\\Handler', $handler);
     }
 
+
+
+    /**
+     * @test
+     */
+    public function getDataProviderForVirtualObjectTest() {
+        $_GET['u'] = 'VirtualObject-Page';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function getDataProviderForVirtualObjectWithFormatTest() {
+        $_GET['u'] = 'VirtualObject-Page.json';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function getDataProviderForVirtualObjectWithPathTest() {
+        $_GET['u'] = 'VirtualObject-Page/1';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function getDataProviderForVirtualObjectWithPathWithFormatTest() {
+        $_GET['u'] = 'VirtualObject-Page/1.json';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
+    }
+
 }
