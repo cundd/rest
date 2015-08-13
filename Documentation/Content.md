@@ -4,11 +4,7 @@ Content via REST
 Setup
 -----
 
-Include the TypoScript file from `Configuration/TypoScript/Presets/Content.ts`
-
-	<INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Configuration/TypoScript/Presets/Content.ts">
-	
-and configure the access
+Include the static TypoScript file from `Virtual Object - Content (rest)` and configure the access
 
 	plugin.tx_rest.settings {
 		paths {
