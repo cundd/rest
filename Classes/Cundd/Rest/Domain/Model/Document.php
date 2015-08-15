@@ -343,6 +343,4 @@ class Document extends AbstractEntity implements \ArrayAccess {
     function __isset($name) {
         return $this->offsetExists($name);
     }
-
-
 }

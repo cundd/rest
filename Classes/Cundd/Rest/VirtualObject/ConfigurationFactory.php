@@ -62,7 +62,6 @@ class ConfigurationFactory implements SingletonInterface {
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createFromArrayForPath($configurationArray, $path) {
-        $configurationData = NULL;
         if (
             isset($configurationArray[$path]) && is_array($configurationArray[$path])
             && isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
