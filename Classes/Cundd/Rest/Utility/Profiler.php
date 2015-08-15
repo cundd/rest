@@ -286,6 +286,4 @@ class Profiler {
         }
         return $instance;
     }
-
-
 }

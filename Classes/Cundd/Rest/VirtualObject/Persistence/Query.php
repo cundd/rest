@@ -230,6 +230,4 @@ class Query implements QueryInterface {
     public function getStatement() {
         return $this->statement;
     }
-
-
 }

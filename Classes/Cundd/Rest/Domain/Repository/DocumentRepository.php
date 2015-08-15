@@ -382,7 +382,7 @@ class DocumentRepository extends Repository {
             /** @var DatabaseConnection $databaseConnection */
             $databaseConnection = $GLOBALS['TYPO3_DB'];
 
-            $query = 'UPDATE tx_rest_domain_model_document SET deleted=2 WHERE db = \'' . $currentDatabase . '\'';
+            $query = sprintf('UPDATE tx_rest_domain_model_document SET deleted=2 WHERE db = \'%s\'', $currentDatabase);
             $databaseConnection->sql_query($query);
         }
     }

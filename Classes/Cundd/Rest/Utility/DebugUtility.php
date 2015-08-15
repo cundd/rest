@@ -66,5 +66,4 @@ class DebugUtility {
         }
         return $backtrace[1];
     }
-
 }

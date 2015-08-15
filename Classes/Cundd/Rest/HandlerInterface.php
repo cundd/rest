@@ -57,5 +57,4 @@ interface HandlerInterface {
      * Configures which method is responsible for handling the different request paths
      */
     public function configureApiPaths();
-
-} 
+}

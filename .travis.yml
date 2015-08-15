@@ -10,10 +10,6 @@ env:
   - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-#  - TYPO3=TYPO3_6-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-#  - TYPO3=TYPO3_6-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-#  - TYPO3=TYPO3_4-7 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-#  - TYPO3=TYPO3_4-5 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 matrix:
   fast_finish: true
@@ -31,17 +27,6 @@ sudo: false
 
 before_script:
 # Install build dependencies
-
-# TODO: The LocalConfiguration.php is only available for TYPO3 6.0 and higher.
-# To support lower versions we have to deliver also a localconf file
-#  - cd ..
-#  - git clone --single-branch --branch $INTEGRATION --depth 1 https://github.com/Konafets/TYPO3-Travis-Integration build-environment
-#  - git clone --single-branch --branch $TYPO3 --depth 1 https://github.com/TYPO3/TYPO3.CMS.git core
-#  - source build-environment/install-helper.sh
-#  - if [[ "$TRAVIS_PHP_VERSION" != "5.5" ]]; then installPhpModule igbinary; fi
-#  - if [[ "$TRAVIS_PHP_VERSION" == "5.3" ]]; then installPhpModule -y apc; fi
-
-# Install rudimentary TYPO3
   - >
     echo "Install dependencies";
     composer --version;
