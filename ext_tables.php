@@ -23,7 +23,11 @@ if (version_compare(TYPO3_version, '6.0.0') < 0) {
 if (method_exists('TYPO3\CMS\Core\Utility\GeneralUtility', 'loadTCA')) {
 	\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('fe_users');
 }
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_users', $tempColumns, 1);
+if (version_compare(TYPO3_branch, '6.2', '<')) {
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_users', $tempColumns, 1);
+} else {
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_users', $tempColumns);
+}
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'tx_rest_apikey;;;;1-1-1', '', 'after:password');
 
 
