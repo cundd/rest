@@ -84,8 +84,14 @@ class RestCommandController extends CommandController {
         } else {
             $documents = $this->documentRepository->findAllIgnoreDatabase();
         }
+        if ($documents) {
         foreach ($documents as $document) {
             $this->showDocument($document, $full);
+        }
+        } else {
+            $this->outputLine(
+                $database ? sprintf('No documents found in database "%s"', $database) : 'No documents found'
+            );
         }
     }
 
