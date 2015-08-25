@@ -254,7 +254,9 @@ class DocumentRepository extends Repository {
         if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
 
         $query = $this->createQuery();
-        $query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        if (method_exists($query->getQuerySettings(), 'setReturnRawQueryResult')) {
+            $query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        }
         $query->matching($query->equals('db', $currentDatabase));
         return $query->execute();
     }
@@ -506,9 +508,12 @@ class DocumentRepository extends Repository {
      */
     public function createQuery() {
         $query = parent::createQuery();
-        $query->getQuerySettings()->setRespectSysLanguage(FALSE);
-        $query->getQuerySettings()->setRespectStoragePage(FALSE);
-        $query->getQuerySettings()->setReturnRawQueryResult($this->useRawQueryResults);
+        $querySettings = $query->getQuerySettings();
+        $querySettings->setRespectSysLanguage(FALSE);
+        $querySettings->setRespectStoragePage(FALSE);
+        if (method_exists($querySettings, 'setReturnRawQueryResult')) {
+            $querySettings->setReturnRawQueryResult($this->useRawQueryResults);
+        }
         return $query;
     }
 
