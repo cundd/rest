@@ -82,29 +82,7 @@ class Bootstrap {
                 ''  // RDCT
             );
 
-            // builds rootline
-            if ($pageUid > 0) {
-                $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
-                /** @var RootlineUtility $rootLine */
-                $rootLineUtility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $pageUid);
-                $rootLine = $rootLineUtility->get();
-                $GLOBALS['TSFE']->rootLine = $rootLine;
-            }
-
-            // Init template
-            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
-            $GLOBALS['TSFE']->tmpl->tt_track = 0;// Do not log time-performance information
-            $GLOBALS['TSFE']->tmpl->init();
-
-            // this generates the constants/config + hierarchy info for the template.
-            if ($rootLine && $pageUid > 0) {
-                $GLOBALS['TSFE']->tmpl->runThroughTemplates(
-                    $rootLine,
-                    0 // start_template_uid
-                );
-            }
-            $GLOBALS['TSFE']->tmpl->generateConfig();
-            $GLOBALS['TSFE']->tmpl->loaded = 1;
+            $GLOBALS['TSFE']->initTemplate();
 
             // builds a cObj
             if (is_array($GLOBALS['TSFE']->page) === FALSE) {
