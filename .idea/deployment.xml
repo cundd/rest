@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="rest.cundd.net" />
+  <component name="PublishConfigData" serverName="master2015.iresults.me">
+    <serverData>
+      <paths name="master2015.iresults.me">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/typo3conf/ext/rest" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
 </project>
