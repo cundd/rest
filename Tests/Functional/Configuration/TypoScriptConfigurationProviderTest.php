@@ -57,7 +57,7 @@ class TypoScriptConfigurationProviderTest extends AbstractCase {
     public function getSettingsTest() {
         $settings = $this->fixture->getSettings();
         $this->assertInternalType('array', $settings);
-        $this->assertArrayHasKey('paths', $settings);
+        $this->assertArrayHasKey('paths.', $settings);
     }
 
     /**

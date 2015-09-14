@@ -51,7 +51,7 @@ class TypoScriptConfigurationProvider implements SingletonInterface {
      * Returns the setting with the given key
      *
      * @param string $keyPath
-     * @param mixed $defaultValue ;
+     * @param mixed $defaultValue
      * @return mixed
      */
     public function getSetting($keyPath, $defaultValue = NULL) {
@@ -60,7 +60,6 @@ class TypoScriptConfigurationProvider implements SingletonInterface {
         $keyPathParts = explode('.', $keyPath);
         foreach ($keyPathParts as $key) {
             if (is_array($matchingSetting)) {
-//				\Cundd\Rest\Utility\DebugUtility::debug($key, $key . '.', $matchingSetting[$key . '.']);
                 if (isset($matchingSetting[$key . '.'])) {
                     $matchingSetting = $matchingSetting[$key . '.'];
                 } else if (isset($matchingSetting[$key])) {
@@ -75,7 +74,6 @@ class TypoScriptConfigurationProvider implements SingletonInterface {
         if (is_null($matchingSetting) && !is_null($defaultValue)) {
             return $defaultValue;
         }
-//		\Cundd\Rest\Utility\DebugUtility::debug($matchingSetting, $this->getSettings(), $keyPath);
         return $matchingSetting;
     }
 
