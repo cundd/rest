@@ -55,8 +55,10 @@ class ApiConfigurationTest extends AbstractCase {
 
     public function tearDown() {
         /** @var RequestFactoryInterface $requestFactory */
-        $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
-        $requestFactory->resetRequest();
+        if ($this->objectManager) {
+            $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
+            $requestFactory->resetRequest();
+        }
         unset($this->fixture);
         unset($_GET['u']);
         parent::tearDown();
