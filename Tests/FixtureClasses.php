@@ -88,14 +88,14 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     }
 
     /**
-     * @param \Cundd\Rest\Tests\MyModel $child
+     * @param MyModel|MyNestedModel $child
      */
     public function setChild($child) {
         $this->child = $child;
     }
 
     /**
-     * @return \Cundd\Rest\Tests\MyModel
+     * @return MyModel|MyNestedModel
      */
     public function getChild() {
         return $this->child;

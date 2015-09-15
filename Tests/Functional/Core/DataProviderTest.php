@@ -178,6 +178,70 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
+    public function getModelDataRecursiveTest() {
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+
+        $childModel->setChild($model);
+        $model->setChild($childModel);
+
+        $properties = $this->fixture->getModelData($model);
+        $this->assertEquals(
+            array(
+                'base' => 'Base',
+                'date' => $testDate,
+                'child' => array(
+                    'base' => 'Base',
+                    'date' => $testDate,
+                    'child' => array(
+                        0 => 'recursion'
+                    ),
+
+                    'uid' => null,
+                    'pid' => null,
+                    '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+                ),
+
+                'uid' => null,
+                'pid' => null,
+                '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+            ),
+            $properties
+        );
+
+        // Make sure the same result is returned if getModelData() is invoked again
+        $properties = $this->fixture->getModelData($model);
+        $this->assertEquals(
+            array(
+                'base' => 'Base',
+                'date' => $testDate,
+                'child' => array(
+                    'base' => 'Base',
+                    'date' => $testDate,
+                    'child' => array(
+                        0 => 'recursion'
+                    ),
+
+                    'uid' => null,
+                    'pid' => null,
+                    '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+                ),
+
+                'uid' => null,
+                'pid' => null,
+                '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+            ),
+            $properties
+        );
+    }
+
+    /**
+     * @test
+     */
     public function getNestedModelDataTest() {
         $testDate = new \DateTime();
         $model = new MyNestedModel();
