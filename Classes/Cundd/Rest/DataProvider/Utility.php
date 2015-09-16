@@ -176,6 +176,6 @@ class Utility {
      * @return bool
      */
     protected static function shouldSkipSingularization($word) {
-        return in_array($word, static::$skipSingularization);
+        return in_array(strtolower($word), static::$skipSingularization);
     }
 }

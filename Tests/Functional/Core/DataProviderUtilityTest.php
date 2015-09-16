@@ -72,5 +72,13 @@ class DataProviderUtilityTest extends AbstractCase {
         $this->assertEquals('equipment', Utility::singularize('equipment'));
         $this->assertEquals('species', Utility::singularize('species'));
         $this->assertEquals('series', Utility::singularize('series'));
+
+        $this->assertEquals('tree', Utility::singularize('Trees'));
+        $this->assertEquals('friend', Utility::singularize('Friends'));
+        $this->assertEquals('hobby', Utility::singularize('Hobbies'));
+        $this->assertEquals('news', Utility::singularize('News'));
+        $this->assertEquals('equipment', Utility::singularize('Equipment'));
+        $this->assertEquals('species', Utility::singularize('Species'));
+        $this->assertEquals('series', Utility::singularize('Series'));
     }
 }
