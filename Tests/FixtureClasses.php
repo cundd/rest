@@ -26,6 +26,7 @@
 namespace Cundd\Rest\Tests;
 
 use Cundd\Rest\HandlerInterface;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
     /**
@@ -113,6 +114,27 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
      */
     public function getDate() {
         return $this->date;
+    }
+}
+
+class MyNestedModelWithObjectStorage extends MyNestedModel {
+    /**
+     * @var ObjectStorage
+     */
+    protected $children;
+
+    /**
+     * @return ObjectStorage
+     */
+    public function getChildren() {
+        return $this->children;
+    }
+
+    /**
+     * @param ObjectStorage $children
+     */
+    public function setChildren($children) {
+        $this->children = $children;
     }
 }
 

@@ -29,6 +29,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
 use Cundd\Rest\Tests\MyNestedModel;
+use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -191,48 +193,83 @@ class DataProviderTest extends AbstractCase {
         $childModel->setChild($model);
         $model->setChild($childModel);
 
-        $properties = $this->fixture->getModelData($model);
-        $this->assertEquals(
-            array(
+        $expectedOutput = array(
+            'base' => 'Base',
+            'date' => $testDate,
+            'child' => array(
                 'base' => 'Base',
                 'date' => $testDate,
-                'child' => array(
-                    'base' => 'Base',
-                    'date' => $testDate,
-                    'child' => 'http:///rest/cundd-rest-my_nested_model/2/child',
-                    'uid' => 2,
-                    'pid' => null,
-                    '__class' => 'Cundd\Rest\Tests\MyNestedModel',
-                ),
-
-                'uid' => 1,
+                'child' => 'http:///rest/cundd-rest-tests-my_nested_model/1/child',
+                'uid' => 2,
                 'pid' => null,
                 '__class' => 'Cundd\Rest\Tests\MyNestedModel',
             ),
-            $properties
+
+            'uid' => 1,
+            'pid' => null,
+            '__class' => 'Cundd\Rest\Tests\MyNestedModel',
         );
+
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
 
         // Make sure the same result is returned if getModelData() is invoked again
-        $properties = $this->fixture->getModelData($model);
-        $this->assertEquals(
-            array(
-                'base' => 'Base',
-                'date' => $testDate,
-                'child' => array(
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
+    }
+
+    /**
+     * @test
+     */
+    public function getModelDataRecursiveWithObjectStorageTest() {
+        $testDate = new \DateTime();
+        $model = new MyNestedModelWithObjectStorage();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $children = new ObjectStorage();
+        $children->attach($model);
+        $children->attach($childModel);
+        $model->setChildren($children);
+
+        $expectedOutput = array(
+            'base' => 'Base',
+            'date' => $testDate,
+            'child' => array(
+                'uid' => null,
+                'pid' => null,
+                '__class' => 'Cundd\Rest\Tests\MyModel',
+                'name' => 'Initial value'
+            ),
+
+            'uid' => 1,
+            'pid' => null,
+            '__class' => 'Cundd\Rest\Tests\MyNestedModelWithObjectStorage',
+            'children' => array(
+                0 => 'http:///rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                1 => array( // <- This is $childModel
                     'base' => 'Base',
                     'date' => $testDate,
-                    'child' =>'http:///rest/cundd-rest-my_nested_model/2/child',
                     'uid' => 2,
                     'pid' => null,
                     '__class' => 'Cundd\Rest\Tests\MyNestedModel',
-                ),
+                    'child' => array(
+                        'name' => 'Initial value',
+                        'uid' => null,
+                        'pid' => null,
+                        '__class' => 'Cundd\Rest\Tests\MyModel',
 
-                'uid' => 1,
-                'pid' => null,
-                '__class' => 'Cundd\Rest\Tests\MyNestedModel',
-            ),
-            $properties
+                    )
+                ),
+            )
         );
+
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
+
+        // Make sure the same result is returned if getModelData() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
     }
 
     /**

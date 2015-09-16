@@ -26,10 +26,10 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\ObjectManager;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
-use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
@@ -223,15 +223,13 @@ class DataProvider implements DataProviderInterface {
      * @return array<mixed>
      */
     public function getModelData($model) {
-        static $handledModels = array();
+
 
         $doNotAddClass = (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0);
 
         /** @var array $properties */
         $properties = NULL;
         if (is_object($model)) {
-            $modelHash = spl_object_hash($model);
-            $handledModels[$modelHash] = true;
 
             // Get the data from the model
             if (method_exists($model, 'jsonSerialize')) {
@@ -243,32 +241,12 @@ class DataProvider implements DataProviderInterface {
                 $doNotAddClass = TRUE;
             }
 
-            // Transform objects recursive
-            if (is_array($properties)) {
-                foreach ($properties as $propertyKey => $propertyValue) {
-                    if (is_object($propertyValue)) {
+            $properties = $this->transformProperties($model, $properties);
 
-                        $propertyValueHash = spl_object_hash($propertyValue);
-                        if (!isset($handledModels[$propertyValueHash])) {
-                            if ($propertyValue instanceof LazyLoadingProxy) {
-                                $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
-                            } else if ($propertyValue instanceof LazyObjectStorage) {
-                                $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
-                            } else {
-                                $properties[$propertyKey] = $this->getModelData($propertyValue);
-                            }
-                        } else {
-                            // Handle recursion
-                            $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $model);
-                        }
-                    }
-                }
-            }
 
             if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
                 $properties['__class'] = get_class($model);
             }
-            unset($handledModels[$modelHash]);
         }
 
         if (!$properties) {
@@ -337,13 +315,27 @@ class DataProvider implements DataProviderInterface {
      */
     public function getUriToNestedResource($resourceKey, $model) {
         $currentUri = '/rest/';
-        $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/' . $resourceKey;
+        $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
+
+        if ($resourceKey !== null) {
+            $currentUri .= $resourceKey;
+        }
 
         $host = filter_var($_SERVER['HTTP_HOST'], FILTER_SANITIZE_URL);
 
         $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
 
         return $protocol . '://' . $host . $currentUri;
+    }
+
+    /**
+     * Returns the URI of a resource
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @return string
+     */
+    public function getUriToResource($model) {
+        return $this->getUriToNestedResource(null, $model);
     }
 
     /**
@@ -530,5 +522,60 @@ class DataProvider implements DataProviderInterface {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
         return $this->logger;
+    }
+
+    /**
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param $properties
+     * @return array
+     */
+    protected function transformProperties($model, $properties) {
+        static $handledModels = array();
+
+        if (!is_array($properties)) {
+            return $properties;
+        }
+
+        $modelHash = spl_object_hash($model);
+        if (isset($handledModels[$modelHash])) {
+            $handledModels[$modelHash] = $handledModels[$modelHash] + 1;
+        } else {
+            $handledModels[$modelHash] = 1;
+        }
+
+        $modelIsObjectStorage = $model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
+
+        // Transform objects recursive
+        foreach ($properties as $propertyKey => $propertyValue) {
+            if (is_object($propertyValue)) {
+                $propertyValueIsObjectStorage = $propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
+                $propertyValueHash = spl_object_hash($propertyValue);
+                if (!isset($handledModels[$propertyValueHash])) {
+                    if ($propertyValue instanceof LazyLoadingProxy) {
+                        $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
+                    } else if ($propertyValue instanceof LazyObjectStorage) {
+                        $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
+                    } else {
+                        $properties[$propertyKey] = $this->getModelData($propertyValue);
+                    }
+                } elseif ($propertyValueIsObjectStorage && $handledModels[$propertyValueHash] < 2) {
+                    $properties[$propertyKey] = $this->getModelData($propertyValue);
+//                } elseif($modelIsObjectStorage) {
+//                    $properties[$propertyKey] = array();
+//
+                } elseif (!$propertyValueIsObjectStorage && !$modelIsObjectStorage) {
+                    $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $propertyValue);
+                } elseif (!$propertyValueIsObjectStorage && $modelIsObjectStorage) {
+                    $properties[$propertyKey] = $this->getUriToResource($propertyValue);
+                } elseif ($propertyValueIsObjectStorage) {
+                    $properties[$propertyKey] = $this->getUriToResource($propertyValue);
+                }
+            }
+        }
+        unset($handledModels[$modelHash]);
+        return $properties;
     }
 }
