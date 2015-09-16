@@ -99,26 +99,20 @@ class Utility {
      * @return string|bool Returns the path or FALSE if it couldn't be determined
      */
     static public function getPathForClassName($className) {
-        if (strpos($className, '\\')) {
-            if ($className[0] !== '\\') {
-                $className = '\\' . $className;
+        if (strpos($className, '\\') === FALSE) {
+            if (substr($className, 0, 3) === 'Tx_') {
+                $className = substr($className, 3);
             }
-            $classNameParts = explode('\\', $className);
-            if (count($classNameParts) > 5) {
-                array_shift($classNameParts);
-            }
-        } else {
-            $classNameParts = explode('_', $className);
+            $className = str_replace('_', '\\', $className);
         }
-        array_shift($classNameParts);
 
+        $className = str_replace('\\Domain\\Model\\', '\\', $className);
         $classNameParts = array_map(
             array('TYPO3\\CMS\\Core\\Utility\\GeneralUtility', 'camelCaseToLowerCaseUnderscored'),
-            $classNameParts
+            explode('\\', $className)
         );
 
-        $path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[1] . self::API_PATH_PART_SEPARATOR . $classNameParts[3]; //  . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
-        return $path;
+        return implode(self::API_PATH_PART_SEPARATOR, $classNameParts);
     }
 
     /**
