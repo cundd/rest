@@ -103,7 +103,6 @@ class Utility {
             if ($className[0] !== '\\') {
                 $className = '\\' . $className;
             }
-            // \(c) 2014 Daniel Corn <info@cundd.net>, cundd\Result\Domain\Model\Team
             $classNameParts = explode('\\', $className);
             if (count($classNameParts) > 5) {
                 array_shift($classNameParts);
@@ -118,7 +117,7 @@ class Utility {
             $classNameParts
         );
 
-        $path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[3]; //  . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
+        $path = $classNameParts[0] . self::API_PATH_PART_SEPARATOR . $classNameParts[1] . self::API_PATH_PART_SEPARATOR . $classNameParts[3]; //  . self::API_PATH_PART_SEPARATOR . $classNameParts[4];
         return $path;
     }
 

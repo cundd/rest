@@ -199,7 +199,7 @@ class DataProviderTest extends AbstractCase {
                 'child' => array(
                     'base' => 'Base',
                     'date' => $testDate,
-                    'child' => 'http:///rest/cundd-my_nested_model/2/child',
+                    'child' => 'http:///rest/cundd-rest-my_nested_model/2/child',
                     'uid' => 2,
                     'pid' => null,
                     '__class' => 'Cundd\Rest\Tests\MyNestedModel',
@@ -221,7 +221,7 @@ class DataProviderTest extends AbstractCase {
                 'child' => array(
                     'base' => 'Base',
                     'date' => $testDate,
-                    'child' =>'http:///rest/cundd-my_nested_model/2/child',
+                    'child' =>'http:///rest/cundd-rest-my_nested_model/2/child',
                     'uid' => 2,
                     'pid' => null,
                     '__class' => 'Cundd\Rest\Tests\MyNestedModel',
