@@ -231,24 +231,25 @@ class DataProvider implements DataProviderInterface {
         $properties = NULL;
         if (is_object($model)) {
             $modelHash = spl_object_hash($model);
+            $handledModels[$modelHash] = true;
 
-            if (!isset($handledModels[$modelHash])) {
-                $handledModels[$modelHash] = true;
+            // Get the data from the model
+            if (method_exists($model, 'jsonSerialize')) {
+                $properties = $model->jsonSerialize();
+            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+                $properties = $model->_getProperties();
+            } else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
+                $properties = array_values(iterator_to_array($model));
+                $doNotAddClass = TRUE;
+            }
 
-                // Get the data from the model
-                if (method_exists($model, 'jsonSerialize')) {
-                    $properties = $model->jsonSerialize();
-                } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
-                    $properties = $model->_getProperties();
-                } else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
-                    $properties = array_values(iterator_to_array($model));
-                    $doNotAddClass = TRUE;
-                }
+            // Transform objects recursive
+            if (is_array($properties)) {
+                foreach ($properties as $propertyKey => $propertyValue) {
+                    if (is_object($propertyValue)) {
 
-                // Transform objects recursive
-                if (is_array($properties)) {
-                    foreach ($properties as $propertyKey => $propertyValue) {
-                        if (is_object($propertyValue)) {
+                        $propertyValueHash = spl_object_hash($propertyValue);
+                        if (!isset($handledModels[$propertyValueHash])) {
                             if ($propertyValue instanceof LazyLoadingProxy) {
                                 $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
                             } else if ($propertyValue instanceof LazyObjectStorage) {
@@ -256,16 +257,16 @@ class DataProvider implements DataProviderInterface {
                             } else {
                                 $properties[$propertyKey] = $this->getModelData($propertyValue);
                             }
+                        } else {
+                            // Handle recursion
+                            $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $model);
                         }
                     }
                 }
+            }
 
-                if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
-                    $properties['__class'] = get_class($model);
-                }
-            } else {
-                // Handle recursion
-                $properties = array('recursion');
+            if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
+                $properties['__class'] = get_class($model);
             }
             unset($handledModels[$modelHash]);
         }

@@ -182,9 +182,11 @@ class DataProviderTest extends AbstractCase {
         $testDate = new \DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
 
         $childModel = new MyNestedModel();
         $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
 
         $childModel->setChild($model);
         $model->setChild($childModel);
@@ -197,16 +199,13 @@ class DataProviderTest extends AbstractCase {
                 'child' => array(
                     'base' => 'Base',
                     'date' => $testDate,
-                    'child' => array(
-                        0 => 'recursion'
-                    ),
-
-                    'uid' => null,
+                    'child' => 'http:///rest/cundd-my_nested_model/2/child',
+                    'uid' => 2,
                     'pid' => null,
                     '__class' => 'Cundd\Rest\Tests\MyNestedModel',
                 ),
 
-                'uid' => null,
+                'uid' => 1,
                 'pid' => null,
                 '__class' => 'Cundd\Rest\Tests\MyNestedModel',
             ),
@@ -222,16 +221,13 @@ class DataProviderTest extends AbstractCase {
                 'child' => array(
                     'base' => 'Base',
                     'date' => $testDate,
-                    'child' => array(
-                        0 => 'recursion'
-                    ),
-
-                    'uid' => null,
+                    'child' =>'http:///rest/cundd-my_nested_model/2/child',
+                    'uid' => 2,
                     'pid' => null,
                     '__class' => 'Cundd\Rest\Tests\MyNestedModel',
                 ),
 
-                'uid' => null,
+                'uid' => 1,
                 'pid' => null,
                 '__class' => 'Cundd\Rest\Tests\MyNestedModel',
             ),
