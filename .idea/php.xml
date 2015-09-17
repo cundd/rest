@@ -3,7 +3,7 @@
   <component name="PhpProjectSharedConfiguration" php_language_level="5.5.0" />
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings load_method="CUSTOM_LOADER" configuration_file_path="$USER_HOME$/Resources/TYPO3.CMS/typo3/sysext/core/Build/FunctionalTests.xml" custom_loader_path="$USER_HOME$/Resources/TYPO3.CMS/bin/phpunit" phpunit_phar_path="$PROJECT_DIR$/../../Resources/phpunit.phar" use_configuration_file="true" />
+      <PhpUnitSettings load_method="PHPUNIT_PHAR" configuration_file_path="$USER_HOME$/Resources/TYPO3.CMS/typo3/sysext/core/Build/FunctionalTests.xml" custom_loader_path="$USER_HOME$/Resources/TYPO3.CMS/bin/phpunit" phpunit_phar_path="$PROJECT_DIR$/../../Resources/phpunit.phar" />
     </phpunit_settings>
   </component>
 </project>

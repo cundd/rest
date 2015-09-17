@@ -75,6 +75,13 @@ class DataProvider implements DataProviderInterface {
     protected $logger;
 
     /**
+     * Dictionary of handled models to their count
+     *
+     * @var array
+     */
+    protected static $handledModels = array();
+
+    /**
      * Returns the domain model repository class name for the given API path
      *
      * @param string $path API path to get the repository for
@@ -214,45 +221,6 @@ class DataProvider implements DataProviderInterface {
     public function getEmptyModelForPath($path) {
         $modelClass = $this->getModelClassForPath($path);
         return $this->objectManager->get($modelClass);
-    }
-
-    /**
-     * Returns the data from the given model
-     *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
-     * @return array<mixed>
-     */
-    public function getModelData($model) {
-
-
-        $doNotAddClass = (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0);
-
-        /** @var array $properties */
-        $properties = NULL;
-        if (is_object($model)) {
-
-            // Get the data from the model
-            if (method_exists($model, 'jsonSerialize')) {
-                $properties = $model->jsonSerialize();
-            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
-                $properties = $model->_getProperties();
-            } else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
-                $properties = array_values(iterator_to_array($model));
-                $doNotAddClass = TRUE;
-            }
-
-            $properties = $this->transformProperties($model, $properties);
-
-
-            if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
-                $properties['__class'] = get_class($model);
-            }
-        }
-
-        if (!$properties) {
-            $properties = $model;
-        }
-        return $properties;
     }
 
     /**
@@ -525,35 +493,74 @@ class DataProvider implements DataProviderInterface {
     }
 
     /**
+     * Returns the data from the given model
      *
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
-     * @param $properties
+     * @return array<mixed>
+     */
+    public function getModelData($model) {
+        if (!is_object($model)) {
+            return $model;
+        }
+
+        if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage && !method_exists($model, 'jsonSerialize')) {
+            return $this->transformObjectStorage($model);
+        }
+
+
+        $modelHash = spl_object_hash($model);
+        if (isset(static::$handledModels[$modelHash])) {
+            static::$handledModels[$modelHash]++;
+        } else {
+            static::$handledModels[$modelHash] = 1;
+        }
+
+        if (static::$handledModels[$modelHash] < 2) {
+            // Get the data from the model
+            if (method_exists($model, 'jsonSerialize')) {
+                $properties = $model->jsonSerialize();
+            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+                $properties = $model->_getProperties();
+            } else {
+                // Return the model directly
+                $properties = $model;
+            }
+
+            if (is_array($properties)) {
+                $properties = $this->transformProperties($model, $properties);
+
+                if (!isset($properties['__class'])
+                    && false === (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0)
+                ) {
+                    $properties['__class'] = get_class($model);
+                }
+            }
+
+            $result = $properties;
+        } else {
+            $result = $this->getUriToResource($model);
+        }
+        static::$handledModels[$modelHash]--;
+        return $result;
+    }
+
+    /**
+     * Transform the properties
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param array $properties
      * @return array
      */
     protected function transformProperties($model, $properties) {
-        static $handledModels = array();
-
-        if (!is_array($properties)) {
-            return $properties;
-        }
-
-        $modelHash = spl_object_hash($model);
-        if (isset($handledModels[$modelHash])) {
-            $handledModels[$modelHash] = $handledModels[$modelHash] + 1;
-        } else {
-            $handledModels[$modelHash] = 1;
-        }
-
-        $modelIsObjectStorage = $model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-
-
         // Transform objects recursive
         foreach ($properties as $propertyKey => $propertyValue) {
             if (is_object($propertyValue)) {
-                $propertyValueIsObjectStorage = $propertyValue instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-
                 $propertyValueHash = spl_object_hash($propertyValue);
-                if (!isset($handledModels[$propertyValueHash])) {
+                $modelRecursionCount = isset(static::$handledModels[$propertyValueHash])
+                    ? static::$handledModels[$propertyValueHash]
+                    : 0;
+
+                if ($modelRecursionCount < 1) {
                     if ($propertyValue instanceof LazyLoadingProxy) {
                         $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
                     } else if ($propertyValue instanceof LazyObjectStorage) {
@@ -561,21 +568,23 @@ class DataProvider implements DataProviderInterface {
                     } else {
                         $properties[$propertyKey] = $this->getModelData($propertyValue);
                     }
-                } elseif ($propertyValueIsObjectStorage && $handledModels[$propertyValueHash] < 2) {
-                    $properties[$propertyKey] = $this->getModelData($propertyValue);
-//                } elseif($modelIsObjectStorage) {
-//                    $properties[$propertyKey] = array();
-//
-                } elseif (!$propertyValueIsObjectStorage && !$modelIsObjectStorage) {
+                } elseif (method_exists($propertyValue, 'getUid')) {
                     $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $propertyValue);
-                } elseif (!$propertyValueIsObjectStorage && $modelIsObjectStorage) {
-                    $properties[$propertyKey] = $this->getUriToResource($propertyValue);
-                } elseif ($propertyValueIsObjectStorage) {
-                    $properties[$propertyKey] = $this->getUriToResource($propertyValue);
+                } else {
+                    $properties[$propertyKey] = $propertyValue;
                 }
             }
         }
-        unset($handledModels[$modelHash]);
         return $properties;
+    }
+
+    /**
+     * Transform object storage
+     *
+     * @param \Traversable $objectStorage
+     * @return array
+     */
+    protected function transformObjectStorage($objectStorage) {
+        return array_values(array_map(array($this, 'getModelData'), iterator_to_array($objectStorage)));
     }
 }
