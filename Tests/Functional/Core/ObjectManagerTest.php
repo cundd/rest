@@ -51,7 +51,9 @@ class ObjectManagerTest extends AbstractCase {
 
     public function tearDown() {
         // Reset the last request
-        $this->fixture->getRequestFactory()->resetRequest();
+        if ($this->fixture) {
+            $this->fixture->getRequestFactory()->resetRequest();
+        }
         unset($this->fixture);
         parent::tearDown();
     }
