@@ -54,11 +54,11 @@ class DataProviderUtilityTest extends AbstractCase {
     public function getPathForClassNameTest() {
         $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
         $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
-        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
 
         $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
         $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
-        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
+        $this->assertEquals('vendor-my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
     }
 
     /**
@@ -72,5 +72,13 @@ class DataProviderUtilityTest extends AbstractCase {
         $this->assertEquals('equipment', Utility::singularize('equipment'));
         $this->assertEquals('species', Utility::singularize('species'));
         $this->assertEquals('series', Utility::singularize('series'));
+
+        $this->assertEquals('Tree', Utility::singularize('Trees'));
+        $this->assertEquals('Friend', Utility::singularize('Friends'));
+        $this->assertEquals('Hobby', Utility::singularize('Hobbies'));
+        $this->assertEquals('News', Utility::singularize('News'));
+        $this->assertEquals('Equipment', Utility::singularize('Equipment'));
+        $this->assertEquals('Species', Utility::singularize('Species'));
+        $this->assertEquals('Series', Utility::singularize('Series'));
     }
 }

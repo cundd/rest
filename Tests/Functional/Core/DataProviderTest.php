@@ -29,6 +29,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
 use Cundd\Rest\Tests\MyNestedModel;
+use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
@@ -173,6 +175,101 @@ class DataProviderTest extends AbstractCase {
                 'pid' => NULL,
                 '__class' => 'Cundd\\Rest\\Tests\\MyModel'
             ), $properties);
+    }
+
+    /**
+     * @test
+     */
+    public function getModelDataRecursiveTest() {
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $childModel->setChild($model);
+        $model->setChild($childModel);
+
+        $expectedOutput = array(
+            'base' => 'Base',
+            'date' => $testDate,
+            'child' => array(
+                'base' => 'Base',
+                'date' => $testDate,
+                'child' => 'http:///rest/cundd-rest-tests-my_nested_model/1/child',
+                'uid' => 2,
+                'pid' => null,
+                '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+            ),
+
+            'uid' => 1,
+            'pid' => null,
+            '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+        );
+
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
+
+        // Make sure the same result is returned if getModelData() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
+    }
+
+    /**
+     * @test
+     */
+    public function getModelDataRecursiveWithObjectStorageTest() {
+        $testDate = new \DateTime();
+        $model = new MyNestedModelWithObjectStorage();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $children = new ObjectStorage();
+        $children->attach($model);
+        $children->attach($childModel);
+        $model->setChildren($children);
+
+        $expectedOutput = array(
+            'base' => 'Base',
+            'date' => $testDate,
+            'child' => array(
+                'uid' => null,
+                'pid' => null,
+                '__class' => 'Cundd\Rest\Tests\MyModel',
+                'name' => 'Initial value'
+            ),
+
+            'uid' => 1,
+            'pid' => null,
+            '__class' => 'Cundd\Rest\Tests\MyNestedModelWithObjectStorage',
+            'children' => array(
+                0 => 'http:///rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
+                1 => array( // <- This is $childModel
+                    'base' => 'Base',
+                    'date' => $testDate,
+                    'uid' => 2,
+                    'pid' => null,
+                    '__class' => 'Cundd\Rest\Tests\MyNestedModel',
+                    'child' => array(
+                        'name' => 'Initial value',
+                        'uid' => null,
+                        'pid' => null,
+                        '__class' => 'Cundd\Rest\Tests\MyModel',
+
+                    )
+                ),
+            )
+        );
+
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
+
+        // Make sure the same result is returned if getModelData() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
     }
 
     /**

@@ -57,16 +57,29 @@ class TypoScriptConfigurationProviderTest extends AbstractCase {
     public function getSettingsTest() {
         $settings = $this->fixture->getSettings();
         $this->assertInternalType('array', $settings);
-        $this->assertArrayHasKey('paths.', $settings);
+
+        if (count($this->fixture->getSettings()) !== 0) {
+            $this->assertArrayHasKey('paths.', $settings);
+        }
     }
 
     /**
      * @test
      */
     public function getSettingTest() {
+        if (count($this->fixture->getSettings()) === 0) {
+            $this->markTestSkipped('ext_typoscript_setup.txt not loaded');
+        }
+
         $this->assertInternalType('array', $this->fixture->getSetting('paths'));
         $this->assertInternalType('array', $this->fixture->getSetting('paths.1'));
         $this->assertEquals('all', $this->fixture->getSetting('paths.1.path'));
+    }
+
+    /**
+     * @test
+     */
+    public function getSettingDefaultTest() {
         $this->assertEquals('defaultValue', $this->fixture->getSetting('paths.NO.path', 'defaultValue'));
     }
 }

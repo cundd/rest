@@ -26,10 +26,10 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\ObjectManager;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
-use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
@@ -73,6 +73,13 @@ class DataProvider implements DataProviderInterface {
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
+
+    /**
+     * Dictionary of handled models to their count
+     *
+     * @var array
+     */
+    protected static $handledModels = array();
 
     /**
      * Returns the domain model repository class name for the given API path
@@ -217,52 +224,6 @@ class DataProvider implements DataProviderInterface {
     }
 
     /**
-     * Returns the data from the given model
-     *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
-     * @return array<mixed>
-     */
-    public function getModelData($model) {
-        $doNotAddClass = (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0);
-        $properties = NULL;
-        if (is_object($model)) {
-            // Get the data from the model
-            if (method_exists($model, 'jsonSerialize')) {
-                $properties = $model->jsonSerialize();
-            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
-                $properties = $model->_getProperties();
-            } else if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
-                $properties = array_values(iterator_to_array($model));
-                $doNotAddClass = TRUE;
-            }
-
-            // Transform objects recursive
-            if (is_array($properties)) {
-                foreach ($properties as $propertyKey => $propertyValue) {
-                    if (is_object($propertyValue)) {
-                        if ($propertyValue instanceof LazyLoadingProxy) {
-                            $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
-                        } else if ($propertyValue instanceof LazyObjectStorage) {
-                            $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
-                        } else {
-                            $properties[$propertyKey] = $this->getModelData($propertyValue);
-                        }
-                    }
-                }
-            }
-
-            if (!$doNotAddClass && $properties && !isset($properties['__class'])) {
-                $properties['__class'] = get_class($model);
-            }
-        }
-
-        if (!$properties) {
-            $properties = $model;
-        }
-        return $properties;
-    }
-
-    /**
      * Returns the data for the given lazy object storage
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
@@ -322,13 +283,27 @@ class DataProvider implements DataProviderInterface {
      */
     public function getUriToNestedResource($resourceKey, $model) {
         $currentUri = '/rest/';
-        $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/' . $resourceKey;
+        $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
+
+        if ($resourceKey !== null) {
+            $currentUri .= $resourceKey;
+        }
 
         $host = filter_var($_SERVER['HTTP_HOST'], FILTER_SANITIZE_URL);
 
         $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
 
         return $protocol . '://' . $host . $currentUri;
+    }
+
+    /**
+     * Returns the URI of a resource
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @return string
+     */
+    public function getUriToResource($model) {
+        return $this->getUriToNestedResource(null, $model);
     }
 
     /**
@@ -515,5 +490,101 @@ class DataProvider implements DataProviderInterface {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
         return $this->logger;
+    }
+
+    /**
+     * Returns the data from the given model
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @return array<mixed>
+     */
+    public function getModelData($model) {
+        if (!is_object($model)) {
+            return $model;
+        }
+
+        if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage && !method_exists($model, 'jsonSerialize')) {
+            return $this->transformObjectStorage($model);
+        }
+
+
+        $modelHash = spl_object_hash($model);
+        if (isset(static::$handledModels[$modelHash])) {
+            static::$handledModels[$modelHash]++;
+        } else {
+            static::$handledModels[$modelHash] = 1;
+        }
+
+        if (static::$handledModels[$modelHash] < 2) {
+            // Get the data from the model
+            if (method_exists($model, 'jsonSerialize')) {
+                $properties = $model->jsonSerialize();
+            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+                $properties = $model->_getProperties();
+            } else {
+                // Return the model directly
+                $properties = $model;
+            }
+
+            if (is_array($properties)) {
+                $properties = $this->transformProperties($model, $properties);
+
+                if (!isset($properties['__class'])
+                    && false === (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0)
+                ) {
+                    $properties['__class'] = get_class($model);
+                }
+            }
+
+            $result = $properties;
+        } else {
+            $result = $this->getUriToResource($model);
+        }
+        static::$handledModels[$modelHash]--;
+        return $result;
+    }
+
+    /**
+     * Transform the properties
+     *
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param array $properties
+     * @return array
+     */
+    protected function transformProperties($model, $properties) {
+        // Transform objects recursive
+        foreach ($properties as $propertyKey => $propertyValue) {
+            if (is_object($propertyValue)) {
+                $propertyValueHash = spl_object_hash($propertyValue);
+                $modelRecursionCount = isset(static::$handledModels[$propertyValueHash])
+                    ? static::$handledModels[$propertyValueHash]
+                    : 0;
+
+                if ($modelRecursionCount < 1) {
+                    if ($propertyValue instanceof LazyLoadingProxy) {
+                        $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
+                    } else if ($propertyValue instanceof LazyObjectStorage) {
+                        $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
+                    } else {
+                        $properties[$propertyKey] = $this->getModelData($propertyValue);
+                    }
+                } elseif (method_exists($propertyValue, 'getUid')) {
+                    $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $propertyValue);
+                } else {
+                    $properties[$propertyKey] = $propertyValue;
+                }
+            }
+        }
+        return $properties;
+    }
+
+    /**
+     * Transform object storage
+     *
+     * @param \Traversable $objectStorage
+     * @return array
+     */
+    protected function transformObjectStorage($objectStorage) {
+        return array_values(array_map(array($this, 'getModelData'), iterator_to_array($objectStorage)));
     }
 }
