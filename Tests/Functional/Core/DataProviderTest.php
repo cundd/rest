@@ -248,7 +248,7 @@ class DataProviderTest extends AbstractCase {
             'pid' => null,
             '__class' => 'Cundd\Rest\Tests\MyNestedModelWithObjectStorage',
             'children' => array(
-                0 => 'http:///rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                0 => 'http:///rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
                 1 => array( // <- This is $childModel
                     'base' => 'Base',
                     'date' => $testDate,
