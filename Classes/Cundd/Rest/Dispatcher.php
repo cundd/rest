@@ -142,18 +142,6 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             // Let Bullet PHP do the hard work
             $response = $this->app->run($request);
 
-            // Additional custom headers
-            $additionalResponseHeaders = $this->objectManager->getConfigurationProvider()->getSetting('responseHeaders', array());
-            if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)){
-                foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
-                    if (is_string($value)) {
-                        $response->header($responseHeaderType, $value);
-                    } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
-                        $response->header(rtrim($responseHeaderType, '.'), GeneralUtility::callUserFunction($value['userFunc'], $value, $this));
-                    }
-                }
-            }
-
             // Handle exceptions
             if ($response->content() instanceof \Exception) {
                 $success = FALSE;
@@ -164,6 +152,18 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             } else {
                 // Cache the response
                 $cache->setCachedValueForRequest($request, $response);
+            }
+        }
+
+        // Additional custom headers
+        $additionalResponseHeaders = $this->objectManager->getConfigurationProvider()->getSetting('responseHeaders', array());
+        if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)){
+            foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
+                if (is_string($value)) {
+                    $response->header($responseHeaderType, $value);
+                } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
+                    $response->header(rtrim($responseHeaderType, '.'), GeneralUtility::callUserFunction($value['userFunc'], $value, $this));
+                }
             }
         }
 
