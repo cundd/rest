@@ -69,48 +69,93 @@ class CacheTest extends AbstractCase {
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('44a16b7f79c92d97a55281bbfb4439ff310607ec', $cacheKey, 'Failed for URI ' . $uri);
+    }
+
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriMyExtMyModel1BlurRequestTest() {
 
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri, 'blur');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriMyExtMyModel1JsonRequestTest() {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriMyExtMyModel1JsonLowerCasedRequestTest() {
         $uri = 'my_ext-my_model/1';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('5c82b501dbbff50f5d15ddad1e3f68c86431bbc8', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
-
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriMyExtMyModelRequestTest() {
         $uri = 'my_ext-my_model';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('6216096e7394211b2d35fe9787d252b10963cf04', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriVendorMySecondExtMyModel1LowerCasedRequestTest() {
         $uri = 'vendor-my_second_ext-my_model/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('5f498749f876b6653099272efe7b827acfbc1ca6', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriVendorMySecondExtMyModel1RequestTest() {
         $uri = 'Vendor-MySecondExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('3715e64cc29448acdc0df19777da794da2804d19', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriVendorNotExistingExtMyModel1RequestTest() {
         $uri = 'Vendor-NotExistingExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('b40dc716cf22179ebab528dd365f87afd3a4ffa7', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
-        $uri = 'Vendor-NotExistingExt-MyModel/1';
-        $request = $this->buildRequestWithUri($uri, 'json');
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriVendorNotExistingExtMyModel1JsonRequestTest() {
+        $uri      = 'Vendor-NotExistingExt-MyModel/1';
+        $request  = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('edc589820622a8d127f335b6439d34f6b37016cf', $cacheKey, 'Failed for URI ' . $uri);
+    }
 
+    /**
+     * @test
+     */
+    public function getCacheKeyForUriMyAliasedModelTest() {
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
