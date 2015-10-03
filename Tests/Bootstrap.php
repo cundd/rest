@@ -35,9 +35,11 @@ class Bootstrap {
             return;
         }
 
-        $bootstrap = new \TYPO3\CMS\Core\Build\FunctionalTestsBootstrap();
-        $bootstrap->bootstrapSystem();
-        unset($bootstrap);
+        if (class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
+            $bootstrap = new \TYPO3\CMS\Core\Build\FunctionalTestsBootstrap();
+            $bootstrap->bootstrapSystem();
+            unset($bootstrap);
+        }
     }
 
     protected function setupComposer() {
