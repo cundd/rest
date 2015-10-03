@@ -84,7 +84,7 @@ interface DataProviderInterface extends SingletonInterface {
     /**
      * Returns the data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
      */
     public function getModelData($model);
 

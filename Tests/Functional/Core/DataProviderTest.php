@@ -315,5 +315,4 @@ class DataProviderTest extends AbstractCase {
                 '__class' => 'Cundd\\Rest\\Tests\\MyNestedJsonSerializeModel'
             ), $properties);
     }
-
 }
