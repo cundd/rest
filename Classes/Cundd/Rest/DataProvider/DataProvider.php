@@ -27,7 +27,11 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\ObjectManager;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
@@ -129,7 +133,7 @@ class DataProvider implements DataProviderInterface {
      * Returns all domain model for the given API path
      *
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getAllModelsForPath($path) {
         return $this->getRepositoryForPath($path)->findAll();
@@ -141,7 +145,7 @@ class DataProvider implements DataProviderInterface {
      *
      * @param array|string|int $data Data of the new model or it's UID
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getModelWithDataForPath($data, $path) {
         $modelClass = $this->getModelClassForPath($path);
@@ -171,7 +175,7 @@ class DataProvider implements DataProviderInterface {
      *
      * @param array|string|int $data Data of the new model or it's UID
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getNewModelWithDataForPath($data, $path) {
         $uid = NULL;
@@ -206,7 +210,7 @@ class DataProvider implements DataProviderInterface {
      * Returns a new domain model for the given API path
      *
      * @param string $path
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getModelForPath($path) {
         return $this->getModelWithDataForPath(array(), $path);
@@ -216,7 +220,7 @@ class DataProvider implements DataProviderInterface {
      * Returns a new domain model for the given API path points to
      *
      * @param string $path API path to get the model for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getEmptyModelForPath($path) {
         $modelClass = $this->getModelClassForPath($path);
@@ -228,7 +232,7 @@ class DataProvider implements DataProviderInterface {
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
      * @param string $propertyKey
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @return array<mixed>
      */
     public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model) {
@@ -254,7 +258,7 @@ class DataProvider implements DataProviderInterface {
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy $proxy
      * @param string $propertyKey
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @return array<mixed>
      */
     public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model) {
@@ -278,7 +282,7 @@ class DataProvider implements DataProviderInterface {
      * Returns the URI of a nested resource
      *
      * @param string $resourceKey
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @return string
      */
     public function getUriToNestedResource($resourceKey, $model) {
@@ -299,7 +303,7 @@ class DataProvider implements DataProviderInterface {
     /**
      * Returns the URI of a resource
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @return string
      */
     public function getUriToResource($model) {
@@ -309,7 +313,7 @@ class DataProvider implements DataProviderInterface {
     /**
      * Returns the property data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $propertyKey
      * @return mixed
      */
@@ -339,7 +343,7 @@ class DataProvider implements DataProviderInterface {
      * Adds or updates the given model in the repository for the
      * given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $path The API path
      * @return void
      */
@@ -359,8 +363,8 @@ class DataProvider implements DataProviderInterface {
      * Tells the Data Provider to replace the given old model with the new one
      * in the repository for the given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
+     * @param DomainObjectInterface $oldModel
+     * @param DomainObjectInterface $newModel
      * @param string $path The API path
      * @return void
      */
@@ -376,7 +380,7 @@ class DataProvider implements DataProviderInterface {
      * Adds or updates the given model in the repository for the
      * given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $path The API path
      * @return void
      */
@@ -495,7 +499,7 @@ class DataProvider implements DataProviderInterface {
     /**
      * Returns the data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param DomainObjectInterface|object $model
      * @return array<mixed>
      */
     public function getModelData($model) {
@@ -519,7 +523,11 @@ class DataProvider implements DataProviderInterface {
             // Get the data from the model
             if (method_exists($model, 'jsonSerialize')) {
                 $properties = $model->jsonSerialize();
-            } else if ($model instanceof \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface) {
+            } elseif ($model instanceof FileInterface) {
+                $properties = $this->transformFileReference($model);
+            } elseif ($model instanceof AbstractFileFolder) {
+                $properties = $this->transformFileReference($model->getOriginalResource());
+            } elseif ($model instanceof DomainObjectInterface) {
                 $properties = $model->_getProperties();
             } else {
                 // Return the model directly
@@ -547,7 +555,7 @@ class DataProvider implements DataProviderInterface {
     /**
      * Transform the properties
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param DomainObjectInterface|object $model
      * @param array $properties
      * @return array
      */
@@ -563,7 +571,7 @@ class DataProvider implements DataProviderInterface {
                 if ($modelRecursionCount < 1) {
                     if ($propertyValue instanceof LazyLoadingProxy) {
                         $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
-                    } else if ($propertyValue instanceof LazyObjectStorage) {
+                    } elseif ($propertyValue instanceof LazyObjectStorage) {
                         $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
                     } else {
                         $properties[$propertyKey] = $this->getModelData($propertyValue);
@@ -586,5 +594,53 @@ class DataProvider implements DataProviderInterface {
      */
     protected function transformObjectStorage($objectStorage) {
         return array_values(array_map(array($this, 'getModelData'), iterator_to_array($objectStorage)));
+    }
+
+    /**
+     * Retrieve data from a file reference
+     *
+     * @param \TYPO3\CMS\Core\Resource\ResourceInterface|Folder|\TYPO3\CMS\Core\Resource\AbstractFile $originalResource
+     * @return array
+     */
+    protected function transformFileReference($originalResource) {
+        static $depth = 0;
+        if ($originalResource instanceof AbstractFileFolder) {
+            if (++$depth > 10) {
+                throw new \RuntimeException('Max nesting level');
+            }
+            $result = $this->transformFileReference($originalResource->getOriginalResource());
+            $depth--;
+            return $result;
+        }
+
+        try {
+            if ($originalResource instanceof Folder) {
+                $filesInFolder = array();
+                foreach ($originalResource->getFiles() as $currentFile) {
+                    $filesInFolder[] = $this->transformFileReference($currentFile);
+                }
+                return $filesInFolder;
+            }
+
+            // This would expose all data
+            //if ($originalResource instanceof \TYPO3\CMS\Core\Resource\FileReference) {
+            //    return $originalResource->getProperties();
+            //}
+
+            if ($originalResource instanceof FileInterface) {
+                return array(
+                    'name' => $originalResource->getName(),
+                    'mimeType' => $originalResource->getMimeType(),
+                    'url' => $originalResource->getPublicUrl(),
+                    'size' => $originalResource->getSize(),
+                );
+            }
+
+            return array(
+                'name' => $originalResource->getName(),
+            );
+        } catch (\RuntimeException $exception) {
+            return array();
+        }
     }
 }
