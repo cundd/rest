@@ -65,7 +65,7 @@ class FileDataProviderTest extends AbstractCase {
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
         $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
             ->setMockClassName('Mock_Test_Class')
-            ->setMethods(['_getProperties'])
+            ->setMethods(array('_getProperties'))
             ->getMockForAbstractClass();
 
         $fixture->method('_getProperties')->willReturn($properties);
@@ -82,7 +82,7 @@ class FileDataProviderTest extends AbstractCase {
         );
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMock('\TYPO3\CMS\Core\Resource\ResourceFactory', ['getFileObject']);
+        $factoryMock = $this->getMock('\TYPO3\CMS\Core\Resource\ResourceFactory', array('getFileObject'));
         $factoryMock->expects($this->any())
             ->method('getFileObject')->will(
                 $this->returnValue($originalFileMock)
