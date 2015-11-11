@@ -623,12 +623,10 @@ class DataProvider implements DataProviderInterface {
                 return $filesInFolder;
             }
 
-            // This would expose all data
-            //if ($originalResource instanceof \TYPO3\CMS\Core\Resource\FileReference) {
-            //    return $originalResource->getProperties();
-            //}
-
             if ($originalResource instanceof FileReference) {
+                // This would expose all data
+                // return $originalResource->getProperties();
+
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
                 return array(
