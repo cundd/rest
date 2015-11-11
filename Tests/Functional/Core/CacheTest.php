@@ -68,14 +68,13 @@ class CacheTest extends AbstractCase {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('44a16b7f79c92d97a55281bbfb4439ff310607ec', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals('102fa34f947e0cf64a430626f374ae2dfea9074d', $cacheKey, 'Failed for URI ' . $uri);
     }
 
     /**
      * @test
      */
     public function getCacheKeyForUriMyExtMyModel1BlurRequestTest() {
-
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri, 'blur');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -119,7 +118,7 @@ class CacheTest extends AbstractCase {
         $uri = 'vendor-my_second_ext-my_model/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('5f498749f876b6653099272efe7b827acfbc1ca6', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals('7f444f61e3e81f7497fba5b1586d9eff2e166d87', $cacheKey, 'Failed for URI ' . $uri);
     }
 
     /**
@@ -129,7 +128,7 @@ class CacheTest extends AbstractCase {
         $uri = 'Vendor-MySecondExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('3715e64cc29448acdc0df19777da794da2804d19', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals('b90470afffedaa646de6a678320ca3749c89abbd', $cacheKey, 'Failed for URI ' . $uri);
     }
 
     /**
@@ -139,7 +138,7 @@ class CacheTest extends AbstractCase {
         $uri = 'Vendor-NotExistingExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('b40dc716cf22179ebab528dd365f87afd3a4ffa7', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals('edc589820622a8d127f335b6439d34f6b37016cf', $cacheKey, 'Failed for URI ' . $uri);
     }
 
     /**
@@ -159,7 +158,7 @@ class CacheTest extends AbstractCase {
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('1eb5c867cb67a0c4f7eada2e5b1f3ed8f1c93350', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals('38e7edae337afd14c4b0154d04717afa2b8ff2a4', $cacheKey, 'Failed for URI ' . $uri);
     }
 
     /**
