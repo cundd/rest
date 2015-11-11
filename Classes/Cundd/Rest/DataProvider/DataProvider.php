@@ -28,6 +28,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\ObjectManager;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
@@ -627,12 +628,25 @@ class DataProvider implements DataProviderInterface {
             //    return $originalResource->getProperties();
             //}
 
+            if ($originalResource instanceof FileReference) {
+                list($title, $description) = $this->getTitleAndDescription($originalResource);
+
+                return array(
+                    'name'        => $originalResource->getName(),
+                    'mimeType'    => $originalResource->getMimeType(),
+                    'url'         => $originalResource->getPublicUrl(),
+                    'size'        => $originalResource->getSize(),
+                    'title'       => $title,
+                    'description' => $description,
+                );
+            }
+
             if ($originalResource instanceof FileInterface) {
                 return array(
-                    'name' => $originalResource->getName(),
+                    'name'     => $originalResource->getName(),
                     'mimeType' => $originalResource->getMimeType(),
-                    'url' => $originalResource->getPublicUrl(),
-                    'size' => $originalResource->getSize(),
+                    'url'      => $originalResource->getPublicUrl(),
+                    'size'     => $originalResource->getSize(),
                 );
             }
 
@@ -642,5 +656,23 @@ class DataProvider implements DataProviderInterface {
         } catch (\RuntimeException $exception) {
             return array();
         }
+    }
+
+    /**
+     * @param FileReference $fileReference
+     * @return array
+     */
+    private function getTitleAndDescription(FileReference $fileReference) {
+        $title = '';
+        $description = '';
+        try {
+            $title = $fileReference->getTitle();
+        } catch (\InvalidArgumentException $exception) {
+        }
+        try {
+            $description = $fileReference->getDescription();
+        } catch (\InvalidArgumentException $exception) {
+        }
+        return array($title, $description);
     }
 }
