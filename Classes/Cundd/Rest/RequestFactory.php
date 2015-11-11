@@ -152,7 +152,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         if (!$uri) {
             return array('', '', '');
         }
-        $originalPath = $path = strtok($uri, '/');
+        $originalPath = $path = strtok(strtok($uri, '?'), '/');
 
         // Check for path aliases
         $pathAlias = $this->getAliasForPath($path);
