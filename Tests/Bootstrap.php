@@ -11,6 +11,7 @@ class Bootstrap {
     public function bootstrapSystem() {
         $this->setupTYPO3();
         $this->setupComposer();
+        $this->setupAbstractCase();
     }
 
     protected function setupTYPO3() {
@@ -18,6 +19,9 @@ class Bootstrap {
             return;
         }
         $restTypo3BasePath = getenv('REST_TYPO3_BASE_PATH');
+        if ($restTypo3BasePath === false) {
+            $restTypo3BasePath = getenv('TYPO3_PATH_WEB');
+        }
         if ($restTypo3BasePath) {
             if (file_exists($restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
                 require_once $restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
@@ -55,6 +59,10 @@ class Bootstrap {
             }
             \Cundd\CunddComposer\Autoloader::register();
         }
+    }
+
+    private function setupAbstractCase() {
+        require_once __DIR__ . '/Functional/AbstractCase.php';
     }
 }
 
