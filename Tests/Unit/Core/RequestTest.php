@@ -8,8 +8,9 @@
 
 namespace Cundd\Rest\Tests\Unit\Core;
 
-
 use Cundd\Rest\Request;
+
+require_once __DIR__ . '/../../Bootstrap.php';
 
 class RequestTest extends \PHPUnit_Framework_TestCase {
     /**
