@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 /*
  * The MIT License (MIT)
@@ -30,40 +29,102 @@
  * Date: 21.09.13
  * Time: 20:49
  */
+namespace Cundd\Rest;
 
-if(php_sapi_name() != 'cli') {
-	die ('Access denied.');
+use TYPO3\CMS\Core\Core\Bootstrap;
+
+class BuiltinServerBootstrap {
+    const TYPO3_BOOTSTRAP_PATH = 'typo3/sysext/core/Classes/Core/Bootstrap.php';
+    const TYPO3_AUTOLOADER_PATH = 'typo3/../vendor/autoload.php';
+
+    /**
+     * @var int
+     */
+    private $port = 1337;
+
+    /**
+     * @var string
+     */
+    private $host = '127.0.0.1';
+
+    /**
+     * BuiltinServerBootstrap constructor.
+     *
+     * @param array $argv
+     */
+    public function __construct(array $argv) {
+        if (isset($argv[1])) {
+            $this->port = $argv[1];
+        }
+        if (isset($argv[2])) {
+            $this->host = $argv[2];
+        }
+    }
+
+    /**
+     * @return Server
+     */
+    public function getServer() {
+        $this->bootstrapSystem();
+        return new Server($this->port, $this->host);
+    }
+
+    private function bootstrapSystem() {
+        // Defining circumstances for CLI mode:
+        define('TYPO3_cliMode', TRUE);
+        define('TYPO3_MODE', 'CLI');
+
+        $this->requireTYPO3();
+        $this->bootstrapTYPO3();
+        $this->requireComposer();
+    }
+
+    private function requireTYPO3() {
+        $pathsToCheck = array(
+            './',
+            __DIR__ . '/../../../',
+            getenv('REST_TYPO3_BASE_PATH'),
+            getenv('TYPO3_PATH_WEB'),
+        );
+
+        $pathsToCheck = array_filter($pathsToCheck);
+        foreach ($pathsToCheck as $path) {
+            if (file_exists($path . self::TYPO3_BOOTSTRAP_PATH)) {
+                require_once $path . self::TYPO3_BOOTSTRAP_PATH;
+                require_once $path . self::TYPO3_AUTOLOADER_PATH;
+                return;
+            }
+        }
+        throw new \Exception('Could not find TYPO3 folder. Please set the environment variable REST_TYPO3_BASE_PATH');
+    }
+
+    private function requireComposer() {
+        if (file_exists(__DIR__ . '/vendor/react/')) {
+            require_once __DIR__ . '/vendor/autoload.php';
+        } elseif (class_exists('Cundd\\CunddComposer\\Autoloader')) {
+            \Cundd\CunddComposer\Autoloader::register();
+        }
+    }
+
+    private function bootstrapTYPO3() {
+        $bootstrap = Bootstrap::getInstance();
+        $bootstrap->baseSetup('typo3conf/ext/rest/');
+
+        $bootstrap
+            ->loadConfigurationAndInitialize()
+            ->loadTypo3LoadedExtAndExtLocalconf(TRUE)
+            ->applyAdditionalConfigurationSettings()
+            ->initializeTypo3DbGlobal();
+    }
 }
 
-// Defining circumstances for CLI mode:
-define('TYPO3_cliMode', TRUE);
-define('TYPO3_MODE', 'CLI');
 
-require __DIR__ . '/../../../typo3/sysext/core/Classes/Core/Bootstrap.php';
-$bootstrap = \TYPO3\CMS\Core\Core\Bootstrap::getInstance();
-$bootstrap->baseSetup('typo3conf/ext/rest/');
-
-$bootstrap
-	->loadConfigurationAndInitialize()
-	->loadTypo3LoadedExtAndExtLocalconf(TRUE)
-	->applyAdditionalConfigurationSettings()
-	->initializeTypo3DbGlobal()
-;
-
-if (file_exists(__DIR__ . '/vendor/react/')) {
-	require_once __DIR__ . '/vendor/autoload.php';
-} else {
-	\Cundd\CunddComposer\Autoloader::register();
+if (php_sapi_name() != 'cli') {
+    die ('Access denied.');
 }
 
-$port = 1337;
-$host = '127.0.0.1';
-if (isset($argv[1])) {
-	$port = $argv[1];
+if (!isset($argv)) {
+    $argv = array();
 }
-if (isset($argv[2])) {
-	$host = $argv[2];
-}
-$restServer = new \Cundd\Rest\Server($port, $host);
-$restServer->start();
-?>
+$bootstrap = new BuiltinServerBootstrap($argv);
+$bootstrap->getServer()->start();
