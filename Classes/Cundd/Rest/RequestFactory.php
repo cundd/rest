@@ -73,6 +73,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
 //        } else {
 //            fwrite(STDOUT, PHP_EOL . '<- ' . spl_object_hash($this) . ' ' . $this->getUri() . PHP_EOL);
         }
+
         return $this->request;
     }
 
@@ -85,6 +86,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         $this->request = null;
         $this->uri = null;
         $this->format = null;
+
         return $this;
     }
 
@@ -97,6 +99,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
     public function registerCurrentRequest($request) {
         $this->resetRequest();
         $this->request = $request;
+
         return $this;
     }
 
@@ -120,7 +123,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         if (!$this->uri) {
             $uri = $this->getArgument('u', FILTER_SANITIZE_URL);
             if (!$uri) {
-                $uri = $this->removeAbsPathPrefix($_SERVER['REQUEST_URI']);
+                $uri = $this->removePathPrefix($_SERVER['REQUEST_URI']);
                 $uri = filter_var(substr($uri, 6), FILTER_SANITIZE_URL);
             }
 
@@ -139,6 +142,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
             }
             $this->uri = $uri;
         }
+
         return $this->uri;
     }
 
@@ -170,9 +174,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
     /**
      * Get a request variable
      *
-     * @param string $name Argument name
-     * @param int $filter Filter for the input
-     * @param mixed $default Default value to use if no argument with the given name exists
+     * @param string $name    Argument name
+     * @param int    $filter  Filter for the input
+     * @param mixed  $default Default value to use if no argument with the given name exists
      * @return mixed
      */
     protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
@@ -181,6 +185,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         if ($argument === NULL) {
             $argument = $default;
         }
+
         return $argument;
     }
 
@@ -197,10 +202,14 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      * @param string $uri
      * @return string
      */
-    private function removeAbsPathPrefix($uri) {
-        $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+    private function removePathPrefix($uri) {
+        // $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+        $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
 
         if ($pathPrefix && $pathPrefix !== 'auto') {
+            if ($pathPrefix[0] !== '/') {
+                $pathPrefix = '/' . $pathPrefix;
+            }
             // Remove trailing slash
             if (substr($pathPrefix, -1) === '/') {
                 $pathPrefix = substr($pathPrefix, 0, -1);
