@@ -4,17 +4,8 @@ set -o nounset
 set -o errexit
 set +e
 
-function init {
-    # Test the environment
-    if [ -z ${TYPO3_PATH_WEB+x} ]; then
-        echo "Please set the TYPO3_PATH_WEB environment variable";
-        exit 1;
-    elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
-        echo "The defined TYPO3_PATH_WEB does not seem to be a directory";
-        exit 1;
-    fi;
-
-    # Export database credentials
+function initDatabase {
+	# Export database credentials
     if [ -z ${typo3DatabaseName+x} ]; then
         export typo3DatabaseName="typo3";
     else
@@ -42,6 +33,29 @@ function init {
     echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
+function initTypo3 {
+	local baseDir=`pwd`;
+	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
+		cd ${TYPO3_PATH_WEB};
+		composer install;
+		cd ${baseDir};
+	fi
+}
+
+function init {
+    # Test the environment
+    if [ -z ${TYPO3_PATH_WEB+x} ]; then
+        echo "Please set the TYPO3_PATH_WEB environment variable";
+        exit 1;
+    elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
+        echo "The defined TYPO3_PATH_WEB does not seem to be a directory";
+        exit 1;
+    fi;
+
+	initTypo3;
+    initDatabase;
+}
+
 function unitTests {
     ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml ./Tests/Unit "$@";
 }
@@ -61,10 +75,6 @@ function run {
     if [ ! -z ${UNIT_TESTS+x} ]; then
         performUnitTests="$UNIT_TESTS";
     fi
-
-
-#    echo "HALLO $@";
-
 
     if [[ "$performFunctionalTests" == "yes" ]]; then
         functionalTests "$@";

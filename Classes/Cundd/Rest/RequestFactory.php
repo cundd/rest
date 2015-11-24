@@ -123,7 +123,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         if (!$this->uri) {
             $uri = $this->getArgument('u', FILTER_SANITIZE_URL);
             if (!$uri) {
-                $uri = $this->removePathPrefix($_SERVER['REQUEST_URI']);
+                $uri = $this->removePathPrefixes($_SERVER['REQUEST_URI']);
                 $uri = filter_var(substr($uri, 6), FILTER_SANITIZE_URL);
             }
 
@@ -202,10 +202,21 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      * @param string $uri
      * @return string
      */
-    private function removePathPrefix($uri) {
-        // $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+    private function removePathPrefixes($uri) {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
+        if ($pathPrefix === false) {
+            $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+        }
 
+        return $this->removePathPrefix($uri, $pathPrefix);
+    }
+
+    /**
+     * @param string $uri
+     * @param string $pathPrefix
+     * @return string
+     */
+    private function removePathPrefix($uri, $pathPrefix) {
         if ($pathPrefix && $pathPrefix !== 'auto') {
             if ($pathPrefix[0] !== '/') {
                 $pathPrefix = '/' . $pathPrefix;
