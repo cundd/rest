@@ -8,11 +8,22 @@ $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['rest'] = 'EXT:rest/index.php';
 
 call_user_func(function () {
     if (isset($_SERVER['REQUEST_URI'])) {
-        $restRequestBasePath = '/'. trim((string)getenv('TYPO3_REST_REQUEST_BASE_PATH'), '/');
-        $restRequestBasePathLength = strlen($restRequestBasePath);
+        $restRequestBasePath = (string)getenv('TYPO3_REST_REQUEST_BASE_PATH');
+
+        if ($restRequestBasePath) {
+            if ($restRequestBasePath[0] !== '/') {
+                $restRequestBasePath = '/' . $restRequestBasePath;
+            }
+            if (substr($restRequestBasePath, -1) === '/') {
+                $restRequestBasePath = substr($restRequestBasePath, 0, -1);
+            }
+        }
+
+        $restRequestPrefix = $restRequestBasePath . '/rest/';
+        $restRequestPrefixLength = strlen($restRequestPrefix);
         $requestUri = $_SERVER['REQUEST_URI'];
-        if (substr($requestUri, 0, 6) === '/rest/'
-            || ($restRequestBasePath !== '/' && substr($requestUri, $restRequestBasePathLength, 6) === '/rest/')) {
+
+        if (substr($requestUri, 0, $restRequestPrefixLength) === $restRequestPrefix) {
             $_GET['eID'] = 'rest';
         }
     }
