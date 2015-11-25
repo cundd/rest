@@ -218,13 +218,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      */
     private function removePathPrefix($uri, $pathPrefix) {
         if ($pathPrefix && $pathPrefix !== 'auto') {
-            if ($pathPrefix[0] !== '/') {
-                $pathPrefix = '/' . $pathPrefix;
-            }
-            // Remove trailing slash
-            if (substr($pathPrefix, -1) === '/') {
-                $pathPrefix = substr($pathPrefix, 0, -1);
-            }
+            $pathPrefix = '/'. trim($pathPrefix, '/');
             if ($this->stringHasPrefix($uri, $pathPrefix)) {
                 $uri = substr($uri, strlen($pathPrefix));
             }
