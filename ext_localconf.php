@@ -11,12 +11,7 @@ call_user_func(function () {
         $restRequestBasePath = (string)getenv('TYPO3_REST_REQUEST_BASE_PATH');
 
         if ($restRequestBasePath) {
-            if ($restRequestBasePath[0] !== '/') {
-                $restRequestBasePath = '/' . $restRequestBasePath;
-            }
-            if (substr($restRequestBasePath, -1) === '/') {
-                $restRequestBasePath = substr($restRequestBasePath, 0, -1);
-            }
+            $restRequestBasePath = '/' . trim($restRequestBasePath, '/');
         }
 
         $restRequestPrefix = $restRequestBasePath . '/rest/';
