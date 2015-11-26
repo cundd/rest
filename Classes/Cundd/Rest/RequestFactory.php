@@ -217,7 +217,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      * @return string
      */
     private function removePathPrefix($uri, $pathPrefix) {
-        if ($pathPrefix && $pathPrefix !== 'auto') {
+        if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
             $pathPrefix = '/'. trim($pathPrefix, '/');
             if ($this->stringHasPrefix($uri, $pathPrefix)) {
                 $uri = substr($uri, strlen($pathPrefix));
@@ -233,6 +233,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      * @return bool
      */
     private function stringHasPrefix($input, $prefix) {
-        return substr($input, 0, strlen($prefix)) === $prefix;
+        return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
     }
 }
