@@ -4,6 +4,24 @@ set -o nounset
 set -o errexit
 set +e
 
+function getMySQLClientPath {
+    if [[ `which mysql > /dev/null` ]]; then
+        which mysql;
+    elif [[ -x /Applications/MAMP/Library/bin/mysql ]]; then
+        echo /Applications/MAMP/Library/bin/mysql;
+    else
+        return 1;
+    fi
+}
+
+function checkMySQLCredentials {
+    `getMySQLClientPath` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "" 2> /dev/null;
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Could not connect to MySQL";
+        exit 1;
+    fi
+}
+
 function initDatabase {
 	# Export database credentials
     if [ -z ${typo3DatabaseName+x} ]; then
@@ -31,6 +49,7 @@ function initDatabase {
     fi
 
     echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
+    checkMySQLCredentials;
 }
 
 function initTypo3 {
