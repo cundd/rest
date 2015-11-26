@@ -15,7 +15,7 @@ function getMySQLClientPath {
 }
 
 function checkMySQLCredentials {
-    `getMySQLClientPath` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "" 2> /dev/null;
+    `getMySQLClientPath` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null;
     if [ $? -ne 0 ]; then
         echo "ERROR: Could not connect to MySQL";
         exit 1;
@@ -95,14 +95,15 @@ function run {
         performUnitTests="$UNIT_TESTS";
     fi
 
-    if [[ "$performFunctionalTests" == "yes" ]]; then
-        functionalTests "$@";
-    fi
-
     if [[ "$performUnitTests" == "yes" ]]; then
+        echo "Run Unit Tests";
         unitTests "$@";
     fi
 
+    if [[ "$performFunctionalTests" == "yes" ]]; then
+        echo "Run Functional Tests";
+        functionalTests "$@";
+    fi
 }
 
 init;
