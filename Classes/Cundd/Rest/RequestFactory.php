@@ -10,6 +10,7 @@ namespace Cundd\Rest;
 
 
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Factory class to get the current Request
@@ -49,15 +50,14 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      */
     public function getRequest() {
         if (!$this->request) {
-            $format = '';
-            $uri = $this->getUri($format);
+            $uri = $this->getUri();
 
             /*
              * Transform Document URLs
              * @Todo: Make this more flexible
              */
-            $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
-            if (substr($uri, 0, $documentApiPathLength) === Request::API_PATH_DOCUMENT . '/') {
+            if ($this->stringHasPrefix($uri, Request::API_PATH_DOCUMENT . '/')) {
+                $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
                 $uri = Request::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
             }
 
@@ -66,13 +66,14 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
             $this->request = new Request(NULL, $uri);
             $this->request->initWithPathAndOriginalPath($path, $originalPath);
             $this->request->injectConfigurationProvider($this->configurationProvider);
-            if ($format) {
-                $this->request->format($format);
+            if ($this->format) {
+                $this->request->format($this->format);
             }
 //            fwrite(STDOUT, PHP_EOL . '-> ' . spl_object_hash($this) . ' ' . $uri . ' - ' . $this->getArgument('u', FILTER_SANITIZE_URL) . PHP_EOL);
 //        } else {
 //            fwrite(STDOUT, PHP_EOL . '<- ' . spl_object_hash($this) . ' ' . $this->getUri() . PHP_EOL);
         }
+
         return $this->request;
     }
 
@@ -85,6 +86,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         $this->request = null;
         $this->uri = null;
         $this->format = null;
+
         return $this;
     }
 
@@ -97,6 +99,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
     public function registerCurrentRequest($request) {
         $this->resetRequest();
         $this->request = $request;
+
         return $this;
     }
 
@@ -120,8 +123,8 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
         if (!$this->uri) {
             $uri = $this->getArgument('u', FILTER_SANITIZE_URL);
             if (!$uri) {
-                $uri = substr($_SERVER['REQUEST_URI'], 6);
-                $uri = filter_var($uri, FILTER_SANITIZE_URL);
+                $uri = $this->removePathPrefixes($_SERVER['REQUEST_URI']);
+                $uri = filter_var(substr($uri, 6), FILTER_SANITIZE_URL);
             }
 
             // Strip the format from the URI
@@ -139,6 +142,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
             }
             $this->uri = $uri;
         }
+
         return $this->uri;
     }
 
@@ -170,17 +174,18 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
     /**
      * Get a request variable
      *
-     * @param string $name Argument name
-     * @param int $filter Filter for the input
-     * @param mixed $default Default value to use if no argument with the given name exists
+     * @param string $name    Argument name
+     * @param int    $filter  Filter for the input
+     * @param mixed  $default Default value to use if no argument with the given name exists
      * @return mixed
      */
     protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
-        $argument = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP($name);
+        $argument = GeneralUtility::_GP($name);
         $argument = filter_var($argument, $filter);
         if ($argument === NULL) {
             $argument = $default;
         }
+
         return $argument;
     }
 
@@ -191,5 +196,43 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface {
      */
     public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
         $this->configurationProvider = $configurationProvider;
+    }
+
+    /**
+     * @param string $uri
+     * @return string
+     */
+    private function removePathPrefixes($uri) {
+        $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
+        if ($pathPrefix === false) {
+            $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+        }
+
+        return $this->removePathPrefix($uri, $pathPrefix);
+    }
+
+    /**
+     * @param string $uri
+     * @param string $pathPrefix
+     * @return string
+     */
+    private function removePathPrefix($uri, $pathPrefix) {
+        if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
+            $pathPrefix = '/'. trim($pathPrefix, '/');
+            if ($this->stringHasPrefix($uri, $pathPrefix)) {
+                $uri = substr($uri, strlen($pathPrefix));
+            }
+        }
+
+        return $uri;
+    }
+
+    /**
+     * @param string $input
+     * @param string $prefix
+     * @return bool
+     */
+    private function stringHasPrefix($input, $prefix) {
+        return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
     }
 }

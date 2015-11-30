@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
@@ -50,20 +51,7 @@ class RequestFactoryTest extends AbstractCase {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
 
-        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $configurationProviderMock */
-        $configurationProviderMock = $this->getMockBuilder('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
-            ->getMock();
-
-        $valueMap = array(
-            array('aliases.myAlias', null, 'MyExt-MyModel'),
-        );
-        $configurationProviderMock
-            ->expects($this->any())
-            ->method('getSetting')
-            ->will($this->returnValueMap($valueMap));
-
-        $this->fixture = new \Cundd\Rest\RequestFactory();
-        $this->fixture->injectConfigurationProvider($configurationProviderMock);
+        $this->fixture = $this->buildRequestFactory();
     }
 
     public function tearDown() {
@@ -322,5 +310,76 @@ class RequestFactoryTest extends AbstractCase {
         $_GET['u'] = 'MyExt-MyModel/1.blur';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getUriWithAbsRefPrefixInSubDirectoryTest() {
+        $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
+        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory/'))->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+    }
+
+    /**
+     * @test
+     */
+    public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest() {
+        $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
+        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory'))->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+    }
+
+    /**
+     * @test
+     */
+    public function getUriWithAbsRefPrefixSlashTest() {
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
+        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/'))->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+    }
+
+    /**
+     * @test
+     */
+    public function getUriWithAbsRefPrefixDomainTest() {
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
+        $request = $this->buildRequestFactory(array('absRefPrefix', null, 'http://example.com/'))->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+    }
+
+    /**
+     * @test
+     */
+    public function getUriWithAbsRefPrefixAutoTest() {
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
+        $request = $this->buildRequestFactory(array('absRefPrefix', null, 'auto'))->getRequest();
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+    }
+
+    /**
+     * @param array ...$configurationProviderSetting
+     * @return RequestFactory
+     */
+    private function buildRequestFactory(array $configurationProviderSetting = null) {
+        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $configurationProviderMock */
+        $configurationProviderMock = $this->getMockBuilder('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
+            ->getMock();
+
+        if ($configurationProviderSetting === null) {
+            $configurationProviderSetting = array(
+                array('aliases.myAlias', null, 'MyExt-MyModel')
+            );
+        } else {
+            $configurationProviderSetting = func_get_args();
+        }
+        $configurationProviderMock
+            ->expects($this->any())
+            ->method('getSetting')
+            ->will($this->returnValueMap($configurationProviderSetting));
+
+        $requestFactory = new RequestFactory();
+        $requestFactory->injectConfigurationProvider($configurationProviderMock);
+        return $requestFactory;
     }
 }
