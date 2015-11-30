@@ -70,7 +70,7 @@ class DispatcherTest extends AbstractCase {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('json', $request->format());
     }
 
     /**
@@ -90,7 +90,7 @@ class DispatcherTest extends AbstractCase {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('json', $request->format());
     }
 
     /**
@@ -101,6 +101,16 @@ class DispatcherTest extends AbstractCase {
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
         $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getDocumentUrWithHtmlFormatTest() {
+        $_GET['u'] = 'Document/MyExt-MyModel/1.html';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
+        $this->assertEquals('html', $request->format());
     }
 
     /**
@@ -163,7 +173,7 @@ class DispatcherTest extends AbstractCase {
     public function getFormatWithoutFormatTest() {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('json', $request->format());
     }
 
     /**
@@ -173,6 +183,15 @@ class DispatcherTest extends AbstractCase {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function getFormatWithHtmlFormatTest() {
+        $_GET['u'] = 'MyExt-MyModel/1.html';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('html', $request->format());
     }
 
     /**

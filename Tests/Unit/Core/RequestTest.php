@@ -8,8 +8,9 @@
 
 namespace Cundd\Rest\Tests\Unit\Core;
 
-
 use Cundd\Rest\Request;
+
+require_once __DIR__ . '/../../Bootstrap.php';
 
 class RequestTest extends \PHPUnit_Framework_TestCase {
     /**
@@ -22,8 +23,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
                 'time' => time(),
             )
         );
-        $request = $this->buildTestRequest(null, 'MyAliasedModel' . time());
         $_POST['myData'] = $testData['myData'];
+        $request = $this->buildTestRequest(null, 'MyAliasedModel' . time());
         $this->assertSame($testData, $request->getSentData());
     }
 
