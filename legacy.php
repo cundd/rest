@@ -17,6 +17,7 @@ class_alias('Tx_Extbase_Reflection_Service', 'TYPO3\\CMS\\Extbase\\Reflection\\R
 class_alias('Tx_Extbase_Persistence_Repository', 'TYPO3\\CMS\\Extbase\\Persistence\\Repository');
 class_alias('Tx_Extbase_Persistence_RepositoryInterface', 'TYPO3\\CMS\\Extbase\\Persistence\\RepositoryInterface');
 class_alias('Tx_Extbase_Persistence_Typo3QuerySettings', 'TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
+class_alias('Tx_Extbase_Persistence_ObjectStorage', 'TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
 class_alias('Tx_Extbase_Persistence_QuerySettingsInterface', 'TYPO3\\CMS\\Extbase\\Persistence\\Generic\\QuerySettingsInterface');
 class_alias('Tx_Extbase_DomainObject_DomainObjectInterface', 'TYPO3\\CMS\\Extbase\\DomainObject\\DomainObjectInterface');
 class_alias('Tx_Extbase_DomainObject_AbstractEntity', 'TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity');

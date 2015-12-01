@@ -6,7 +6,7 @@ if (!defined('TYPO3_MODE')) {
 if (file_exists(__DIR__ . '/vendor/')) {
 	require_once __DIR__ . '/vendor/autoload.php';
 } else {
-	Tx_CunddComposer_Autoloader::register();
+	\Cundd\CunddComposer\Autoloader::register();
 }
 
 if (!class_exists('Cundd\\Rest\\Bootstrap')) {
@@ -18,6 +18,6 @@ if (!class_exists('Cundd\\Rest\\Bootstrap')) {
 
 $bootstrap = new \Cundd\Rest\Bootstrap;
 $bootstrap->init();
-$app = new \Cundd\Rest\Dispatcher;
-$app->dispatch();
-?>
+/** @var \Cundd\Rest\Dispatcher $dispatcher */
+$dispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager')->get('Cundd\\Rest\\Dispatcher');
+$dispatcher->dispatch();

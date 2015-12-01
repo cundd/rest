@@ -32,7 +32,6 @@
  */
 
 
-
 namespace Cundd\Rest\Authentication;
 
 

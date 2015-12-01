@@ -38,24 +38,23 @@ namespace Cundd\Rest;
  * @package Cundd\Rest
  */
 interface HandlerInterface {
-	/**
-	 * Sets the current request
-	 *
-	 * @param \Cundd\Rest\Request $request
-	 * @return $this
-	 */
-	public function setRequest($request);
+    /**
+     * Sets the current request
+     *
+     * @param \Cundd\Rest\Request $request
+     * @return $this
+     */
+    public function setRequest($request);
 
-	/**
-	 * Returns the current request
-	 *
-	 * @return \Cundd\Rest\Request
-	 */
-	public function getRequest();
+    /**
+     * Returns the current request
+     *
+     * @return \Cundd\Rest\Request
+     */
+    public function getRequest();
 
-	/**
-	 * Configures which method is responsible for handling the different request paths
-	 */
-	public function configureApiPaths();
-
-} 
+    /**
+     * Configures which method is responsible for handling the different request paths
+     */
+    public function configureApiPaths();
+}

@@ -31,64 +31,85 @@
  */
 
 
-
 namespace Cundd\Rest\Authentication\UserProvider;
 
 
 use Cundd\Rest\Authentication\UserProviderInterface;
 
+/**
+ * User Provider implementation for FeUsers
+ *
+ * @package Cundd\Rest\Authentication\UserProvider
+ */
 class FeUserProvider implements UserProviderInterface {
-	/**
-	 * Returns if the user with the given credentials is valid
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @return boolean
-	 */
-	public function checkCredentials($username, $password) {
-		/** @var \t3lib_DB $databaseAdapter */
-		$databaseAdapter = $this->getDatabaseAdapter();
+    /**
+     * Name of the password column
+     */
+    const PASSWORD_COLUMN_NAME = 'tx_rest_apikey';
 
-		$whereClause = $this->buildWhereStatement(array(
-			'username' => $username,
-			'password' => $password
-		));
-		$result = $databaseAdapter->exec_SELECTquery('COUNT(*)', 'fe_users', $whereClause);
-		$row = $databaseAdapter->sql_fetch_row($result);
-		return (bool) $row[0];
-	}
+    /**
+     * Returns if the user with the given credentials is valid
+     *
+     * @param string $username
+     * @param string $password
+     * @return boolean
+     */
+    public function checkCredentials($username, $password) {
+        /** @var \t3lib_DB $databaseAdapter */
+        $databaseAdapter = $this->getDatabaseAdapter();
 
-	/**
-	 * Builds the where statement from the given properties
-	 * @param array $properties
-	 * @return string
-	 */
-	protected function buildWhereStatement($properties) {
-		$whereParts = array();
-		$databaseAdapter = $this->getDatabaseAdapter();
-		foreach($properties as $key => $value) {
-			if ($key === 'password') {
-				list($value, $key) = $this->preparePassword($value);
-			}
-			$whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
-		}
-		return implode(' AND ', $whereParts);
-	}
+        $whereClause = $this->buildWhereStatement(array(
+            'username' => $username,
+            'password' => $password
+        ));
+        $result = $databaseAdapter->exec_SELECTquery('COUNT(*)', 'fe_users', $whereClause);
+        $row = $databaseAdapter->sql_fetch_row($result);
+        return (bool)$row[0];
+    }
 
-	/**
-	 * Returns an array containing the prepared password and table column
-	 * @param string $password
-	 * @return array
-	 */
-	protected function preparePassword($password) {
-		return array($password, 'tx_rest_apikey');
-	}
+    /**
+     * Builds the where statement from the given properties
+     *
+     * @param array $properties
+     * @return string
+     */
+    protected function buildWhereStatement($properties) {
+        $whereParts = array();
+        $databaseAdapter = $this->getDatabaseAdapter();
+        foreach ($properties as $key => $value) {
+            if ($key === 'password') {
+                list($value, $key) = $this->preparePassword($value);
+            }
+            if (is_int($value)) {
+                $whereParts[] = '`' . $key . '`=' . $value;
+            } else {
+                $whereParts[] = '`' . $key . '`=' . $databaseAdapter->fullQuoteStr($value, 'fe_users');
+            }
+        }
+        $whereParts[] = '`' . self::PASSWORD_COLUMN_NAME . '`<>\'\'';
+        $whereParts[] = '(`disable`=0)';
+        $whereParts[] = '(`deleted`=0)';
+        $whereParts[] = sprintf('(`starttime`<=%d)', time());
+        $whereParts[] = sprintf('(endtime=0 OR endtime>%d)', time());
+        return implode(' AND ', $whereParts);
+    }
 
-	/**
-	 * Returns the database adapter
-	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
-	 */
-	protected function getDatabaseAdapter() {
-		return $GLOBALS['TYPO3_DB'];
-	}
+    /**
+     * Returns an array containing the prepared password and table column
+     *
+     * @param string $password
+     * @return array
+     */
+    protected function preparePassword($password) {
+        return array($password, self::PASSWORD_COLUMN_NAME);
+    }
+
+    /**
+     * Returns the database adapter
+     *
+     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     */
+    protected function getDatabaseAdapter() {
+        return $GLOBALS['TYPO3_DB'];
+    }
 }

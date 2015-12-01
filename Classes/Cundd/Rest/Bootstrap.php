@@ -24,106 +24,160 @@
  */
 
 namespace Cundd\Rest;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
-use TYPO3\CMS\Core\Utility\RootlineUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
 
 class Bootstrap {
-	/**
-	 * Initializes the TYPO3 environment.
-	 *
-	 * @return	void
-	 */
-	public function init() {
-		if (version_compare(TYPO3_version, '6.0.0') < 0) {
-			require_once __DIR__ . '/../../../legacy.php';
-		}
+    /**
+     * Initializes the TYPO3 environment.
+     *
+     * @return    void
+     */
+    public function init() {
+        if (version_compare(TYPO3_version, '6.0.0') < 0) {
+            require_once __DIR__ . '/../../../legacy.php';
+        }
 
-		EidUtility::connectDB();
-		$this->initTSFE();
-	}
+        if (method_exists('TYPO3\CMS\Frontend\Utility\EidUtility', 'connectDB')) {
+            EidUtility::connectDB();
+        }
+        $this->initTSFE();
+    }
 
-	/**
-	 * Initialize the TSFE.
-	 *
-	 * @param	integer	$pageUid	 The page UID
-	 * @param	boolean	$overrule
-	 * @return	void
-	 */
-	public function initTSFE($pageUid = -1, $overrule = FALSE) {
-		$rootLine = NULL;
-		$typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
-		if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
-			$pageUid = intval(GeneralUtility::_GP('pid'));
-		}
-		if ($pageUid === -1) {
-			$pageUid = 0;
-		}
+    /**
+     * Initialize the TSFE.
+     *
+     * @param    integer $pageUid The page UID
+     * @param    boolean $overrule
+     * @return    void
+     */
+    public function initTSFE($pageUid = -1, $overrule = FALSE) {
+        $rootLine = NULL;
+        $typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
+        if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
+            $pageUid = intval(GeneralUtility::_GP('pid'));
+        }
+        if ($pageUid === -1) {
+            $pageUid = 0;
+        }
 
-		#$typo3confVariables['EXT']['extList'] = str_replace('tq_seo', '', $typo3confVariables['EXT']['extList']);
-		#$typo3confVariables['EXT']['extList_FE'] = str_replace('tq_seo', '', $typo3confVariables['EXT']['extList_FE']);
+        // begin
+        if (!is_object($GLOBALS['TT']) || $overrule === TRUE) {
+            $GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\TimeTracker();
+            $GLOBALS['TT']->start();
+        }
 
-		// declare
-		//$temp_TSFEclassName = t3lib_div::makeInstance('tslib_fe');
+        if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === TRUE) && is_int($pageUid)) {
+            // builds TSFE object
+            $GLOBALS['TSFE'] = $typoScriptFrontendController = new \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController(
+                $typo3confVariables,
+                $pageUid,
+                0,  // Type
+                0,  // no_cache
+                '', // cHash
+                '', // jumpurl
+                '', // MP,
+                ''  // RDCT
+            );
 
-		// begin
-		if (!is_object($GLOBALS['TT']) || $overrule === TRUE) {
-			$GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\TimeTracker();
-			$GLOBALS['TT']->start();
-		}
+            $typoScriptFrontendController->initTemplate();
 
-		if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === TRUE) && is_int($pageUid)) {
-			// builds TSFE object
-			$GLOBALS['TSFE'] = new \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController(
-				$typo3confVariables,
-				$pageUid,
-				0, 		// Type
-				0, 		// no_cache
-				'', 	// cHash
-				'', 	// jumpurl
-				'', 	// MP,
-				'' 		// RDCT
-				);
+            // builds a cObj
+            if (is_array($typoScriptFrontendController->page) === FALSE) {
+                $typoScriptFrontendController->page = array();
+            }
 
-//			$start = microtime(TRUE);
+            $typoScriptFrontendController->newCObj();
 
-			// builds rootline
-			if ($pageUid > 0) {
-				$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
-				//$rootLine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', 0, '', $this);
-				/** @var RootlineUtility $rootLine */
-				$rootLineUtility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\RootlineUtility', $pageUid);
-				$rootLine = $rootLineUtility->get();
-//				$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pageUid);
-				$GLOBALS['TSFE']->rootLine = $rootLine;
-			}
+            // Add the FE user
+            $typoScriptFrontendController->fe_user = EidUtility::initFeUser();
 
-			// Init template
-			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
-			$GLOBALS['TSFE']->tmpl->tt_track = 0;// Do not log time-performance information
-			$GLOBALS['TSFE']->tmpl->init();
+            $typoScriptFrontendController->determineId();
+            $typoScriptFrontendController->getConfigArray();
 
-			// this generates the constants/config + hierarchy info for the template.
-			if ($rootLine && $pageUid > 0) {
-				$GLOBALS['TSFE']->tmpl->runThroughTemplates(
-					$rootLine,
-					0 // start_template_uid
-				);
-			}
-			$GLOBALS['TSFE']->tmpl->generateConfig();
-			$GLOBALS['TSFE']->tmpl->loaded = 1;
+            $this->setRequestedLanguage($typoScriptFrontendController);
+            $typoScriptFrontendController->settingLanguage();
+            $typoScriptFrontendController->settingLocale();
+        }
+    }
 
-			// builds a cObj
-			$GLOBALS['TSFE']->newCObj();
 
-			// Add the FE user
-			$GLOBALS['TSFE']->fe_user = EidUtility::initFeUser();
+    private function getRequestedLanguageCode() {
+        if (class_exists('Locale')) {
+            return \Locale::getPrimaryLanguage(\Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']));
+        }
 
-//			$start = microtime(TRUE);
-			$GLOBALS['TSFE']->determineId();
-			$GLOBALS['TSFE']->getConfigArray();
-//			echo 'Time: ' . (microtime(TRUE) - $start);
-		}
-	}
+        return null;
+    }
+
+    /**
+     * @return int|null
+     */
+    private function getRequestedLanguageUid() {
+        // Test the full HTTP_ACCEPT_LANGUAGE header
+        $typoscriptValue = $this->readConfigurationFromTyposcript(
+            'plugin.tx_rest.settings.languages.' . $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+            $GLOBALS['TSFE']
+        );
+
+        if ($typoscriptValue !== null) {
+            return intval($typoscriptValue);
+        }
+
+        // Retrieve and test the parsed header
+        $languageCode = $this->getRequestedLanguageCode();
+        if ($languageCode === null) {
+            return null;
+        }
+        $typoscriptValue = $this->readConfigurationFromTyposcript(
+            'plugin.tx_rest.settings.languages.' . $languageCode,
+            $GLOBALS['TSFE']
+        );
+
+        if ($typoscriptValue === null) {
+            return null;
+        }
+
+        return intval($typoscriptValue);
+    }
+
+    /**
+     * @param string                       $keyPath
+     * @param TypoScriptFrontendController $typoScriptFrontendController
+     * @return mixed
+     */
+    private function readConfigurationFromTyposcript($keyPath, $typoScriptFrontendController) {
+        $keyPathParts = explode('.', $keyPath);
+        $currentValue = $typoScriptFrontendController->tmpl->setup;
+
+        foreach ($keyPathParts as $currentKey) {
+            if (isset($currentValue[$currentKey . '.'])) {
+                $currentValue = $currentValue[$currentKey . '.'];
+            } elseif (isset($currentValue[$currentKey])) {
+                $currentValue = $currentValue[$currentKey];
+            } else {
+                return null;
+            }
+        }
+
+        return $currentValue;
+    }
+
+    /**
+     * @param TypoScriptFrontendController $typoScriptFrontendController
+     */
+    private function setRequestedLanguage($typoScriptFrontendController) {
+        // Set language if defined
+        if (GeneralUtility::_GP('L') !== null) {
+            $typoScriptFrontendController->config['config']['sys_language_uid'] = intval(GeneralUtility::_GP('L'));
+        } else {
+            $requestedLanguageUid = $this->getRequestedLanguageUid();
+
+            if (!is_null($requestedLanguageUid)) {
+                $typoScriptFrontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
+            }
+        }
+    }
 }
-?>

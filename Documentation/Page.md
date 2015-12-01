@@ -4,11 +4,7 @@ Page via REST
 Setup
 -----
 
-Include the TypoScript file from `Configuration/TypoScript/Presets/Page.ts`
-
-	<INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Configuration/TypoScript/Presets/Page.ts">
-	
-and configure the access
+Include the TypoScript file from `Virtual Object - Page` and configure the access
 
 	plugin.tx_rest.settings {
 		paths {

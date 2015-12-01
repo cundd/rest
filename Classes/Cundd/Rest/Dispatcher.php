@@ -28,11 +28,12 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
-use Cundd\Rest\DataProvider\Utility;
-use TYPO3\CMS\Core\Log\Logger;
+use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
+use Cundd\Rest\Dispatcher\DispatcherInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Main dispatcher of REST requests
@@ -42,486 +43,480 @@ use Cundd\Rest\Access\AccessControllerInterface;
  *
  * @package Cundd\Rest
  */
-class Dispatcher implements SingletonInterface {
-	/**
-	 * API path
-	 *
-	 * @var string
-	 */
-	protected $uri;
+class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface {
+    /**
+     * @var \Cundd\Rest\ObjectManager
+     */
+    protected $objectManager;
 
-	/**
-	 * @var \Cundd\Rest\ObjectManager
-	 */
-	protected $objectManager;
+    /**
+     * @var \Bullet\App
+     */
+    protected $app;
 
-	/**
-	 * @var \Bullet\App
-	 */
-	protected $app;
+    /**
+     * @var RequestFactoryInterface
+     */
+    protected $requestFactory;
 
-	/**
-	 * @var \Cundd\Rest\Request
-	 */
-	protected $request;
+    /**
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
 
-	/**
-	 * @var \TYPO3\CMS\Core\Log\Logger
-	 */
-	protected $logger;
+    /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected $logger;
 
-	/**
-	 * The response format
-	 *
-	 * @var string
-	 */
-	protected $format;
+    /**
+     * The shared instance
+     *
+     * @var \Cundd\Rest\Dispatcher
+     */
+    static protected $sharedDispatcher;
 
-	/**
-	 * The shared instance
-	 *
-	 * @var \Cundd\Rest\Dispatcher
-	 */
-	static protected $sharedDispatcher;
+    /**
+     * Initialize
+     */
+    public function __construct() {
+        $this->app = new \Bullet\App();
 
-	/**
-	 * Initialize
-	 */
-	public function __construct() {
-		$this->app           = new \Bullet\App();
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
-		$this->objectManager->setDispatcher($this);
+        $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+        $this->requestFactory = $this->objectManager->getRequestFactory();
+        $this->responseFactory = $this->objectManager->getResponseFactory();
 
-		self::$sharedDispatcher = $this;
-	}
+        self::$sharedDispatcher = $this;
+    }
 
-	/**
-	 * Dispatch the request
-	 *
-	 * @param \Cundd\Rest\Request $request         Overwrite the request
-	 * @param Response            $responsePointer Reference to be filled with the response
-	 * @return boolean Returns if the request has been successfully dispatched
-	 */
-	public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
-		if ($request) {
-			$this->request = $request;
-			$this->objectManager->reassignRequest();
-		} else {
-			$request = $this->getRequest();
-		}
+    /**
+     * Dispatch the request
+     *
+     * @param \Cundd\Rest\Request $request Overwrite the request
+     * @param Response $responsePointer Reference to be filled with the response
+     * @return boolean Returns if the request has been successfully dispatched
+     */
+    public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
+        if ($request) {
+            $this->requestFactory->registerCurrentRequest($request);
+            $this->objectManager->reassignRequest();
+        } else {
+            $request = $this->requestFactory->getRequest();
+        }
 
-		if (!$this->getPath()) {
-			return $this->greet();
-		}
+        $requestPath = $request->path();
+        if (!$requestPath) {
+            return $this->greet();
+        }
 
-		// Checks if the request needs authentication
-		switch ($this->objectManager->getAccessController()->getAccess()) {
-			case AccessControllerInterface::ACCESS_ALLOW:
-				break;
+        // Checks if the request needs authentication
+        switch ($this->objectManager->getAccessController()->getAccess()) {
+            case AccessControllerInterface::ACCESS_ALLOW:
+                break;
 
-			case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-				echo $this->createErrorResponse('Unauthorized', 401);
-				return FALSE;
+            case AccessControllerInterface::ACCESS_UNAUTHORIZED:
+                echo $this->responseFactory->createErrorResponse('Unauthorized', 401);
+                return FALSE;
 
-			case AccessControllerInterface::ACCESS_DENY:
-			default:
-				echo $this->createErrorResponse('Forbidden', 403);
-				return FALSE;
-		}
+            case AccessControllerInterface::ACCESS_DENY:
+            default:
+                echo $this->responseFactory->createErrorResponse('Forbidden', 403);
+                return FALSE;
+        }
 
-		/** @var Cache $cache */
-		$cache    = $this->objectManager->getCache();
-		$response = $cache->getCachedValueForRequest($request);
+        /** @var Cache $cache */
+        $cache = $this->objectManager->getCache();
+        $response = $cache->getCachedValueForRequest($request);
 
-		$success = TRUE;
+        $success = TRUE;
 
-		// If no cached response exists
-		if (!$response) {
+        // If no cached response exists
+        if (!$response) {
 
-			// If a path is given let the handler build up the routes
-			if ($this->getPath()) {
-				$this->logRequest('path: "' . $this->getPath() . '" method: "' . $request->method() . '"');
-				$this->objectManager->getHandler()->configureApiPaths();
-			}
+            // If a path is given let the handler build up the routes
+            if ($requestPath) {
+                $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->method()));
+                $this->objectManager->getHandler()->configureApiPaths();
+            }
 
-			// Let Bullet PHP do the hard work
-			$response = $this->app->run($request);
+            // Let Bullet PHP do the hard work
+            $response = $this->app->run($request);
 
-//			$response->content($response->content());
+            // Handle exceptions
+            if ($response->content() instanceof \Exception) {
+                $success = FALSE;
 
-			// Handle exceptions
-			if ($response->content() instanceof \Exception) {
-				$success = FALSE;
+                $exception = $response->content();
+                $this->logException($exception);
+                $response = $this->exceptionToResponse($exception);
+            } else {
+                // Cache the response
+                $cache->setCachedValueForRequest($request, $response);
+            }
+        }
 
-				$exception = $response->content();
-				$this->logException($exception);
-				$response = $this->exceptionToResponse($exception);
-			}
+        // Additional custom headers
+        $additionalResponseHeaders = $this->objectManager->getConfigurationProvider()->getSetting('responseHeaders', array());
+        if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)){
+            foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
+                if (is_string($value)) {
+                    $response->header($responseHeaderType, $value);
+                } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
+                    $response->header(rtrim($responseHeaderType, '.'), GeneralUtility::callUserFunction($value['userFunc'], $value, $this));
+                }
+            }
+        }
 
-			// Cache the response
-			$cache->setCachedValueForRequest($request, $response);
-		}
+        $responsePointer = $response;
+        $responseString = (string)$response;
+        $this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
+        echo $responseString;
+        return $success;
+    }
 
-		$responsePointer = $response;
-		$responseString  = (string)$response;
-		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
-		echo $responseString;
-		return $success;
-	}
+    /**
+     * Print the greeting
+     *
+     * @return boolean Returns if the request has been successfully dispatched
+     */
+    public function greet() {
+        /** @var \Cundd\Rest\Request $request */
+        $request = $this->requestFactory->getRequest();
 
-	/**
-	 * Print the greeting
-	 *
-	 * @return boolean Returns if the request has been successfully dispatched
-	 */
-	public function greet() {
-		/** @var \Cundd\Rest\Request $request */
-		$request = $this->getRequest();
+        $this->app->path('/', function ($request) {
+            $greeting = 'What\'s up?';
+            $hour = date('H');
+            if ($hour <= '10') {
+                $greeting = 'Good Morning!';
+            } else if ($hour >= '23') {
+                $greeting = 'Hy! Still awake?';
+            }
+            return $greeting;
+        });
 
-		$this->app->path('/', function ($request) {
-			$greeting = 'What\'s up?';
-			$hour     = date('H');
-			if ($hour <= '10') {
-				$greeting = 'Good Morning!';
-			} else if ($hour >= '23') {
-				$greeting = 'Hy! Still awake?';
-			}
-			return $greeting;
-		});
+        $response = $this->app->run($request);
 
-		$response = $this->app->run($request);
+        $responseString = (string)$response;
+        $this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
+        echo $responseString;
+        return TRUE;
+    }
 
-		$responseString = (string)$response;
-		$this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
-		echo $responseString;
-		return TRUE;
-	}
+    /**
+     * Catch and report the exception, that occurred during the request
+     *
+     * @param \Exception $exception
+     * @return Response
+     */
+    public function exceptionToResponse($exception) {
+        if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+            return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+        }
+        return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+    }
 
-	/**
-	 * Catch and report the exception, that occurred during the request
-	 *
-	 * @param \Exception $exception
-	 * @return Response
-	 */
-	public function exceptionToResponse($exception) {
-		if ($_SERVER['SERVER_ADDR'] === '127.0.0.1') {
-			return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
-		}
-		return $this->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
-	}
+    /**
+     * Returns the request
+     *
+     * Better use the RequestFactory::getRequest() instead
+     *
+     * @return \Cundd\Rest\Request
+     */
+    public function getRequest() {
+        return $this->requestFactory->getRequest();
+    }
 
-	/**
-	 * Returns a response with the given message and status code
-	 *
-	 * @param string|array $data
-	 * @param int          $status
-	 * @return Response
-	 */
-	public function createErrorResponse($data, $status) {
-		return $this->_createResponse($data, $status, TRUE);
-	}
+    /**
+     * Returns the Bullet App
+     *
+     * Use one of the register*() methods if applicable
+     *
+     * @return \Bullet\App
+     */
+    public function getApp() {
+        return $this->app;
+    }
 
-	/**
-	 * Returns a response with the given message and status code
-	 *
-	 * @param string|array $data
-	 * @param int          $status
-	 * @return Response
-	 */
-	public function createSuccessResponse($data, $status) {
-		return $this->_createResponse($data, $status);
-	}
+    /**
+     * Register the callback for the given parameter
+     *
+     * @param string $param
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerParameter($param, \Closure $callback) {
+        $this->app->param($param, $callback);
+        return $this;
+    }
 
-	/**
-	 * Returns a response with the given message and status code
-	 *
-	 * @param string|array $data Data to send
-	 * @param int          $status Status code of the response
-	 * @param bool         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
-	 * @return Response
-	 */
-	protected function _createResponse($data, $status, $forceError = FALSE) {
-		$body     = NULL;
-		$response = new Response(NULL, $status);
-		$format   = $this->getRequest()->format();
-		if (!$format) {
-			$format = 'json';
-		}
+    /**
+     * Register the callback for the given path segment
+     *
+     * @param string $path
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPath($path, \Closure $callback) {
+        $this->app->path($path, $callback);
+        return $this;
+    }
 
-		$messageKey = 'message';
-		if ($forceError || $status >= 400) {
-			$messageKey = 'error';
-		}
+    /**
+     * Handle GET method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerGetMethod(\Closure $callback) {
+        $this->app->method('GET', $callback);
+        return $this;
+    }
 
-		switch ($format) {
-			case 'json':
+    /**
+     * Handle POST method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPostMethod(\Closure $callback) {
+        $this->app->method('POST', $callback);
+        return $this;
+    }
 
-				switch (gettype($data)) {
-					case 'string':
-						$body = array(
-							$messageKey => $data
-						);
-						break;
+    /**
+     * Handle PUT method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPutMethod(\Closure $callback) {
+        $this->app->method('PUT', $callback);
+        return $this;
+    }
 
-					case 'array':
-						$body = $data;
-						break;
+    /**
+     * Handle DELETE method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerDeleteMethod(\Closure $callback) {
+        $this->app->method('DELETE', $callback);
+        return $this;
+    }
 
-					case 'NULL':
-						$body = array(
-							$messageKey => $response->statusText($status)
-						);
-						break;
-				}
+    /**
+     * Handle PATCH method
+     *
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerPatchMethod(\Closure $callback) {
+        $this->app->method('PATCH', $callback);
+        return $this;
+    }
 
-				$response->contentType('application/json');
-				$response->content(json_encode($body));
-				break;
+    /**
+     * Register the callback for the given HTTP method(s)
+     *
+     * @param string]string[] $method
+     * @param \Closure $callback
+     * @return $this
+     */
+    public function registerHttpMethod($methods, \Closure $callback) {
+        $this->app->method($methods, $callback);
+        return $this;
+    }
 
-			case 'xml':
-				// TODO: support more response formats
+    /**
+     * Returns the logger
+     *
+     * @return \TYPO3\CMS\Core\Log\Logger
+     */
+    public function getLogger() {
+        if (!$this->logger) {
+            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+        }
+        return $this->logger;
+    }
 
-			default:
-				$body = 'Unsupported format: ' . $this->getRequest()->format();
-				$response->content($body);
-		}
-		return $response;
-	}
+    /**
+     * Logs the given request message and data
+     *
+     * @param string $message
+     * @param array $data
+     */
+    public function logRequest($message, $data = NULL) {
+        if ($this->getExtensionConfiguration('logRequests')) {
+            $this->log($message, $data);
+        }
+    }
 
-	/**
-	 * Returns the request
-	 *
-	 * @return \Cundd\Rest\Request
-	 */
-	public function getRequest() {
-		if (!$this->request) {
-			$format = '';
-			$uri    = $this->getUri($format);
+    /**
+     * Logs the given response message and data
+     *
+     * @param string $message
+     * @param array $data
+     */
+    public function logResponse($message, $data = NULL) {
+        if ($this->getExtensionConfiguration('logResponse')) {
+            $this->log($message, $data);
+        }
+    }
 
-			/*
-			 * Transform Document URLs
-			 * @Todo: Make this better
-			 */
-			if (substr($uri, 0, 9) === 'Document/') {
-				$uri = 'Document-' . substr($uri, 9);
-			}
-			$this->request = new Request(NULL, $uri);
-			$this->request->injectConfigurationProvider($this->objectManager->getConfigurationProvider());
-			if ($format) {
-				$this->request->format($format);
-			}
+    /**
+     * Logs the given exception
+     *
+     * @param \Exception $exception
+     */
+    public function logException($exception) {
+        $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+        $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+    }
 
-		}
-		return $this->request;
-	}
+    /**
+     * Logs the given message and data
+     *
+     * @param string $message
+     * @param array $data
+     */
+    public function log($message, $data = NULL) {
+        if ($data) {
+            $this->getLogger()->log(LogLevel::DEBUG, $message, $data);
+        } else {
+            $this->getLogger()->log(LogLevel::DEBUG, $message);
+        }
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getPath() {
-		return $this->getRequest()->path();
-	}
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createErrorResponse()
+     */
+    public function createErrorResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createErrorResponse($data, $status);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getOriginalPath() {
-		return $this->getRequest()->originalPath();
-	}
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data
+     * @param int $status
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse()
+     */
+    public function createSuccessResponse($data, $status) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->responseFactory->createSuccessResponse($data, $status);
+    }
 
-	/**
-	 * Returns the URI
-	 *
-	 * @param string $format Reference to be filled with the request format
-	 * @return string
-	 */
-	public function getUri(&$format = '') {
-		if (!$this->uri) {
-			$uri = $this->getArgument('u', FILTER_SANITIZE_URL);
-			if (!$uri) {
-				$uri = substr($_SERVER['REQUEST_URI'], 6);
-				$uri = filter_var($uri, FILTER_SANITIZE_URL);
-			}
+    /**
+     * Returns a response with the given message and status code
+     *
+     * @param string|array $data Data to send
+     * @param int $status Status code of the response
+     * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+     * @return Response
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
+     */
+    protected function _createResponse($data, $status, $forceError = FALSE) {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        /** @var ResponseFactory $responseFactory */
+        $responseFactory = $this->responseFactory;
+        return $responseFactory->createResponse($data, $status, $forceError);
+    }
 
-			// Strip the format from the URI
-			$resourceName    = basename($uri);
-			$lastDotPosition = strrpos($resourceName, '.');
-			if ($lastDotPosition !== FALSE) {
-				$newUri = '';
-				if ($uri !== $resourceName) {
-					$newUri = dirname($uri) . '/';
-				}
-				$newUri .= substr($resourceName, 0, $lastDotPosition);
-				$uri = $newUri;
+    /**
+     * @return string
+     * @deprecated use getRequest()->path() instead
+     */
+    public function getPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->path();
+    }
 
-				$format = substr($resourceName, $lastDotPosition + 1);
-			}
-			$this->uri = $uri;
-		}
-		return $this->uri;
-	}
+    /**
+     * @return string
+     * @deprecated use getRequest()->originalPath() instead
+     */
+    public function getOriginalPath() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->originalPath();
+    }
 
-	/**
-	 * @param string $name    Argument name
-	 * @param int    $filter  Filter for the input
-	 * @param mixed  $default Default value to use if no argument with the given name exists
-	 * @return mixed
-	 */
-	protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = NULL) {
-		$argument = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP($name);
-		$argument = filter_var($argument, $filter);
-		if ($argument === NULL) {
-			$argument = $default;
-		}
-		return $argument;
-	}
+    /**
+     * Returns the URI
+     *
+     * @param string $format Reference to be filled with the request format
+     * @return string
+     * @deprecated use the RequestFactory::getUri() instead
+     */
+    public function getUri(&$format = '') {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getUri($format);
+    }
 
-	/**
-	 * Returns the sent data
-	 *
-	 * @return mixed
-	 */
-	public function getSentData() {
-		$request = $this->getRequest();
+    /**
+     * Returns the sent data
+     *
+     * @return mixed
+     * @deprecated use the request's getSentData()
+     */
+    public function getSentData() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getSentData();
+    }
 
-		/** @var \Cundd\Rest\Request $request */
-		$data = $request->post();
-		/*
-		 * If no form url-encoded body is sent check if a JSON
-		 * payload is sent with the singularized root object key as
-		 * the payload's root object key
-		 */
-		if (!$data) {
-			$data = $request->get(
-				Utility::singularize($this->getRootObjectKey())
-			);
-			if (!$data) {
-				$data = json_decode($request->raw(), TRUE);
-			}
-		}
-		return $data;
-	}
+    /**
+     * Returns the key to use for the root object if addRootObjectForCollection
+     * is enabled
+     *
+     * @return string
+     * @deprecated use the request's getRootObjectKey()
+     */
+    public function getRootObjectKey() {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+        return $this->requestFactory->getRequest()->getRootObjectKey();
+    }
 
-	/**
-	 * Returns the key to use for the root object if addRootObjectForCollection
-	 * is enabled
-	 *
-	 * @return string
-	 */
-	public function getRootObjectKey() {
-		$originalPath = $this->getOriginalPath();
-		/*
-		 * Transform Document URLs
-		 * @Todo: Make this better
-		 */
-		if (substr($originalPath, 0, 9) === 'Document-') {
-			$originalPath = substr($originalPath, 9);
-		}
-		return $originalPath;
-	}
+    /**
+     * Returns the extension configuration for the given key
+     *
+     * @param $key
+     * @return mixed
+     */
+    protected function getExtensionConfiguration($key) {
+        // Read the configuration from the globals
+        static $configuration;
+        if (!$configuration) {
+            if (isset($GLOBALS['TYPO3_CONF_VARS'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest'])
+            ) {
+                $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest']);
+            }
+        }
 
-	/**
-	 * Returns the Bullet App
-	 *
-	 * @return \Bullet\App
-	 */
-	public function getApp() {
-		return $this->app;
-	}
+        if (isset($configuration[$key])) {
+            return $configuration[$key];
+        }
+        return NULL;
+    }
 
-	/**
-	 * Returns the logger
-	 *
-	 * @return \TYPO3\CMS\Core\Log\Logger
-	 */
-	public function getLogger() {
-		if (!$this->logger) {
-			$this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
-		}
-		return $this->logger;
-	}
-
-	/**
-	 * Logs the given request message and data
-	 *
-	 * @param string $message
-	 * @param array  $data
-	 */
-	public function logRequest($message, $data = NULL) {
-		if ($this->getExtensionConfiguration('logRequests')) {
-			$this->log($message, $data);
-		}
-	}
-
-	/**
-	 * Logs the given response message and data
-	 *
-	 * @param string $message
-	 * @param array  $data
-	 */
-	public function logResponse($message, $data = NULL) {
-		if ($this->getExtensionConfiguration('logResponse')) {
-			$this->log($message, $data);
-		}
-	}
-
-	/**
-	 * Logs the given exception
-	 *
-	 * @param \Exception $exception
-	 */
-	public function logException($exception) {
-		$message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-		$this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
-	}
-
-	/**
-	 * Logs the given message and data
-	 *
-	 * @param string $message
-	 * @param array  $data
-	 */
-	public function log($message, $data = NULL) {
-		if ($data) {
-			$this->getLogger()->log(LogLevel::DEBUG, $message, $data);
-		} else {
-			$this->getLogger()->log(LogLevel::DEBUG, $message);
-		}
-	}
-
-	/**
-	 * Returns the extension configuration for the given key
-	 *
-	 * @param $key
-	 * @return mixed
-	 */
-	protected function getExtensionConfiguration($key) {
-		// Read the configuration from the globals
-		static $configuration;
-		if (!$configuration) {
-			if (isset($GLOBALS['TYPO3_CONF_VARS'])
-				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT'])
-				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'])
-				&& isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest'])
-			) {
-				$configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest']);
-			}
-		}
-
-		if (isset($configuration[$key])) {
-			return $configuration[$key];
-		}
-		return NULL;
-	}
-
-	/**
-	 * Returns the shared dispatcher instance
-	 *
-	 * @return \Cundd\Rest\Dispatcher
-	 */
-	static public function getSharedDispatcher() {
-		return self::$sharedDispatcher;
-	}
+    /**
+     * Returns the shared dispatcher instance
+     *
+     * @return \Cundd\Rest\Dispatcher
+     */
+    static public function getSharedDispatcher() {
+        if (!self::$sharedDispatcher) {
+            new static();
+        }
+        return self::$sharedDispatcher;
+    }
 }
-
-?>

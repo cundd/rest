@@ -20,18 +20,18 @@ $EM_CONF[$_EXTKEY] = array(
 	'shy' => '',
 	'priority' => '',
 	'module' => '',
-	'state' => 'alpha',
+	'state' => 'beta',
 	'internal' => '',
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
-	'version' => '',
+	'version' => '2.1.0',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.7.0-6.2.99',
-			'cundd_composer' => '2.0'
+			'typo3' => '4.7.0-7.99.99',
+			'cundd_composer' => '2.0',
 		),
 		'conflicts' => array(
 		),
@@ -39,5 +39,3 @@ $EM_CONF[$_EXTKEY] = array(
 		),
 	),
 );
-
-?>

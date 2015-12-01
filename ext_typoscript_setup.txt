@@ -18,9 +18,16 @@ plugin.tx_rest.settings {
 		}
 	}
 
+	# You may add custom response headers, see example below
+	#responseHeaders {
+	#	Access-Control-Allow-Origin = example.com
+	#	Access-Control-Allow-Methods = GET, POST, OPTIONS, DELETE
+	#}
+
 	# This is not defined here to allow easy customization in third party extensions TypoScript setup
 	# cacheLifeTime = -1
 	# expiresHeaderLifeTime =
+	# doNotAddClass = 1
 }
 
 

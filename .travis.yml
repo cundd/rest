@@ -1,0 +1,74 @@
+language: php
+php:
+  - 5.5
+  - 5.6
+  - hhvm
+  - nightly
+
+env:
+  - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: hhvm
+
+  include:
+    - php: 5.3
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 5.4
+      env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
+sudo: false
+
+before_script:
+# Install build dependencies
+  - >
+    echo "Install dependencies";
+    composer --version;
+    COMPOSER=cundd_composer.json composer install --verbose;
+
+    cd ..;
+    echo "Get TYPO3 source";
+    git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
+    cd TYPO3.CMS;
+    composer install;
+    rm -rf typo3/sysext/compatibility6;
+
+    mkdir -p ./typo3conf/ext/;
+    ln -s $CLI_HOME ./typo3conf/ext/$REPO;
+    cd ..;
+
+    mysql -e 'create database typo3_test;';
+
+script:
+  - >
+    cd $CLI_HOME;
+    if [ -d "../TYPO3.CMS" ]; then
+      cd ../TYPO3.CMS/;
+    else
+      echo "TYPO3.CMS folder not found";
+      exit 1;
+    fi;
+
+  - >
+    if [[ "$UNIT_TESTS" == "yes" ]]; then
+      echo;
+      echo "Running unit tests";
+      ./bin/phpunit --colors -c typo3/sysext/core/Build/UnitTests.xml typo3conf/ext/$REPO/Tests/Unit;
+    fi
+
+  - >
+    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
+      echo;
+      export typo3DatabaseName="typo3";
+      export typo3DatabaseHost="localhost";
+      export typo3DatabaseUsername="root";
+      export typo3DatabasePassword="";
+      ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/$REPO/Tests/Functional;
+    fi
+
