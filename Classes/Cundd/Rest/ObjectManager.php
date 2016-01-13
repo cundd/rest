@@ -204,7 +204,14 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * @return \Cundd\Rest\Cache\Cache
      */
     public function getCache() {
-        return $this->get('Cundd\\Rest\\Cache\\Cache');
+        if (
+            $this->getConfigurationProvider()->getSetting('cacheClass')
+            && $this->isRegistered($this->getConfigurationProvider()->getSetting('cacheClass'))
+        ) {
+            return $this->get($this->getConfigurationProvider()->getSetting('cacheClass'));
+        } else {
+            return $this->get('Cundd\\Rest\\Cache\\Cache');
+        }
     }
 
     /**
