@@ -4,7 +4,10 @@ set -o nounset
 set -o errexit
 set +e
 
-function getMySQLClientPath {
+: ${FUNCTIONAL_TESTS="yes"}
+: ${UNIT_TESTS="yes"}
+
+function get_mysql_client_path {
     if [[ `which mysql > /dev/null` ]]; then
         which mysql;
     elif [[ -x /Applications/MAMP/Library/bin/mysql ]]; then
@@ -14,15 +17,15 @@ function getMySQLClientPath {
     fi
 }
 
-function checkMySQLCredentials {
-    `getMySQLClientPath` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null;
+function check_mysql_credentials {
+    `get_mysql_client_path` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null;
     if [ $? -ne 0 ]; then
         echo "ERROR: Could not connect to MySQL";
         exit 1;
     fi
 }
 
-function initDatabase {
+function init_database {
 	# Export database credentials
     if [ -z ${typo3DatabaseName+x} ]; then
         export typo3DatabaseName="typo3";
@@ -49,10 +52,10 @@ function initDatabase {
     fi
 
     echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
-    checkMySQLCredentials;
+    check_mysql_credentials;
 }
 
-function initTypo3 {
+function init_typo3 {
 	local baseDir=`pwd`;
 	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
 		cd ${TYPO3_PATH_WEB};
@@ -71,40 +74,29 @@ function init {
         exit 1;
     fi;
 
-	initTypo3;
-    initDatabase;
+	init_typo3;
+    init_database;
 }
 
-function unitTests {
+function unit_tests {
     ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml ./Tests/Unit "$@";
 }
 
-function functionalTests {
+function functional_tests {
     ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml ./Tests/Functional "$@";
 }
 
-function run {
-    performFunctionalTests="yes";
-    performUnitTests="yes";
-
-    if [ ! -z ${FUNCTIONAL_TESTS+x} ]; then
-        performFunctionalTests="$FUNCTIONAL_TESTS";
-    fi
-
-    if [ ! -z ${UNIT_TESTS+x} ]; then
-        performUnitTests="$UNIT_TESTS";
-    fi
-
-    if [[ "$performUnitTests" == "yes" ]]; then
+function main {
+    init;
+    if [[ "$UNIT_TESTS" == "yes" ]]; then
         echo "Run Unit Tests";
-        unitTests "$@";
+        unit_tests "$@";
     fi
 
-    if [[ "$performFunctionalTests" == "yes" ]]; then
+    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
         echo "Run Functional Tests";
-        functionalTests "$@";
+        functional_tests "$@";
     fi
 }
 
-init;
-run $@;
+main $@;
