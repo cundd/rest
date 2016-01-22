@@ -358,6 +358,28 @@ class RequestFactoryTest extends AbstractCase {
     }
 
     /**
+     * @test
+     */
+    public function urlAndPathShouldNotIncludeQueryDataTest() {
+        $_GET['u'] = 'MyExt-MyModel/1?query=string';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $this->assertEquals('json', $request->format());
+    }
+
+    /**
+     * @test
+     */
+    public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest() {
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $this->assertEquals('json', $request->format());
+    }
+
+    /**
      * @param array ...$configurationProviderSetting
      * @return RequestFactory
      */
