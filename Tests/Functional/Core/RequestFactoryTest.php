@@ -362,9 +362,21 @@ class RequestFactoryTest extends AbstractCase {
      */
     public function urlAndPathShouldNotIncludeQueryDataTest() {
         $_GET['u'] = 'MyExt-MyModel/1?query=string';
-        $request = $this->fixture->getRequest();
+        $request = $this->buildRequestFactory()->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->path());
         $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $this->assertEquals('json', $request->format());
+
+        $_GET['u'] = 'MyExt-MyModel/?query=string';
+        $request = $this->buildRequestFactory()->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel/', $request->url());
+        $this->assertEquals('json', $request->format());
+
+        $_GET['u'] = 'MyExt-MyModel?query=string';
+        $request = $this->buildRequestFactory()->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel', $request->url());
         $this->assertEquals('json', $request->format());
     }
 
@@ -373,9 +385,21 @@ class RequestFactoryTest extends AbstractCase {
      */
     public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest() {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
-        $request = $this->fixture->getRequest();
+        $request = $this->buildRequestFactory()->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->path());
         $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $this->assertEquals('json', $request->format());
+
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/?query=string';
+        $request = $this->buildRequestFactory()->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel/', $request->url());
+        $this->assertEquals('json', $request->format());
+
+        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel?query=string';
+        $request = $this->buildRequestFactory()->getRequest();
+        $this->assertEquals('MyExt-MyModel', $request->path());
+        $this->assertEquals('MyExt-MyModel', $request->url());
         $this->assertEquals('json', $request->format());
     }
 
