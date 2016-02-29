@@ -2,12 +2,10 @@ language: php
 php:
   - 5.5
   - 5.6
-  - 7.0
   - hhvm
   - nightly
 
 env:
-  - TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_7-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_7-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
@@ -19,6 +17,7 @@ matrix:
     - php: hhvm
 
   include:
+    # TYPO3 Master
     - php: 7.0
       env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
     - php: nightly
@@ -26,6 +25,11 @@ matrix:
     - php: hhvm
       env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
+    # TYPO3 7.6
+    - php: 7.0
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
+    # TYPO3 6.2 (old)
     - php: 5.3
       env: TYPO3=TYPO3_6-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
     - php: 5.4
