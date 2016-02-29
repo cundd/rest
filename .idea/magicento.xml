@@ -3,5 +3,6 @@
   <component name="MagicentoSettings">
     <option name="pathToMage" value="$PROJECT_DIR$/app/Mage.php" />
     <option name="enabled" value="false" />
+    <option name="projectClosedCorrectly" value="false" />
   </component>
 </project>
