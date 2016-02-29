@@ -290,6 +290,11 @@ class Cache {
      * @return string
      */
     protected function _getCacheKey() {
-        return sha1($this->currentRequest->url() . '_' . $this->currentRequest->format() . '_' . $this->currentRequest->method());
+        $cacheKey = sha1($this->currentRequest->url() . '_' . $this->currentRequest->format() . '_' . $this->currentRequest->method());
+        $params = $this->currentRequest->params();
+        if ($this->currentRequest->isGet() && count($params)) {
+            $cacheKey = sha1($cacheKey . serialize($this->currentRequest->params()));
+        }
+        return $cacheKey;
     }
 }
