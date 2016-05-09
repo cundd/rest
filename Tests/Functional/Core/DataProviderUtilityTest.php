@@ -68,17 +68,42 @@ class DataProviderUtilityTest extends AbstractCase {
         $this->assertEquals('tree', Utility::singularize('trees'));
         $this->assertEquals('friend', Utility::singularize('friends'));
         $this->assertEquals('hobby', Utility::singularize('hobbies'));
-        $this->assertEquals('news', Utility::singularize('news'));
-        $this->assertEquals('equipment', Utility::singularize('equipment'));
-        $this->assertEquals('species', Utility::singularize('species'));
-        $this->assertEquals('series', Utility::singularize('series'));
 
         $this->assertEquals('Tree', Utility::singularize('Trees'));
         $this->assertEquals('Friend', Utility::singularize('Friends'));
         $this->assertEquals('Hobby', Utility::singularize('Hobbies'));
-        $this->assertEquals('News', Utility::singularize('News'));
-        $this->assertEquals('Equipment', Utility::singularize('Equipment'));
-        $this->assertEquals('Species', Utility::singularize('Species'));
-        $this->assertEquals('Series', Utility::singularize('Series'));
+    }
+
+    /**
+     * @test
+     */
+    public function registerSingularForPluralTest() {
+        $singularToPlural = array(
+            'news'      => 'news',
+            'equipment' => 'equipment',
+            'species'   => 'species',
+            'series'    => 'series',
+            'News'      => 'News',
+            'Equipment' => 'Equipment',
+            'Species'   => 'Species',
+            'Series'    => 'Series',
+            'Singular'  => 'Plural',
+        );
+        foreach ($singularToPlural as $singular => $plural) {
+            Utility::registerSingularForPlural($singular, $plural);
+        }
+
+        $this->assertEquals('tree', Utility::singularize('trees'));
+        $this->assertEquals('friend', Utility::singularize('friends'));
+        $this->assertEquals('hobby', Utility::singularize('hobbies'));
+        $this->assertEquals('Tree', Utility::singularize('Trees'));
+        $this->assertEquals('Friend', Utility::singularize('Friends'));
+        $this->assertEquals('Hobby', Utility::singularize('Hobbies'));
+        $this->assertEquals('Singular', Utility::singularize('Plural'));
+
+        foreach ($singularToPlural as $singular => $plural) {
+            $this->assertEquals($singular, Utility::singularize($plural));
+        }
+
     }
 }

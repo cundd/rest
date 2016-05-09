@@ -28,6 +28,21 @@ plugin.tx_rest.settings {
 	# cacheLifeTime = -1
 	# expiresHeaderLifeTime =
 	# doNotAddClass = 1
+
+	# Define words that should not be converted to singular
+	singularToPlural {
+		news = news
+		equipment = equipment
+		information = information
+		rice = rice
+		money = money
+		species = species
+		series = series
+		fish = fish
+		sheep = sheep
+		press = press
+		sms = sms
+	}
 }
 
 

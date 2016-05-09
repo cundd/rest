@@ -28,6 +28,7 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -85,6 +86,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
         $this->requestFactory = $this->objectManager->getRequestFactory();
         $this->responseFactory = $this->objectManager->getResponseFactory();
+        $this->registerSingularToPlural();
 
         self::$sharedDispatcher = $this;
     }
@@ -157,7 +159,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
         // Additional custom headers
         $additionalResponseHeaders = $this->objectManager->getConfigurationProvider()->getSetting('responseHeaders', array());
-        if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)){
+        if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)) {
             foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
                 if (is_string($value)) {
                     $response->header($responseHeaderType, $value);
@@ -319,7 +321,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     /**
      * Register the callback for the given HTTP method(s)
      *
-     * @param string]string[] $method
+     * @param string ]string[] $method
      * @param \Closure $callback
      * @return $this
      */
@@ -506,6 +508,18 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             return $configuration[$key];
         }
         return NULL;
+    }
+
+    /**
+     * Register singulars to the plural
+     */
+    protected function registerSingularToPlural() {
+        $singularToPlural = $this->objectManager->getConfigurationProvider()->getSetting('singularToPlural');
+        if ($singularToPlural) {
+            foreach ($singularToPlural as $singular => $plural) {
+                Utility::registerSingularForPlural($singular, $plural);
+            }
+        }
     }
 
     /**

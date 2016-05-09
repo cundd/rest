@@ -39,23 +39,11 @@ class Utility {
     const API_PATH_PART_SEPARATOR = '-';
 
     /**
-     * Words to skip when converting to singular
+     * Mapping from singular to plural
      *
      * @var array
      */
-    protected static $skipSingularization = array(
-        'news',
-        'equipment',
-        'information',
-        'rice',
-        'money',
-        'species',
-        'series',
-        'fish',
-        'sheep',
-        'press',
-        'sms',
-    );
+    protected static $singularToPlural = array();
 
     /**
      * Returns an array of class name parts including vendor, extension
@@ -72,7 +60,7 @@ class Utility {
      * @param bool $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
-    static public function getClassNamePartsForPath($path, $convertPlural = TRUE) {
+    public static function getClassNamePartsForPath($path, $convertPlural = TRUE) {
         if (strpos($path, '_') !== FALSE) {
             $path = GeneralUtility::underscoredToUpperCamelCase($path);
         }
@@ -86,10 +74,9 @@ class Utility {
             $parts[$lastPartIndex] = static::singularize($parts[$lastPartIndex]);
         }
 
-        $parts = array_map(function ($part) {
+        return array_map(function ($part) {
             return ucfirst($part);
         }, $parts);
-        return $parts;
     }
 
     /**
@@ -98,7 +85,7 @@ class Utility {
      * @param string $className
      * @return string|bool Returns the path or FALSE if it couldn't be determined
      */
-    static public function getPathForClassName($className) {
+    public static function getPathForClassName($className) {
         if (strpos($className, '\\') === FALSE) {
             if (substr($className, 0, 3) === 'Tx_') {
                 $className = substr($className, 3);
@@ -121,10 +108,16 @@ class Utility {
      * @param string $word
      * @return string
      */
-    static public function singularize($word) {
-        if (static::shouldSkipSingularization($word)) {
-            return $word;
+    public static function singularize($word) {
+        $customMapping = array_search($word, static::$singularToPlural, true);
+        if ($customMapping !== false) {
+            return $customMapping;
         }
+        $customMapping = array_search(strtolower($word), static::$singularToPlural, true);
+        if ($customMapping !== false) {
+            return $customMapping;
+        }
+
         // Here is the list of rules. To add a scenario,
         // Add the plural ending as the key and the singular
         // ending as the value for that key. This could be
@@ -138,13 +131,13 @@ class Utility {
         // the last rule (s) would catch double (ss) words
         // if we didn't stop before it got to that rule.
         $rules = array(
-            'ss' => false,
-            'os' => 'o',
+            'ss'  => false,
+            'os'  => 'o',
             'ies' => 'y',
             'xes' => 'x',
             'oes' => 'o',
             'ves' => 'f',
-            's' => '');
+            's'   => '');
         // Loop through all the rules and do the replacement.
         foreach (array_keys($rules) as $key) {
             // If the end of the word doesn't match the key,
@@ -164,12 +157,12 @@ class Utility {
     }
 
     /**
-     * Returns if the given word should NOT be singularized
+     * Add a mapping from singular to plural
      *
-     * @param string $word
-     * @return bool
+     * @param $singular
+     * @param $plural
      */
-    protected static function shouldSkipSingularization($word) {
-        return in_array(strtolower($word), static::$skipSingularization);
+    public static function registerSingularForPlural($singular, $plural) {
+        static::$singularToPlural[$singular] = $plural;
     }
 }
