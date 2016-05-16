@@ -25,6 +25,14 @@ matrix:
     - php: hhvm
       env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
+    # TYPO3 8.0
+    - php: 7.0
+      env: TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
     # TYPO3 7.6
     - php: 7.0
       env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
@@ -74,12 +82,17 @@ script:
       echo "TYPO3.CMS folder not found";
       exit 1;
     fi;
+    if [ -e "./bin/phpunit" ]; then
+      TEST_BINARY="./bin/phpunit";
+    else
+      TEST_BINARY="phpunit";
+    fi
 
   - >
     if [[ "$UNIT_TESTS" == "yes" ]]; then
       echo;
       echo "Running unit tests";
-      ./bin/phpunit --colors -c typo3/sysext/core/Build/UnitTests.xml typo3conf/ext/$REPO/Tests/Unit;
+      $TEST_BINARY --colors -c typo3/sysext/core/Build/UnitTests.xml typo3conf/ext/$REPO/Tests/Unit;
     fi
 
   - >
@@ -89,6 +102,6 @@ script:
       export typo3DatabaseHost="localhost";
       export typo3DatabaseUsername="root";
       export typo3DatabasePassword="";
-      ./bin/phpunit --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/$REPO/Tests/Functional;
+      $TEST_BINARY --colors -c typo3/sysext/core/Build/FunctionalTests.xml ./typo3conf/ext/$REPO/Tests/Functional;
     fi
 
