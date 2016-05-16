@@ -83,8 +83,10 @@ script:
       exit 1;
     fi;
     if [ -e "./bin/phpunit" ]; then
+      echo "Use test binary ./bin/phpunit"
       TEST_BINARY="./bin/phpunit";
     else
+      echo "Use test binary phpunit"
       TEST_BINARY="phpunit";
     fi
 
