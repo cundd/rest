@@ -35,7 +35,7 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 
 class BuiltinServerBootstrap {
     const TYPO3_BOOTSTRAP_PATH = 'typo3/sysext/core/Classes/Core/Bootstrap.php';
-    const TYPO3_AUTOLOADER_PATH = 'typo3/../vendor/autoload.php';
+    const TYPO3_AUTOLOADER_PATH = 'vendor/autoload.php';
 
     /**
      * @var int
@@ -89,9 +89,19 @@ class BuiltinServerBootstrap {
 
         $pathsToCheck = array_filter($pathsToCheck);
         foreach ($pathsToCheck as $path) {
-            if (file_exists($path . self::TYPO3_BOOTSTRAP_PATH)) {
-                require_once $path . self::TYPO3_BOOTSTRAP_PATH;
-                require_once $path . self::TYPO3_AUTOLOADER_PATH;
+            $path = rtrim($path, '/') . '/';
+
+            $fullPath = '';
+            if (file_exists($path . 'typo3/../' . self::TYPO3_AUTOLOADER_PATH)) {
+                $fullPath = $path . 'typo3/../' . self::TYPO3_AUTOLOADER_PATH;
+            } elseif (file_exists($path . 'typo3/../typo3_src/' . self::TYPO3_AUTOLOADER_PATH)) {
+                $fullPath = $path . 'typo3/../typo3_src/' . self::TYPO3_AUTOLOADER_PATH;
+            } elseif (file_exists($path . self::TYPO3_BOOTSTRAP_PATH)) {
+                $fullPath = $path . self::TYPO3_BOOTSTRAP_PATH;
+            }
+
+            if ($fullPath) {
+                require_once $fullPath;
                 return;
             }
         }
