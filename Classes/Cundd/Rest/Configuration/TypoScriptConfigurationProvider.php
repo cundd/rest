@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
  *
  * @package Cundd\Rest\Configuration
  */
-class TypoScriptConfigurationProvider implements SingletonInterface {
+class TypoScriptConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface {
     /**
      * Settings read from the TypoScript
      *
