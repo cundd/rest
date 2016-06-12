@@ -52,7 +52,6 @@ function init_database {
     fi
 
     echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
-    check_mysql_credentials;
 }
 
 function init_typo3 {
@@ -95,6 +94,7 @@ function main {
 
     if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
         echo "Run Functional Tests";
+        check_mysql_credentials;
         functional_tests "$@";
     fi
 }
