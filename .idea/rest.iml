@@ -12,27 +12,11 @@
       <library name="PHP">
         <CLASSES>
           <root url="file://$MODULE_DIR$/vendor" />
-          <root url="file://$MODULE_DIR$/../../../Resources/phpunit.phar" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/core" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/extbase" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/fluid" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-7.5.0/typo3/sysext" />
         </CLASSES>
         <SOURCES>
           <root url="file://$MODULE_DIR$/vendor" />
-          <root url="file://$MODULE_DIR$/../../../Resources/phpunit.phar" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/core" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/extbase" />
-          <root url="file://$MODULE_DIR$/../../../Resources/typo3_src-7.lts/TYPO3.CMS/typo3/sysext/fluid" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="PHARS">
-        <CLASSES>
-          <root url="phar://$MODULE_DIR$/../../../Resources/phpunit.phar/" />
-        </CLASSES>
-        <SOURCES>
-          <root url="phar://$MODULE_DIR$/../../../Resources/phpunit.phar/" />
+          <root url="file://$MODULE_DIR$/../../Resources/typo3_src-7.5.0/typo3/sysext" />
         </SOURCES>
       </library>
     </orderEntry>
