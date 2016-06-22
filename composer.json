@@ -1,5 +1,6 @@
 {
     "name": "cundd/rest",
+    "type": "typo3-cms-extension",
     "description": "REST API for TYPO3 CMS",
     "keywords": ["typo3cms"],
     "authors": [
