@@ -15,6 +15,10 @@
             "Cundd\\Rest": "Classes/"
         }
     },
+    "replace": {
+        "rest": "self.version",
+        "typo3-ter/rest": "self.version"
+    },
     "suggest": {
         "vlucas/bulletphp": "Required for the REST extension to work"
     }
