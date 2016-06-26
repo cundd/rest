@@ -1,19 +1,19 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-	die ('Access denied.');
+    die ('Access denied.');
 }
 
 if (file_exists(__DIR__ . '/vendor/')) {
-	require_once __DIR__ . '/vendor/autoload.php';
-} else {
-	\Cundd\CunddComposer\Autoloader::register();
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (class_exists('Cundd\\CunddComposer\\Autoloader')) {
+    \Cundd\CunddComposer\Autoloader::register();
 }
 
 if (!class_exists('Cundd\\Rest\\Bootstrap')) {
-	throw new RuntimeException('Could not find class \\Cundd\\Rest\\Bootstrap. '
-		. 'Maybe the Composer dependencies have not been installed',
-		1397921464
-	);
+    echo('Could not find class "\\Cundd\\Rest\\Bootstrap". Maybe the Composer dependencies have not been installed.'
+        . PHP_EOL
+        . 'See https://rest.cundd.net/Installation/ for details');
+    exit(1);
 }
 
 $bootstrap = new \Cundd\Rest\Bootstrap;
