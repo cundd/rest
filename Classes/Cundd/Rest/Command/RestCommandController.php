@@ -1,4 +1,18 @@
 <?php
+
+namespace Cundd\Rest\Command;
+
+use Cundd\CunddComposer\Autoloader;
+use Cundd\Rest\Domain\Model\Document;
+use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+
+
+if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
+    require_once __DIR__ . '/../../../../vendor/autoload.php';
+} else {
+    Autoloader::register();
+}
+
 /*
  *  Copyright notice
  *
@@ -22,27 +36,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
-/**
- * @author COD
- * Created 09.01.14 11:03
- */
-
-
-namespace Cundd\Rest\Command;
-
-
-use Cundd\CunddComposer\Autoloader;
-use Cundd\Rest\Domain\Model\Document;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-
-
-if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-    require_once __DIR__ . '/../../../../vendor/autoload.php';
-} else {
-    Autoloader::register();
-}
-
 class RestCommandController extends CommandController {
     /**
      * ASCII command escape

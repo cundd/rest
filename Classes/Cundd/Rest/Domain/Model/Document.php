@@ -210,22 +210,6 @@ class Document extends AbstractEntity implements \ArrayAccess {
         return $this;
     }
 
-//	/**
-//	 * Sets the value for the given key path
-//	 *
-//	 * @param mixed $value
-//	 * @param string $keyPath
-//	 * @return $this
-//	 */
-//	public function setValueForKeyPath($value, $keyPath) {
-//		$lastDotPosition = strrpos($keyPath, '.');
-//		$keyPathToSubject = substr($keyPath, 0, $lastDotPosition);
-//		$key = substr($keyPath, $lastDotPosition + 1);
-//		$subject = ObjectAccess::getProperty($this, $keyPathToSubject);
-//		ObjectAccess::setProperty($subject, $key, $value);
-//		return $this;
-//	}
-
     /**
      * Sets the value for the given key
      *

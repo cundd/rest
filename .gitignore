@@ -46,7 +46,7 @@ nbactions.xml
 nb-configuration.xml
 
 ### PhpStorm
-.idea/workspace.xml
+.idea/
 
 ### Eclipse
 *.pydevproject
