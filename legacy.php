@@ -4,15 +4,15 @@ require_once __DIR__ . '/legacy_core.php';
 /**
  * Simulate TYPO3 6.0
  */
-class_alias('t3lib_tsparser_ext', 		'TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
-class_alias('tslib_eidtools', 			'TYPO3\\CMS\\Frontend\\Utility\\EidUtility');
-class_alias('tslib_fe', 				'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController');
+class_alias('t3lib_tsparser_ext', 'TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService');
+class_alias('tslib_eidtools', 'TYPO3\\CMS\\Frontend\\Utility\\EidUtility');
+class_alias('tslib_fe', 'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController');
 
-class_alias('Tx_Extbase_Object_ObjectManagerInterface',						'TYPO3\\CMS\\Extbase\\Object\\ObjectManagerInterface');
-class_alias('Tx_Extbase_Object_ObjectManager',								'TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-class_alias('Tx_Extbase_Configuration_ConfigurationManagerInterface', 		'TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
-class_alias('Tx_Extbase_Configuration_ConfigurationManager', 				'TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
-class_alias('Tx_Extbase_Property_PropertyMapper', 							'TYPO3\\CMS\\Extbase\\Property\\PropertyMapper');
+class_alias('Tx_Extbase_Object_ObjectManagerInterface', 'TYPO3\\CMS\\Extbase\\Object\\ObjectManagerInterface');
+class_alias('Tx_Extbase_Object_ObjectManager', 'TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+class_alias('Tx_Extbase_Configuration_ConfigurationManagerInterface', 'TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
+class_alias('Tx_Extbase_Configuration_ConfigurationManager', 'TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
+class_alias('Tx_Extbase_Property_PropertyMapper', 'TYPO3\\CMS\\Extbase\\Property\\PropertyMapper');
 class_alias('Tx_Extbase_Reflection_Service', 'TYPO3\\CMS\\Extbase\\Reflection\\ReflectionService');
 class_alias('Tx_Extbase_Persistence_Repository', 'TYPO3\\CMS\\Extbase\\Persistence\\Repository');
 class_alias('Tx_Extbase_Persistence_RepositoryInterface', 'TYPO3\\CMS\\Extbase\\Persistence\\RepositoryInterface');
