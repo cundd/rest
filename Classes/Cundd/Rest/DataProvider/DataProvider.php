@@ -668,13 +668,13 @@ class DataProvider implements DataProviderInterface {
         try {
             $title = $fileReference->getTitle();
         } catch (\InvalidArgumentException $exception) {
-            $message = 'An invalid argument for the title have been passed!';
+            $message = 'An invalid argument for the title has been passed!';
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
         try {
             $description = $fileReference->getDescription();
         } catch (\InvalidArgumentException $exception) {
-            $message = 'An invalid argument for the description have been passed!';
+            $message = 'An invalid argument for the description has been passed!';
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
         return array($title, $description);
