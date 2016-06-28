@@ -25,10 +25,10 @@
 
 namespace Cundd\Rest\DataProvider;
 
-
 use TYPO3\CMS\Core\SingletonInterface;
 
-interface DataProviderInterface extends SingletonInterface {
+interface DataProviderInterface extends SingletonInterface
+{
     /**
      * Returns the domain model repository for the models the given API path points to
      *

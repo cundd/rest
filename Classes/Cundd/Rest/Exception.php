@@ -30,5 +30,6 @@ namespace Cundd\Rest;
  *
  * @package Cundd\Rest
  */
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 }

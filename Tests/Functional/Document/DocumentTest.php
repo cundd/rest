@@ -30,7 +30,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
-class DummyObject {
+class DummyObject
+{
 }
 
 /**
@@ -43,13 +44,15 @@ class DummyObject {
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DocumentTest extends AbstractCase {
+class DocumentTest extends AbstractCase
+{
     /**
      * @var Document
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->fixture = new Document();
         $this->fixture->_setDataProtected(json_encode(array(
@@ -64,7 +67,8 @@ class DocumentTest extends AbstractCase {
         )));
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -72,7 +76,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function setContentTest() {
+    public function setContentTest()
+    {
         $content = '{"data": "The new test content"}';
         $this->fixture->_setDataProtected($content);
         $this->assertEquals($content, $this->fixture->_getDataProtected());
@@ -81,7 +86,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function getInitialContentTest() {
+    public function getInitialContentTest()
+    {
         $model = new Document();
         $result = $model->_getDataProtected();
         $this->assertNull($result);
@@ -90,7 +96,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function setDbTest() {
+    public function setDbTest()
+    {
         $db = 'testdb';
         $this->fixture->_setDb($db);
         $this->assertEquals($db, $this->fixture->_getDb());
@@ -107,7 +114,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @expectException \Cundd\Rest\Domain\Exception\InvalidDatabaseNameException
      */
-    public function setInvalidDbTest() {
+    public function setInvalidDbTest()
+    {
         $db = 'test-db';
         $this->fixture->_setDb($db);
     }
@@ -115,7 +123,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function getInitialDbTest() {
+    public function getInitialDbTest()
+    {
         $result = $this->fixture->_getDb();
         $this->assertEquals('', $result);
     }
@@ -123,48 +132,49 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function changeGuidTest() {
+    public function changeGuidTest()
+    {
         $id = time();
         $database = 'testdb';
         $this->fixture->setId($id);
         $this->fixture->_setDb($database);
         $this->assertEquals($database . '-' . $id, $this->fixture->getGuid());
-
     }
 
     /**
      * @test
      */
-    public function getInitialGuidTest() {
+    public function getInitialGuidTest()
+    {
         $result = $this->fixture->getGuid();
         $this->assertNull($result);
-
     }
 
     /**
      * @test
      */
-    public function valueForKeyTest() {
+    public function valueForKeyTest()
+    {
         $key = 'firstName';
         $result = $this->fixture->valueForKey($key);
         $this->assertEquals('Daniel', $result);
-
     }
 
     /**
      * @test
      */
-    public function valueForKeyPathTest() {
+    public function valueForKeyPathTest()
+    {
         $keyPath = 'address.street';
         $result = $this->fixture->valueForKeyPath($keyPath);
         $this->assertEquals('Bingstreet 1', $result);
-
     }
 
     /**
      * @test
      */
-    public function valueForUndefinedKeyTest() {
+    public function valueForUndefinedKeyTest()
+    {
         $undefinedKey = 'undefined';
         $result = $this->fixture->valueForUndefinedKey($undefinedKey);
         $this->assertNull($result);
@@ -173,7 +183,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function setValueForKeyTest() {
+    public function setValueForKeyTest()
+    {
         $function = 'Superman';
         $key = 'function';
 
@@ -194,35 +205,40 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function offsetExistsTest() {
+    public function offsetExistsTest()
+    {
         $this->assertTrue($this->fixture->offsetExists('firstName'));
     }
 
     /**
      * @test
      */
-    public function offsetExistsArrayTest() {
+    public function offsetExistsArrayTest()
+    {
         $this->assertTrue(isset($this->fixture['firstName']));
     }
 
     /**
      * @test
      */
-    public function offsetGetTest() {
+    public function offsetGetTest()
+    {
         $this->assertEquals('Daniel', $this->fixture->offsetGet('firstName'));
     }
 
     /**
      * @test
      */
-    public function offsetGetArrayTest() {
+    public function offsetGetArrayTest()
+    {
         $this->assertEquals('Daniel', $this->fixture['firstName']);
     }
 
     /**
      * @test
      */
-    public function offsetSetTest() {
+    public function offsetSetTest()
+    {
         $function = 'Superman';
         $key = 'function';
 
@@ -233,7 +249,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function offsetSetArrayTest() {
+    public function offsetSetArrayTest()
+    {
         $function = 'Superman';
         $key = 'function';
 
@@ -244,7 +261,8 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function offsetUnsetTest() {
+    public function offsetUnsetTest()
+    {
         $key = 'firstName';
         $this->fixture->offsetUnset($key);
         $this->assertNull($this->fixture->valueForKey($key));
@@ -253,11 +271,10 @@ class DocumentTest extends AbstractCase {
     /**
      * @test
      */
-    public function offsetUnsetArrayTest() {
+    public function offsetUnsetArrayTest()
+    {
         $key = 'firstName';
         unset($this->fixture[$key]);
         $this->assertNull($this->fixture->valueForKey($key));
     }
-
-
 }

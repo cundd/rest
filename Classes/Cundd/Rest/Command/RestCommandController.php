@@ -6,7 +6,6 @@ use Cundd\CunddComposer\Autoloader;
 use Cundd\Rest\Domain\Model\Document;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
-
 if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
     require_once __DIR__ . '/../../../../vendor/autoload.php';
 } else {
@@ -36,7 +35,8 @@ if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-class RestCommandController extends CommandController {
+class RestCommandController extends CommandController
+{
     /**
      * ASCII command escape
      */
@@ -71,16 +71,17 @@ class RestCommandController extends CommandController {
      * @param string $database Name of the database to list
      * @param bool $full Display the Documents body
      */
-    public function showDocumentsCommand($database = '', $full = FALSE) {
+    public function showDocumentsCommand($database = '', $full = false)
+    {
         if ($database) {
             $documents = $this->documentRepository->findByDatabase($database);
         } else {
             $documents = $this->documentRepository->findAllIgnoreDatabase();
         }
         if ($documents) {
-        foreach ($documents as $document) {
-            $this->showDocument($document, $full);
-        }
+            foreach ($documents as $document) {
+                $this->showDocument($document, $full);
+            }
         } else {
             $this->outputLine(
                 $database ? sprintf('No documents found in database "%s"', $database) : 'No documents found'
@@ -93,7 +94,8 @@ class RestCommandController extends CommandController {
      *
      * @param string $database Name of the database to remove
      */
-    public function removeDatabaseCommand($database) {
+    public function removeDatabaseCommand($database)
+    {
         $this->documentRepository->setDatabase($database);
         $count = $this->documentRepository->countAll();
 
@@ -130,7 +132,8 @@ class RestCommandController extends CommandController {
      * @param Document $document
      * @param bool $showBody
      */
-    public function showDocument(Document $document, $showBody = FALSE) {
+    public function showDocument(Document $document, $showBody = false)
+    {
         $this->outputLine(
             static::ESCAPE . static::GREEN
             . 'Database: ' . $document->_getDb() . ' '
@@ -140,7 +143,7 @@ class RestCommandController extends CommandController {
 
         if ($showBody) {
             $this->outputLine(
-                $this->formatJsonData($document->_getDataProtected(), TRUE) . PHP_EOL
+                $this->formatJsonData($document->_getDataProtected(), true) . PHP_EOL
             );
         }
     }
@@ -152,10 +155,11 @@ class RestCommandController extends CommandController {
      * @param bool $isJsonString Set this to TRUE if the given data already is a JSON string
      * @return string
      */
-    public function formatJsonData($data, $isJsonString = FALSE) {
+    public function formatJsonData($data, $isJsonString = false)
+    {
         if (defined('JSON_PRETTY_PRINT')) {
             if ($isJsonString) {
-                $data = json_decode($data, TRUE);
+                $data = json_decode($data, true);
             }
             return json_encode($data, JSON_PRETTY_PRINT);
         }
@@ -219,8 +223,8 @@ class RestCommandController extends CommandController {
              * an opening bracket
              */
             if (
-                strpos($trimmedLine, '{') !== FALSE
-                || strpos($trimmedLine, '[') !== FALSE
+                strpos($trimmedLine, '{') !== false
+                || strpos($trimmedLine, '[') !== false
             ) {
                 $indentedDepth++;
             }

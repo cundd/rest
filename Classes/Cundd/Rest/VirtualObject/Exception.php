@@ -32,5 +32,6 @@ use Cundd\Rest\Exception as BaseException;
  *
  * @package Cundd\Rest\VirtualObject
  */
-class Exception extends BaseException {
+class Exception extends BaseException
+{
 }

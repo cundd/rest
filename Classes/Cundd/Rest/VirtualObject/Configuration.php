@@ -33,7 +33,8 @@ namespace Cundd\Rest\VirtualObject;
  *
  * @package Cundd\Rest\VirtualObject
  */
-class Configuration implements ConfigurationInterface {
+class Configuration implements ConfigurationInterface
+{
     /**
      * The array that hold the configuration data
      *
@@ -54,10 +55,11 @@ class Configuration implements ConfigurationInterface {
      *
      * @var boolean
      */
-    protected $skipUnknownProperties = FALSE;
+    protected $skipUnknownProperties = false;
 
 
-    function __construct($configurationData = array()) {
+    public function __construct($configurationData = array())
+    {
         $this->configurationData = $configurationData;
     }
 
@@ -66,7 +68,8 @@ class Configuration implements ConfigurationInterface {
      *
      * @return array
      */
-    public function getAllProperties() {
+    public function getAllProperties()
+    {
         return array_keys($this->configurationData['properties']);
     }
 
@@ -75,7 +78,8 @@ class Configuration implements ConfigurationInterface {
      *
      * @return array
      */
-    public function getAllSourceKeys() {
+    public function getAllSourceKeys()
+    {
         return array_map(function ($item) {
             return $item['column'];
         }, array_values($this->configurationData['properties']));
@@ -87,7 +91,8 @@ class Configuration implements ConfigurationInterface {
      * @param string $propertyName
      * @return boolean
      */
-    public function hasProperty($propertyName) {
+    public function hasProperty($propertyName)
+    {
         return isset($this->configurationData['properties'][$propertyName]);
     }
 
@@ -99,7 +104,8 @@ class Configuration implements ConfigurationInterface {
      * @param string $sourceKey
      * @return boolean
      */
-    public function hasSourceKey($sourceKey) {
+    public function hasSourceKey($sourceKey)
+    {
         $sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
         return isset($sourceKeyToPropertyMap[$sourceKey]);
     }
@@ -110,7 +116,8 @@ class Configuration implements ConfigurationInterface {
      * @param string $propertyName
      * @return array
      */
-    public function getConfigurationForProperty($propertyName) {
+    public function getConfigurationForProperty($propertyName)
+    {
         return isset($this->configurationData['properties'][$propertyName])
             ? $this->configurationData['properties'][$propertyName]
             : array();
@@ -122,13 +129,14 @@ class Configuration implements ConfigurationInterface {
      * @param string $propertyName
      * @return string
      */
-    public function getSourceKeyForProperty($propertyName) {
+    public function getSourceKeyForProperty($propertyName)
+    {
         if (!$this->hasProperty($propertyName)) {
-            return NULL;
+            return null;
         }
         return isset($this->configurationData['properties'][$propertyName]['column'])
             ? $this->configurationData['properties'][$propertyName]['column']
-            : NULL;
+            : null;
     }
 
     /**
@@ -137,11 +145,12 @@ class Configuration implements ConfigurationInterface {
      * @param string $sourceKey
      * @return string
      */
-    public function getPropertyForSourceKey($sourceKey) {
+    public function getPropertyForSourceKey($sourceKey)
+    {
         $sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
         return isset($sourceKeyToPropertyMap[$sourceKey])
             ? $sourceKeyToPropertyMap[$sourceKey]
-            : NULL;
+            : null;
     }
 
     /**
@@ -150,13 +159,14 @@ class Configuration implements ConfigurationInterface {
      * @param string $propertyName
      * @return string Returns one of the following: "string", "float", "int", "integer", "bool", "boolean"
      */
-    public function getTypeForProperty($propertyName) {
+    public function getTypeForProperty($propertyName)
+    {
         if (!$this->hasProperty($propertyName)) {
-            return NULL;
+            return null;
         }
         return isset($this->configurationData['properties'][$propertyName]['type'])
             ? $this->configurationData['properties'][$propertyName]['type']
-            : NULL;
+            : null;
     }
 
     /**
@@ -164,10 +174,11 @@ class Configuration implements ConfigurationInterface {
      *
      * @return string
      */
-    public function getSourceIdentifier() {
+    public function getSourceIdentifier()
+    {
         return isset($this->configurationData['tableName'])
             ? $this->configurationData['tableName']
-            : NULL;
+            : null;
     }
 
     /**
@@ -175,7 +186,8 @@ class Configuration implements ConfigurationInterface {
      *
      * @return array
      */
-    public function getSourceKeyToPropertyMap() {
+    public function getSourceKeyToPropertyMap()
+    {
         if (!$this->sourceKeyToPropertyMap) {
             foreach ($this->configurationData['properties'] as $propertyName => $propertyMapping) {
                 $this->sourceKeyToPropertyMap[$propertyMapping['column']] = $propertyName;
@@ -190,7 +202,8 @@ class Configuration implements ConfigurationInterface {
      * @param boolean $skipUnknownProperties
      * @return $this
      */
-    public function setSkipUnknownProperties($skipUnknownProperties) {
+    public function setSkipUnknownProperties($skipUnknownProperties)
+    {
         $this->skipUnknownProperties = $skipUnknownProperties;
         return $this;
     }
@@ -200,7 +213,8 @@ class Configuration implements ConfigurationInterface {
      *
      * @return boolean
      */
-    public function shouldSkipUnknownProperties() {
+    public function shouldSkipUnknownProperties()
+    {
         return $this->skipUnknownProperties;
     }
 
@@ -209,9 +223,8 @@ class Configuration implements ConfigurationInterface {
      *
      * @return string
      */
-    public function getIdentifier() {
-        return isset($this->configurationData['identifier']) ? $this->configurationData['identifier'] : NULL;
+    public function getIdentifier()
+    {
+        return isset($this->configurationData['identifier']) ? $this->configurationData['identifier'] : null;
     }
-
-
 }

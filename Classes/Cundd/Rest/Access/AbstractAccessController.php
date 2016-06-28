@@ -35,7 +35,8 @@ namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Dispatcher;
 
-abstract class AbstractAccessController implements AccessControllerInterface {
+abstract class AbstractAccessController implements AccessControllerInterface
+{
     /**
      * The current request
      *
@@ -54,7 +55,8 @@ abstract class AbstractAccessController implements AccessControllerInterface {
      *
      * @param \Cundd\Rest\Request $request
      */
-    public function setRequest(\Cundd\Rest\Request $request) {
+    public function setRequest(\Cundd\Rest\Request $request)
+    {
         $this->request = $request;
     }
 
@@ -63,7 +65,8 @@ abstract class AbstractAccessController implements AccessControllerInterface {
      *
      * @return \Bullet\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -73,14 +76,15 @@ abstract class AbstractAccessController implements AccessControllerInterface {
      * @throws \Exception
      * @return AccessControllerInterface::ACCESS
      */
-    protected function checkAuthentication() {
+    protected function checkAuthentication()
+    {
         try {
             $isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate();
         } catch (\Exception $exception) {
             Dispatcher::getSharedDispatcher()->logException($exception);
             throw $exception;
         }
-        if ($isAuthenticated === FALSE) {
+        if ($isAuthenticated === false) {
             return self::ACCESS_UNAUTHORIZED;
         }
         return self::ACCESS_ALLOW;

@@ -7,13 +7,13 @@
  */
 namespace Cundd\Rest;
 
-
 /**
  * Factory class to get the current Request
  *
  * @package Cundd\Rest
  */
-interface RequestFactoryInterface {
+interface RequestFactoryInterface
+{
     /**
      * Returns the request
      *

@@ -32,7 +32,8 @@ use Cundd\Rest\VirtualObject\VirtualObject;
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-interface RepositoryInterface {
+interface RepositoryInterface
+{
     /**
      * Adds the given object to the database
      *

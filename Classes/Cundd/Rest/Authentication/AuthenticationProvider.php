@@ -25,5 +25,6 @@
 
 namespace Cundd\Rest\Authentication;
 
-class AuthenticationProvider extends AbstractAuthenticationProvider {
+class AuthenticationProvider extends AbstractAuthenticationProvider
+{
 }

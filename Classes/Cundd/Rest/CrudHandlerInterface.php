@@ -37,7 +37,8 @@ namespace Cundd\Rest;
  *
  * @package Cundd\Rest
  */
-interface CrudHandlerInterface extends HandlerInterface {
+interface CrudHandlerInterface extends HandlerInterface
+{
 
     /**
      * Returns the unique identifier of the currently matching Domain Model

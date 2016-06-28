@@ -30,7 +30,8 @@ namespace Cundd\Rest\VirtualObject\Persistence;
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-interface BackendInterface {
+interface BackendInterface
+{
     /**
      * Adds a row to the storage
      *

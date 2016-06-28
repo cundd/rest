@@ -34,7 +34,6 @@
 
 namespace Cundd\Rest\Authentication;
 
-
-class UserProvider extends UserProvider\FeUserProvider {
-
+class UserProvider extends UserProvider\FeUserProvider
+{
 }

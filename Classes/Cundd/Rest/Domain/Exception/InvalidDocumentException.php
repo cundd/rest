@@ -36,6 +36,6 @@ namespace Cundd\Rest\Domain\Exception;
  *
  * @package Cundd\Rest\Domain\Exception
  */
-class InvalidDocumentException extends DomainException {
-
+class InvalidDocumentException extends DomainException
+{
 }

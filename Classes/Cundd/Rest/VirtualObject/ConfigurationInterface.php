@@ -34,7 +34,8 @@ namespace Cundd\Rest\VirtualObject;
  *
  * @package Cundd\Rest\VirtualObject
  */
-interface ConfigurationInterface {
+interface ConfigurationInterface
+{
     /**
      * Returns the list of all properties
      *

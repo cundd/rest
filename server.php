@@ -33,7 +33,8 @@ namespace Cundd\Rest;
 
 use TYPO3\CMS\Core\Core\Bootstrap;
 
-class BuiltinServerBootstrap {
+class server
+{
     const TYPO3_BOOTSTRAP_PATH = 'typo3/sysext/core/Classes/Core/Bootstrap.php';
     const TYPO3_AUTOLOADER_PATH = 'vendor/autoload.php';
 
@@ -52,7 +53,8 @@ class BuiltinServerBootstrap {
      *
      * @param array $argv
      */
-    public function __construct(array $argv) {
+    public function __construct(array $argv)
+    {
         if (isset($argv[1])) {
             $this->port = $argv[1];
         }
@@ -64,14 +66,16 @@ class BuiltinServerBootstrap {
     /**
      * @return Server
      */
-    public function getServer() {
+    public function getServer()
+    {
         $this->bootstrapSystem();
         return new Server($this->port, $this->host);
     }
 
-    private function bootstrapSystem() {
+    private function bootstrapSystem()
+    {
         // Defining circumstances for CLI mode:
-        define('TYPO3_cliMode', TRUE);
+        define('TYPO3_cliMode', true);
         define('TYPO3_MODE', 'CLI');
 
         $this->requireTYPO3();
@@ -79,7 +83,8 @@ class BuiltinServerBootstrap {
         $this->requireComposer();
     }
 
-    private function requireTYPO3() {
+    private function requireTYPO3()
+    {
         $pathsToCheck = array(
             './',
             __DIR__ . '/../../../',
@@ -108,7 +113,8 @@ class BuiltinServerBootstrap {
         throw new \Exception('Could not find TYPO3 folder. Please set the environment variable REST_TYPO3_BASE_PATH');
     }
 
-    private function requireComposer() {
+    private function requireComposer()
+    {
         if (file_exists(__DIR__ . '/vendor/react/')) {
             require_once __DIR__ . '/vendor/autoload.php';
         } elseif (class_exists('Cundd\\CunddComposer\\Autoloader')) {
@@ -116,13 +122,14 @@ class BuiltinServerBootstrap {
         }
     }
 
-    private function bootstrapTYPO3() {
+    private function bootstrapTYPO3()
+    {
         $bootstrap = Bootstrap::getInstance();
         $bootstrap->baseSetup('typo3conf/ext/rest/');
 
         $bootstrap
             ->loadConfigurationAndInitialize()
-            ->loadTypo3LoadedExtAndExtLocalconf(TRUE)
+            ->loadTypo3LoadedExtAndExtLocalconf(true)
             ->applyAdditionalConfigurationSettings()
             ->initializeTypo3DbGlobal();
     }
@@ -130,7 +137,7 @@ class BuiltinServerBootstrap {
 
 
 if (php_sapi_name() != 'cli') {
-    die ('Access denied.');
+    die('Access denied.');
 }
 
 if (!isset($argv)) {

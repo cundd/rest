@@ -14,7 +14,8 @@ use Closure;
  *
  * @package Cundd\Rest
  */
-interface ApiConfigurationInterface {
+interface ApiConfigurationInterface
+{
     /**
      * Register the callback for the given parameter
      *

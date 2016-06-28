@@ -36,20 +36,23 @@ use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
 
-class BackendTest extends AbstractDatabaseCase {
+class BackendTest extends AbstractDatabaseCase
+{
     /**
      * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\BackendInterface');
 //		$this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -57,7 +60,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function getObjectCountByQuery() {
+    public function getObjectCountByQuery()
+    {
         $query = array(
             'uid' => 100
         );
@@ -113,7 +117,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function getObjectDataByQuery() {
+    public function getObjectDataByQuery()
+    {
         $query = array(
             'uid' => 100
         );
@@ -169,7 +174,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function getObjectCountByQueryWithZeroResult() {
+    public function getObjectCountByQueryWithZeroResult()
+    {
         $query = array(
             'uid' => time()
         );
@@ -224,7 +230,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function getObjectDataByQueryWithEmptyResult() {
+    public function getObjectDataByQueryWithEmptyResult()
+    {
         $query = array(
             'uid' => time()
         );
@@ -279,9 +286,10 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function addRow() {
+    public function addRow()
+    {
         $newData = array(
-            'uid' => NULL,
+            'uid' => null,
             'title' => 'New test entry',
             'content' => 'This is my third text',
             'content_time' => time()
@@ -298,7 +306,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function updateRow() {
+    public function updateRow()
+    {
         $newData = array(
             'uid' => 300,
             'title' => 'Changed test entry',
@@ -316,7 +325,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function removeRow() {
+    public function removeRow()
+    {
         $identifier = array(
             'uid' => 200,
         );
@@ -329,7 +339,8 @@ class BackendTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function findAll() {
+    public function findAll()
+    {
         $this->assertEquals(2, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, array()));
     }
 }

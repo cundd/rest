@@ -32,7 +32,8 @@ use Cundd\Rest\Access\Exception\InvalidConfigurationException;
  *
  * @package Cundd\Rest\Access
  */
-class ConfigurationBasedAccessController extends AbstractAccessController {
+class ConfigurationBasedAccessController extends AbstractAccessController
+{
     /**
      * The request want's to read data
      */
@@ -53,7 +54,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      *
      * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
      */
-    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
+    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider)
+    {
         $this->configurationProvider = $configurationProvider;
     }
 
@@ -63,7 +65,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      * @throws Exception\InvalidConfigurationException if the configuration is incomplete
      * @return AccessControllerInterface::ACCESS
      */
-    public function getAccess() {
+    public function getAccess()
+    {
         $configurationKey = self::ACCESS_METHOD_READ;
         $configuration = $this->getConfigurationForCurrentPath();
         if ($this->isWrite()) {
@@ -88,7 +91,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      * @return bool
      * @throws Exception\InvalidConfigurationException
      */
-    public function requestNeedsAuthentication() {
+    public function requestNeedsAuthentication()
+    {
         $configurationKey = self::ACCESS_METHOD_READ;
         $configuration = $this->getConfigurationForCurrentPath();
         if ($this->isWrite()) {
@@ -102,9 +106,9 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
 
         $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -112,7 +116,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      *
      * @param \Cundd\Rest\Request $request
      */
-    public function setRequest(\Cundd\Rest\Request $request) {
+    public function setRequest(\Cundd\Rest\Request $request)
+    {
         parent::setRequest($request);
     }
 
@@ -122,7 +127,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      *
      * @return bool
      */
-    public function isWrite() {
+    public function isWrite()
+    {
         return $this->request->isWrite();
     }
 
@@ -132,7 +138,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      * @return string
      * @throws \UnexpectedValueException if the request is not set
      */
-    public function getConfigurationForCurrentPath() {
+    public function getConfigurationForCurrentPath()
+    {
         if (!$this->request) {
             throw new \UnexpectedValueException('The request isn\'t set', 1376816053);
         }
@@ -145,7 +152,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      * @param string $path
      * @return string
      */
-    public function getConfigurationForPath($path) {
+    public function getConfigurationForPath($path)
+    {
         $configuredPaths = $this->getConfiguredPaths();
         $matchingConfiguration = array();
 
@@ -156,7 +164,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
             $currentPathPattern = "!^$currentPathPattern$!";
             if ($currentPath === 'all' && !$matchingConfiguration) {
                 $matchingConfiguration = $configuration;
-            } else if (preg_match($currentPathPattern, $path)) {
+            } elseif (preg_match($currentPathPattern, $path)) {
                 $matchingConfiguration = $configuration;
             }
         }
@@ -168,7 +176,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController {
      *
      * @return array
      */
-    public function getConfiguredPaths() {
+    public function getConfiguredPaths()
+    {
         $settings = $this->configurationProvider->getSettings();
         if (isset($settings['paths']) && is_array($settings['paths'])) {
             return $settings['paths'];

@@ -28,7 +28,8 @@ namespace Cundd\Rest\Tests;
 use Cundd\Rest\HandlerInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
+class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
+{
     /**
      * @var string
      */
@@ -37,22 +38,26 @@ class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
     /**
      * @param string $name
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 }
 
-class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+{
 }
 
-class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject {
+class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
+{
     /**
      * @var string
      */
@@ -61,14 +66,15 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     /**
      * @var \DateTime
      */
-    protected $date = NULL;
+    protected $date = null;
 
     /**
      * @var \Cundd\Rest\Tests\MyModel
      */
-    protected $child = NULL;
+    protected $child = null;
 
-    function __construct() {
+    public function __construct()
+    {
         $this->child = new MyModel();
         $this->date = new \DateTime();
     }
@@ -77,47 +83,54 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     /**
      * @param string $base
      */
-    public function setBase($base) {
+    public function setBase($base)
+    {
         $this->base = $base;
     }
 
     /**
      * @return string
      */
-    public function getBase() {
+    public function getBase()
+    {
         return $this->base;
     }
 
     /**
      * @param MyModel|MyNestedModel $child
      */
-    public function setChild($child) {
+    public function setChild($child)
+    {
         $this->child = $child;
     }
 
     /**
      * @return MyModel|MyNestedModel
      */
-    public function getChild() {
+    public function getChild()
+    {
         return $this->child;
     }
 
     /**
      * @param \DateTime $date
      */
-    public function setDate($date) {
+    public function setDate($date)
+    {
         $this->date = $date;
     }
 
     /**
      * @return \DateTime
      */
-    public function getDate() {
+    public function getDate()
+    {
         return $this->date;
     }
 }
 
-class MyNestedModelWithObjectStorage extends MyNestedModel {
+class MyNestedModelWithObjectStorage extends MyNestedModel
+{
     /**
      * @var ObjectStorage
      */
@@ -126,20 +139,24 @@ class MyNestedModelWithObjectStorage extends MyNestedModel {
     /**
      * @return ObjectStorage
      */
-    public function getChildren() {
+    public function getChildren()
+    {
         return $this->children;
     }
 
     /**
      * @param ObjectStorage $children
      */
-    public function setChildren($children) {
+    public function setChildren($children)
+    {
         $this->children = $children;
     }
 }
 
-class MyNestedJsonSerializeModel extends MyNestedModel {
-    public function jsonSerialize() {
+class MyNestedJsonSerializeModel extends MyNestedModel
+{
+    public function jsonSerialize()
+    {
         return array(
             'base' => $this->base,
             'child' => $this->child
@@ -147,23 +164,27 @@ class MyNestedJsonSerializeModel extends MyNestedModel {
     }
 }
 
-class MyHandler implements HandlerInterface {
+class MyHandler implements HandlerInterface
+{
     /**
      * @inheritDoc
      */
-    public function setRequest($request) {
+    public function setRequest($request)
+    {
     }
 
     /**
      * @inheritDoc
      */
-    public function getRequest() {
+    public function getRequest()
+    {
     }
 
     /**
      * @inheritDoc
      */
-    public function configureApiPaths() {
+    public function configureApiPaths()
+    {
     }
 }
 

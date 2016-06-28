@@ -41,7 +41,8 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
+class ConfigurationFactoryTest extends AbstractVirtualObjectCase
+{
     /**
      * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
      */
@@ -84,7 +85,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
         )
     );
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
 
@@ -99,7 +101,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
         $this->fixture->injectConfigurationProvider($typeScriptConfigurationStub);
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -107,14 +110,16 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function createTest() {
+    public function createTest()
+    {
         $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $this->fixture->create());
     }
 
     /**
      * @test
      */
-    public function createFromArrayTest() {
+    public function createFromArrayTest()
+    {
         $configurationObject = $this->fixture->createFromArrayForPath($this->getTestConfigurationData(), 'ResourceName');
         $this->validateConfiguration($configurationObject);
     }
@@ -122,7 +127,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function createWithConfigurationDataTest() {
+    public function createWithConfigurationDataTest()
+    {
         $configurationData = $this->typoScriptDummyArray['mapping.'];
         $configurationObject = $this->fixture->createWithConfigurationData($configurationData);
         $this->validateConfiguration($configurationObject);
@@ -131,7 +137,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function createFromTypoScriptForPathTest() {
+    public function createFromTypoScriptForPathTest()
+    {
         $configurationObject = $this->fixture->createFromTypoScriptForPath('ResourceName');
         $this->validateConfiguration($configurationObject);
     }
@@ -139,7 +146,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function createFromJsonTest() {
+    public function createFromJsonTest()
+    {
         $configurationObject = $this->fixture->createFromJsonForPath($this->getTestConfigurationJSONString(), 'ResourceName');
         $this->validateConfiguration($configurationObject);
     }
@@ -150,7 +158,8 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase {
      *
      * @param ConfigurationInterface $configuration
      */
-    public function validateConfiguration($configuration) {
+    public function validateConfiguration($configuration)
+    {
         $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $configuration);
 
         $this->assertTrue($configuration->hasProperty('property1'));

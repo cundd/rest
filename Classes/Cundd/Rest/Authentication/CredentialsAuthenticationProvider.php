@@ -27,13 +27,13 @@ namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Handler\AuthHandler;
 
-
 /**
  * Authentication Provider for requests authenticated through the login route (/auth/login)
  *
  * @package Cundd\Rest\Authentication
  */
-class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider {
+class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider
+{
     /**
      * @var \Cundd\Rest\SessionManager
      * @inject
@@ -45,7 +45,8 @@ class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider {
      *
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate() {
+    public function authenticate()
+    {
         return $this->sessionManager->valueForKey('loginStatus') === AuthHandler::STATUS_LOGGED_IN;
     }
 }

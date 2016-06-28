@@ -40,18 +40,21 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderUtilityTest extends AbstractCase {
+class DataProviderUtilityTest extends AbstractCase
+{
     /**
      * @test
      */
-    public function getClassNamePartsForPathTest() {
+    public function getClassNamePartsForPathTest()
+    {
         $this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
     }
 
     /**
      * @test
      */
-    public function getPathForClassNameTest() {
+    public function getPathForClassNameTest()
+    {
         $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
         $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
         $this->assertEquals('vendor-my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
@@ -64,7 +67,8 @@ class DataProviderUtilityTest extends AbstractCase {
     /**
      * @test
      */
-    public function singularizeTest() {
+    public function singularizeTest()
+    {
         $this->assertEquals('tree', Utility::singularize('trees'));
         $this->assertEquals('friend', Utility::singularize('friends'));
         $this->assertEquals('hobby', Utility::singularize('hobbies'));
@@ -77,7 +81,8 @@ class DataProviderUtilityTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerSingularForPluralTest() {
+    public function registerSingularForPluralTest()
+    {
         $singularToPlural = array(
             'news'      => 'news',
             'equipment' => 'equipment',
@@ -104,6 +109,5 @@ class DataProviderUtilityTest extends AbstractCase {
         foreach ($singularToPlural as $singular => $plural) {
             $this->assertEquals($singular, Utility::singularize($plural));
         }
-
     }
 }

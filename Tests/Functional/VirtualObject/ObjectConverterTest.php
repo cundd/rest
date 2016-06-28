@@ -38,19 +38,22 @@ use Cundd\Rest\VirtualObject\VirtualObject;
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 
-class ObjectConverterTest extends AbstractVirtualObjectCase {
+class ObjectConverterTest extends AbstractVirtualObjectCase
+{
     /**
      * @var \Cundd\Rest\VirtualObject\ObjectConverter
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->fixture = new ObjectConverter();
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -58,7 +61,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function prepareDataFromVirtualObjectDataTest() {
+    public function prepareDataFromVirtualObjectDataTest()
+    {
         $testObjectData = $this->testObjectData;
         $virtualObject = new VirtualObject($testObjectData);
         $rawData = $this->fixture->prepareDataFromVirtualObjectData($virtualObject->getData());
@@ -68,7 +72,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function prepareForVirtualObjectDataTest() {
+    public function prepareForVirtualObjectDataTest()
+    {
         $testRawData = $this->testRawData;
         $preparedData = $this->fixture->prepareForVirtualObjectData($testRawData);
         $this->assertEquals($this->testObjectData, $preparedData);
@@ -77,7 +82,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function prepareDataFromVirtualObjectDataUpdateTest() {
+    public function prepareDataFromVirtualObjectDataUpdateTest()
+    {
         $testObjectData = $this->testObjectData;
         unset($testObjectData['property1']);
         unset($testObjectData['property6']);
@@ -87,14 +93,15 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         unset($testRawData['property_six']);
 
         $virtualObject = new VirtualObject($testObjectData);
-        $rawData = $this->fixture->prepareDataFromVirtualObjectData($virtualObject->getData(), FALSE);
+        $rawData = $this->fixture->prepareDataFromVirtualObjectData($virtualObject->getData(), false);
         $this->assertEquals($testRawData, $rawData);
     }
 
     /**
      * @test
      */
-    public function prepareForVirtualObjectDataUpdateTest() {
+    public function prepareForVirtualObjectDataUpdateTest()
+    {
         $testRawData = $this->testRawData;
         unset($testRawData['property_one']);
         unset($testRawData['property_six']);
@@ -103,14 +110,15 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         unset($testObjectData['property1']);
         unset($testObjectData['property6']);
 
-        $preparedData = $this->fixture->prepareForVirtualObjectData($testRawData, FALSE);
+        $preparedData = $this->fixture->prepareForVirtualObjectData($testRawData, false);
         $this->assertEquals($testObjectData, $preparedData);
     }
 
     /**
      * @test
      */
-    public function convertFromVirtualObjectTest() {
+    public function convertFromVirtualObjectTest()
+    {
         $testObjectData = $this->testObjectData;
         $virtualObject = new VirtualObject($testObjectData);
         $rawData = $this->fixture->convertFromVirtualObject($virtualObject);
@@ -120,7 +128,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function convertToVirtualObjectTest() {
+    public function convertToVirtualObjectTest()
+    {
         $testRawData = $this->testRawData;
         $virtualObject = $this->fixture->convertToVirtualObject($testRawData);
         $this->assertEquals($this->testObjectData, $virtualObject->getData());
@@ -129,7 +138,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function convertFromVirtualObjectWithTypeTransformationTest() {
+    public function convertFromVirtualObjectWithTypeTransformationTest()
+    {
         $testObjectData = $this->testObjectData;
         $testObjectData['property2'] = '0.98';
         $testObjectData['property3'] = 10.002;
@@ -148,7 +158,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function convertToVirtualObjectWithTypeTransformationTest() {
+    public function convertToVirtualObjectWithTypeTransformationTest()
+    {
         $testRawData = $this->testRawData;
         $testRawData['property_two'] = '0.98';
         $testRawData['property_three'] = 10.002;
@@ -165,8 +176,9 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function convertFromVirtualObjectWithSkippedUndefinedPropertyTest() {
-        $this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
+    public function convertFromVirtualObjectWithSkippedUndefinedPropertyTest()
+    {
+        $this->fixture->getConfiguration()->setSkipUnknownProperties(true);
 
         $testObjectData = $this->testObjectData;
         $testObjectData['property99'] = 'What ever - this must not be in the result';
@@ -180,8 +192,9 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function convertToVirtualObjectWithSkippedUndefinedPropertyTest() {
-        $this->fixture->getConfiguration()->setSkipUnknownProperties(TRUE);
+    public function convertToVirtualObjectWithSkippedUndefinedPropertyTest()
+    {
+        $this->fixture->getConfiguration()->setSkipUnknownProperties(true);
 
         $testRawData = $this->testRawData;
         $testRawData['property_ninetynine'] = 'What ever - this must not be in the result';
@@ -196,7 +209,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
      * @test
      * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
      */
-    public function convertFromVirtualObjectWithUndefinedPropertyTest() {
+    public function convertFromVirtualObjectWithUndefinedPropertyTest()
+    {
         $testObjectData = $this->testObjectData;
         $testObjectData['property99'] = 'What ever - this must not be in the result';
         $virtualObject = new VirtualObject($testObjectData);
@@ -210,7 +224,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
      * @test
      * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
      */
-    public function convertToVirtualObjectWithUndefinedPropertyTest() {
+    public function convertToVirtualObjectWithUndefinedPropertyTest()
+    {
         $testRawData = $this->testRawData;
         $testRawData['property_ninetynine'] = 'What ever - this must not be in the result';
         $virtualObject = $this->fixture->convertToVirtualObject($testRawData);
@@ -223,7 +238,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function typeConverterTest() {
+    public function typeConverterTest()
+    {
         $this->assertSame(90, $this->fixture->convertToType(90, 'integer'));
         $this->assertSame(1, $this->fixture->convertToType(1, 'int'));
         $this->assertSame(90, $this->fixture->convertToType(90.08, 'integer'));
@@ -231,14 +247,14 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         $this->assertSame(90, $this->fixture->convertToType('90.08', 'integer'));
         $this->assertSame(1, $this->fixture->convertToType('1.09', 'int'));
 
-        $this->assertSame(TRUE, $this->fixture->convertToType(TRUE, 'boolean'));
-        $this->assertSame(FALSE, $this->fixture->convertToType(FALSE, 'boolean'));
-        $this->assertSame(TRUE, $this->fixture->convertToType(1, 'boolean'));
-        $this->assertSame(FALSE, $this->fixture->convertToType(0, 'boolean'));
-        $this->assertSame(TRUE, $this->fixture->convertToType('yes', 'boolean'));
-        $this->assertSame(FALSE, $this->fixture->convertToType('', 'boolean'));
-        $this->assertSame(FALSE, $this->fixture->convertToType(array(), 'boolean'));
-        $this->assertSame(FALSE, $this->fixture->convertToType(NULL, 'boolean'));
+        $this->assertSame(true, $this->fixture->convertToType(true, 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType(false, 'boolean'));
+        $this->assertSame(true, $this->fixture->convertToType(1, 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType(0, 'boolean'));
+        $this->assertSame(true, $this->fixture->convertToType('yes', 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType('', 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType(array(), 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType(null, 'boolean'));
 
         $this->assertSame(1.09, $this->fixture->convertToType(1.09, 'float'));
         $this->assertSame(90.08, $this->fixture->convertToType(90.08, 'float'));
@@ -247,8 +263,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         $this->assertSame(0.0, $this->fixture->convertToType(0, 'float'));
         $this->assertSame(1.09, $this->fixture->convertToType('1.09', 'float'));
         $this->assertSame(90.08, $this->fixture->convertToType('90.08', 'float'));
-        $this->assertSame(1.0, $this->fixture->convertToType(TRUE, 'float'));
-        $this->assertSame(0.0, $this->fixture->convertToType(FALSE, 'float'));
+        $this->assertSame(1.0, $this->fixture->convertToType(true, 'float'));
+        $this->assertSame(0.0, $this->fixture->convertToType(false, 'float'));
 
         $this->assertSame('Hello', $this->fixture->convertToType('Hello', 'string'));
         $this->assertSame('how are you?', $this->fixture->convertToType('how are you?', 'string'));
@@ -259,22 +275,22 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         $this->assertSame('0', $this->fixture->convertToType(0, 'string'));
         $this->assertSame('1.09', $this->fixture->convertToType('1.09', 'string'));
         $this->assertSame('90.08', $this->fixture->convertToType('90.08', 'string'));
-        $this->assertSame('1', $this->fixture->convertToType(TRUE, 'string'));
-        $this->assertSame('', $this->fixture->convertToType(FALSE, 'string'));
+        $this->assertSame('1', $this->fixture->convertToType(true, 'string'));
+        $this->assertSame('', $this->fixture->convertToType(false, 'string'));
 
         $this->assertSame('Hello', $this->fixture->convertToType('Hello', 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType('how are you?', 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType(1.09, 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType(90.08, 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType('how are you?', 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType(1.09, 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType(90.08, 'slug'));
         $this->assertSame('1', $this->fixture->convertToType(1, 'slug'));
         $this->assertSame('90', $this->fixture->convertToType(90, 'slug'));
         $this->assertSame('0', $this->fixture->convertToType(0, 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType('1.09', 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType('90.08', 'slug'));
-        $this->assertSame('1', $this->fixture->convertToType(TRUE, 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType(FALSE, 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType('i am not-"slug"', 'slug'));
-        $this->assertSame(NULL, $this->fixture->convertToType('i am neither', 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType('1.09', 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType('90.08', 'slug'));
+        $this->assertSame('1', $this->fixture->convertToType(true, 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType(false, 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType('i am not-"slug"', 'slug'));
+        $this->assertSame(null, $this->fixture->convertToType('i am neither', 'slug'));
         $this->assertSame('but-i-am-1', $this->fixture->convertToType('but-i-am-1', 'slug'));
         $this->assertSame('me2', $this->fixture->convertToType('me2', 'slug'));
 
@@ -340,7 +356,8 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
      * @test
      * @expectedException \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      */
-    public function throwExceptionIfConfigurationIsNotSet() {
+    public function throwExceptionIfConfigurationIsNotSet()
+    {
         $virtualObject = new VirtualObject();
         $converter = new ObjectConverter();
         $converter->convertFromVirtualObject($virtualObject);
@@ -351,9 +368,9 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         'property_two' => 0.98,
         'property_three' => 10,
         'property_four' => PHP_INT_MAX,
-        'property_five' => TRUE,
-        'property_six' => FALSE,
-        'property_seven' => FALSE,
+        'property_five' => true,
+        'property_six' => false,
+        'property_seven' => false,
         'property_eight' => 8,
     );
 
@@ -362,10 +379,9 @@ class ObjectConverterTest extends AbstractVirtualObjectCase {
         'property2' => 0.98,
         'property3' => 10,
         'property4' => PHP_INT_MAX,
-        'property5' => TRUE,
-        'property6' => FALSE,
-        'property_seven' => FALSE,
+        'property5' => true,
+        'property6' => false,
+        'property_seven' => false,
         'property_eight' => 8,
     );
-
 }

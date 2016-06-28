@@ -7,13 +7,13 @@
  */
 namespace Cundd\Rest\Configuration;
 
-
 /**
  * Class TypoScriptConfigurationProvider
  *
  * @package Cundd\Rest\Configuration
  */
-interface ConfigurationProviderInterface {
+interface ConfigurationProviderInterface
+{
     /**
      * Returns the setting with the given key
      *
@@ -21,7 +21,7 @@ interface ConfigurationProviderInterface {
      * @param mixed $defaultValue
      * @return mixed
      */
-    public function getSetting($keyPath, $defaultValue = NULL);
+    public function getSetting($keyPath, $defaultValue = null);
 
     /**
      * Returns the settings read from the TypoScript

@@ -36,25 +36,29 @@ require_once __DIR__ . '/../AbstractCase.php';
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-class TypoScriptConfigurationProviderTest extends AbstractCase {
+class TypoScriptConfigurationProviderTest extends AbstractCase
+{
     /**
      * @var TypoScriptConfigurationProvider
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
     }
 
     /**
      * @test
      */
-    public function getSettingsTest() {
+    public function getSettingsTest()
+    {
         $settings = $this->fixture->getSettings();
         $this->assertInternalType('array', $settings);
 
@@ -66,7 +70,8 @@ class TypoScriptConfigurationProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getSettingTest() {
+    public function getSettingTest()
+    {
         if (count($this->fixture->getSettings()) === 0) {
             $this->markTestSkipped('ext_typoscript_setup.txt not loaded');
         }
@@ -79,7 +84,8 @@ class TypoScriptConfigurationProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getSettingDefaultTest() {
+    public function getSettingDefaultTest()
+    {
         $this->assertEquals('defaultValue', $this->fixture->getSetting('paths.NO.path', 'defaultValue'));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-	die ('Access denied.');
+    die('Access denied.');
 }
 
 /*
@@ -35,22 +35,22 @@ if (!defined('TYPO3_MODE')) {
  */
 
 // Defining circumstances for CLI mode:
-define('TYPO3_cliMode', TRUE);
+define('TYPO3_cliMode', true);
 define('TYPO3_MODE', 'CLI');
 
 if (file_exists(__DIR__ . '/vendor/react/')) {
-	require_once __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/vendor/autoload.php';
 } else {
-	\Cundd\CunddComposer\Autoloader::register();
+    \Cundd\CunddComposer\Autoloader::register();
 }
 
 $port = 1337;
 $host = '127.0.0.1';
 if (isset($argv[2])) {
-	$port = $argv[2];
+    $port = $argv[2];
 }
 if (isset($argv[3])) {
-	$host = $argv[3];
+    $host = $argv[3];
 }
 $restServer = new \Cundd\Rest\Server($port, $host);
 $restServer->start();

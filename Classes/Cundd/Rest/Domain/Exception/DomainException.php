@@ -31,7 +31,6 @@
 
 namespace Cundd\Rest\Domain\Exception;
 
-
-class DomainException extends \LogicException {
-
+class DomainException extends \LogicException
+{
 }

@@ -42,7 +42,8 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
  *
  * @package Cundd\Rest\DataProvider
  */
-class DataProvider implements DataProviderInterface {
+class DataProvider implements DataProviderInterface
+{
     /**
      * @var \Cundd\Rest\ObjectManagerInterface
      * @inject
@@ -92,7 +93,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path) {
+    public function getRepositoryClassForPath($path)
+    {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
         $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
@@ -107,7 +109,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
      */
-    public function getRepositoryForPath($path) {
+    public function getRepositoryForPath($path)
+    {
         $repositoryClass = $this->getRepositoryClassForPath($path);
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
@@ -121,7 +124,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return string
      */
-    public function getModelClassForPath($path) {
+    public function getModelClassForPath($path)
+    {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
         $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
         if (!class_exists($modelClass)) {
@@ -136,7 +140,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return DomainObjectInterface
      */
-    public function getAllModelsForPath($path) {
+    public function getAllModelsForPath($path)
+    {
         return $this->getRepositoryForPath($path)->findAll();
     }
 
@@ -148,13 +153,14 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path) {
+    public function getModelWithDataForPath($data, $path)
+    {
         $modelClass = $this->getModelClassForPath($path);
 
         // If no data is given return a new instance
         if (!$data) {
             return $this->getEmptyModelForPath($path);
-        } else if (is_scalar($data)) { // If it is a scalar treat it as identity
+        } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForPath($data, $path);
         }
 
@@ -162,7 +168,7 @@ class DataProvider implements DataProviderInterface {
         try {
             $model = $this->propertyMapper->convert($data, $modelClass);
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
-            $model = NULL;
+            $model = null;
 
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
@@ -178,8 +184,9 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the repository for
      * @return DomainObjectInterface
      */
-    public function getNewModelWithDataForPath($data, $path) {
-        $uid = NULL;
+    public function getNewModelWithDataForPath($data, $path)
+    {
+        $uid = null;
         // If no data is given return a new instance
         if (!$data) {
             return $this->getEmptyModelForPath($path);
@@ -189,7 +196,7 @@ class DataProvider implements DataProviderInterface {
         if (isset($data['__identity']) && $data['__identity']) {
             // Load the UID of the existing model
             $uid = $this->getUidOfModelWithIdentityForPath($data['__identity'], $path);
-        } else if (isset($data['uid']) && $data['uid']) {
+        } elseif (isset($data['uid']) && $data['uid']) {
             $uid = $data['uid'];
         }
         if ($uid) {
@@ -213,7 +220,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path
      * @return DomainObjectInterface
      */
-    public function getModelForPath($path) {
+    public function getModelForPath($path)
+    {
         return $this->getModelWithDataForPath(array(), $path);
     }
 
@@ -223,7 +231,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path API path to get the model for
      * @return DomainObjectInterface
      */
-    public function getEmptyModelForPath($path) {
+    public function getEmptyModelForPath($path)
+    {
         $modelClass = $this->getModelClassForPath($path);
         return $this->objectManager->get($modelClass);
     }
@@ -236,8 +245,9 @@ class DataProvider implements DataProviderInterface {
      * @param DomainObjectInterface $model
      * @return array<mixed>
      */
-    public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model) {
-        $returnData = NULL;
+    public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model)
+    {
+        $returnData = null;
         // Get the first level of nested objects
         if ($this->currentModelDataDepth < 1) {
             $this->currentModelDataDepth++;
@@ -262,7 +272,8 @@ class DataProvider implements DataProviderInterface {
      * @param DomainObjectInterface $model
      * @return array<mixed>
      */
-    public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model) {
+    public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model)
+    {
         $returnData = array();
 
         /*
@@ -286,7 +297,8 @@ class DataProvider implements DataProviderInterface {
      * @param DomainObjectInterface $model
      * @return string
      */
-    public function getUriToNestedResource($resourceKey, $model) {
+    public function getUriToNestedResource($resourceKey, $model)
+    {
         $currentUri = '/rest/';
         $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
 
@@ -307,7 +319,8 @@ class DataProvider implements DataProviderInterface {
      * @param DomainObjectInterface $model
      * @return string
      */
-    public function getUriToResource($model) {
+    public function getUriToResource($model)
+    {
         return $this->getUriToNestedResource(null, $model);
     }
 
@@ -318,7 +331,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $propertyKey
      * @return mixed
      */
-    public function getModelProperty($model, $propertyKey) {
+    public function getModelProperty($model, $propertyKey)
+    {
         $propertyValue = $model->_getProperty($propertyKey);
         if (is_object($propertyValue)) {
             if ($propertyValue instanceof LazyObjectStorage) {
@@ -334,8 +348,8 @@ class DataProvider implements DataProviderInterface {
             } else {
                 $propertyValue = $this->getModelData($propertyValue);
             }
-        } else if (!$propertyValue) {
-            return NULL;
+        } elseif (!$propertyValue) {
+            return null;
         }
         return $propertyValue;
     }
@@ -348,7 +362,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path The API path
      * @return void
      */
-    public function saveModelForPath($model, $path) {
+    public function saveModelForPath($model, $path)
+    {
         $repository = $this->getRepositoryForPath($path);
         if ($repository) {
             if ($model->_isNew()) {
@@ -369,7 +384,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path The API path
      * @return void
      */
-    public function replaceModelForPath($oldModel, $newModel, $path) {
+    public function replaceModelForPath($oldModel, $newModel, $path)
+    {
         $repository = $this->getRepositoryForPath($path);
         if ($repository) {
             $repository->update($newModel);
@@ -385,7 +401,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path The API path
      * @return void
      */
-    public function removeModelForPath($model, $path) {
+    public function removeModelForPath($model, $path)
+    {
         $repository = $this->getRepositoryForPath($path);
         if ($repository) {
             $repository->remove($model);
@@ -396,7 +413,8 @@ class DataProvider implements DataProviderInterface {
     /**
      * Persist all changes to the database
      */
-    public function persistAllChanges() {
+    public function persistAllChanges()
+    {
         /** @var PersistenceManagerInterface $persistenceManager */
         $persistenceManager = $this->objectManager->get(ObjectManager::getPersistenceManagerClassName());
         $persistenceManager->persistAll();
@@ -409,10 +427,11 @@ class DataProvider implements DataProviderInterface {
      * @param string $path The path
      * @return integer|null    Returns the UID of NULL if the object couldn't be found
      */
-    protected function getUidOfModelWithIdentityForPath($identifier, $path) {
+    protected function getUidOfModelWithIdentityForPath($identifier, $path)
+    {
         $model = $this->getModelWithIdentityForPath($identifier, $path);
         if (!$model) {
-            return NULL;
+            return null;
         }
         return $model->getUid();
     }
@@ -424,7 +443,8 @@ class DataProvider implements DataProviderInterface {
      * @param string $path The path
      * @return mixed|null|object
      */
-    protected function getModelWithIdentityForPath($identifier, $path) {
+    protected function getModelWithIdentityForPath($identifier, $path)
+    {
         $repository = $this->getRepositoryForPath($path);
 
         // Tries to fetch the object by UID
@@ -435,8 +455,8 @@ class DataProvider implements DataProviderInterface {
 
 
         // Fetch the first identity property and search the repository for it
-        $type = NULL;
-        $property = NULL;
+        $type = null;
+        $property = null;
         try {
             $classSchema = $this->reflectionService->getClassSchema($this->getModelClassForPath($path));
             $identityProperties = $classSchema->getIdentityProperties();
@@ -465,14 +485,14 @@ class DataProvider implements DataProviderInterface {
 
             case 'array':
             default:
-                $typeMatching = FALSE;
+                $typeMatching = false;
         }
 
         if ($typeMatching) {
             $findMethod = 'findOneBy' . ucfirst($property);
             return call_user_func(array($repository, $findMethod), $identifier);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -481,7 +501,8 @@ class DataProvider implements DataProviderInterface {
      * @param $data
      * @return array
      */
-    protected function prepareModelData($data) {
+    protected function prepareModelData($data)
+    {
         return $data;
     }
 
@@ -490,7 +511,8 @@ class DataProvider implements DataProviderInterface {
      *
      * @return \TYPO3\CMS\Core\Log\Logger
      */
-    protected function getLogger() {
+    protected function getLogger()
+    {
         if (!$this->logger) {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
@@ -503,7 +525,8 @@ class DataProvider implements DataProviderInterface {
      * @param DomainObjectInterface|object $model
      * @return array<mixed>
      */
-    public function getModelData($model) {
+    public function getModelData($model)
+    {
         if (!is_object($model)) {
             return $model;
         }
@@ -560,7 +583,8 @@ class DataProvider implements DataProviderInterface {
      * @param array $properties
      * @return array
      */
-    protected function transformProperties($model, $properties) {
+    protected function transformProperties($model, $properties)
+    {
         // Transform objects recursive
         foreach ($properties as $propertyKey => $propertyValue) {
             if (is_object($propertyValue)) {
@@ -593,7 +617,8 @@ class DataProvider implements DataProviderInterface {
      * @param \Traversable $objectStorage
      * @return array
      */
-    protected function transformObjectStorage($objectStorage) {
+    protected function transformObjectStorage($objectStorage)
+    {
         return array_values(array_map(array($this, 'getModelData'), iterator_to_array($objectStorage)));
     }
 
@@ -603,7 +628,8 @@ class DataProvider implements DataProviderInterface {
      * @param \TYPO3\CMS\Core\Resource\ResourceInterface|Folder|\TYPO3\CMS\Core\Resource\AbstractFile $originalResource
      * @return array
      */
-    protected function transformFileReference($originalResource) {
+    protected function transformFileReference($originalResource)
+    {
         static $depth = 0;
         if ($originalResource instanceof AbstractFileFolder) {
             if (++$depth > 10) {
@@ -662,7 +688,8 @@ class DataProvider implements DataProviderInterface {
      * @param FileReference $fileReference
      * @return array
      */
-    private function getTitleAndDescription(FileReference $fileReference) {
+    private function getTitleAndDescription(FileReference $fileReference)
+    {
         $title = '';
         $description = '';
         try {

@@ -5,16 +5,19 @@
 
 namespace Cundd\Rest\Tests;
 
-class Bootstrap {
+class Bootstrap
+{
     const TYPO3_BOOTSTRAP_CLASS_PATH = 'sysext/core/Build/FunctionalTestsBootstrap.php';
 
-    public function bootstrapSystem() {
+    public function bootstrapSystem()
+    {
         $this->setupTYPO3();
         $this->setupComposer();
         $this->setupAbstractCase();
     }
 
-    protected function setupTYPO3() {
+    protected function setupTYPO3()
+    {
         if (defined('TYPO3_MODE')) {
             return;
         }
@@ -46,7 +49,8 @@ class Bootstrap {
         }
     }
 
-    protected function setupComposer() {
+    protected function setupComposer()
+    {
         // Load composer autoloader
         if (file_exists(__DIR__ . '/../vendor/')) {
             require_once __DIR__ . '/../vendor/autoload.php';
@@ -61,7 +65,8 @@ class Bootstrap {
         }
     }
 
-    private function setupAbstractCase() {
+    private function setupAbstractCase()
+    {
         require_once __DIR__ . '/Functional/AbstractCase.php';
     }
 }
@@ -72,4 +77,3 @@ if (PHP_SAPI !== 'cli') {
 $bootstrap = new Bootstrap();
 $bootstrap->bootstrapSystem();
 unset($bootstrap);
-

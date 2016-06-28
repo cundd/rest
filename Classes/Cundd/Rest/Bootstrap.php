@@ -29,13 +29,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
 
-class Bootstrap {
+class Bootstrap
+{
     /**
      * Initializes the TYPO3 environment.
      *
      * @return    void
      */
-    public function init() {
+    public function init()
+    {
         if (version_compare(TYPO3_version, '6.0.0') < 0) {
             require_once __DIR__ . '/../../../legacy.php';
         }
@@ -53,10 +55,11 @@ class Bootstrap {
      * @param    boolean $overrule
      * @return    void
      */
-    public function initTSFE($pageUid = -1, $overrule = FALSE) {
-        $rootLine = NULL;
+    public function initTSFE($pageUid = -1, $overrule = false)
+    {
+        $rootLine = null;
         $typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
-        if ($pageUid == -1 && GeneralUtility::_GP('pid') !== NULL) {
+        if ($pageUid == -1 && GeneralUtility::_GP('pid') !== null) {
             $pageUid = intval(GeneralUtility::_GP('pid'));
         }
         if ($pageUid === -1) {
@@ -64,12 +67,12 @@ class Bootstrap {
         }
 
         // begin
-        if (!is_object($GLOBALS['TT']) || $overrule === TRUE) {
+        if (!is_object($GLOBALS['TT']) || $overrule === true) {
             $GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\TimeTracker();
             $GLOBALS['TT']->start();
         }
 
-        if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === TRUE) && is_int($pageUid)) {
+        if ((!is_object($GLOBALS['TSFE']) || $GLOBALS['TSFE'] instanceof \stdClass || $overrule === true) && is_int($pageUid)) {
             // builds TSFE object
             $GLOBALS['TSFE'] = $typoScriptFrontendController = new \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController(
                 $typo3confVariables,
@@ -85,7 +88,7 @@ class Bootstrap {
             $typoScriptFrontendController->initTemplate();
 
             // builds a cObj
-            if (is_array($typoScriptFrontendController->page) === FALSE) {
+            if (is_array($typoScriptFrontendController->page) === false) {
                 $typoScriptFrontendController->page = array();
             }
 
@@ -104,7 +107,8 @@ class Bootstrap {
     }
 
 
-    private function getRequestedLanguageCode() {
+    private function getRequestedLanguageCode()
+    {
         if (class_exists('Locale')) {
             return \Locale::getPrimaryLanguage(\Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']));
         }
@@ -115,7 +119,8 @@ class Bootstrap {
     /**
      * @return int|null
      */
-    private function getRequestedLanguageUid() {
+    private function getRequestedLanguageUid()
+    {
         // Test the full HTTP_ACCEPT_LANGUAGE header
         $typoscriptValue = $this->readConfigurationFromTyposcript(
             'plugin.tx_rest.settings.languages.' . $_SERVER['HTTP_ACCEPT_LANGUAGE'],
@@ -148,7 +153,8 @@ class Bootstrap {
      * @param TypoScriptFrontendController $typoScriptFrontendController
      * @return mixed
      */
-    private function readConfigurationFromTyposcript($keyPath, $typoScriptFrontendController) {
+    private function readConfigurationFromTyposcript($keyPath, $typoScriptFrontendController)
+    {
         $keyPathParts = explode('.', $keyPath);
         $currentValue = $typoScriptFrontendController->tmpl->setup;
 
@@ -168,7 +174,8 @@ class Bootstrap {
     /**
      * @param TypoScriptFrontendController $typoScriptFrontendController
      */
-    private function setRequestedLanguage($typoScriptFrontendController) {
+    private function setRequestedLanguage($typoScriptFrontendController)
+    {
         // Set language if defined
         if (GeneralUtility::_GP('L') !== null) {
             $typoScriptFrontendController->config['config']['sys_language_uid'] = intval(GeneralUtility::_GP('L'));

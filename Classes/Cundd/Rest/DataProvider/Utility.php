@@ -32,7 +32,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @package Cundd\Rest\DataProvider
  */
-class Utility {
+class Utility
+{
     /**
      * Separator between vendor, extension and model in the API path
      */
@@ -60,8 +61,9 @@ class Utility {
      * @param bool $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
-    public static function getClassNamePartsForPath($path, $convertPlural = TRUE) {
-        if (strpos($path, '_') !== FALSE) {
+    public static function getClassNamePartsForPath($path, $convertPlural = true)
+    {
+        if (strpos($path, '_') !== false) {
             $path = GeneralUtility::underscoredToUpperCamelCase($path);
         }
         $parts = explode(self::API_PATH_PART_SEPARATOR, $path);
@@ -85,8 +87,9 @@ class Utility {
      * @param string $className
      * @return string|bool Returns the path or FALSE if it couldn't be determined
      */
-    public static function getPathForClassName($className) {
-        if (strpos($className, '\\') === FALSE) {
+    public static function getPathForClassName($className)
+    {
+        if (strpos($className, '\\') === false) {
             if (substr($className, 0, 3) === 'Tx_') {
                 $className = substr($className, 3);
             }
@@ -108,7 +111,8 @@ class Utility {
      * @param string $word
      * @return string
      */
-    public static function singularize($word) {
+    public static function singularize($word)
+    {
         $customMapping = array_search($word, static::$singularToPlural, true);
         if ($customMapping !== false) {
             return $customMapping;
@@ -143,12 +147,14 @@ class Utility {
             // If the end of the word doesn't match the key,
             // it's not a candidate for replacement. Move on
             // to the next plural ending.
-            if (substr($word, (strlen($key) * -1)) != $key)
+            if (substr($word, (strlen($key) * -1)) != $key) {
                 continue;
+            }
             // If the value of the key is false, stop looping
             // and return the original version of the word.
-            if ($key === false)
+            if ($key === false) {
                 return $word;
+            }
             // We've made it this far, so we can do the
             // replacement.
             return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
@@ -162,7 +168,8 @@ class Utility {
      * @param $singular
      * @param $plural
      */
-    public static function registerSingularForPlural($singular, $plural) {
+    public static function registerSingularForPlural($singular, $plural)
+    {
         static::$singularToPlural[$singular] = $plural;
     }
 }

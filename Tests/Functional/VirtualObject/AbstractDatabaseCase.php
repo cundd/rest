@@ -42,20 +42,21 @@ use Cundd\Rest\VirtualObject\Configuration;
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class AbstractDatabaseCase extends AbstractVirtualObjectCase {
+class AbstractDatabaseCase extends AbstractVirtualObjectCase
+{
     /**
      * Test database name
      *
      * @var string
      */
-    static protected $testDatabaseTable = 'tx_rest_domain_model_test';
+    protected static $testDatabaseTable = 'tx_rest_domain_model_test';
 
     /**
      * Test data sets
      *
      * @var array
      */
-    static protected $testData = array(
+    protected static $testData = array(
         array(
             'uid' => 100,
             'title' => 'Test entry',
@@ -80,7 +81,8 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase {
      *
      * @return Configuration
      */
-    protected function getTestConfiguration() {
+    protected function getTestConfiguration()
+    {
         $testConfiguration = $this->getTestConfigurationData();
         return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
     }
@@ -90,7 +92,8 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase {
      *
      * @return array
      */
-    protected function getTestConfigurationData() {
+    protected function getTestConfigurationData()
+    {
         if ($this->testConfiguration) {
             return $this->testConfiguration;
         }
@@ -127,24 +130,27 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase {
 }
 CONFIGURATION;
 
-        $this->testConfiguration = json_decode($testConfigurationJson, TRUE);
+        $this->testConfiguration = json_decode($testConfigurationJson, true);
         return $this->testConfiguration;
     }
 
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->createTable();
         $this->insertData();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         $this->truncateTable();
         $this->dropTable();
         parent::tearDown();
     }
 
-    protected function createTable() {
+    protected function createTable()
+    {
         $testDatabaseTable = self::$testDatabaseTable;
         $createTableSQL = <<<SQL
 CREATE TABLE $testDatabaseTable (
@@ -165,7 +171,8 @@ SQL;
         $databaseConnection->sql_query($createTableSQL);
     }
 
-    protected function dropTable() {
+    protected function dropTable()
+    {
         $testDatabaseTable = self::$testDatabaseTable;
         $dropTableSQL = <<<SQL
 		DROP TABLE IF EXISTS $testDatabaseTable;
@@ -175,7 +182,8 @@ SQL;
         $databaseConnection->sql_query($dropTableSQL);
     }
 
-    protected function truncateTable() {
+    protected function truncateTable()
+    {
         $testDatabaseTable = self::$testDatabaseTable;
         $dropTableSQL = <<<SQL
 		TRUNCATE TABLE  $testDatabaseTable
@@ -186,7 +194,8 @@ SQL;
         $databaseConnection->sql_query($dropTableSQL);
     }
 
-    protected function insertData() {
+    protected function insertData()
+    {
         /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
         $databaseConnection = $this->getDatabaseConnection();
         $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);

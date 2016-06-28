@@ -40,19 +40,22 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DispatcherTest extends AbstractCase {
+class DispatcherTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\Dispatcher
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
         $this->fixture = new \Cundd\Rest\Dispatcher();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         /** @var RequestFactoryInterface $requestFactory */
         if ($this->objectManager) {
             $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
@@ -66,7 +69,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriTest() {
+    public function getUriTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -76,7 +80,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithFormatTest() {
+    public function getUriWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -86,7 +91,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUriTest() {
+    public function getDocumentUriTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -96,7 +102,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUriWithFormatTest() {
+    public function getDocumentUriWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -106,7 +113,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUrWithHtmlFormatTest() {
+    public function getDocumentUrWithHtmlFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -116,7 +124,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getPathTest() {
+    public function getPathTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -125,7 +134,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getPathWithFormatTest() {
+    public function getPathWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -134,7 +144,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentPathTest() {
+    public function getDocumentPathTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -143,7 +154,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentPathWithFormatTest() {
+    public function getDocumentPathWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -152,7 +164,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUnderscoredPathWithFormatAndIdTest() {
+    public function getUnderscoredPathWithFormatAndIdTest()
+    {
         $_GET['u'] = 'my_ext-my_model/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
@@ -161,7 +174,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUnderscoredPathWithFormatTest2() {
+    public function getUnderscoredPathWithFormatTest2()
+    {
         $_GET['u'] = 'my_ext-my_model.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
@@ -170,7 +184,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithoutFormatTest() {
+    public function getFormatWithoutFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -179,7 +194,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithFormatTest() {
+    public function getFormatWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -188,7 +204,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithHtmlFormatTest() {
+    public function getFormatWithHtmlFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('html', $request->format());
@@ -197,7 +214,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithNotExistingFormatTest() {
+    public function getFormatWithNotExistingFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.blur';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -206,7 +224,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function createErrorResponseTest() {
+    public function createErrorResponseTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createErrorResponse('Everything ok', 200);
         $this->assertEquals(200, $response->status());
@@ -222,11 +241,11 @@ class DispatcherTest extends AbstractCase {
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"error":"This will default to JSON"}', $response->content());
 
-        $response = $this->fixture->createErrorResponse(NULL, 200);
+        $response = $this->fixture->createErrorResponse(null, 200);
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"error":"OK"}', $response->content());
 
-        $response = $this->fixture->createErrorResponse(NULL, 404);
+        $response = $this->fixture->createErrorResponse(null, 404);
         $this->assertEquals(404, $response->status());
         $this->assertEquals('{"error":"Not Found"}', $response->content());
     }
@@ -234,7 +253,8 @@ class DispatcherTest extends AbstractCase {
     /**
      * @test
      */
-    public function createSuccessResponseTest() {
+    public function createSuccessResponseTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createSuccessResponse('Everything ok', 200);
         $this->assertEquals(200, $response->status());
@@ -250,12 +270,12 @@ class DispatcherTest extends AbstractCase {
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"message":"This will default to JSON"}', $response->content());
 
-        $response = $this->fixture->createSuccessResponse(NULL, 200);
+        $response = $this->fixture->createSuccessResponse(null, 200);
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"message":"OK"}', $response->content());
 
         // This will be an error
-        $response = $this->fixture->createSuccessResponse(NULL, 404);
+        $response = $this->fixture->createSuccessResponse(null, 404);
         $this->assertEquals(404, $response->status());
         $this->assertEquals('{"error":"Not Found"}', $response->content());
     }

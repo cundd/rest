@@ -10,13 +10,13 @@ namespace Cundd\Rest\Dispatcher;
 use Bullet\Response;
 use Cundd\Rest\Request;
 
-
 /**
  * Interface for the main dispatcher of REST requests
  *
  * @package Cundd\Rest
  */
-interface DispatcherInterface {
+interface DispatcherInterface
+{
     /**
      * Dispatch the request
      *
@@ -24,5 +24,5 @@ interface DispatcherInterface {
      * @param Response $responsePointer Reference to be filled with the response
      * @return boolean Returns if the request has been successfully dispatched
      */
-    public function dispatch(Request $request = NULL, Response &$responsePointer = NULL);
+    public function dispatch(Request $request = null, Response &$responsePointer = null);
 }

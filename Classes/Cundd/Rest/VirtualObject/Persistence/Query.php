@@ -13,7 +13,8 @@ namespace Cundd\Rest\VirtualObject\Persistence;
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-class Query implements QueryInterface {
+class Query implements QueryInterface
+{
     /**
      * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
      * @inject
@@ -64,7 +65,8 @@ class Query implements QueryInterface {
      * @return array Returns the result
      * @api
      */
-    public function execute() {
+    public function execute()
+    {
         return $this->persistenceManager->getObjectDataByQuery($this);
     }
 
@@ -75,7 +77,8 @@ class Query implements QueryInterface {
      * @return integer The query result count
      * @api
      */
-    public function count() {
+    public function count()
+    {
         return $this->persistenceManager->getObjectCountByQuery($this);
     }
 
@@ -90,7 +93,8 @@ class Query implements QueryInterface {
      * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings) {
+    public function setOrderings(array $orderings)
+    {
         $this->orderings = $orderings;
         return $this;
     }
@@ -104,7 +108,8 @@ class Query implements QueryInterface {
      * @return QueryInterface
      * @api
      */
-    public function setLimit($limit) {
+    public function setLimit($limit)
+    {
         $this->limit = $limit;
         return $this;
     }
@@ -118,7 +123,8 @@ class Query implements QueryInterface {
      * @return QueryInterface
      * @api
      */
-    public function setOffset($offset) {
+    public function setOffset($offset)
+    {
         $this->offset = $offset;
         return $this;
     }
@@ -133,7 +139,8 @@ class Query implements QueryInterface {
      * @return array
      * @api
      */
-    public function getOrderings() {
+    public function getOrderings()
+    {
         return $this->orderings;
     }
 
@@ -143,7 +150,8 @@ class Query implements QueryInterface {
      * @return integer
      * @api
      */
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
@@ -153,7 +161,8 @@ class Query implements QueryInterface {
      * @return integer
      * @api
      */
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
@@ -163,7 +172,8 @@ class Query implements QueryInterface {
      * @return mixed the constraint, or null if none
      * @api
      */
-    public function getConstraint() {
+    public function getConstraint()
+    {
         return $this->constraint;
     }
 
@@ -174,7 +184,8 @@ class Query implements QueryInterface {
      * @return QueryInterface
      * @api
      */
-    public function setConstraint($constraint) {
+    public function setConstraint($constraint)
+    {
         $this->constraint = $constraint;
         return $this;
     }
@@ -184,7 +195,8 @@ class Query implements QueryInterface {
      *
      * @return string
      */
-    public function getSourceIdentifier() {
+    public function getSourceIdentifier()
+    {
         return $this->sourceIdentifier;
     }
 
@@ -194,7 +206,8 @@ class Query implements QueryInterface {
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->persistenceManager->setConfiguration($configuration);
         return $this;
     }
@@ -205,7 +218,8 @@ class Query implements QueryInterface {
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         return $this->persistenceManager->getConfiguration();
     }
 
@@ -217,7 +231,8 @@ class Query implements QueryInterface {
      * @param array $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
      * @return QueryInterface
      */
-    public function statement($statement, array $parameters = array()) {
+    public function statement($statement, array $parameters = array())
+    {
         $this->statement = new \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement($statement, $parameters);
         return $this;
     }
@@ -227,7 +242,8 @@ class Query implements QueryInterface {
      *
      * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
      */
-    public function getStatement() {
+    public function getStatement()
+    {
         return $this->statement;
     }
 }

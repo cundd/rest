@@ -40,19 +40,22 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class FileDataProviderTest extends AbstractCase {
+class FileDataProviderTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\DataProvider\DataProviderInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -61,7 +64,8 @@ class FileDataProviderTest extends AbstractCase {
      * @param array $properties
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
-    protected function createDomainModelFixture(array $properties = array()) {
+    protected function createDomainModelFixture(array $properties = array())
+    {
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
         $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
             ->setMockClassName('Mock_Test_Class')
@@ -76,7 +80,8 @@ class FileDataProviderTest extends AbstractCase {
      * @param array $fileReferenceProperties
      * @return \PHPUnit_Framework_MockObject_MockObject|FileReference|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface
      */
-    protected function createFileReferenceMock(array $fileReferenceProperties = array()) {
+    protected function createFileReferenceMock(array $fileReferenceProperties = array())
+    {
         $fileReferenceProperties = array(
             'uid_local' => time(),
             'name' => 'Test name',
@@ -96,7 +101,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @return \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createFileMock() {
+    protected function createFileMock()
+    {
         $originalFileProperties = array(
             'identifier' => sha1('testFile' . time()),
             'name' => 'Original file name',
@@ -135,7 +141,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForModelWithFileReferenceTest() {
+    public function getModelDataForModelWithFileReferenceTest()
+    {
         $testModel = $this->createDomainModelFixture(array(
             'title' => 'Test',
             'file' => $this->createFileReferenceMock()
@@ -163,7 +170,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForModelWithFileReferenceAndDataTest() {
+    public function getModelDataForModelWithFileReferenceAndDataTest()
+    {
         $testModel = $this->createDomainModelFixture(array(
             'title' => 'Test',
             'file' => $this->createFileReferenceMock(array(
@@ -194,7 +202,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForFileReferenceTest() {
+    public function getModelDataForFileReferenceTest()
+    {
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock();
 
@@ -216,7 +225,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForFileReferenceWithDataTest() {
+    public function getModelDataForFileReferenceWithDataTest()
+    {
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock(array(
             'title' => 'My title',
@@ -241,7 +251,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForFileTest() {
+    public function getModelDataForFileTest()
+    {
         /** @var object $testModel */
         $testModel = $this->createFileMock();
 
@@ -261,7 +272,8 @@ class FileDataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataForModelWithFileTest() {
+    public function getModelDataForModelWithFileTest()
+    {
         /** @var object $testModel */
         $testModel = $this->createDomainModelFixture(array(
             'title' => 'Test',

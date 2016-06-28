@@ -25,8 +25,8 @@
 
 namespace Cundd\Rest\Authentication;
 
-
-interface AuthenticationProviderInterface {
+interface AuthenticationProviderInterface
+{
     /**
      * Tries to authenticate the current request
      *

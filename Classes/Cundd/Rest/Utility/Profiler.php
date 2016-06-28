@@ -39,7 +39,8 @@ use TYPO3\CMS\Core\Log\LogLevel;
  *
  * @package Cundd\Rest\Utility
  */
-class Profiler {
+class Profiler
+{
     /**
      * Start time
      *
@@ -69,7 +70,8 @@ class Profiler {
     /**
      * @param resource|object $outputHandler Output handler to use
      */
-    function __construct($outputHandler = STDOUT) {
+    public function __construct($outputHandler = STDOUT)
+    {
         $this->outputHandler = $outputHandler;
     }
 
@@ -79,13 +81,14 @@ class Profiler {
      * @param array|string $options Additional options to pass to the profiler. If a string is given it will be used as name
      * @return $this
      */
-    public function start($options = array()) {
+    public function start($options = array())
+    {
         if (is_string($options)) {
             $options = array('name' => $options);
         }
         $this->options = $options;
         $this->profilingData = array();
-        $this->startTime = microtime(TRUE);
+        $this->startTime = microtime(true);
         return $this;
     }
 
@@ -94,8 +97,9 @@ class Profiler {
      *
      * @return array
      */
-    public function collect() {
-        $runEndTime = microtime(TRUE);
+    public function collect()
+    {
+        $runEndTime = microtime(true);
         $runId = count($this->profilingData);
         $lastRunData = end($this->profilingData);
         $runStartTime = $lastRunData ? $lastRunData['collectTime'] : $this->startTime;
@@ -110,8 +114,8 @@ class Profiler {
             'runStartTime' => $runStartTime,
             'runEndTime' => $runEndTime,
             'runDuration' => $runEndTime - $runStartTime,
-            'memory' => memory_get_usage(TRUE),
-            'memoryPeak' => memory_get_peak_usage(TRUE),
+            'memory' => memory_get_usage(true),
+            'memoryPeak' => memory_get_peak_usage(true),
         );
 
         if (isset($this->options['collectCaller']) && $this->options['collectCaller']) {
@@ -126,7 +130,8 @@ class Profiler {
      *
      * @return string Returns the message
      */
-    public function output() {
+    public function output()
+    {
         $messageParts = array();
 
         foreach ($this->profilingData as $currentRunData) {
@@ -143,10 +148,10 @@ class Profiler {
                     ' @ %s:%s',
                     $caller['file'],
                     $caller['line']
-                );;
+                );
+                ;
             }
             $messageParts[] = $currentMessagePart;
-
         }
         $message = implode(PHP_EOL, $messageParts);
 
@@ -166,7 +171,8 @@ class Profiler {
     /**
      * Clears the profiling data
      */
-    public function clear() {
+    public function clear()
+    {
         $this->profilingData = array();
     }
 
@@ -175,7 +181,8 @@ class Profiler {
      *
      * @return array Returns last run data
      */
-    public function collectAndOutput() {
+    public function collectAndOutput()
+    {
         $currentRunData = $this->collect();
         $this->output();
         return $currentRunData;
@@ -186,7 +193,8 @@ class Profiler {
      *
      * @return array Returns last run data
      */
-    public function collectClearAndOutput() {
+    public function collectClearAndOutput()
+    {
         $currentRunData = $this->collect();
         $this->output();
         $this->clear();
@@ -198,7 +206,8 @@ class Profiler {
      *
      * @return array
      */
-    public function getProfilingData() {
+    public function getProfilingData()
+    {
         return $this->profilingData;
     }
 
@@ -209,7 +218,8 @@ class Profiler {
      *
      * @param resource|object $outputHandler
      */
-    public function setOutputHandler($outputHandler) {
+    public function setOutputHandler($outputHandler)
+    {
         $this->outputHandler = $outputHandler;
     }
 
@@ -220,7 +230,8 @@ class Profiler {
      *
      * @return resource|object
      */
-    public function getOutputHandler() {
+    public function getOutputHandler()
+    {
         return $this->outputHandler;
     }
 
@@ -230,7 +241,8 @@ class Profiler {
      * @param integer $size
      * @return string
      */
-    protected function formatMemory($size) {
+    protected function formatMemory($size)
+    {
         $unit = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
         return @round($size / pow(1024, ($i = intval(floor(log($size, 1024))))), 2) . ' ' . $unit[$i];
     }
@@ -240,16 +252,17 @@ class Profiler {
      *
      * @return array
      */
-    protected function getCaller() {
-        static $php54 = NULL;
-        if ($php54 === NULL) {
+    protected function getCaller()
+    {
+        static $php54 = null;
+        if ($php54 === null) {
             $php54 = (version_compare(PHP_VERSION, '5.4.0') >= 0);
         }
 
         if ($php54) {
-            $backtrace = debug_backtrace(FALSE, 5);
+            $backtrace = debug_backtrace(false, 5);
         } else {
-            $backtrace = debug_backtrace(FALSE);
+            $backtrace = debug_backtrace(false);
         }
         $backtraceEntry = current($backtrace);
         while (isset($backtraceEntry['class']) && $backtraceEntry['class'] === __CLASS__) {
@@ -264,7 +277,8 @@ class Profiler {
      * @param resource|object $outputHandler
      * @return Profiler
      */
-    static public function create($outputHandler = STDIN) {
+    public static function create($outputHandler = STDIN)
+    {
         /** @var Profiler $instance */
         $instance = new static($outputHandler);
         $instance->start();
@@ -277,8 +291,9 @@ class Profiler {
      * @param resource|object $outputHandler
      * @return Profiler
      */
-    static public function sharedInstance($outputHandler = STDIN) {
-        static $instance = NULL;
+    public static function sharedInstance($outputHandler = STDIN)
+    {
+        static $instance = null;
         if (!$instance) {
             /** @var Profiler $instance */
             $instance = new static($outputHandler);

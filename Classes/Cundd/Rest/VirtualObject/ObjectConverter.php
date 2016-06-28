@@ -34,7 +34,8 @@ use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
  *
  * @package Cundd\Rest\VirtualObject
  */
-class ObjectConverter {
+class ObjectConverter
+{
     /**
      * The configuration to use when converting
      *
@@ -42,7 +43,8 @@ class ObjectConverter {
      */
     protected $configuration;
 
-    function __construct($configuration = NULL) {
+    public function __construct($configuration = null)
+    {
         $this->configuration = $configuration;
     }
 
@@ -55,11 +57,12 @@ class ObjectConverter {
      * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return array
      */
-    public function prepareDataFromVirtualObjectData($virtualObjectData, $replace = TRUE) {
+    public function prepareDataFromVirtualObjectData($virtualObjectData, $replace = true)
+    {
         $configuration = $this->getConfiguration();
         $convertedData = array();
         if ($replace) {
-            $convertedData = array_fill_keys($configuration->getAllSourceKeys(), NULL);
+            $convertedData = array_fill_keys($configuration->getAllSourceKeys(), null);
         }
 
         if (!$configuration) {
@@ -77,7 +80,7 @@ class ObjectConverter {
                 $propertyValue = $this->convertToType($propertyValue, $type);
 
                 $convertedData[$sourceKey] = $propertyValue;
-            } else if (!$configuration->shouldSkipUnknownProperties()) {
+            } elseif (!$configuration->shouldSkipUnknownProperties()) {
                 throw new InvalidPropertyException('Property "' . $propertyKey . '" is not defined', 1395670264);
             }
         }
@@ -92,11 +95,12 @@ class ObjectConverter {
      * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return array
      */
-    public function convertFromVirtualObject($virtualObject) {
-        $virtualObjectData = NULL;
+    public function convertFromVirtualObject($virtualObject)
+    {
+        $virtualObjectData = null;
         if (is_array($virtualObject)) {
             $virtualObjectData = $virtualObject;
-        } else if ($virtualObject instanceof VirtualObject) {
+        } elseif ($virtualObject instanceof VirtualObject) {
             $virtualObjectData = $virtualObject->getData();
         }
         return $this->prepareDataFromVirtualObjectData($virtualObjectData);
@@ -111,11 +115,12 @@ class ObjectConverter {
      * @throws MissingConfigurationException if the configuration is not set
      * @return array
      */
-    public function prepareForVirtualObjectData($source, $replace = TRUE) {
+    public function prepareForVirtualObjectData($source, $replace = true)
+    {
         $configuration = $this->getConfiguration();
         $convertedData = array();
         if ($replace) {
-            $convertedData = array_fill_keys($configuration->getAllProperties(), NULL);
+            $convertedData = array_fill_keys($configuration->getAllProperties(), null);
         }
 
         if (!$configuration) {
@@ -129,7 +134,7 @@ class ObjectConverter {
                 $sourceValue = $this->convertToType($sourceValue, $type);
 
                 $convertedData[$propertyKey] = $sourceValue;
-            } else if (!$configuration->shouldSkipUnknownProperties()) {
+            } elseif (!$configuration->shouldSkipUnknownProperties()) {
                 throw new InvalidPropertyException('Property "' . $sourceKey . '" is not defined', 1395670264);
             }
         }
@@ -144,7 +149,8 @@ class ObjectConverter {
      * @throws MissingConfigurationException if the configuration is not set
      * @return VirtualObject
      */
-    public function convertToVirtualObject($source) {
+    public function convertToVirtualObject($source)
+    {
         return new VirtualObject($this->prepareForVirtualObjectData($source));
     }
 
@@ -156,8 +162,9 @@ class ObjectConverter {
      * @throws Exception\InvalidConverterTypeException if the given type is not valid
      * @return mixed Returns the converted value
      */
-    public function convertToType($value, $type) {
-        $result = NULL;
+    public function convertToType($value, $type)
+    {
+        $result = null;
         switch (strtolower($type)) {
             // Builtin types
             case 'integer':
@@ -181,7 +188,7 @@ class ObjectConverter {
 
             // Special types
             case 'slug':
-                $result = (preg_match('/^[a-zA-Z0-9-_]+$/', $value) > 0 ? (string)$value : NULL);
+                $result = (preg_match('/^[a-zA-Z0-9-_]+$/', $value) > 0 ? (string)$value : null);
                 break;
 
             case 'url':
@@ -209,7 +216,8 @@ class ObjectConverter {
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->configuration = $configuration;
         return $this;
     }
@@ -220,10 +228,11 @@ class ObjectConverter {
      * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration() {
-        if (!$this->configuration) throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
+    public function getConfiguration()
+    {
+        if (!$this->configuration) {
+            throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
+        }
         return $this->configuration;
     }
-
-
 }

@@ -16,7 +16,8 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package Cundd\Rest
  */
-class ResponseFactory implements SingletonInterface, ResponseFactoryInterface {
+class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
+{
     /**
      * @var \Cundd\Rest\RequestFactoryInterface
      */
@@ -29,8 +30,9 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface {
      * @param int $status
      * @return Response
      */
-    public function createErrorResponse($data, $status) {
-        return $this->createResponse($data, $status, TRUE);
+    public function createErrorResponse($data, $status)
+    {
+        return $this->createResponse($data, $status, true);
     }
 
     /**
@@ -40,7 +42,8 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface {
      * @param int $status
      * @return Response
      */
-    public function createSuccessResponse($data, $status) {
+    public function createSuccessResponse($data, $status)
+    {
         return $this->createResponse($data, $status);
     }
 
@@ -53,9 +56,10 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface {
      * @return Response
      * @internal
      */
-    public function createResponse($data, $status, $forceError = FALSE) {
-        $body = NULL;
-        $response = new Response(NULL, $status);
+    public function createResponse($data, $status, $forceError = false)
+    {
+        $body = null;
+        $response = new Response(null, $status);
         $format = $this->requestFactory->getRequest()->format();
         if (!$format) {
             $format = 'json';
@@ -104,7 +108,8 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface {
     /**
      * @param \Cundd\Rest\RequestFactoryInterface $requestFactory
      */
-    public function injectRequestFactory(\Cundd\Rest\RequestFactoryInterface $requestFactory) {
+    public function injectRequestFactory(\Cundd\Rest\RequestFactoryInterface $requestFactory)
+    {
         $this->requestFactory = $requestFactory;
     }
 }

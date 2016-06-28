@@ -37,7 +37,8 @@ namespace Cundd\Rest;
  *
  * @package Cundd\Rest
  */
-interface HandlerInterface {
+interface HandlerInterface
+{
     /**
      * Sets the current request
      *

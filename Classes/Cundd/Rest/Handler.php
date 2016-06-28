@@ -41,7 +41,8 @@ use Traversable;
  *
  * @package Cundd\Rest
  */
-class Handler implements CrudHandlerInterface {
+class Handler implements CrudHandlerInterface
+{
     /**
      * Current request
      *
@@ -73,14 +74,16 @@ class Handler implements CrudHandlerInterface {
      *
      * @param \Cundd\Rest\ObjectManager $objectManager
      */
-    public function injectObjectManager(\Cundd\Rest\ObjectManager $objectManager) {
+    public function injectObjectManager(\Cundd\Rest\ObjectManager $objectManager)
+    {
         $this->objectManager = $objectManager;
     }
 
     /**
      * @param \Cundd\Rest\ResponseFactoryInterface $responseFactory
      */
-    public function injectResponseFActory(\Cundd\Rest\ResponseFactoryInterface $responseFactory) {
+    public function injectResponseFActory(\Cundd\Rest\ResponseFactoryInterface $responseFactory)
+    {
         $this->responseFactory = $responseFactory;
     }
 
@@ -90,9 +93,10 @@ class Handler implements CrudHandlerInterface {
      * @param \Cundd\Rest\Request $request
      * @return $this
      */
-    public function setRequest($request) {
+    public function setRequest($request)
+    {
         $this->request = $request;
-        $this->identifier = NULL;
+        $this->identifier = null;
         return $this;
     }
 
@@ -101,7 +105,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return \Cundd\Rest\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         if (!$this->request) {
             return $this->objectManager->getRequestFactory()->getRequest();
         }
@@ -113,7 +118,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return string
      */
-    public function getIdentifier() {
+    public function getIdentifier()
+    {
         return $this->identifier;
     }
 
@@ -123,7 +129,8 @@ class Handler implements CrudHandlerInterface {
      * @param string $identifier
      * @return $this
      */
-    public function setIdentifier($identifier) {
+    public function setIdentifier($identifier)
+    {
         $this->identifier = $identifier;
         return $this;
     }
@@ -134,11 +141,12 @@ class Handler implements CrudHandlerInterface {
      * @param string $propertyKey
      * @return mixed
      */
-    public function getProperty($propertyKey) {
+    public function getProperty($propertyKey)
+    {
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404);
         }
         return $dataProvider->getModelProperty($model, $propertyKey);
     }
@@ -148,14 +156,15 @@ class Handler implements CrudHandlerInterface {
      *
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function show() {
+    public function show()
+    {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* SHOW
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404);
         }
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
@@ -171,7 +180,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function replace() {
+    public function replace()
+    {
         $dataProvider = $this->getDataProvider();
 
         $request = $this->getRequest();
@@ -181,13 +191,13 @@ class Handler implements CrudHandlerInterface {
 
         $oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$oldModel) {
-            return $this->responseFactory->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404);
         }
 
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 400);
+            return $this->responseFactory->createSuccessResponse(null, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
@@ -205,7 +215,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function update() {
+    public function update()
+    {
         $dataProvider = $this->getDataProvider();
 
         $request = $this->getRequest();
@@ -216,7 +227,7 @@ class Handler implements CrudHandlerInterface {
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
 
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
@@ -234,17 +245,18 @@ class Handler implements CrudHandlerInterface {
      *
      * @return integer Returns 200 an success
      */
-    public function delete() {
+    public function delete()
+    {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* REMOVE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404);
         }
         $dataProvider->removeModelForPath($model, $this->getPath());
-        return $this->responseFactory->createSuccessResponse(NULL, 200);
+        return $this->responseFactory->createSuccessResponse(null, 200);
     }
 
     /**
@@ -252,7 +264,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function create() {
+    public function create()
+    {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* CREATE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -267,7 +280,7 @@ class Handler implements CrudHandlerInterface {
          */
         $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(NULL, 400);
+            return $this->responseFactory->createSuccessResponse(null, 400);
         }
 
         $dataProvider->saveModelForPath($model, $this->getPath());
@@ -285,7 +298,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return array Returns all Models
      */
-    public function listAll() {
+    public function listAll()
+    {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* LIST 																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
@@ -308,7 +322,8 @@ class Handler implements CrudHandlerInterface {
     /**
      * Configure the API paths
      */
-    public function configureApiPaths() {
+    public function configureApiPaths()
+    {
         $dispatcher = Dispatcher::getSharedDispatcher();
 
         /** @var HandlerInterface */
@@ -388,7 +403,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return DataProviderInterface
      */
-    protected function getDataProvider() {
+    protected function getDataProvider()
+    {
         return $this->objectManager->getDataProvider();
     }
 
@@ -397,7 +413,8 @@ class Handler implements CrudHandlerInterface {
      *
      * @return string
      */
-    protected function getPath() {
+    protected function getPath()
+    {
         return $this->getRequest()->path();
     }
 }

@@ -33,8 +33,8 @@
 
 namespace Cundd\Rest\Authentication;
 
-
-interface UserProviderInterface {
+interface UserProviderInterface
+{
     /**
      * Returns if the user with the given credentials is valid
      *
