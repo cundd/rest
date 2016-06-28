@@ -11,31 +11,30 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-    'title' => 'rest',
-    'description' => 'REST API for TYPO3 CMS',
-    'category' => 'services',
-    'author' => 'Daniel Corn',
-    'author_email' => 'info@cundd.net',
-    'author_company' => 'cundd',
-    'shy' => '',
-    'priority' => '',
-    'module' => '',
-    'state' => 'beta',
-    'internal' => '',
-    'uploadfolder' => '0',
-    'createDirs' => '',
-    'modify_tables' => '',
+    'title'            => 'rest',
+    'description'      => 'REST API for TYPO3 CMS',
+    'category'         => 'services',
+    'author'           => 'Daniel Corn',
+    'author_email'     => 'info@cundd.net',
+    'author_company'   => 'cundd',
+    'shy'              => '',
+    'priority'         => '',
+    'module'           => '',
+    'state'            => 'beta',
+    'internal'         => '',
+    'uploadfolder'     => '0',
+    'createDirs'       => '',
+    'modify_tables'    => '',
     'clearCacheOnLoad' => 0,
-    'lockType' => '',
-    'version' => '2.1.0',
-    'constraints' => array(
-        'depends' => array(
+    'lockType'         => '',
+    'version'          => '2.1.0',
+    'constraints'      => array(
+        'depends'   => array(
             'typo3' => '4.7.0-7.99.99',
+        ),
+        'conflicts' => array(),
+        'suggests'  => array(
             'cundd_composer' => '2.0',
-        ),
-        'conflicts' => array(
-        ),
-        'suggests' => array(
         ),
     ),
 );

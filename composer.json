@@ -1,0 +1,26 @@
+{
+    "name": "cundd/rest",
+    "type": "typo3-cms-extension",
+    "description": "REST API for TYPO3 CMS",
+    "keywords": ["typo3cms"],
+    "authors": [
+        {
+            "name": "Daniel Corn",
+            "email": "info@cundd.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "license": "GPL-2.0+",
+    "autoload": {
+        "psr-0": {
+            "Cundd\\Rest": "Classes/"
+        }
+    },
+    "replace": {
+        "rest": "self.version",
+        "typo3-ter/rest": "self.version"
+    },
+    "suggest": {
+        "vlucas/bulletphp": "Required for the REST extension to work"
+    }
+}
