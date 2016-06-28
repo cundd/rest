@@ -656,6 +656,7 @@ class DataProvider implements DataProviderInterface
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
                 return array(
+                    'uid'         => $originalResource->getUid(),
                     'name'        => $originalResource->getName(),
                     'mimeType'    => $originalResource->getMimeType(),
                     'url'         => $originalResource->getPublicUrl(),
