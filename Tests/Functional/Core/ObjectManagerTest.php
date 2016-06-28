@@ -371,6 +371,5 @@ class ObjectManagerTest extends AbstractCase
         $code[] = '{}';
 
         eval(implode(' ', $code));
-        var_dump(class_exists(($namespace ? $namespace . '\\' : '' ).$className));
     }
 }

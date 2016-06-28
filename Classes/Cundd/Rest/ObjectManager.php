@@ -102,30 +102,40 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
         if (!$this->dataProvider) {
             list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-            // Check if an extension provides a Data Provider for the domain model
-            $dataProviderClass = 'Tx_' . $extension . '_Rest_' . $model . 'DataProvider';
-            if (!class_exists($dataProviderClass)) {
-                $dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\' . $model . 'DataProvider';
-            }
+            $classes = array(
+                // Check if an extension provides a Data Provider for the domain model
+                'Tx_' . $extension . '_Rest_' . $model . 'DataProvider',
+                ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\' . $model . 'DataProvider',
 
-            // Check if an extension provides a Data Provider
-            if (!class_exists($dataProviderClass)) {
-                $dataProviderClass = 'Tx_' . $extension . '_Rest_DataProvider';
-            }
-            if (!class_exists($dataProviderClass)) {
-                $dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
-            }
-            // Get the specific builtin Data Provider
-            if (!class_exists($dataProviderClass)) {
-                $dataProviderClass = 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider';
+                // Check if an extension provides a Data Provider
+                'Tx_' . $extension . '_Rest_DataProvider',
+                ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider',
+
+                // Check for a specific builtin Data Provider
+                'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider',
+
                 // Get the default Data Provider
-                if (!class_exists($dataProviderClass)) {
-                    $dataProviderClass = 'Cundd\\Rest\\DataProvider\\DataProviderInterface';
-                }
+                'Cundd\\Rest\\DataProvider\\DataProviderInterface',
+            );
+
+            $dataProviderClass = $this->getFirstExistingClass($classes);
+            if (!$dataProviderClass) {
+                throw new \Exception('No Data Provider found');
             }
             $this->dataProvider = $this->get($dataProviderClass);
         }
         return $this->dataProvider;
+    }
+
+
+    private function getFirstExistingClass(array $classes)
+    {
+        foreach ($classes as $class) {
+            if (class_exists($class) || interface_exists($class)) {
+                return $class;
+            }
+        }
+        return '';
     }
 
     /**
