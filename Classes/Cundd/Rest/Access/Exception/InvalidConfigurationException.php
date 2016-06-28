@@ -25,5 +25,6 @@
 
 namespace Cundd\Rest\Access\Exception;
 
-class InvalidConfigurationException extends \LogicException {
+class InvalidConfigurationException extends \LogicException
+{
 }

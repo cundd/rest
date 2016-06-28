@@ -42,7 +42,8 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class DocumentRepository extends Repository {
+class DocumentRepository extends Repository
+{
     /**
      * Currently selected database
      *
@@ -56,7 +57,7 @@ class DocumentRepository extends Repository {
      *
      * @var bool
      */
-    protected $useRawQueryResults = FALSE;
+    protected $useRawQueryResults = false;
 
     /**
      * Selects a database
@@ -64,9 +65,14 @@ class DocumentRepository extends Repository {
      * @param string $database
      * @throws InvalidDatabaseNameException if an invalid database name is provided
      */
-    public function setDatabase($database) {
-        if (!ctype_alnum($database)) throw new InvalidDatabaseNameException('The given database name contains invalid characters', 1389258923);
-        if (strtolower($database) !== $database) throw new InvalidDatabaseNameException('The given database name must be lowercase', 1389348390);
+    public function setDatabase($database)
+    {
+        if (!ctype_alnum($database)) {
+            throw new InvalidDatabaseNameException('The given database name contains invalid characters', 1389258923);
+        }
+        if (strtolower($database) !== $database) {
+            throw new InvalidDatabaseNameException('The given database name must be lowercase', 1389348390);
+        }
         $this->database = $database;
     }
 
@@ -75,7 +81,8 @@ class DocumentRepository extends Repository {
      *
      * @return string
      */
-    public function getDatabase() {
+    public function getDatabase()
+    {
         return $this->database;
     }
 
@@ -84,7 +91,8 @@ class DocumentRepository extends Repository {
      *
      * @return string
      */
-    public function database() {
+    public function database()
+    {
         if (func_num_args() > 0) {
             $this->setDatabase(func_get_arg(0));
         }
@@ -103,7 +111,8 @@ class DocumentRepository extends Repository {
      * @throws \Cundd\Rest\Domain\Exception\InvalidDocumentException if the given data could not be converted to a Document
      * @return Document Returns the registered Document
      */
-    public function register($data) {
+    public function register($data)
+    {
         if (is_object($data) && $data instanceof Document) {
             $this->registerObject($data);
             return $data;
@@ -124,7 +133,8 @@ class DocumentRepository extends Repository {
      * @throws \Cundd\Rest\Domain\Exception\InvalidDocumentException if the given data could not be converted to a Document
      * @return Document Returns the registered Document
      */
-    public function registerData($data) {
+    public function registerData($data)
+    {
         $object = $this->convertToDocument($data);
         if (!$object) {
             throw new InvalidDocumentException('Could not convert the given data to a Document', 1389286531);
@@ -144,7 +154,8 @@ class DocumentRepository extends Repository {
      * @param Document $object
      * @return Document Returns the registered Document
      */
-    public function registerObject($object) {
+    public function registerObject($object)
+    {
         $foundObject = $this->findByGuid($object->getGuid());
 
         // If the object appears as new but has a matching object merge those
@@ -169,7 +180,8 @@ class DocumentRepository extends Repository {
      * @return void
      * @api
      */
-    public function add($object) {
+    public function add($object)
+    {
         if (!$object->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
@@ -190,7 +202,8 @@ class DocumentRepository extends Repository {
      * @return void
      * @api
      */
-    public function remove($object) {
+    public function remove($object)
+    {
         if (!$object->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
@@ -211,7 +224,8 @@ class DocumentRepository extends Repository {
      * @return void
      * @api
      */
-    public function update($modifiedObject) {
+    public function update($modifiedObject)
+    {
         if (!$modifiedObject->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
@@ -231,9 +245,12 @@ class DocumentRepository extends Repository {
      * @return array<Document>
      * @api
      */
-    public function findAll() {
+    public function findAll()
+    {
         $currentDatabase = $this->getDatabase();
-        if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        if (!$currentDatabase) {
+            throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        }
 
         $query = $this->createQuery();
         $query->matching($query->equals('db', $currentDatabase));
@@ -249,13 +266,16 @@ class DocumentRepository extends Repository {
      * @return array<array>
      * @api
      */
-    public function findAllRaw() {
+    public function findAllRaw()
+    {
         $currentDatabase = $this->getDatabase();
-        if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        if (!$currentDatabase) {
+            throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        }
 
         $query = $this->createQuery();
         if (method_exists($query->getQuerySettings(), 'setReturnRawQueryResult')) {
-            $query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+            $query->getQuerySettings()->setReturnRawQueryResult(true);
         }
         $query->matching($query->equals('db', $currentDatabase));
         return $query->execute();
@@ -269,7 +289,8 @@ class DocumentRepository extends Repository {
      * @param string $database
      * @return array<Document>
      */
-    public function findByDatabase($database) {
+    public function findByDatabase($database)
+    {
         $this->setDatabase($database);
         return $this->findAll();
     }
@@ -280,7 +301,8 @@ class DocumentRepository extends Repository {
      * @param string $guid
      * @return Document
      */
-    public function findByGuid($guid) {
+    public function findByGuid($guid)
+    {
         /** @var Query $query */
         $query = $this->createQuery();
         list($database, $id) = explode('-', $guid, 2);
@@ -295,7 +317,7 @@ class DocumentRepository extends Repository {
 
         $result = $this->convertCollection($query->execute());
         if (!$result) {
-            return NULL;
+            return null;
         }
         if ($this->useRawQueryResults) {
             return reset($result);
@@ -303,7 +325,7 @@ class DocumentRepository extends Repository {
         if ($result instanceof QueryResultInterface) {
             return $result->getFirst();
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -312,13 +334,14 @@ class DocumentRepository extends Repository {
      * @param string $id
      * @return Document
      */
-    public function findOneById($id) {
+    public function findOneById($id)
+    {
         $query = $this->createQuery();
         $query->matching($query->equals('id', $id));
 
         $result = $this->convertCollection($query->execute());
         if (!$result) {
-            return NULL;
+            return null;
         }
         if ($this->useRawQueryResults) {
             return reset($result);
@@ -326,13 +349,14 @@ class DocumentRepository extends Repository {
         if ($result instanceof QueryResultInterface) {
             return $result->getFirst();
         }
-        return NULL;
+        return null;
     }
 
     /**
      * @see findOneById()
      */
-    public function findById($id) {
+    public function findById($id)
+    {
         return $this->findOneById($id);
     }
 
@@ -342,7 +366,8 @@ class DocumentRepository extends Repository {
      * @return array<Document>
      * @api
      */
-    public function findAllIgnoreDatabase() {
+    public function findAllIgnoreDatabase()
+    {
         return $this->convertCollection($this->createQuery()->execute());
     }
 
@@ -353,9 +378,12 @@ class DocumentRepository extends Repository {
      * @return integer The object count
      * @api
      */
-    public function countAll() {
+    public function countAll()
+    {
         $currentDatabase = $this->getDatabase();
-        if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        if (!$currentDatabase) {
+            throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+        }
 
         $query = $this->createQuery();
         $query->matching($query->equals('db', $currentDatabase));
@@ -371,16 +399,19 @@ class DocumentRepository extends Repository {
      *
      * @api
      */
-    public function removeAll() {
-        foreach ($this->findAll() AS $object) {
+    public function removeAll()
+    {
+        foreach ($this->findAll() as $object) {
             $this->remove($object);
         }
 
         if ($this->useRawQueryResults) {
             $currentDatabase = $this->getDatabase();
-            if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+            if (!$currentDatabase) {
+                throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+            }
 
-            $GLOBALS['TYPO3_DB']->store_lastBuiltQuery = TRUE;
+            $GLOBALS['TYPO3_DB']->store_lastBuiltQuery = true;
             /** @var DatabaseConnection $databaseConnection */
             $databaseConnection = $GLOBALS['TYPO3_DB'];
 
@@ -395,7 +426,8 @@ class DocumentRepository extends Repository {
      * @param string $database
      * @return boolean|\mysqli_result|object MySQLi result object / DBAL object
      */
-    public function removeAllFromDatabase($database) {
+    public function removeAllFromDatabase($database)
+    {
         /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
         $databaseConnection = $GLOBALS['TYPO3_DB'];
 
@@ -418,7 +450,8 @@ class DocumentRepository extends Repository {
      * @return object The matching object if found, otherwise NULL
      * @api
      */
-    public function findByUid($uid) {
+    public function findByUid($uid)
+    {
         return $this->persistenceManager->getObjectByIdentifier($uid, $this->objectType);
     }
 
@@ -429,7 +462,8 @@ class DocumentRepository extends Repository {
      * @return object The matching object if found, otherwise NULL
      * @api
      */
-    public function findByIdentifier($identifier) {
+    public function findByIdentifier($identifier)
+    {
         return $this->persistenceManager->getObjectByIdentifier($identifier, $this->objectType);
     }
 
@@ -469,7 +503,8 @@ class DocumentRepository extends Repository {
      * @return mixed
      * @api
      */
-    public function __call($methodName, $arguments) {
+    public function __call($methodName, $arguments)
+    {
         // @todo: Fix me
 //		$currentDatabase = $this->getDatabase();
 //		if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
@@ -506,11 +541,12 @@ class DocumentRepository extends Repository {
      * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
      * @api
      */
-    public function createQuery() {
+    public function createQuery()
+    {
         $query = parent::createQuery();
         $querySettings = $query->getQuerySettings();
-        $querySettings->setRespectSysLanguage(FALSE);
-        $querySettings->setRespectStoragePage(FALSE);
+        $querySettings->setRespectSysLanguage(false);
+        $querySettings->setRespectStoragePage(false);
         if (method_exists($querySettings, 'setReturnRawQueryResult')) {
             $querySettings->setReturnRawQueryResult($this->useRawQueryResults);
         }
@@ -526,7 +562,8 @@ class DocumentRepository extends Repository {
      * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
      * @return mixed|null|object
      */
-    public function findWithProperties($properties, $count = FALSE, $limit = -1) {
+    public function findWithProperties($properties, $count = false, $limit = -1)
+    {
         /** @var Query $query */
         $query = $this->createQuery();
 
@@ -539,7 +576,9 @@ class DocumentRepository extends Repository {
             unset($properties['guid']);
         } else {
             $currentDatabase = $this->getDatabase();
-            if (!$currentDatabase) throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+            if (!$currentDatabase) {
+                throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
+            }
             $query->matching($query->equals('db', $currentDatabase));
         }
 
@@ -569,12 +608,12 @@ class DocumentRepository extends Repository {
          * that were not filtered in the query
          */
         foreach ($resultCollection as $currentDocument) {
-            $isMatchingResult = TRUE;
+            $isMatchingResult = true;
             $currentDocumentData = $currentDocument->_getUnpackedData();
 
             foreach ($properties as $propertyKey => $propertyValue) {
                 if ($propertyValue !== ObjectAccess::getPropertyPath($currentDocumentData, $propertyKey)) {
-                    $isMatchingResult = FALSE;
+                    $isMatchingResult = false;
                     break;
                 }
             }
@@ -595,7 +634,8 @@ class DocumentRepository extends Repository {
      * @param array|QueryResultInterface $resultCollection
      * @return array<Document>
      */
-    public function convertCollection($resultCollection) {
+    public function convertCollection($resultCollection)
+    {
         if (!$this->useRawQueryResults) {
             if (is_object($resultCollection) && $resultCollection->count() === 0) {
                 return array();
@@ -617,9 +657,10 @@ class DocumentRepository extends Repository {
      * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
      * @return Document
      */
-    public function convertToDocument($input) {
+    public function convertToDocument($input)
+    {
         if (!$input) {
-            return NULL;
+            return null;
         }
 
         $inputData = $input;
@@ -629,14 +670,14 @@ class DocumentRepository extends Repository {
             }
         }
 
-        $convertedObject = NULL;
+        $convertedObject = null;
         if (!$this->useRawQueryResults) {
             // If the input already is a Document return it
             if (is_object($input) && $input instanceof Document) {
                 return $input;
             }
 
-            switch (TRUE) {
+            switch (true) {
                 case isset($inputData['uid']):
                     $convertedObject = $this->findByUid($inputData['uid']);
                     break;
@@ -677,7 +718,7 @@ class DocumentRepository extends Repository {
          * assign it to the Document
          */
         foreach ($inputData as $key => $value) {
-//			if (ctype_lower($key[0])) { // Preserve the case
+            //			if (ctype_lower($key[0])) { // Preserve the case
 //				$key = GeneralUtility::underscoredToLowerCamelCase($key);
 //			} else {
 //				$key = GeneralUtility::underscoredToUpperCamelCase($key);
@@ -706,7 +747,8 @@ class DocumentRepository extends Repository {
      * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
      * @return Document
      */
-    protected function mergeDocuments($oldDocument, $newDocument) {
+    protected function mergeDocuments($oldDocument, $newDocument)
+    {
         $mergeKeys = array('uid', 'pid', 'id', 'db', Document::DATA_PROPERTY_NAME);
         foreach ($mergeKeys as $key) {
             if (isset($newDocument[$key]) && $newDocument[$key]) {
@@ -728,7 +770,8 @@ class DocumentRepository extends Repository {
      *
      * @param Document $document
      */
-    public function willChangeDocument($document) {
+    public function willChangeDocument($document)
+    {
     }
 
     /**
@@ -736,7 +779,8 @@ class DocumentRepository extends Repository {
      *
      * @param Document $document
      */
-    public function didChangeDocument($document) {
+    public function didChangeDocument($document)
+    {
     }
 
     /**
@@ -744,7 +788,8 @@ class DocumentRepository extends Repository {
      *
      * @return string Class name of the repository.
      */
-    protected function getRepositoryClassName() {
+    protected function getRepositoryClassName()
+    {
         new Document();
         if (version_compare(TYPO3_version, '6.0.0') < 0) {
             return 'Tx_Rest_Domain_Repository_DocumentRepository';
@@ -752,6 +797,4 @@ class DocumentRepository extends Repository {
 
         return __CLASS__;
     }
-
-
 }

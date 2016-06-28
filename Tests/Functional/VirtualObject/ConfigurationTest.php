@@ -39,13 +39,15 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class ConfigurationTest extends AbstractVirtualObjectCase {
+class ConfigurationTest extends AbstractVirtualObjectCase
+{
     /**
      * @var \Cundd\Rest\VirtualObject\Configuration
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $testConfiguration = $this->getTestConfigurationData();
@@ -54,7 +56,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
         );
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -62,7 +65,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getAllPropertiesTest() {
+    public function getAllPropertiesTest()
+    {
         $this->assertEquals(array(
             'property1',
             'property2',
@@ -78,7 +82,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getAllSourceKeysTest() {
+    public function getAllSourceKeysTest()
+    {
         $this->assertEquals(array(
             'property_one',
             'property_two',
@@ -94,7 +99,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function hasPropertyTest() {
+    public function hasPropertyTest()
+    {
         $this->assertTrue($this->fixture->hasProperty('property1'));
         $this->assertTrue($this->fixture->hasProperty('property2'));
         $this->assertTrue($this->fixture->hasProperty('property3'));
@@ -109,7 +115,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function hasSourceKeyTest() {
+    public function hasSourceKeyTest()
+    {
         $this->assertTrue($this->fixture->hasSourceKey('property_one'));
         $this->assertTrue($this->fixture->hasSourceKey('property_two'));
         $this->assertTrue($this->fixture->hasSourceKey('property_three'));
@@ -124,7 +131,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getConfigurationForPropertyTest() {
+    public function getConfigurationForPropertyTest()
+    {
         $testPropertyConfiguration = array(
             'type' => 'string',
             'column' => 'property_one',
@@ -137,7 +145,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getSourceKeyForPropertyTest() {
+    public function getSourceKeyForPropertyTest()
+    {
         $this->assertEquals('property_three', $this->fixture->getSourceKeyForProperty('property3'));
         $this->assertEquals('property_six', $this->fixture->getSourceKeyForProperty('property6'));
         $this->assertNull($this->fixture->getSourceKeyForProperty('propertyNotExists'));
@@ -146,7 +155,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getPropertyForSourceKeyTest() {
+    public function getPropertyForSourceKeyTest()
+    {
         $this->assertEquals('property3', $this->fixture->getPropertyForSourceKey('property_three'));
         $this->assertEquals('property6', $this->fixture->getPropertyForSourceKey('property_six'));
         $this->assertNull($this->fixture->getPropertyForSourceKey('propertyNotExists'));
@@ -155,7 +165,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getTypeForPropertyTest() {
+    public function getTypeForPropertyTest()
+    {
         $this->assertEquals('int', $this->fixture->getTypeForProperty('property3'));
         $this->assertEquals('boolean', $this->fixture->getTypeForProperty('property6'));
         $this->assertNull($this->fixture->getTypeForProperty('propertyNotExists'));
@@ -164,14 +175,16 @@ class ConfigurationTest extends AbstractVirtualObjectCase {
     /**
      * @test
      */
-    public function getSourceIdentifierTest() {
+    public function getSourceIdentifierTest()
+    {
         $this->assertEquals('my_resource_table', $this->fixture->getSourceIdentifier());
     }
 
     /**
      * @test
      */
-    public function getIdentifierTest() {
+    public function getIdentifierTest()
+    {
         $this->assertEquals('property1', $this->fixture->getIdentifier());
     }
 }

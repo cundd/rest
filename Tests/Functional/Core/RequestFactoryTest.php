@@ -41,20 +41,23 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class RequestFactoryTest extends AbstractCase {
+class RequestFactoryTest extends AbstractCase
+{
     /**
      * @var RequestFactoryInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
 
         $this->fixture = $this->buildRequestFactory();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         unset($_GET['u']);
         parent::tearDown();
@@ -63,7 +66,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriTest() {
+    public function getUriTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -73,7 +77,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithFormatTest() {
+    public function getUriWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/2', $request->url());
@@ -83,7 +88,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithHtmlFormatTest() {
+    public function getUriWithHtmlFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/2.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/2', $request->url());
@@ -93,7 +99,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getAliasUriTest() {
+    public function getAliasUriTest()
+    {
         $_GET['u'] = 'myAlias/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -103,7 +110,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getAliasUriWithFormatTest() {
+    public function getAliasUriWithFormatTest()
+    {
         $_GET['u'] = 'myAlias/2.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/2', $request->url());
@@ -113,7 +121,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getAliasUriWithHtmlFormatTest() {
+    public function getAliasUriWithHtmlFormatTest()
+    {
         $_GET['u'] = 'myAlias/2.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel/2', $request->url());
@@ -123,7 +132,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getOriginalPathTest() {
+    public function getOriginalPathTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->originalPath());
@@ -132,7 +142,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getOriginalPathWithFormatTest() {
+    public function getOriginalPathWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->originalPath());
@@ -141,7 +152,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getRootObjectKeyTest() {
+    public function getRootObjectKeyTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
@@ -150,7 +162,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getRootObjectKeyWithFormatTest() {
+    public function getRootObjectKeyWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
@@ -159,7 +172,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUriTest() {
+    public function getDocumentUriTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -169,7 +183,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUriWithFormatTest() {
+    public function getDocumentUriWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -179,7 +194,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentUriWithHtmlFormatTest() {
+    public function getDocumentUriWithHtmlFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
@@ -189,7 +205,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getPathTest() {
+    public function getPathTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -198,7 +215,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getPathWithFormatTest() {
+    public function getPathWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -207,7 +225,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentPathTest() {
+    public function getDocumentPathTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -216,7 +235,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDocumentPathWithFormatTest() {
+    public function getDocumentPathWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -225,7 +245,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getOriginalPathWithDocumentTest() {
+    public function getOriginalPathWithDocumentTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->originalPath();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -234,7 +255,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getOriginalPathWithDocumentWithFormatTest() {
+    public function getOriginalPathWithDocumentWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->originalPath();
         $this->assertEquals('Document-MyExt-MyModel', $path);
@@ -243,7 +265,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getRootObjectKeyWithDocumentTest() {
+    public function getRootObjectKeyWithDocumentTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $path = $this->fixture->getRequest()->getRootObjectKey();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -252,7 +275,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getRootObjectKeyWithDocumentWithFormatTest() {
+    public function getRootObjectKeyWithDocumentWithFormatTest()
+    {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->getRootObjectKey();
         $this->assertEquals('MyExt-MyModel', $path);
@@ -261,7 +285,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUnderscoredPathWithFormatAndIdTest() {
+    public function getUnderscoredPathWithFormatAndIdTest()
+    {
         $_GET['u'] = 'my_ext-my_model/1.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
@@ -270,7 +295,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUnderscoredPathWithFormatTest2() {
+    public function getUnderscoredPathWithFormatTest2()
+    {
         $_GET['u'] = 'my_ext-my_model.json';
         $path = $this->fixture->getRequest()->path();
         $this->assertEquals('my_ext-my_model', $path);
@@ -279,7 +305,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithoutFormatTest() {
+    public function getFormatWithoutFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -288,7 +315,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithFormatTest() {
+    public function getFormatWithFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -297,7 +325,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithHtmlFormatTest() {
+    public function getFormatWithHtmlFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('html', $request->format());
@@ -306,7 +335,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getFormatWithNotExistingFormatTest() {
+    public function getFormatWithNotExistingFormatTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.blur';
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->format());
@@ -315,7 +345,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithAbsRefPrefixInSubDirectoryTest() {
+    public function getUriWithAbsRefPrefixInSubDirectoryTest()
+    {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
         $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory/'))->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -324,7 +355,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest() {
+    public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest()
+    {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
         $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory'))->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -333,7 +365,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithAbsRefPrefixSlashTest() {
+    public function getUriWithAbsRefPrefixSlashTest()
+    {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
         $request = $this->buildRequestFactory(array('absRefPrefix', null, '/'))->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -342,7 +375,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithAbsRefPrefixDomainTest() {
+    public function getUriWithAbsRefPrefixDomainTest()
+    {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
         $request = $this->buildRequestFactory(array('absRefPrefix', null, 'http://example.com/'))->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -351,7 +385,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function getUriWithAbsRefPrefixAutoTest() {
+    public function getUriWithAbsRefPrefixAutoTest()
+    {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
         $request = $this->buildRequestFactory(array('absRefPrefix', null, 'auto'))->getRequest();
         $this->assertEquals('MyExt-MyModel/1', $request->url());
@@ -360,7 +395,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function urlAndPathShouldNotIncludeQueryDataTest() {
+    public function urlAndPathShouldNotIncludeQueryDataTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1?query=string';
         $request = $this->buildRequestFactory()->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->path());
@@ -383,7 +419,8 @@ class RequestFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest() {
+    public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest()
+    {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
         $request = $this->buildRequestFactory()->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->path());
@@ -407,7 +444,8 @@ class RequestFactoryTest extends AbstractCase {
      * @param array ...$configurationProviderSetting
      * @return RequestFactory
      */
-    private function buildRequestFactory(array $configurationProviderSetting = null) {
+    private function buildRequestFactory(array $configurationProviderSetting = null)
+    {
         /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $configurationProviderMock */
         $configurationProviderMock = $this->getMockBuilder('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
             ->getMock();

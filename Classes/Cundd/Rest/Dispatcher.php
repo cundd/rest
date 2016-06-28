@@ -44,7 +44,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @package Cundd\Rest
  */
-class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface {
+class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface
+{
     /**
      * @var \Cundd\Rest\ObjectManager
      */
@@ -75,12 +76,13 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @var \Cundd\Rest\Dispatcher
      */
-    static protected $sharedDispatcher;
+    protected static $sharedDispatcher;
 
     /**
      * Initialize
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->app = new \Bullet\App();
 
         $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
@@ -98,7 +100,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param Response $responsePointer Reference to be filled with the response
      * @return boolean Returns if the request has been successfully dispatched
      */
-    public function dispatch(Request $request = NULL, Response &$responsePointer = NULL) {
+    public function dispatch(Request $request = null, Response &$responsePointer = null)
+    {
         if ($request) {
             $this->requestFactory->registerCurrentRequest($request);
             $this->objectManager->reassignRequest();
@@ -118,19 +121,19 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
             case AccessControllerInterface::ACCESS_UNAUTHORIZED:
                 echo $this->responseFactory->createErrorResponse('Unauthorized', 401);
-                return FALSE;
+                return false;
 
             case AccessControllerInterface::ACCESS_DENY:
             default:
                 echo $this->responseFactory->createErrorResponse('Forbidden', 403);
-                return FALSE;
+                return false;
         }
 
         /** @var Cache $cache */
         $cache = $this->objectManager->getCache();
         $response = $cache->getCachedValueForRequest($request);
 
-        $success = TRUE;
+        $success = true;
 
         // If no cached response exists
         if (!$response) {
@@ -146,7 +149,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
             // Handle exceptions
             if ($response->content() instanceof \Exception) {
-                $success = FALSE;
+                $success = false;
 
                 $exception = $response->content();
                 $this->logException($exception);
@@ -181,7 +184,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @return boolean Returns if the request has been successfully dispatched
      */
-    public function greet() {
+    public function greet()
+    {
         /** @var \Cundd\Rest\Request $request */
         $request = $this->requestFactory->getRequest();
 
@@ -190,7 +194,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             $hour = date('H');
             if ($hour <= '10') {
                 $greeting = 'Good Morning!';
-            } else if ($hour >= '23') {
+            } elseif ($hour >= '23') {
                 $greeting = 'Hy! Still awake?';
             }
             return $greeting;
@@ -201,7 +205,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         $responseString = (string)$response;
         $this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
         echo $responseString;
-        return TRUE;
+        return true;
     }
 
     /**
@@ -210,7 +214,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Exception $exception
      * @return Response
      */
-    public function exceptionToResponse($exception) {
+    public function exceptionToResponse($exception)
+    {
         if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
             return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
         }
@@ -224,7 +229,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @return \Cundd\Rest\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->requestFactory->getRequest();
     }
 
@@ -235,7 +241,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @return \Bullet\App
      */
-    public function getApp() {
+    public function getApp()
+    {
         return $this->app;
     }
 
@@ -246,7 +253,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerParameter($param, \Closure $callback) {
+    public function registerParameter($param, \Closure $callback)
+    {
         $this->app->param($param, $callback);
         return $this;
     }
@@ -258,7 +266,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerPath($path, \Closure $callback) {
+    public function registerPath($path, \Closure $callback)
+    {
         $this->app->path($path, $callback);
         return $this;
     }
@@ -269,7 +278,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerGetMethod(\Closure $callback) {
+    public function registerGetMethod(\Closure $callback)
+    {
         $this->app->method('GET', $callback);
         return $this;
     }
@@ -280,7 +290,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerPostMethod(\Closure $callback) {
+    public function registerPostMethod(\Closure $callback)
+    {
         $this->app->method('POST', $callback);
         return $this;
     }
@@ -291,7 +302,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerPutMethod(\Closure $callback) {
+    public function registerPutMethod(\Closure $callback)
+    {
         $this->app->method('PUT', $callback);
         return $this;
     }
@@ -302,7 +314,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerDeleteMethod(\Closure $callback) {
+    public function registerDeleteMethod(\Closure $callback)
+    {
         $this->app->method('DELETE', $callback);
         return $this;
     }
@@ -313,7 +326,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerPatchMethod(\Closure $callback) {
+    public function registerPatchMethod(\Closure $callback)
+    {
         $this->app->method('PATCH', $callback);
         return $this;
     }
@@ -325,7 +339,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param \Closure $callback
      * @return $this
      */
-    public function registerHttpMethod($methods, \Closure $callback) {
+    public function registerHttpMethod($methods, \Closure $callback)
+    {
         $this->app->method($methods, $callback);
         return $this;
     }
@@ -335,7 +350,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @return \TYPO3\CMS\Core\Log\Logger
      */
-    public function getLogger() {
+    public function getLogger()
+    {
         if (!$this->logger) {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
@@ -348,7 +364,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param string $message
      * @param array $data
      */
-    public function logRequest($message, $data = NULL) {
+    public function logRequest($message, $data = null)
+    {
         if ($this->getExtensionConfiguration('logRequests')) {
             $this->log($message, $data);
         }
@@ -360,7 +377,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param string $message
      * @param array $data
      */
-    public function logResponse($message, $data = NULL) {
+    public function logResponse($message, $data = null)
+    {
         if ($this->getExtensionConfiguration('logResponse')) {
             $this->log($message, $data);
         }
@@ -371,7 +389,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @param \Exception $exception
      */
-    public function logException($exception) {
+    public function logException($exception)
+    {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
         $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
     }
@@ -382,7 +401,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param string $message
      * @param array $data
      */
-    public function log($message, $data = NULL) {
+    public function log($message, $data = null)
+    {
         if ($data) {
             $this->getLogger()->log(LogLevel::DEBUG, $message, $data);
         } else {
@@ -398,7 +418,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return Response
      * @deprecated use ResponseFactory->createErrorResponse()
      */
-    public function createErrorResponse($data, $status) {
+    public function createErrorResponse($data, $status)
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->responseFactory->createErrorResponse($data, $status);
     }
@@ -411,7 +432,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return Response
      * @deprecated use ResponseFactory->createSuccessResponse()
      */
-    public function createSuccessResponse($data, $status) {
+    public function createSuccessResponse($data, $status)
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->responseFactory->createSuccessResponse($data, $status);
     }
@@ -425,7 +447,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return Response
      * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
      */
-    protected function _createResponse($data, $status, $forceError = FALSE) {
+    protected function _createResponse($data, $status, $forceError = false)
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         /** @var ResponseFactory $responseFactory */
         $responseFactory = $this->responseFactory;
@@ -436,7 +459,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return string
      * @deprecated use getRequest()->path() instead
      */
-    public function getPath() {
+    public function getPath()
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->path();
     }
@@ -445,7 +469,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return string
      * @deprecated use getRequest()->originalPath() instead
      */
-    public function getOriginalPath() {
+    public function getOriginalPath()
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->originalPath();
     }
@@ -457,7 +482,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return string
      * @deprecated use the RequestFactory::getUri() instead
      */
-    public function getUri(&$format = '') {
+    public function getUri(&$format = '')
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getUri($format);
     }
@@ -468,7 +494,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return mixed
      * @deprecated use the request's getSentData()
      */
-    public function getSentData() {
+    public function getSentData()
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->getSentData();
     }
@@ -480,7 +507,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @return string
      * @deprecated use the request's getRootObjectKey()
      */
-    public function getRootObjectKey() {
+    public function getRootObjectKey()
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         return $this->requestFactory->getRequest()->getRootObjectKey();
     }
@@ -491,7 +519,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param $key
      * @return mixed
      */
-    protected function getExtensionConfiguration($key) {
+    protected function getExtensionConfiguration($key)
+    {
         // Read the configuration from the globals
         static $configuration;
         if (!$configuration) {
@@ -507,13 +536,14 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         if (isset($configuration[$key])) {
             return $configuration[$key];
         }
-        return NULL;
+        return null;
     }
 
     /**
      * Register singulars to the plural
      */
-    protected function registerSingularToPlural() {
+    protected function registerSingularToPlural()
+    {
         $singularToPlural = $this->objectManager->getConfigurationProvider()->getSetting('singularToPlural');
         if ($singularToPlural) {
             foreach ($singularToPlural as $singular => $plural) {
@@ -527,7 +557,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @return \Cundd\Rest\Dispatcher
      */
-    static public function getSharedDispatcher() {
+    public static function getSharedDispatcher()
+    {
         if (!self::$sharedDispatcher) {
             new static();
         }

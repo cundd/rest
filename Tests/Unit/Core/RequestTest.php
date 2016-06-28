@@ -12,11 +12,13 @@ use Cundd\Rest\Request;
 
 require_once __DIR__ . '/../../Bootstrap.php';
 
-class RequestTest extends \PHPUnit_Framework_TestCase {
+class RequestTest extends \PHPUnit_Framework_TestCase
+{
     /**
      * @test
      */
-    public function getSentDataTest() {
+    public function getSentDataTest()
+    {
         $testData = array(
             'myData' => array(
                 'name' => 'Blur',
@@ -31,7 +33,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
     /**
      * @test
      */
-    public function getSentDataFromRawBodyTest() {
+    public function getSentDataFromRawBodyTest()
+    {
         $testData = array(
             'myData' => array(
                 'name' => 'Test Name',
@@ -50,7 +53,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase {
      * @param mixed $rawBody
      * @return Request
      */
-    protected function buildTestRequest($method = null, $url = null, array $params = array(), array $headers = array(), $rawBody = null) {
+    protected function buildTestRequest($method = null, $url = null, array $params = array(), array $headers = array(), $rawBody = null)
+    {
         $path = strtok($url, '/');
         $request = new \Cundd\Rest\Request($method, $url, $params, $headers, $rawBody);
         $request->initWithPathAndOriginalPath($path, $path);

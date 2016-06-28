@@ -35,13 +35,13 @@ use Cundd\Rest\DataProvider\Utility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-
 /**
  * The class caches responses of requests
  *
  * @package Cundd\Rest\Cache
  */
-class Cache {
+class Cache
+{
     /**
      * @var \Cundd\Rest\ObjectManager
      * @inject
@@ -67,14 +67,14 @@ class Cache {
      *
      * @var integer
      */
-    protected $cacheLifeTime = NULL;
+    protected $cacheLifeTime = null;
 
     /**
      * Life time defined in the expires header
      *
      * @var integer
      */
-    protected $expiresHeaderLifeTime = NULL;
+    protected $expiresHeaderLifeTime = null;
 
     /**
      * Returns the cached value for the given request or NULL if it is not
@@ -83,11 +83,12 @@ class Cache {
      * @param \Cundd\Rest\Request $request
      * @return \Bullet\Response
      */
-    public function getCachedValueForRequest(\Cundd\Rest\Request $request) {
+    public function getCachedValueForRequest(\Cundd\Rest\Request $request)
+    {
         $this->currentRequest = $request;
 
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
-        $cacheInstance = NULL;
+        $cacheInstance = null;
         $cacheLifeTime = $this->getCacheLifeTime();
 
         /*
@@ -96,18 +97,18 @@ class Cache {
          */
         $useCaching = ($cacheLifeTime !== -1) && $request->path();
         if (!$useCaching) {
-            return NULL;
+            return null;
         }
 
         $cacheInstance = $this->_getCacheInstance();
         $responseArray = $cacheInstance->get($this->_getCacheKey());
         if (!$responseArray) {
-            return NULL;
+            return null;
         }
 
         if (!$request->isRead()) {
             $this->_clearCache();
-            return NULL;
+            return null;
         }
 
         /** TODO: Send 304 status if appropriate */
@@ -127,11 +128,12 @@ class Cache {
      * @param \Cundd\Rest\Request $request
      * @param \Bullet\Response $response
      */
-    public function setCachedValueForRequest(\Cundd\Rest\Request $request, Response $response) {
+    public function setCachedValueForRequest(\Cundd\Rest\Request $request, Response $response)
+    {
         $this->currentRequest = $request;
 
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
-        $cacheInstance = NULL;
+        $cacheInstance = null;
 
         // Don't cache exceptions
         if ($response->content() instanceof \Exception) {
@@ -170,7 +172,8 @@ class Cache {
      * @param \Cundd\Rest\Request $request
      * @return string
      */
-    public function getCacheKeyForRequest(\Cundd\Rest\Request $request) {
+    public function getCacheKeyForRequest(\Cundd\Rest\Request $request)
+    {
         $this->currentRequest = $request;
         return $this->_getCacheKey();
     }
@@ -182,7 +185,8 @@ class Cache {
      * @param int $cacheLifeTime
      * @return $this
      */
-    public function setCacheLifeTime($cacheLifeTime) {
+    public function setCacheLifeTime($cacheLifeTime)
+    {
         $this->cacheLifeTime = $cacheLifeTime;
         return $this;
     }
@@ -192,10 +196,11 @@ class Cache {
      *
      * @return int
      */
-    public function getCacheLifeTime() {
-        if ($this->cacheLifeTime === NULL) {
+    public function getCacheLifeTime()
+    {
+        if ($this->cacheLifeTime === null) {
             $readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime');
-            if ($readCacheLifeTime === NULL) {
+            if ($readCacheLifeTime === null) {
                 $readCacheLifeTime = -1;
             }
             $this->cacheLifeTime = intval($readCacheLifeTime);
@@ -209,7 +214,8 @@ class Cache {
      * @param int $expiresHeaderLifeTime
      * @return $this
      */
-    public function setExpiresHeaderLifeTime($expiresHeaderLifeTime) {
+    public function setExpiresHeaderLifeTime($expiresHeaderLifeTime)
+    {
         $this->expiresHeaderLifeTime = $expiresHeaderLifeTime;
         return $this;
     }
@@ -219,10 +225,11 @@ class Cache {
      *
      * @return int
      */
-    public function getExpiresHeaderLifeTime() {
-        if ($this->expiresHeaderLifeTime === NULL) {
+    public function getExpiresHeaderLifeTime()
+    {
+        if ($this->expiresHeaderLifeTime === null) {
             $readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('expiresHeaderLifeTime');
-            $this->expiresHeaderLifeTime = ($readCacheLifeTime !== NULL) ? intval($readCacheLifeTime) : $this->getCacheLifeTime();
+            $this->expiresHeaderLifeTime = ($readCacheLifeTime !== null) ? intval($readCacheLifeTime) : $this->getCacheLifeTime();
         }
         return $this->expiresHeaderLifeTime;
     }
@@ -233,7 +240,8 @@ class Cache {
      * @param $date
      * @return string
      */
-    protected function getHttpDate($date) {
+    protected function getHttpDate($date)
+    {
         return gmdate('D, d M Y H:i:s \G\M\T', $date);
     }
 
@@ -242,7 +250,8 @@ class Cache {
      *
      * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
      */
-    protected function _getCacheInstance() {
+    protected function _getCacheInstance()
+    {
         if (!$this->cacheInstance) {
             /** @var CacheManager $cacheManager */
             $cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
@@ -256,14 +265,16 @@ class Cache {
      *
      * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
      */
-    public function setCacheInstance($cacheInstance) {
+    public function setCacheInstance($cacheInstance)
+    {
         $this->cacheInstance = $cacheInstance;
     }
 
     /**
      * Clears the cache for the current request
      */
-    protected function _clearCache() {
+    protected function _clearCache()
+    {
         $allTags = $this->_getTags();
         $firstTag = $allTags[0];
         $this->_getCacheInstance()->flushByTag($firstTag);
@@ -274,7 +285,8 @@ class Cache {
      *
      * @return array[string]
      */
-    protected function _getTags() {
+    protected function _getTags()
+    {
         $currentPath = $this->currentRequest->path();
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($currentPath);
         return array(
@@ -289,7 +301,8 @@ class Cache {
      *
      * @return string
      */
-    protected function _getCacheKey() {
+    protected function _getCacheKey()
+    {
         $cacheKey = sha1($this->currentRequest->url() . '_' . $this->currentRequest->format() . '_' . $this->currentRequest->method());
         $params = $this->currentRequest->params();
         if ($this->currentRequest->isGet() && count($params)) {

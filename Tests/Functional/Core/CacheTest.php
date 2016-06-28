@@ -40,13 +40,15 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @package Cundd\Rest\Test\Core
  */
-class CacheTest extends AbstractCase {
+class CacheTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\Cache\Cache
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         /** @var Cache $fixture */
@@ -56,7 +58,8 @@ class CacheTest extends AbstractCase {
         $this->fixture = $fixture;
     }
 
-    protected function tearDown() {
+    protected function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -64,7 +67,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForRequestTest() {
+    public function getCacheKeyForRequestTest()
+    {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -74,7 +78,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriMyExtMyModel1BlurRequestTest() {
+    public function getCacheKeyForUriMyExtMyModel1BlurRequestTest()
+    {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri, 'blur');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -84,7 +89,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriMyExtMyModel1JsonRequestTest() {
+    public function getCacheKeyForUriMyExtMyModel1JsonRequestTest()
+    {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -94,7 +100,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriMyExtMyModel1JsonLowerCasedRequestTest() {
+    public function getCacheKeyForUriMyExtMyModel1JsonLowerCasedRequestTest()
+    {
         $uri = 'my_ext-my_model/1';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -104,7 +111,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriMyExtMyModelRequestTest() {
+    public function getCacheKeyForUriMyExtMyModelRequestTest()
+    {
         $uri = 'my_ext-my_model';
         $request = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -114,7 +122,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriVendorMySecondExtMyModel1LowerCasedRequestTest() {
+    public function getCacheKeyForUriVendorMySecondExtMyModel1LowerCasedRequestTest()
+    {
         $uri = 'vendor-my_second_ext-my_model/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -124,7 +133,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriVendorMySecondExtMyModel1RequestTest() {
+    public function getCacheKeyForUriVendorMySecondExtMyModel1RequestTest()
+    {
         $uri = 'Vendor-MySecondExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -134,7 +144,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriVendorNotExistingExtMyModel1RequestTest() {
+    public function getCacheKeyForUriVendorNotExistingExtMyModel1RequestTest()
+    {
         $uri = 'Vendor-NotExistingExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -144,7 +155,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriVendorNotExistingExtMyModel1JsonRequestTest() {
+    public function getCacheKeyForUriVendorNotExistingExtMyModel1JsonRequestTest()
+    {
         $uri      = 'Vendor-NotExistingExt-MyModel/1';
         $request  = $this->buildRequestWithUri($uri, 'json');
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -154,7 +166,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForUriMyAliasedModelTest() {
+    public function getCacheKeyForUriMyAliasedModelTest()
+    {
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
@@ -164,7 +177,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForGetRequestWithParameterTest() {
+    public function getCacheKeyForGetRequestWithParameterTest()
+    {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $request->setParams(array('q' => 'queryTestParamter'));
@@ -175,7 +189,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCacheKeyForGetRequestWithDifferentParameterShouldNotMatchTest() {
+    public function getCacheKeyForGetRequestWithDifferentParameterShouldNotMatchTest()
+    {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri);
         $request->setParams(array('q' => 'queryTestParamter'));
@@ -191,12 +206,13 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCachedInitialValueForRequestTest() {
+    public function getCachedInitialValueForRequestTest()
+    {
         $uri = 'MyAliasedModel' . time();
         $request = $this->buildRequestWithUri($uri);
 
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
-        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', false);
         $this->fixture->setCacheInstance($cacheInstance);
         $cachedValue = $this->fixture->getCachedValueForRequest($request);
         $this->assertNull($cachedValue);
@@ -205,7 +221,8 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function getCachedValueForRequestTest() {
+    public function getCachedValueForRequestTest()
+    {
         $uri = 'MyAliasedModel' . time();
         $responseArray = array(
             'content' => 'the content',
@@ -218,7 +235,7 @@ class CacheTest extends AbstractCase {
         $request = $this->buildRequestWithUri($uri);
 
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
-        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', false);
         $cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
         $this->fixture->setCacheInstance($cacheInstance);
         $response = $this->fixture->getCachedValueForRequest($request);
@@ -230,14 +247,15 @@ class CacheTest extends AbstractCase {
     /**
      * @test
      */
-    public function setCachedValueForRequestTest() {
+    public function setCachedValueForRequestTest()
+    {
         $response = new \Bullet\Response();
         $response->content('Test content');
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
 
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
-        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+        $cacheInstance = $this->getMock('TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', false);
         $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
         $this->fixture->setCacheInstance($cacheInstance);
         $this->fixture->setCachedValueForRequest($request, $response);

@@ -43,7 +43,8 @@ use TYPO3\CMS\Core\Log\LogLevel;
  *
  * @package Cundd\Rest\DataProvider
  */
-class VirtualObjectDataProvider extends DataProvider {
+class VirtualObjectDataProvider extends DataProvider
+{
     /**
      * @var array<\Cundd\Rest\VirtualObject\ObjectConverter>
      */
@@ -61,7 +62,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path
      * @return \Cundd\Rest\VirtualObject\ObjectConverter
      */
-    public function getObjectConverterForPath($path) {
+    public function getObjectConverterForPath($path)
+    {
         if (!isset($this->objectConverterMap[$path])) {
             $objectConverter = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ObjectConverter');
             $objectConverter->setConfiguration($this->getConfigurationForPath($path));
@@ -79,7 +81,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      * @return ConfigurationInterface
      */
-    public function getConfigurationForPath($path) {
+    public function getConfigurationForPath($path)
+    {
         $path = substr($path, strpos($path, '-') + 1); // Strip the "VirtualObject-" from the path
         if (!$path) {
             throw new MissingConfigurationException('Could not get configuration for empty path', 1395932408);
@@ -93,7 +96,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path) {
+    public function getRepositoryClassForPath($path)
+    {
         return 'Cundd\\Rest\\VirtualObject\\Persistence\\Repository';
     }
 
@@ -103,7 +107,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
      */
-    public function getRepositoryForPath($path) {
+    public function getRepositoryForPath($path)
+    {
         $repositoryClass = $this->getRepositoryClassForPath($path);
         /** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
@@ -119,11 +124,12 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path) {
+    public function getModelWithDataForPath($data, $path)
+    {
         // If no data is given return a new instance
         if (!$data) {
             return $this->getEmptyModelForPath($path);
-        } else if (is_scalar($data)) { // If it is a scalar treat it as identity
+        } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForPath($data, $path);
         }
 
@@ -132,9 +138,8 @@ class VirtualObjectDataProvider extends DataProvider {
             $objectConverter = $this->getObjectConverterForPath($path);
             $modelData = $objectConverter->convertFromVirtualObject($data);
             $model = $objectConverter->convertToVirtualObject($modelData);
-
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
-            $model = NULL;
+            $model = null;
 
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
@@ -148,7 +153,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path API path to get the model for
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
-    public function getEmptyModelForPath($path) {
+    public function getEmptyModelForPath($path)
+    {
         return new VirtualObject();
     }
 
@@ -158,7 +164,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
      * @return array<mixed>
      */
-    public function getModelData($model) {
+    public function getModelData($model)
+    {
         $properties = parent::getModelData($model);
         if ($properties === $model) {
             return array();
@@ -173,13 +180,14 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $propertyKey
      * @return mixed
      */
-    public function getModelProperty($model, $propertyKey) {
+    public function getModelProperty($model, $propertyKey)
+    {
         /** @var VirtualObject $model */
         $modelData = $model->getData();
         if (isset($modelData[$propertyKey])) {
             return $modelData[$propertyKey];
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -189,7 +197,8 @@ class VirtualObjectDataProvider extends DataProvider {
      * @param string $path The API path
      * @return void
      */
-    public function saveModelForPath($model, $path) {
+    public function saveModelForPath($model, $path)
+    {
         /** @var VirtualObject $model */
         /** @var RepositoryInterface $repository */
         $repository = $this->getRepositoryForPath($path);
@@ -202,7 +211,8 @@ class VirtualObjectDataProvider extends DataProvider {
     /**
      * Persist all changes to the database
      */
-    public function persistAllChanges() {
+    public function persistAllChanges()
+    {
         // We don't have to do anything because changes are persisted live
     }
 }

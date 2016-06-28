@@ -33,7 +33,6 @@
 
 namespace Cundd\Rest\Authentication\UserProvider;
 
-
 use Cundd\Rest\Authentication\UserProviderInterface;
 
 /**
@@ -41,7 +40,8 @@ use Cundd\Rest\Authentication\UserProviderInterface;
  *
  * @package Cundd\Rest\Authentication\UserProvider
  */
-class FeUserProvider implements UserProviderInterface {
+class FeUserProvider implements UserProviderInterface
+{
     /**
      * Name of the password column
      */
@@ -54,7 +54,8 @@ class FeUserProvider implements UserProviderInterface {
      * @param string $password
      * @return boolean
      */
-    public function checkCredentials($username, $password) {
+    public function checkCredentials($username, $password)
+    {
         /** @var \t3lib_DB $databaseAdapter */
         $databaseAdapter = $this->getDatabaseAdapter();
 
@@ -73,7 +74,8 @@ class FeUserProvider implements UserProviderInterface {
      * @param array $properties
      * @return string
      */
-    protected function buildWhereStatement($properties) {
+    protected function buildWhereStatement($properties)
+    {
         $whereParts = array();
         $databaseAdapter = $this->getDatabaseAdapter();
         foreach ($properties as $key => $value) {
@@ -100,7 +102,8 @@ class FeUserProvider implements UserProviderInterface {
      * @param string $password
      * @return array
      */
-    protected function preparePassword($password) {
+    protected function preparePassword($password)
+    {
         return array($password, self::PASSWORD_COLUMN_NAME);
     }
 
@@ -109,7 +112,8 @@ class FeUserProvider implements UserProviderInterface {
      *
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
-    protected function getDatabaseAdapter() {
+    protected function getDatabaseAdapter()
+    {
         return $GLOBALS['TYPO3_DB'];
     }
 }

@@ -44,13 +44,15 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderTest extends AbstractCase {
+class DataProviderTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\DataProvider\DataProviderInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         require_once __DIR__ . '/../../FixtureClasses.php';
@@ -78,7 +80,8 @@ class DataProviderTest extends AbstractCase {
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -86,7 +89,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getRepositoryForPathTest() {
+    public function getRepositoryForPathTest()
+    {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
         $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
 
@@ -98,7 +102,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getNamespacedRepositoryForPathTest() {
+    public function getNamespacedRepositoryForPathTest()
+    {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
         $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
 
@@ -109,7 +114,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getNamespacedRepositoryForPathWithVendorTest() {
+    public function getNamespacedRepositoryForPathWithVendorTest()
+    {
         $repository = $this->fixture->getRepositoryForPath('Vendor-MyExt-MyModel');
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 
@@ -120,7 +126,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelForPathTest() {
+    public function getModelForPathTest()
+    {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
         $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
 
@@ -131,7 +138,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getNamespacedModelForPathTest() {
+    public function getNamespacedModelForPathTest()
+    {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
         $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
 
@@ -142,7 +150,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getNamespacedModelForPathWithVendorTest() {
+    public function getNamespacedModelForPathWithVendorTest()
+    {
         $model = $this->fixture->getModelWithDataForPath(array(), 'Vendor-MyExt-MyModel');
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 
@@ -153,7 +162,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelWithEmptyDataTest() {
+    public function getModelWithEmptyDataTest()
+    {
         $data = array();
         $path = 'MyExt-MyModel';
 
@@ -165,14 +175,15 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataTest() {
+    public function getModelDataTest()
+    {
         $model = new MyModel();
         $properties = $this->fixture->getModelData($model);
         $this->assertEquals(
             array(
                 'name' => 'Initial value',
-                'uid' => NULL,
-                'pid' => NULL,
+                'uid' => null,
+                'pid' => null,
                 '__class' => 'Cundd\\Rest\\Tests\\MyModel'
             ), $properties);
     }
@@ -180,7 +191,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataRecursiveTest() {
+    public function getModelDataRecursiveTest()
+    {
         $testDate = new \DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
@@ -219,7 +231,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getModelDataRecursiveWithObjectStorageTest() {
+    public function getModelDataRecursiveWithObjectStorageTest()
+    {
         $testDate = new \DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);
@@ -275,7 +288,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getNestedModelDataTest() {
+    public function getNestedModelDataTest()
+    {
         $testDate = new \DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
@@ -285,12 +299,12 @@ class DataProviderTest extends AbstractCase {
             array(
                 'base' => 'Base',
                 'date' => $testDate,
-                'uid' => NULL,
-                'pid' => NULL,
+                'uid' => null,
+                'pid' => null,
                 'child' => array(
                     'name' => 'Initial value',
-                    'uid' => NULL,
-                    'pid' => NULL,
+                    'uid' => null,
+                    'pid' => null,
                     '__class' => 'Cundd\\Rest\\Tests\\MyModel'
                 ),
                 '__class' => 'Cundd\\Rest\\Tests\\MyNestedModel'
@@ -300,7 +314,8 @@ class DataProviderTest extends AbstractCase {
     /**
      * @test
      */
-    public function getJsonSerializeNestedModelDataTest() {
+    public function getJsonSerializeNestedModelDataTest()
+    {
         $model = new MyNestedJsonSerializeModel();
         $properties = $this->fixture->getModelData($model);
         $this->assertEquals(
@@ -308,8 +323,8 @@ class DataProviderTest extends AbstractCase {
                 'base' => 'Base',
                 'child' => array(
                     'name' => 'Initial value',
-                    'uid' => NULL,
-                    'pid' => NULL,
+                    'uid' => null,
+                    'pid' => null,
                     '__class' => 'Cundd\\Rest\\Tests\\MyModel'
                 ),
                 '__class' => 'Cundd\\Rest\\Tests\\MyNestedJsonSerializeModel'

@@ -36,19 +36,22 @@ use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
 
-class PersistenceManagerTest extends AbstractDatabaseCase {
+class PersistenceManagerTest extends AbstractDatabaseCase
+{
     /**
      * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\PersistenceManagerInterface');
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         unset($this->fixture);
         parent::tearDown();
     }
@@ -56,7 +59,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function findAllTest() {
+    public function findAllTest()
+    {
         $result = $this->fixture->getObjectDataByQuery(array());
         $result = $this->getTestDataFromObjectCollection($result);
         $this->assertEquals(self::$testData, $result);
@@ -65,14 +69,16 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function countAllTest() {
+    public function countAllTest()
+    {
         $this->assertEquals(2, $this->fixture->getObjectCountByQuery(array()));
     }
 
     /**
      * @test
      */
-    public function addTest() {
+    public function addTest()
+    {
         $newObjectData = array(
             'uid' => 900,
             'title' => 'My new title',
@@ -99,7 +105,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function removeTest() {
+    public function removeTest()
+    {
         $objectData = array(
             'uid' => 100, // <= this is relevant
             'title' => 'My new title',
@@ -126,7 +133,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function updateTest() {
+    public function updateTest()
+    {
         $objectData = array(
             'uid' => 100, // <= this is relevant
             'title' => 'My new title',
@@ -145,7 +153,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
     /**
      * @test
      */
-    public function findByIdentifierTest() {
+    public function findByIdentifierTest()
+    {
         $uid = 100;
         $result = $this->fixture->getObjectByIdentifier($uid);
 
@@ -161,7 +170,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
      * @param array <VirtualObject> $collection
      * @return array
      */
-    protected function getTestDataFromObjectCollection($collection) {
+    protected function getTestDataFromObjectCollection($collection)
+    {
         $newCollection = array();
         foreach ($collection as $item) {
             $newCollection[] = $this->getTestDataFromObject($item);
@@ -173,7 +183,8 @@ class PersistenceManagerTest extends AbstractDatabaseCase {
      * @param VirtualObject $virtualObject
      * @return array
      */
-    protected function getTestDataFromObject($virtualObject) {
+    protected function getTestDataFromObject($virtualObject)
+    {
         $virtualObjectData = $virtualObject->getData();
         $virtualObjectData['content_time'] = $virtualObjectData['contentTime'];
         unset($virtualObjectData['contentTime']);

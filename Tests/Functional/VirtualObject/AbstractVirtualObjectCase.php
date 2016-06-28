@@ -42,7 +42,8 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @package Cundd\Rest\Test\VirtualObject
  */
-class AbstractVirtualObjectCase extends AbstractCase {
+class AbstractVirtualObjectCase extends AbstractCase
+{
     /**
      * @var array
      */
@@ -53,7 +54,8 @@ class AbstractVirtualObjectCase extends AbstractCase {
      *
      * @return Configuration
      */
-    protected function getTestConfiguration() {
+    protected function getTestConfiguration()
+    {
         $testConfiguration = $this->getTestConfigurationData();
         return new \Cundd\Rest\VirtualObject\Configuration(
             \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
@@ -65,18 +67,20 @@ class AbstractVirtualObjectCase extends AbstractCase {
      *
      * @return array
      */
-    protected function getTestConfigurationData() {
+    protected function getTestConfigurationData()
+    {
         if ($this->testConfiguration) {
             return $this->testConfiguration;
         }
-        $this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), TRUE);
+        $this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), true);
         return $this->testConfiguration;
     }
 
     /**
      * @return string
      */
-    protected function getTestConfigurationJSONString() {
+    protected function getTestConfigurationJSONString()
+    {
         return <<<CONFIGURATION
 {
     "ResourceName": {

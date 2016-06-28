@@ -33,7 +33,8 @@ use Cundd\Rest\DataProvider\Utility;
  *
  * @package Cundd\Rest
  */
-class Request extends BaseRequest {
+class Request extends BaseRequest
+{
     /**
      * Path prefix for the Document Store
      */
@@ -61,7 +62,8 @@ class Request extends BaseRequest {
      * @param string $originalPath
      * @return $this
      */
-    public function initWithPathAndOriginalPath($path, $originalPath) {
+    public function initWithPathAndOriginalPath($path, $originalPath)
+    {
         if (!is_string($path)) {
             throw new \InvalidArgumentException(sprintf(
                 'Argument 1 passed must be a string, %s given',
@@ -78,7 +80,8 @@ class Request extends BaseRequest {
      *
      * @return string
      */
-    public function path() {
+    public function path()
+    {
         if (!$this->path) {
             \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
             $uri = $this->url();
@@ -102,7 +105,8 @@ class Request extends BaseRequest {
      *
      * @return string
      */
-    public function originalPath() {
+    public function originalPath()
+    {
         if ($this->originalPath === -1) {
             return $this->path();
         }
@@ -114,7 +118,8 @@ class Request extends BaseRequest {
      *
      * @return mixed
      */
-    public function getSentData() {
+    public function getSentData()
+    {
         $data = $this->post();
         /*
          * If no form url-encoded body is sent check if a JSON
@@ -126,7 +131,7 @@ class Request extends BaseRequest {
                 Utility::singularize($this->getRootObjectKey())
             );
             if (!$data) {
-                $data = json_decode($this->raw(), TRUE);
+                $data = json_decode($this->raw(), true);
             }
         }
         return $data;
@@ -140,21 +145,22 @@ class Request extends BaseRequest {
      * @param string $format
      * @return string Format
      */
-    public function format($format = null) {
-        if (NULL !== $format) {
+    public function format($format = null)
+    {
+        if (null !== $format) {
             // If using full mime type, we only need the extension
-            if (strpos($format, '/') !== FALSE && in_array($format, $this->_mimeTypes)) {
+            if (strpos($format, '/') !== false && in_array($format, $this->_mimeTypes)) {
                 $format = array_search($format, $this->_mimeTypes);
             }
-            $this->_format = $this->_validateFormat($format) ? $format : NULL;
+            $this->_format = $this->_validateFormat($format) ? $format : null;
         }
 
-        if (!$this->_format && $format === NULL) {
+        if (!$this->_format && $format === null) {
             // Detect extension and assign it as the requested format (overrides 'Accept' header)
             $dotPos = strpos($this->url(), '.');
-            if ($dotPos !== FALSE) {
+            if ($dotPos !== false) {
                 $ext = substr($this->url(), $dotPos + 1);
-                $this->_format = $this->_validateFormat($ext) ? $ext : NULL;
+                $this->_format = $this->_validateFormat($ext) ? $ext : null;
             }
 
             // Check the CONTENT_TYPE header
@@ -175,7 +181,8 @@ class Request extends BaseRequest {
      *
      * @return bool
      */
-    public function isWrite() {
+    public function isWrite()
+    {
         return !$this->isRead();
     }
 
@@ -184,7 +191,8 @@ class Request extends BaseRequest {
      *
      * @return bool
      */
-    public function isRead() {
+    public function isRead()
+    {
         return in_array(strtoupper($this->method()), array('GET', 'HEAD'));
     }
 
@@ -194,7 +202,8 @@ class Request extends BaseRequest {
      *
      * @return string
      */
-    public function getRootObjectKey() {
+    public function getRootObjectKey()
+    {
         $originalPath = $this->originalPath();
         /*
          * Transform Document URLs
@@ -214,10 +223,11 @@ class Request extends BaseRequest {
      * @return string
      * @deprecated
      */
-    public function getAliasForPath($path) {
+    public function getAliasForPath($path)
+    {
         \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
         if (!$this->configurationProvider) {
-            return NULL;
+            return null;
         }
         return $this->configurationProvider->getSetting('aliases.' . $path);
     }
@@ -227,7 +237,8 @@ class Request extends BaseRequest {
      * @internal
      * @deprecated
      */
-    public function injectConfigurationProvider($configurationProvider) {
+    public function injectConfigurationProvider($configurationProvider)
+    {
         $this->configurationProvider = $configurationProvider;
     }
 
@@ -237,7 +248,8 @@ class Request extends BaseRequest {
      * @param $format
      * @return boolean
      */
-    protected function _validateFormat($format) {
+    protected function _validateFormat($format)
+    {
         return isset($this->_mimeTypes[$format]);
     }
 }

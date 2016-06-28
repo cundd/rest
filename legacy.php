@@ -42,26 +42,31 @@ class_alias('Cundd\\Rest\\Domain\\Repository\\DocumentRepository', 'Tx_Rest_Doma
 /**
  * Class TYPO3_CMS_Core_Log_LogManager
  */
-class TYPO3_CMS_Core_Log_LogManager {
-	/**
-	 * @param $className
-	 * @return $this
-	 */
-	public function getLogger($className) {
-		return $this;
-	}
+class TYPO3_CMS_Core_Log_LogManager
+{
+    /**
+     * @param $className
+     * @return $this
+     */
+    public function getLogger($className)
+    {
+        return $this;
+    }
 
-	/**
-	 * Adds a log record.
-	 *
-	 * @param integer $level Log level.
-	 * @param string $message Log message.
-	 * @param array $data Additional data to log
-	 * @return mixed
-	 */
-	public function log($level, $message, array $data = array()) {
-		if (TYPO3_DLOG) t3lib_div::devLog($message, 'rest', $level, $data);
-	}
+    /**
+     * Adds a log record.
+     *
+     * @param integer $level Log level.
+     * @param string $message Log message.
+     * @param array $data Additional data to log
+     * @return mixed
+     */
+    public function log($level, $message, array $data = array())
+    {
+        if (TYPO3_DLOG) {
+            t3lib_div::devLog($message, 'rest', $level, $data);
+        }
+    }
 }
 class_alias('TYPO3_CMS_Core_Log_LogManager', 'TYPO3\\CMS\\Core\\Log\\LogManager');
 
@@ -69,14 +74,15 @@ class_alias('TYPO3_CMS_Core_Log_LogManager', 'TYPO3\\CMS\\Core\\Log\\LogManager'
 /**
  * Class LogLevel
  */
-class TYPO3_CMS_Core_Log_LogLevel {
-	const EMERGENCY = 0;
-	const ALERT = 1;
-	const CRITICAL = 2;
-	const ERROR = 3;
-	const WARNING = 4;
-	const NOTICE = 5;
-	const INFO = 6;
-	const DEBUG = 7;
+class TYPO3_CMS_Core_Log_LogLevel
+{
+    const EMERGENCY = 0;
+    const ALERT = 1;
+    const CRITICAL = 2;
+    const ERROR = 3;
+    const WARNING = 4;
+    const NOTICE = 5;
+    const INFO = 6;
+    const DEBUG = 7;
 }
 class_alias('TYPO3_CMS_Core_Log_LogLevel', 'TYPO3\\CMS\\Core\\Log\\LogLevel');

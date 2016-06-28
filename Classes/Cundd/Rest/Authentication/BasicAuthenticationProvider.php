@@ -25,13 +25,13 @@
 
 namespace Cundd\Rest\Authentication;
 
-
 /**
  * Authentication Provider for login data sent through Basic Auth
  *
  * @package Cundd\Rest\Authentication
  */
-class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
+class BasicAuthenticationProvider extends AbstractAuthenticationProvider
+{
     /**
      * Provider that will check the user credentials
      *
@@ -45,9 +45,10 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider {
      *
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate() {
-        $username = NULL;
-        $password = NULL;
+    public function authenticate()
+    {
+        $username = null;
+        $password = null;
 
         // mod_php
         if (isset($_SERVER['PHP_AUTH_USER'])) {

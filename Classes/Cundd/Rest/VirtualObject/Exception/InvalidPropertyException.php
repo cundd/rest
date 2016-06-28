@@ -32,5 +32,6 @@ use Cundd\Rest\VirtualObject\Exception;
  *
  * @package Cundd\Rest\VirtualObject\Exception
  */
-class InvalidPropertyException extends Exception {
+class InvalidPropertyException extends Exception
+{
 }

@@ -42,7 +42,8 @@ use Cundd\Rest\Request;
  *
  * @package Cundd\Rest\Handler
  */
-class AuthHandler implements HandlerInterface {
+class AuthHandler implements HandlerInterface
+{
     /**
      * Status logged in
      */
@@ -91,7 +92,8 @@ class AuthHandler implements HandlerInterface {
      * @param \Cundd\Rest\Request $request
      * @return $this
      */
-    public function setRequest($request) {
+    public function setRequest($request)
+    {
         $this->request = $request;
         return $this;
     }
@@ -101,7 +103,8 @@ class AuthHandler implements HandlerInterface {
      *
      * @return \Cundd\Rest\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         if (!$this->request) {
             return $this->requestFactory->getRequest();
         }
@@ -113,9 +116,10 @@ class AuthHandler implements HandlerInterface {
      *
      * @return array
      */
-    public function getStatus() {
+    public function getStatus()
+    {
         $loginStatus = $this->sessionManager->valueForKey('loginStatus');
-        if ($loginStatus === NULL) {
+        if ($loginStatus === null) {
             $loginStatus = self::STATUS_LOGGED_OUT;
         }
         return array(
@@ -129,7 +133,8 @@ class AuthHandler implements HandlerInterface {
      * @param array $sentData
      * @return array
      */
-    public function checkLogin($sentData) {
+    public function checkLogin($sentData)
+    {
         $loginStatus = self::STATUS_LOGGED_OUT;
         if (isset($sentData['username']) && isset($sentData['apikey'])) {
             $username = $sentData['username'];
@@ -152,7 +157,8 @@ class AuthHandler implements HandlerInterface {
      *
      * @return array
      */
-    public function logout() {
+    public function logout()
+    {
         $this->sessionManager->setValueForKey('loginStatus', self::STATUS_LOGGED_OUT);
         return array(
             'status' => self::STATUS_LOGGED_OUT
@@ -162,7 +168,8 @@ class AuthHandler implements HandlerInterface {
     /**
      * Configure the API paths
      */
-    public function configureApiPaths() {
+    public function configureApiPaths()
+    {
         $dispatcher = Dispatcher::getSharedDispatcher();
 
         /** @var AuthHandler */

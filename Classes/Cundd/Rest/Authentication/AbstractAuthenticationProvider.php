@@ -25,7 +25,8 @@
 
 namespace Cundd\Rest\Authentication;
 
-abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface {
+abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface
+{
     /**
      * The current request
      *
@@ -38,22 +39,25 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
      *
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate() {
-        return FALSE;
+    public function authenticate()
+    {
+        return false;
     }
 
     /**
      * @param \Bullet\Request|\Cundd\Rest\Request $request
      * @return mixed|void
      */
-    public function setRequest(\Cundd\Rest\Request $request) {
+    public function setRequest(\Cundd\Rest\Request $request)
+    {
         $this->request = $request;
     }
 
     /**
      * @return \Bullet\Request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 }

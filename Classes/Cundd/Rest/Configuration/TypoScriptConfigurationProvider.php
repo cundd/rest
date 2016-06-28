@@ -33,13 +33,14 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
  *
  * @package Cundd\Rest\Configuration
  */
-class TypoScriptConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface {
+class TypoScriptConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface
+{
     /**
      * Settings read from the TypoScript
      *
      * @var array
      */
-    protected $settings = NULL;
+    protected $settings = null;
 
     /**
      * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManager
@@ -54,7 +55,8 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
      * @param mixed $defaultValue
      * @return mixed
      */
-    public function getSetting($keyPath, $defaultValue = NULL) {
+    public function getSetting($keyPath, $defaultValue = null)
+    {
         $matchingSetting = $this->getSettings();
 
         $keyPathParts = explode('.', $keyPath);
@@ -62,13 +64,13 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
             if (is_array($matchingSetting)) {
                 if (isset($matchingSetting[$key . '.'])) {
                     $matchingSetting = $matchingSetting[$key . '.'];
-                } else if (isset($matchingSetting[$key])) {
+                } elseif (isset($matchingSetting[$key])) {
                     $matchingSetting = $matchingSetting[$key];
                 } else {
-                    $matchingSetting = NULL;
+                    $matchingSetting = null;
                 }
             } else {
-                $matchingSetting = NULL;
+                $matchingSetting = null;
             }
         }
         if (is_null($matchingSetting) && !is_null($defaultValue)) {
@@ -82,8 +84,9 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
      *
      * @return array
      */
-    public function getSettings() {
-        if ($this->settings === NULL) {
+    public function getSettings()
+    {
+        if ($this->settings === null) {
             $this->settings = array();
 
             $typoScript = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
@@ -103,7 +106,8 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
      * @param array $settings
      * @internal
      */
-    public function setSettings($settings) {
+    public function setSettings($settings)
+    {
         $this->settings = $settings;
     }
 }

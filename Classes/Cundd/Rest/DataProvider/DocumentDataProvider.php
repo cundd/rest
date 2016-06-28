@@ -31,7 +31,8 @@ use Cundd\Rest\Domain\Repository\DocumentRepository;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
 
-class DocumentDataProvider extends DataProvider {
+class DocumentDataProvider extends DataProvider
+{
 
     /**
      * Returns the domain model repository class name for the given API path
@@ -39,7 +40,8 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path) {
+    public function getRepositoryClassForPath($path)
+    {
         return 'Cundd\\Rest\\Domain\\Repository\\DocumentRepository';
     }
 
@@ -49,7 +51,8 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return string
      */
-    public function getModelClassForPath($path) {
+    public function getModelClassForPath($path)
+    {
         return 'Cundd\\Rest\\Domain\\Model\\Document';
     }
 
@@ -59,7 +62,8 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return DomainObjectInterface
      */
-    public function getAllModelsForPath($path) {
+    public function getAllModelsForPath($path)
+    {
         $documentDatabase = $this->getDatabaseNameFromPath($path);
 
         /** @var DocumentRepository $documentRepository */
@@ -76,7 +80,8 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path The API path
      * @return void
      */
-    public function saveModelForPath($model, $path) {
+    public function saveModelForPath($model, $path)
+    {
         $documentDatabase = $this->getDatabaseNameFromPath($path);
 
         /** @var DocumentRepository $repository */
@@ -99,8 +104,9 @@ class DocumentDataProvider extends DataProvider {
      * @param Document $model
      * @return array<mixed>
      */
-    public function getModelData($model) {
-        $properties = NULL;
+    public function getModelData($model)
+    {
+        $properties = null;
         if (is_object($model)) {
             // Get the data from the model
             if ($model instanceof DomainObjectInterface) {
@@ -142,7 +148,8 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path
      * @return string
      */
-    public function getDatabaseNameFromPath($path) {
+    public function getDatabaseNameFromPath($path)
+    {
         return Utility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
     }
 
@@ -154,11 +161,12 @@ class DocumentDataProvider extends DataProvider {
      * @param string $path API path to get the repository for
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path) {
+    public function getModelWithDataForPath($data, $path)
+    {
         // If no data is given return NULL
         if (!$data) {
-            return NULL;
-        } else if (is_scalar($data)) { // If it is a scalar treat it as identity
+            return null;
+        } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForPath($data, $path);
         }
 
@@ -176,7 +184,7 @@ class DocumentDataProvider extends DataProvider {
             $model = $repository->convertToDocument($data);
             $model->_setDb($documentDatabase);
         } catch (\Exception $exception) {
-            $model = NULL;
+            $model = null;
 
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));

@@ -29,14 +29,15 @@ require_once __DIR__ . '/../AbstractCase.php';
 
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-
-class ConfigurationBasedAccessControllerTest extends AbstractCase {
+class ConfigurationBasedAccessControllerTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\Access\ConfigurationBasedAccessController
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $configurationProvider = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
         $this->fixture = $this->objectManager->get('Cundd\\Rest\\Access\\ConfigurationBasedAccessController');
@@ -74,7 +75,8 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
     /**
      * @test
      */
-    public function getDefaultConfigurationForPathTest() {
+    public function getDefaultConfigurationForPathTest()
+    {
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
@@ -89,7 +91,8 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
     /**
      * @test
      */
-    public function getConfigurationForPathWithoutWildcardTest() {
+    public function getConfigurationForPathWithoutWildcardTest()
+    {
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
@@ -104,7 +107,8 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
     /**
      * @test
      */
-    public function getConfigurationForPathWithWildcardTest() {
+    public function getConfigurationForPathWithWildcardTest()
+    {
         $uri = 'my_secondext-my_model/34/';
         $request = $this->buildRequestWithUri($uri);
         $testConfiguration = array(
@@ -115,5 +119,4 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase {
         $configuration = $this->fixture->getConfigurationForPath($request->path());
         $this->assertEquals($testConfiguration, $configuration);
     }
-
 }

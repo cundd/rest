@@ -32,13 +32,13 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
-
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-class PersistenceManager implements PersistenceManagerInterface {
+class PersistenceManager implements PersistenceManagerInterface
+{
     /**
      * @var \Cundd\Rest\ObjectManager
      * @inject
@@ -74,7 +74,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param VirtualObject $object
      * @return VirtualObject Returns the registered Document
      */
-    public function registerObject($object) {
+    public function registerObject($object)
+    {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         if (
             $identifierQuery
@@ -93,7 +94,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function add($object) {
+    public function add($object)
+    {
         $identifierValue = $this->backend->addRow(
             $this->getSourceIdentifier(),
             $this->getObjectConverter()->convertFromVirtualObject($object)
@@ -108,7 +110,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function update($object) {
+    public function update($object)
+    {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         if (
             $identifierQuery
@@ -128,7 +131,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function remove($object) {
+    public function remove($object)
+    {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         if (
             $identifierQuery
@@ -149,7 +153,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @return integer
      * @api
      */
-    public function getObjectCountByQuery($query) {
+    public function getObjectCountByQuery($query)
+    {
         return $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $query);
     }
 
@@ -160,7 +165,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @return array
      * @api
      */
-    public function getObjectDataByQuery($query) {
+    public function getObjectDataByQuery($query)
+    {
         $objectConverter = $this->getObjectConverter();
         $objectCollection = array();
 
@@ -177,7 +183,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param string $identifier
      * @return VirtualObject
      */
-    public function getObjectByIdentifier($identifier) {
+    public function getObjectByIdentifier($identifier)
+    {
         $configuration = $this->getConfiguration();
 
         $identifierProperty = $configuration->getIdentifier();
@@ -193,7 +200,7 @@ class PersistenceManager implements PersistenceManagerInterface {
         foreach ($rawObjectCollection as $rawObjectData) {
             return $objectConverter->convertToVirtualObject($rawObjectData);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -202,7 +209,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param object $object
      * @return array
      */
-    public function getIdentifiersOfObject($object) {
+    public function getIdentifiersOfObject($object)
+    {
         $objectData = $object->getData();
         $identifier = $this->getConfiguration()->getIdentifier();
         return isset($objectData[$identifier]) ? array($identifier => $objectData[$identifier]) : array();
@@ -214,7 +222,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param object $object
      * @return array
      */
-    public function getIdentifierColumnsOfObject($object) {
+    public function getIdentifierColumnsOfObject($object)
+    {
         $configuration = $this->getConfiguration();
         $objectData = $object->getData();
         $identifier = $configuration->getIdentifier();
@@ -228,7 +237,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      *
      * @return string
      */
-    public function getSourceIdentifier() {
+    public function getSourceIdentifier()
+    {
         return $this->getConfiguration()->getSourceIdentifier();
     }
 
@@ -238,9 +248,10 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->configuration = $configuration;
-        $this->objectConverter = NULL;
+        $this->objectConverter = null;
         return $this;
     }
 
@@ -250,7 +261,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);
         }
@@ -262,7 +274,8 @@ class PersistenceManager implements PersistenceManagerInterface {
      *
      * @return ObjectConverter
      */
-    protected function getObjectConverter() {
+    protected function getObjectConverter()
+    {
         if (!$this->objectConverter) {
             $this->objectConverter = new ObjectConverter($this->getConfiguration());
         }

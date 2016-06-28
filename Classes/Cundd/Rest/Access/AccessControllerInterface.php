@@ -33,8 +33,8 @@
 
 namespace Cundd\Rest\Access;
 
-
-interface AccessControllerInterface {
+interface AccessControllerInterface
+{
     /**
      * Access identifier to signal if the current request is allowed
      */

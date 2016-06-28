@@ -36,6 +36,6 @@ namespace Cundd\Rest\Domain\Exception;
  *
  * @package Cundd\Rest\Domain\Repository\Exception
  */
-class NoDatabaseSelectedException extends DomainException {
-
+class NoDatabaseSelectedException extends DomainException
+{
 }

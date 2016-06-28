@@ -32,7 +32,8 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package Cundd\Rest\VirtualObject
  */
-class ConfigurationFactory implements SingletonInterface {
+class ConfigurationFactory implements SingletonInterface
+{
     /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
@@ -41,7 +42,8 @@ class ConfigurationFactory implements SingletonInterface {
     /**
      * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
      */
-    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider) {
+    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider)
+    {
         $this->configurationProvider = $configurationProvider;
     }
 
@@ -50,7 +52,8 @@ class ConfigurationFactory implements SingletonInterface {
      *
      * @return ConfigurationInterface
      */
-    public function create() {
+    public function create()
+    {
         return $this->_createWithConfigurationData(array());
     }
 
@@ -61,14 +64,15 @@ class ConfigurationFactory implements SingletonInterface {
      * @param       $path
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromArrayForPath($configurationArray, $path) {
+    public function createFromArrayForPath($configurationArray, $path)
+    {
         if (
             isset($configurationArray[$path]) && is_array($configurationArray[$path])
             && isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
         ) {
             return $this->_createWithConfigurationData($configurationArray[$path]['mapping']);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -77,15 +81,16 @@ class ConfigurationFactory implements SingletonInterface {
      * @param string $path
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromTypoScriptForPath($path) {
+    public function createFromTypoScriptForPath($path)
+    {
         $configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $path);
         if (!isset($configurationData['mapping.'])) {
-            return NULL;
+            return null;
         }
         $mapping = $configurationData['mapping.'];
 
         if (!isset($mapping['properties.'])) {
-            return NULL;
+            return null;
         }
 
         $mergedConfigurationData = array(
@@ -107,12 +112,13 @@ class ConfigurationFactory implements SingletonInterface {
      * @param        $path
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromJsonForPath($jsonString, $path) {
-        $configurationData = json_decode($jsonString, TRUE);
+    public function createFromJsonForPath($jsonString, $path)
+    {
+        $configurationData = json_decode($jsonString, true);
         if ($configurationData) {
             return $this->createFromArrayForPath($configurationData, $path);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -121,7 +127,8 @@ class ConfigurationFactory implements SingletonInterface {
      * @param array $configurationData
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createWithConfigurationData($configurationData) {
+    public function createWithConfigurationData($configurationData)
+    {
         return $this->_createWithConfigurationData($configurationData);
     }
 
@@ -131,7 +138,8 @@ class ConfigurationFactory implements SingletonInterface {
      * @param array $configurationData
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    protected function _createWithConfigurationData($configurationData) {
+    protected function _createWithConfigurationData($configurationData)
+    {
         $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
         if (isset($configurationData['skipUnknownProperties'])) {
@@ -146,7 +154,8 @@ class ConfigurationFactory implements SingletonInterface {
      * @param array $mapping
      * @return array
      */
-    static public function preparePropertyMapping($mapping) {
+    public static function preparePropertyMapping($mapping)
+    {
         /**
          * Remove the last character form the property key (used when imported from TypoScript)
          *

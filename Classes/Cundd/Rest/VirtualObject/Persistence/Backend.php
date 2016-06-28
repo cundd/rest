@@ -29,8 +29,8 @@ use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 
-
-class Backend implements BackendInterface {
+class Backend implements BackendInterface
+{
     /**
      * Adds a row to the storage
      *
@@ -38,7 +38,8 @@ class Backend implements BackendInterface {
      * @param array $row The row to insert
      * @return integer the UID of the inserted row
      */
-    public function addRow($tableName, array $row) {
+    public function addRow($tableName, array $row)
+    {
         $this->checkTableArgument($tableName);
 
         $this->getAdapter()->exec_INSERTquery($tableName, $row);
@@ -55,7 +56,8 @@ class Backend implements BackendInterface {
      * @param array $row The row to update
      * @return mixed|void
      */
-    public function updateRow($tableName, $query, array $row) {
+    public function updateRow($tableName, $query, array $row)
+    {
         $this->checkTableArgument($tableName);
 
         $result = $this->getAdapter()->exec_UPDATEquery($tableName, $this->createWhereStatementFromQuery($query, $tableName), $row);
@@ -70,7 +72,8 @@ class Backend implements BackendInterface {
      * @param array $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
      * @return mixed|void
      */
-    public function removeRow($tableName, array $identifier) {
+    public function removeRow($tableName, array $identifier)
+    {
         $this->checkTableArgument($tableName);
 
         $result = $this->getAdapter()->exec_DELETEquery($tableName, $this->createWhereStatementFromQuery($identifier, $tableName));
@@ -86,7 +89,8 @@ class Backend implements BackendInterface {
      * @return integer
      * @api
      */
-    public function getObjectCountByQuery($tableName, $query) {
+    public function getObjectCountByQuery($tableName, $query)
+    {
         $this->checkTableArgument($tableName);
 
         list($row) = $this->getAdapter()->exec_SELECTgetRows(
@@ -110,7 +114,8 @@ class Backend implements BackendInterface {
      * @return array
      * @api
      */
-    public function getObjectDataByQuery($tableName, $query) {
+    public function getObjectDataByQuery($tableName, $query)
+    {
         $this->checkTableArgument($tableName);
 
         $result = $this->getAdapter()->exec_SELECTgetRows(
@@ -131,7 +136,8 @@ class Backend implements BackendInterface {
      * @return void
      * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException
      */
-    protected function checkSqlErrors() {
+    protected function checkSqlErrors()
+    {
         $error = $this->getAdapter()->sql_error();
         if ($error !== '') {
             $error = '#' . $this->getAdapter()->sql_errno() . ': ' . $error;
@@ -149,8 +155,9 @@ class Backend implements BackendInterface {
      * @throws \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
      * @return string
      */
-    protected function createWhereStatementFromQuery($query, $tableName) {
-        $configuration = NULL;
+    protected function createWhereStatementFromQuery($query, $tableName)
+    {
+        $configuration = null;
         $this->checkTableArgument($tableName);
 
         if ($query instanceof QueryInterface) {
@@ -170,7 +177,9 @@ class Backend implements BackendInterface {
         $adapter = $this->getAdapter();
         $constraints = array();
         foreach ($query as $property => $value) {
-            if ($configuration && !$configuration->hasProperty($property)) throw new InvalidColumnNameException('The given property is not defined', 1396092229);
+            if ($configuration && !$configuration->hasProperty($property)) {
+                throw new InvalidColumnNameException('The given property is not defined', 1396092229);
+            }
 
             $column = $configuration ? $configuration->getSourceKeyForProperty($property) : $property;
 
@@ -178,10 +187,10 @@ class Backend implements BackendInterface {
                 throw new InvalidColumnNameException('The given column is not valid', 1395678424);
             }
 
-            if (is_scalar($value) || $value === NULL) {
+            if (is_scalar($value) || $value === null) {
                 $operator = '=';
                 $comparisonValue = $adapter->fullQuoteStr($value, $tableName);
-            } else if (is_array($value)) {
+            } elseif (is_array($value)) {
                 /**
                  * If you don't want the given value to be escaped set the constraint's "doNotEscapeValue" key to the
                  * name of it's property key
@@ -221,7 +230,8 @@ class Backend implements BackendInterface {
      * @throws InvalidOperatorException
      * @return string an SQL operator
      */
-    protected function resolveOperator($operator) {
+    protected function resolveOperator($operator)
+    {
         switch ($operator) {
 //			case self::OPERATOR_EQUAL_TO_NULL:
 //				$operator = 'IS';
@@ -269,7 +279,8 @@ class Backend implements BackendInterface {
      * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception
      * @return string
      */
-    protected function replacePlaceholders(&$sqlString, array $parameters, $tableName = 'foo') {
+    protected function replacePlaceholders(&$sqlString, array $parameters, $tableName = 'foo')
+    {
         // TODO profile this method again
         if (substr_count($sqlString, '?') !== count($parameters)) {
             throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception('The number of question marks to replace must be equal to the number of parameters.', 1242816074);
@@ -278,8 +289,8 @@ class Backend implements BackendInterface {
         $offset = 0;
         foreach ($parameters as $parameter) {
             $markPosition = strpos($sqlString, '?', $offset);
-            if ($markPosition !== FALSE) {
-                if ($parameter === NULL) {
+            if ($markPosition !== false) {
+                if ($parameter === null) {
                     $parameter = 'NULL';
                 } elseif (is_array($parameter) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable) {
                     $items = array();
@@ -303,7 +314,8 @@ class Backend implements BackendInterface {
      * @param QueryInterface $query
      * @return string
      */
-    protected function createLimitStatementFromQuery($query) {
+    protected function createLimitStatementFromQuery($query)
+    {
         #SELECT * FROM tbl LIMIT 5,10;  # Retrieve rows 6-15
         if ($query instanceof QueryInterface) {
             $limit = '' . $query->getOffset();
@@ -321,7 +333,8 @@ class Backend implements BackendInterface {
      * @param QueryInterface $query
      * @return string
      */
-    protected function createOrderingStatementFromQuery($query) {
+    protected function createOrderingStatementFromQuery($query)
+    {
         if ($query instanceof QueryInterface) {
             $orderings = $query->getOrderings();
             $orderArray = array_map(function ($property, $direction) {
@@ -338,7 +351,8 @@ class Backend implements BackendInterface {
      * @param string $tableName
      * @throws Exception\InvalidTableNameException
      */
-    protected function checkTableArgument($tableName) {
+    protected function checkTableArgument($tableName)
+    {
         if (!is_string($tableName)) {
             throw new InvalidTableNameException('The given table name is of type ' . gettype($tableName) . '. You may have a wrong argument order', 1395677889);
         }
@@ -355,10 +369,9 @@ class Backend implements BackendInterface {
      *
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
-    public function getAdapter() {
+    public function getAdapter()
+    {
         /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
         return $GLOBALS['TYPO3_DB'];
     }
-
-
 }

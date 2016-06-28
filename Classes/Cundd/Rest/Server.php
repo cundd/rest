@@ -30,8 +30,8 @@ use React\Socket\Server as SocketServer;
 use React\Http\Server as HttpServer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-
-class Server {
+class Server
+{
     /**
      * Port to listen at
      *
@@ -54,7 +54,8 @@ class Server {
     protected $dispatcher;
 
 
-    function __construct($port = NULL, $host = NULL) {
+    public function __construct($port = null, $host = null)
+    {
         $bootstrap = new \Cundd\Rest\Bootstrap;
         $bootstrap->init();
 
@@ -72,7 +73,8 @@ class Server {
     /**
      * Starts the server
      */
-    public function start() {
+    public function start()
+    {
         $loop = Factory::create();
         $socketServer = new SocketServer($loop);
         $httpServer = new HttpServer($socketServer);
@@ -90,7 +92,8 @@ class Server {
      * @param \React\Http\Request $request Request to handle
      * @param \React\Http\Response $response Prebuilt response object
      */
-    public function serverCallback($request, $response) {
+    public function serverCallback($request, $response)
+    {
         // Currently the PHP server is readonly
         if (!in_array(strtoupper($request->getMethod()), array('GET', 'HEAD'))) {
             $response->writeHead(405, array('Content-type' => 'text/plain'));
@@ -112,7 +115,7 @@ class Server {
         $this->setServerGlobals($request);
 
         /** @var \Bullet\Response $restResponse */
-        $restResponse = NULL;
+        $restResponse = null;
 
         ob_start();
         $this->dispatcher->dispatch($restRequest, $restResponse);
@@ -136,7 +139,8 @@ class Server {
      * @param string $path
      * @return mixed
      */
-    public function sanitizePath($path) {
+    public function sanitizePath($path)
+    {
         return filter_var($path, FILTER_SANITIZE_URL);
     }
 
@@ -146,7 +150,8 @@ class Server {
      * @param \Bullet\Response $restResponse
      * @return array<mixed>
      */
-    public function getHeadersFromResponse($restResponse) {
+    public function getHeadersFromResponse($restResponse)
+    {
         // Spy the headers
         $headers = $this->spyHeadersOfResponse($restResponse);
 
@@ -157,16 +162,16 @@ class Server {
             $xmlIndicatorPosition = strpos($content, '<');
             $jsonIndicatorPosition = strpos($content, '{');
 
-            switch (TRUE) {
-                case $xmlIndicatorPosition === FALSE && $jsonIndicatorPosition === FALSE:
+            switch (true) {
+                case $xmlIndicatorPosition === false && $jsonIndicatorPosition === false:
                     $contentType = 'text/plain';
                     break;
 
-                case $xmlIndicatorPosition === FALSE:
+                case $xmlIndicatorPosition === false:
                     $contentType = 'application/json; charset=UTF-8';
                     break;
 
-                case $jsonIndicatorPosition === FALSE:
+                case $jsonIndicatorPosition === false:
                     $contentType = 'application/xml; charset=UTF-8';
                     break;
 
@@ -191,12 +196,13 @@ class Server {
      * @param \Bullet\Response $restResponse
      * @return array
      */
-    public function spyHeadersOfResponse($restResponse) {
-        static $reflectionProperty = NULL;
-        if ($reflectionProperty === NULL) {
+    public function spyHeadersOfResponse($restResponse)
+    {
+        static $reflectionProperty = null;
+        if ($reflectionProperty === null) {
             $reflectionClass = new \ReflectionClass('\\Bullet\\Response');
             $reflectionProperty = $reflectionClass->getProperty('_headers');
-            $reflectionProperty->setAccessible(TRUE);
+            $reflectionProperty->setAccessible(true);
         }
         return $reflectionProperty->getValue($restResponse);
     }
@@ -204,7 +210,8 @@ class Server {
     /**
      * @param \React\Http\Request $request
      */
-    public function setServerGlobals($request) {
+    public function setServerGlobals($request)
+    {
         $headers = $request->getHeaders();
         if (isset($headers['Authorization']) && $headers['Authorization']) {
             $_SERVER['HTTP_AUTHENTICATION'] = $headers['Authorization'];

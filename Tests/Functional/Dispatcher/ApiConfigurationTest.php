@@ -41,19 +41,22 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class ApiConfigurationTest extends AbstractCase {
+class ApiConfigurationTest extends AbstractCase
+{
     /**
      * @var \Cundd\Rest\Dispatcher\ApiConfigurationInterface
      */
     protected $fixture;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
         $this->fixture = new \Cundd\Rest\Dispatcher();
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         /** @var RequestFactoryInterface $requestFactory */
         if ($this->objectManager) {
             $requestFactory = $this->objectManager->get('Cundd\\Rest\\RequestFactory');
@@ -70,7 +73,8 @@ class ApiConfigurationTest extends AbstractCase {
      * @param mixed $value
      * @return ApiConfigurationInterface|object
      */
-    protected function injectProperty($object, $property, $value) {
+    protected function injectProperty($object, $property, $value)
+    {
         $reflectionClass = new \ReflectionClass($object);
         $reflectionProperty = $reflectionClass->getProperty($property);
         $reflectionProperty->setAccessible(true);
@@ -84,7 +88,8 @@ class ApiConfigurationTest extends AbstractCase {
      * @param ApiConfigurationInterface|object|null $object
      * @return ApiConfigurationInterface|object
      */
-    protected function mockAppInstanceMethodFunctionWithParameters($methodName, $callback, $object = null) {
+    protected function mockAppInstanceMethodFunctionWithParameters($methodName, $callback, $object = null)
+    {
         if (!$object) {
             $object = $this->fixture;
         }
@@ -101,8 +106,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerParameterTest() {
-        $callback = function() {};
+    public function registerParameterTest()
+    {
+        $callback = function () {};
         $param = 'int';
 
         $appInstance = $this->getMock('Bullet\App', array('param'));
@@ -120,8 +126,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerPathTest() {
-        $callback = function() {};
+    public function registerPathTest()
+    {
+        $callback = function () {};
         $path = 'login';
 
         $appInstance = $this->getMock('Bullet\App', array('path'));
@@ -139,8 +146,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerGetMethodTest() {
-        $callback = function() {};
+    public function registerGetMethodTest()
+    {
+        $callback = function () {};
         $this->mockAppInstanceMethodFunctionWithParameters('GET', $callback);
         $this->fixture->registerGetMethod($callback);
     }
@@ -148,8 +156,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerPostMethodTest() {
-        $callback = function() {};
+    public function registerPostMethodTest()
+    {
+        $callback = function () {};
         $this->mockAppInstanceMethodFunctionWithParameters('POST', $callback);
         $this->fixture->registerPostMethod($callback);
     }
@@ -157,8 +166,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerPutMethodTest() {
-        $callback = function() {};
+    public function registerPutMethodTest()
+    {
+        $callback = function () {};
         $this->mockAppInstanceMethodFunctionWithParameters('PUT', $callback);
         $this->fixture->registerPutMethod($callback);
     }
@@ -166,8 +176,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerDeleteMethodTest() {
-        $callback = function() {};
+    public function registerDeleteMethodTest()
+    {
+        $callback = function () {};
         $this->mockAppInstanceMethodFunctionWithParameters('DELETE', $callback);
         $this->fixture->registerDeleteMethod($callback);
     }
@@ -175,8 +186,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerPatchMethodTest() {
-        $callback = function() {};
+    public function registerPatchMethodTest()
+    {
+        $callback = function () {};
         $this->mockAppInstanceMethodFunctionWithParameters('PATCH', $callback);
         $this->fixture->registerPatchMethod($callback);
     }
@@ -184,8 +196,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerHttpMethodTest() {
-        $callback = function() {};
+    public function registerHttpMethodTest()
+    {
+        $callback = function () {};
         $method = 'head';
         $this->mockAppInstanceMethodFunctionWithParameters($method, $callback);
         $this->fixture->registerHttpMethod($method, $callback);
@@ -194,8 +207,9 @@ class ApiConfigurationTest extends AbstractCase {
     /**
      * @test
      */
-    public function registerHttpMethodWithMultipleMethodsTest() {
-        $callback = function() {};
+    public function registerHttpMethodWithMultipleMethodsTest()
+    {
+        $callback = function () {};
         $method = array('head', 'option', 'get', 'post');
         $this->mockAppInstanceMethodFunctionWithParameters($method, $callback);
         $this->fixture->registerHttpMethod($method, $callback);

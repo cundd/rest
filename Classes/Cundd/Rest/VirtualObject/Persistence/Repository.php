@@ -25,18 +25,17 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
-
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\VirtualObject;
-
 
 /**
  * Repository for Virtual Objects
  *
  * @package Cundd\Rest\VirtualObject\Persistence
  */
-class Repository implements RepositoryInterface {
+class Repository implements RepositoryInterface
+{
     /**
      * @var \Cundd\Rest\ObjectManager
      * @inject
@@ -67,7 +66,8 @@ class Repository implements RepositoryInterface {
      * @param VirtualObject $object
      * @return VirtualObject Returns the registered Document
      */
-    public function registerObject($object) {
+    public function registerObject($object)
+    {
         return $this->persistenceManager->registerObject($object);
     }
 
@@ -77,7 +77,8 @@ class Repository implements RepositoryInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function add($object) {
+    public function add($object)
+    {
         $this->persistenceManager->add($object);
     }
 
@@ -87,7 +88,8 @@ class Repository implements RepositoryInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function update($object) {
+    public function update($object)
+    {
         $this->persistenceManager->update($object);
     }
 
@@ -97,7 +99,8 @@ class Repository implements RepositoryInterface {
      * @param VirtualObject $object
      * @return void
      */
-    public function remove($object) {
+    public function remove($object)
+    {
         $this->persistenceManager->remove($object);
     }
 
@@ -106,7 +109,8 @@ class Repository implements RepositoryInterface {
      *
      * @return array
      */
-    public function findAll() {
+    public function findAll()
+    {
         return $this->createQuery()->execute();
     }
 
@@ -116,7 +120,8 @@ class Repository implements RepositoryInterface {
      * @return integer The object count
      * @api
      */
-    public function countAll() {
+    public function countAll()
+    {
         return $this->createQuery()->count();
     }
 
@@ -127,7 +132,8 @@ class Repository implements RepositoryInterface {
      * @return void
      * @api
      */
-    public function removeAll() {
+    public function removeAll()
+    {
         foreach ($this->findAll() as $object) {
             $this->remove($object);
         }
@@ -139,7 +145,8 @@ class Repository implements RepositoryInterface {
      * @param string $identifier
      * @return VirtualObject
      */
-    public function findByIdentifier($identifier) {
+    public function findByIdentifier($identifier)
+    {
         return $this->persistenceManager->getObjectByIdentifier($identifier);
     }
 
@@ -149,7 +156,8 @@ class Repository implements RepositoryInterface {
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->configuration = $configuration;
         $this->persistenceManager->setConfiguration($configuration);
         return $this;
@@ -161,7 +169,8 @@ class Repository implements RepositoryInterface {
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);
         }
@@ -175,7 +184,8 @@ class Repository implements RepositoryInterface {
      * @return object The matching object if found, otherwise NULL
      * @api
      */
-    public function findByUid($uid) {
+    public function findByUid($uid)
+    {
         return $this->findByIdentifier($uid);
     }
 
@@ -191,7 +201,8 @@ class Repository implements RepositoryInterface {
      * @return void
      * @api
      */
-    public function setDefaultOrderings(array $defaultOrderings) {
+    public function setDefaultOrderings(array $defaultOrderings)
+    {
         // TODO: Implement setDefaultOrderings() method
     }
 
@@ -202,7 +213,8 @@ class Repository implements RepositoryInterface {
      * @return void
      * @api
      */
-    public function setDefaultQuerySettings(\TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings) {
+    public function setDefaultQuerySettings(\TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings)
+    {
         // TODO: Implement setDefaultQuerySettings() method.
     }
 
@@ -212,12 +224,11 @@ class Repository implements RepositoryInterface {
      * @return QueryInterface
      * @api
      */
-    public function createQuery() {
+    public function createQuery()
+    {
         /** @var QueryInterface $query */
         $query = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\QueryInterface');
         $query->setConfiguration($this->getConfiguration());
         return $query;
     }
-
-
 }

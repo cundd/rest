@@ -14,7 +14,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 
 require_once __DIR__ . '/../AbstractCase.php';
 
-class ResponseFactoryTest extends AbstractCase {
+class ResponseFactoryTest extends AbstractCase
+{
     /**
      * @var ResponseFactory
      */
@@ -28,7 +29,8 @@ class ResponseFactoryTest extends AbstractCase {
     /**
      * @inheritDoc
      */
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         $this->requestFactory = $this->objectManager->get('Cundd\Rest\RequestFactoryInterface');
         $this->fixture = $this->objectManager->get('Cundd\Rest\ResponseFactory');
@@ -37,7 +39,8 @@ class ResponseFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function createErrorResponseTest() {
+    public function createErrorResponseTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createErrorResponse('Everything ok', 200);
         $this->assertEquals(200, $response->status());
@@ -53,11 +56,11 @@ class ResponseFactoryTest extends AbstractCase {
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"error":"This will default to JSON"}', $response->content());
 
-        $response = $this->fixture->createErrorResponse(NULL, 200);
+        $response = $this->fixture->createErrorResponse(null, 200);
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"error":"OK"}', $response->content());
 
-        $response = $this->fixture->createErrorResponse(NULL, 404);
+        $response = $this->fixture->createErrorResponse(null, 404);
         $this->assertEquals(404, $response->status());
         $this->assertEquals('{"error":"Not Found"}', $response->content());
     }
@@ -65,7 +68,8 @@ class ResponseFactoryTest extends AbstractCase {
     /**
      * @test
      */
-    public function createSuccessResponseTest() {
+    public function createSuccessResponseTest()
+    {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createSuccessResponse('Everything ok', 200);
         $this->assertEquals(200, $response->status());
@@ -81,12 +85,12 @@ class ResponseFactoryTest extends AbstractCase {
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"message":"This will default to JSON"}', $response->content());
 
-        $response = $this->fixture->createSuccessResponse(NULL, 200);
+        $response = $this->fixture->createSuccessResponse(null, 200);
         $this->assertEquals(200, $response->status());
         $this->assertEquals('{"message":"OK"}', $response->content());
 
         // This will be an error
-        $response = $this->fixture->createSuccessResponse(NULL, 404);
+        $response = $this->fixture->createSuccessResponse(null, 404);
         $this->assertEquals(404, $response->status());
         $this->assertEquals('{"error":"Not Found"}', $response->content());
     }

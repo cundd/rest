@@ -1,6 +1,6 @@
 <?php
 if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
+    die('Access denied.');
 }
 
 if (version_compare(TYPO3_version, '6.0.0') < 0) {
@@ -39,7 +39,7 @@ $TCA['tx_rest_domain_model_document'] = array(
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
-        'dividers2tabs' => TRUE,
+        'dividers2tabs' => true,
 
         'delete' => 'deleted',
         'enablecolumns' => array(

@@ -36,6 +36,6 @@ namespace Cundd\Rest\Domain\Exception;
  *
  * @package Cundd\Rest\Domain\Repository\Exception
  */
-class InvalidDatabaseNameException extends DomainException {
-
+class InvalidDatabaseNameException extends DomainException
+{
 }

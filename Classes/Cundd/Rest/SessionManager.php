@@ -15,21 +15,23 @@ use TYPO3\CMS\Core\SingletonInterface;
  *
  * @package Cundd\Rest
  */
-class SessionManager implements SingletonInterface {
+class SessionManager implements SingletonInterface
+{
     const KEY_PREFIX = 'rest-';
 
     /**
      * @var bool
      */
-    protected $didInitialize = FALSE;
+    protected $didInitialize = false;
 
     /**
      * Reads the session data from the database
      */
-    protected function _initialize() {
+    protected function _initialize()
+    {
         if (!$this->didInitialize) {
             $GLOBALS['TSFE']->fe_user->fetchSessionData();
-            $this->didInitialize = TRUE;
+            $this->didInitialize = true;
         }
     }
 
@@ -39,7 +41,8 @@ class SessionManager implements SingletonInterface {
      * @param string $key
      * @return mixed
      */
-    public function valueForKey($key) {
+    public function valueForKey($key)
+    {
         $this->_initialize();
         return $GLOBALS['TSFE']->fe_user->getKey('ses', self::KEY_PREFIX . $key);
     }
@@ -51,7 +54,8 @@ class SessionManager implements SingletonInterface {
      * @param mixed $value
      * @return $this
      */
-    public function setValueForKey($key, $value) {
+    public function setValueForKey($key, $value)
+    {
         $GLOBALS['TSFE']->fe_user->setKey('ses', self::KEY_PREFIX . $key, $value);
         $GLOBALS['TSFE']->fe_user->storeSessionData();
         return $this;

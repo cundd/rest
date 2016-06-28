@@ -38,7 +38,8 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Document extends AbstractEntity implements \ArrayAccess {
+class Document extends AbstractEntity implements \ArrayAccess
+{
     /**
      * Name of the property that holds the data
      */
@@ -75,16 +76,17 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @var array
      */
-    protected $_dataUnpacked = NULL;
+    protected $_dataUnpacked = null;
 
     /**
      * Returns the Documents global unique identifier
      *
      * @return string
      */
-    public function getGuid() {
+    public function getGuid()
+    {
         $guid = $this->db . '-' . $this->id;
-        return $guid !== '-' ? $guid : NULL;
+        return $guid !== '-' ? $guid : null;
     }
 
     /**
@@ -92,7 +94,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @param string $id
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
@@ -101,7 +104,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @return string
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -110,9 +114,10 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @param string $content
      */
-    public function _setDataProtected($content) {
+    public function _setDataProtected($content)
+    {
         $this->dataProtected = $content;
-        $this->_dataUnpacked = NULL;
+        $this->_dataUnpacked = null;
     }
 
     /**
@@ -120,7 +125,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @return string
      */
-    public function _getDataProtected() {
+    public function _getDataProtected()
+    {
         return $this->dataProtected;
     }
 
@@ -130,8 +136,11 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $db
      * @throws InvalidDatabaseNameException if the given database name is not valid
      */
-    public function _setDb($db) {
-        if (!ctype_alnum($db)) throw new InvalidDatabaseNameException('The given database name is invalid', 1389258923);
+    public function _setDb($db)
+    {
+        if (!ctype_alnum($db)) {
+            throw new InvalidDatabaseNameException('The given database name is invalid', 1389258923);
+        }
         $this->db = strtolower($db);
     }
 
@@ -140,7 +149,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @return string
      */
-    public function _getDb() {
+    public function _getDb()
+    {
         return $this->db;
     }
 
@@ -150,7 +160,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $key
      * @return mixed
      */
-    public function valueForKey($key) {
+    public function valueForKey($key)
+    {
         return $this->_valueForKey($key);
     }
 
@@ -160,8 +171,9 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $keyPath
      * @return mixed
      */
-    public function valueForKeyPath($keyPath) {
-        if (strpos($keyPath, '.') === FALSE) {
+    public function valueForKeyPath($keyPath)
+    {
+        if (strpos($keyPath, '.') === false) {
             return $this->valueForKey($keyPath);
         }
         return ObjectAccess::getPropertyPath($this->_getUnpackedData(), $keyPath);
@@ -173,8 +185,9 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $key
      * @return null
      */
-    public function valueForUndefinedKey($key) {
-        return NULL;
+    public function valueForUndefinedKey($key)
+    {
+        return null;
     }
 
     /**
@@ -184,7 +197,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $key
      * @return mixed
      */
-    protected function _valueForKey($key) {
+    protected function _valueForKey($key)
+    {
         if (isset($this->$key) && $this->$key) {
             return $this->$key;
         }
@@ -192,8 +206,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
         $unpackedContent = $this->_getUnpackedData();
         if (isset($unpackedContent[$key])) {
             return $unpackedContent[$key];
-        } else if (property_exists($this, $key)) {
-            return NULL;
+        } elseif (property_exists($this, $key)) {
+            return null;
         }
         return $this->valueForUndefinedKey($key);
     }
@@ -205,7 +219,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param mixed $value
      * @return $this
      */
-    public function setValueForKey($key, $value) {
+    public function setValueForKey($key, $value)
+    {
         $this->_setValueForKey($key, $value);
         return $this;
     }
@@ -216,10 +231,11 @@ class Document extends AbstractEntity implements \ArrayAccess {
      * @param string $key
      * @param mixed $value
      */
-    protected function _setValueForKey($key, $value) {
+    protected function _setValueForKey($key, $value)
+    {
         if ($key === 'dataProtected') {
             $this->dataProtected = $value;
-            $this->_dataUnpacked = NULL;
+            $this->_dataUnpacked = null;
             return;
         }
         if (property_exists($this, $key)) {
@@ -241,9 +257,10 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @return array|mixed
      */
-    public function _getUnpackedData() {
+    public function _getUnpackedData()
+    {
         if (!$this->_dataUnpacked) {
-            $this->_dataUnpacked = json_decode($this->dataProtected, TRUE);
+            $this->_dataUnpacked = json_decode($this->dataProtected, true);
         }
         return $this->_dataUnpacked;
     }
@@ -253,7 +270,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *
      * @return $this
      */
-    public function _packContent() {
+    public function _packContent()
+    {
         $this->dataProtected = json_encode($this->_dataUnpacked);
         return $this;
     }
@@ -271,8 +289,9 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *                      <p>
      *                      The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists($offset) {
-        return $this->valueForKey($offset) ? TRUE : FALSE;
+    public function offsetExists($offset)
+    {
+        return $this->valueForKey($offset) ? true : false;
     }
 
     /**
@@ -285,7 +304,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *                      </p>
      * @return mixed Can return all value types.
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return $this->valueForKey($offset);
     }
 
@@ -302,7 +322,8 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *                      </p>
      * @return void
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         $this->setValueForKey($offset, $value);
     }
 
@@ -316,15 +337,18 @@ class Document extends AbstractEntity implements \ArrayAccess {
      *                      </p>
      * @return void
      */
-    public function offsetUnset($offset) {
-        $this->setValueForKey($offset, NULL);
+    public function offsetUnset($offset)
+    {
+        $this->setValueForKey($offset, null);
     }
 
-    function __get($name) {
+    public function __get($name)
+    {
         return $this->valueForKey($name);
     }
 
-    function __isset($name) {
+    public function __isset($name)
+    {
         return $this->offsetExists($name);
     }
 }

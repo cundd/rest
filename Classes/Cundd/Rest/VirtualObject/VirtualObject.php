@@ -32,7 +32,8 @@ namespace Cundd\Rest\VirtualObject;
  *
  * @package Cundd\Rest
  */
-class VirtualObject {
+class VirtualObject
+{
     /**
      * The data
      *
@@ -40,7 +41,8 @@ class VirtualObject {
      */
     protected $data = array();
 
-    function __construct($data = array()) {
+    public function __construct($data = array())
+    {
         $this->data = $data;
     }
 
@@ -50,7 +52,8 @@ class VirtualObject {
      * @param array $data
      * @return $this
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
         return $this;
     }
@@ -60,7 +63,8 @@ class VirtualObject {
      *
      * @return array
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -70,8 +74,9 @@ class VirtualObject {
      * @param string $key
      * @return mixed
      */
-    public function valueForKey($key) {
-        return isset($this->data[$key]) ? $this->data[$key] : NULL;
+    public function valueForKey($key)
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
     /**
@@ -81,7 +86,8 @@ class VirtualObject {
      * @param mixed $value
      * @return $this
      */
-    public function setValueForKey($key, $value) {
+    public function setValueForKey($key, $value)
+    {
         $this->data[$key] = $value;
         return $this;
     }
@@ -91,7 +97,8 @@ class VirtualObject {
      *
      * @return array
      */
-    public function jsonSerialize() {
+    public function jsonSerialize()
+    {
         return $this->getData();
     }
 }

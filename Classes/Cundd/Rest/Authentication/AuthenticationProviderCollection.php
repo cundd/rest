@@ -25,13 +25,13 @@
 
 namespace Cundd\Rest\Authentication;
 
-
 /**
  * Authentication Provider that tests a collection of Authentication Providers
  *
  * @package Cundd\Rest\Authentication
  */
-class AuthenticationProviderCollection implements AuthenticationProviderInterface {
+class AuthenticationProviderCollection implements AuthenticationProviderInterface
+{
     /**
      * Collection of Authentication Providers
      *
@@ -44,13 +44,14 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      *
      * @param array <AuthenticationProviderInterface>|\SplObjectStorage<AuthenticationProviderInterface> $providers
      */
-    function __construct($providers) {
+    public function __construct($providers)
+    {
         $this->providers = new \SplObjectStorage();
         if (is_array($providers)) {
             foreach ($providers as $provider) {
                 $this->addProvider($provider);
             }
-        } else if ($providers instanceof \SplObjectStorage) {
+        } elseif ($providers instanceof \SplObjectStorage) {
             $this->providers = $providers;
         }
     }
@@ -60,21 +61,23 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      *
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate() {
+    public function authenticate()
+    {
         /** @var AuthenticationProviderInterface $authenticationProvider */
         foreach ($this->providers as $authenticationProvider) {
             if ($authenticationProvider->authenticate()) {
-                return TRUE;
+                return true;
             }
         }
-        return FALSE;
+        return false;
     }
 
     /**
      * @param \Bullet\Request|\Cundd\Rest\Request $request
      * @return mixed|void
      */
-    public function setRequest(\Cundd\Rest\Request $request) {
+    public function setRequest(\Cundd\Rest\Request $request)
+    {
         /** @var AuthenticationProviderInterface $authenticationProvider */
         foreach ($this->providers as $authenticationProvider) {
             $authenticationProvider->setRequest($request);
@@ -87,7 +90,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param \SplObjectStorage $providers
      * @return $this
      */
-    public function setProviders($providers) {
+    public function setProviders($providers)
+    {
         $this->providers = $providers;
         return $this;
     }
@@ -97,7 +101,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      *
      * @return \SplObjectStorage
      */
-    public function getProviders() {
+    public function getProviders()
+    {
         return $this->providers;
     }
 
@@ -107,7 +112,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param AuthenticationProviderInterface $provider
      * @return $this
      */
-    public function addProvider(AuthenticationProviderInterface $provider) {
+    public function addProvider(AuthenticationProviderInterface $provider)
+    {
         $this->providers->attach($provider);
         return $this;
     }
@@ -118,7 +124,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param AuthenticationProviderInterface $provider
      * @return $this
      */
-    public function removeProvider(AuthenticationProviderInterface $provider) {
+    public function removeProvider(AuthenticationProviderInterface $provider)
+    {
         $this->providers->detach($provider);
         return $this;
     }

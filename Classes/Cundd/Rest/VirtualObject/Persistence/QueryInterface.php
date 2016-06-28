@@ -11,7 +11,8 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 /**
  * A persistence query interface
  */
-interface QueryInterface {
+interface QueryInterface
+{
     /**
      * The '=' comparison operator.
      *
