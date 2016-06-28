@@ -160,6 +160,7 @@ class FileDataProviderTest extends AbstractCase
                     'size' => 10,
                     'title' => '',
                     'description' => '',
+                    'uid' => 0,
                     '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
                 '__class' => 'Mock_Test_Class'
@@ -176,7 +177,8 @@ class FileDataProviderTest extends AbstractCase
             'title' => 'Test',
             'file' => $this->createFileReferenceMock(array(
                 'title' => 'My title',
-                'description' => 'File description'
+                'description' => 'File description',
+                'uid' => 0,
             ))
         ));
 
@@ -192,6 +194,7 @@ class FileDataProviderTest extends AbstractCase
                     'size' => 10,
                     'title' => 'My title',
                     'description' => 'File description',
+                    'uid' => 0,
                     '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
                 '__class' => 'Mock_Test_Class'
@@ -217,6 +220,7 @@ class FileDataProviderTest extends AbstractCase
                 'size' => 10,
                 'title' => '',
                 'description' => '',
+                'uid' => 0,
                 '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
             ), $result
         );
@@ -230,7 +234,8 @@ class FileDataProviderTest extends AbstractCase
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock(array(
             'title' => 'My title',
-            'description' => 'File description'
+            'description' => 'File description',
+            'uid' => 0,
         ));
 
         $result = $this->fixture->getModelData($testModel);
@@ -243,6 +248,7 @@ class FileDataProviderTest extends AbstractCase
                 'size' => 10,
                 'title' => 'My title',
                 'description' => 'File description',
+                'uid' => 0,
                 '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
             ), $result
         );
