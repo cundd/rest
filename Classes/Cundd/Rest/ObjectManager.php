@@ -100,10 +100,18 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getDataProvider()
     {
         if (!$this->dataProvider) {
-            list($vendor, $extension, ) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+
+            // Check if an extension provides a Data Provider for the domain model
+            $dataProviderClass = 'Tx_' . $extension . '_Rest_' . $model . 'DataProvider';
+            if (!class_exists($dataProviderClass)) {
+                $dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\' . $model . 'DataProvider';
+            }
 
             // Check if an extension provides a Data Provider
-            $dataProviderClass = 'Tx_' . $extension . '_Rest_DataProvider';
+            if (!class_exists($dataProviderClass)) {
+                $dataProviderClass = 'Tx_' . $extension . '_Rest_DataProvider';
+            }
             if (!class_exists($dataProviderClass)) {
                 $dataProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider';
             }
@@ -128,7 +136,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAuthenticationProvider()
     {
         if (!$this->authenticationProvider) {
-            list($vendor, $extension, ) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
             // Check if an extension provides a Authentication Provider
             $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
@@ -160,7 +168,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAccessController()
     {
         if (!$this->accessController) {
-            list($vendor, $extension, ) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
             // Check if an extension provides a Authentication Provider
             $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
@@ -186,7 +194,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getHandler()
     {
         /** @var \Cundd\Rest\HandlerInterface $handler */
-        list($vendor, $extension, ) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+        list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
         // Check if an extension provides a Handler
         $handlerClass = 'Tx_' . $extension . '_Rest_Handler';

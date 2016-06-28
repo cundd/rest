@@ -192,6 +192,30 @@ class ObjectManagerTest extends AbstractCase
     /**
      * @test
      */
+    public function getDataProviderForModelWithPathTest()
+    {
+        $this->createClass('Tx_MyThirdExt_Rest_MyModelDataProvider', '', '\\Cundd\\Rest\\DataProvider\\DataProvider');
+        $_GET['u'] = 'MyThirdExt-MyModel/1.json';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+        $this->assertInstanceOf('Tx_MyThirdExt_Rest_MyModelDataProvider', $dataProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function getNamespacedDataProviderForModelWithPathTest()
+    {
+        $this->createClass('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', '\\Cundd\\Rest\\DataProvider\\DataProvider');
+        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1.json';
+        $dataProvider = $this->fixture->getDataProvider();
+        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', $dataProvider);
+    }
+
+    /**
+     * @test
+     */
     public function getHandlerForPathTest()
     {
         $_GET['u'] = 'my_ext-my_model/1';
@@ -278,7 +302,6 @@ class ObjectManagerTest extends AbstractCase
     }
 
 
-
     /**
      * @test
      */
@@ -317,5 +340,37 @@ class ObjectManagerTest extends AbstractCase
         $_GET['u'] = 'VirtualObject-Page/1.json';
         $dataProvider = $this->fixture->getDataProvider();
         $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
+    }
+
+
+    /**
+     * @param string $className
+     * @param string $namespace
+     * @param string $extends
+     */
+    private function createClass($className, $namespace = '', $extends = '')
+    {
+        if (!is_string($className)) {
+            throw new \InvalidArgumentException('$className must be a string');
+        }
+        if (!is_string($namespace)) {
+            throw new \InvalidArgumentException('$namespace must be a string');
+        }
+        if (!is_string($extends)) {
+            throw new \InvalidArgumentException('$extends must be a string');
+        }
+
+        $code = array();
+        if ($namespace) {
+            $code[] = "namespace $namespace;";
+        }
+        $code[] = "class $className";
+        if ($extends) {
+            $code[] = "extends $extends";
+        }
+        $code[] = '{}';
+
+        eval(implode(' ', $code));
+        var_dump(class_exists(($namespace ? $namespace . '\\' : '' ).$className));
     }
 }
