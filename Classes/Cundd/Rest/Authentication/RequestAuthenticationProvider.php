@@ -41,6 +41,6 @@ class RequestAuthenticationProvider extends AbstractAuthenticationProvider
      */
     public function authenticate()
     {
-        return (true == ($GLOBALS['TSFE']->fe_user->user));
+        return !!($GLOBALS['TSFE']->fe_user->user);
     }
 }
