@@ -122,113 +122,65 @@ class ObjectManagerTest extends AbstractCase
 
     public function dataProviderTestGenerator()
     {
-        // 28
+        $defaultDataProvider = '\\Cundd\\Rest\\DataProvider\\DataProvider';
         return array(
             //     url,                expected,                     classToBuild
             array('', 'Cundd\\Rest\\DataProvider\\DataProvider', array()),
-            array('my_ext-my_model/1', 'Tx_MyExt_Rest_DataProvider', array()),
-            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_DataProvider', array()),
-            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_DataProvider', array()),
-            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_DataProvider', array()),
+            array('my_ext-my_model/1', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
+            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
+            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
+            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
 
-            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
-            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
-            array('Vendor-NotExistingExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
-            array('Vendor-NotExistingExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
+            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
+            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
+            array('Vendor-NotExistingExt-MyModel/1', $defaultDataProvider, array()),
+            array('Vendor-NotExistingExt-MyModel/1.json', $defaultDataProvider, array()),
 
-            array('MyThirdExt-MyModel/1.json', 'Tx_MyThirdExt_Rest_MyModelDataProvider', array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', '\\Cundd\\Rest\\DataProvider\\DataProvider')),
-            array('Vendor-MySecondExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', '\\Cundd\\Rest\\DataProvider\\DataProvider')),
+            array('MyThirdExt-MyModel/1.json', 'Tx_MyThirdExt_Rest_MyModelDataProvider', array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider)),
+            array('Vendor-MySecondExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
         );
     }
 
     /**
      * @test
+     *
+     * @dataProvider handlerTestGenerator
+     * @param string $url
+     * @param string $expectedClass
+     * @param array $classToBuild
+     * @throws \Exception
      */
-    public function getHandlerForPathTest()
+    public function getHandlerTest($url, $expectedClass, $classToBuild)
     {
-        $_GET['u'] = 'my_ext-my_model/1';
+        $_GET['u'] = $url;
+        if ($classToBuild) {
+            $this->createClass($classToBuild);
+        }
+
         $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
+        $this->assertInstanceOf($expectedClass, $handler);
+        $this->assertInstanceOf('Cundd\\Rest\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Cundd\\Rest\\Handler', $handler);
     }
 
-    /**
-     * @test
-     */
-    public function getHandlerForPathWithFormatTest()
+    public function handlerTestGenerator()
     {
-        $_GET['u'] = 'my_ext-my_model/1.json';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
-    }
+        $defaultHandler = '\\Cundd\\Rest\\Handler';
 
-    /**
-     * @test
-     */
-    public function getHandlerForPathUpperCamelCaseTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
-    }
+        return array(
+            //     url,                expected,                     classToBuild
+            array('my_ext-my_model/1', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
+            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
+            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
+            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
 
-    /**
-     * @test
-     */
-    public function getHandlerForPathUpperCamelCaseWithFormatTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1.json';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Tx_MyExt_Rest_Handler', $handler);
-    }
+            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
+            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
 
-    /**
-     * @test
-     */
-    public function getNamespacedHandlerForPathTest()
-    {
-        $_GET['u'] = 'vendor-my_second_ext-my_model/1';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\Handler', $handler);
+            array('Vendor-NotExistingExt-MyModel/1', $defaultHandler, array()),
+            array('Vendor-NotExistingExt-MyModel/1.json', $defaultHandler, array()),
+        );
     }
-
-    /**
-     * @test
-     */
-    public function getNamespacedHandlerForPathUpperCamelCaseTest()
-    {
-        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\Handler', $handler);
-    }
-
-    /**
-     * @test
-     */
-    public function getDefaultHandlerForPathTest()
-    {
-        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('\\Cundd\\Rest\\Handler', $handler);
-    }
-
-    /**
-     * @test
-     */
-    public function getDefaultHandlerForPathWithFormatTest()
-    {
-        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1.json';
-        $handler = $this->fixture->getHandler();
-        $this->assertInstanceOf('\\Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('\\Cundd\\Rest\\Handler', $handler);
-    }
-
 
     /**
      * @test
@@ -275,6 +227,7 @@ class ObjectManagerTest extends AbstractCase
      * @param string $className
      * @param string $namespace
      * @param string $extends
+     * @throws \Exception
      */
     private function createClass($className, $namespace = '', $extends = '')
     {
@@ -289,6 +242,12 @@ class ObjectManagerTest extends AbstractCase
         }
         if (!is_string($extends)) {
             throw new \InvalidArgumentException('$extends must be a string');
+        }
+
+        $namespace = trim($namespace, '\\');
+        if (class_exists("$namespace\\$className")) {
+            printf('Class %s already exists' . PHP_EOL, "$namespace\\$className");
+            return;
         }
 
         $code = array();

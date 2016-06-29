@@ -25,7 +25,6 @@
 
 namespace Cundd\Rest\Tests;
 
-use Cundd\Rest\HandlerInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
@@ -164,31 +163,27 @@ class MyNestedJsonSerializeModel extends MyNestedModel
     }
 }
 
-class MyHandler implements HandlerInterface
-{
-    /**
-     * @inheritDoc
-     */
-    public function setRequest($request)
-    {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRequest()
-    {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function configureApiPaths()
-    {
-    }
-}
-
-class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Tx_MyExt_Rest_DataProvider');
-class_alias('Cundd\\Rest\\DataProvider\\DataProvider', 'Vendor\\MySecondExt\\Rest\\DataProvider');
-class_alias('Cundd\\Rest\\Tests\\MyHandler', 'Tx_MyExt_Rest_Handler');
-class_alias('Cundd\\Rest\\Tests\\MyHandler', 'Vendor\\MySecondExt\\Rest\\Handler');
+//class MyHandler implements HandlerInterface
+//{
+//    /**
+//     * @inheritDoc
+//     */
+//    public function setRequest($request)
+//    {
+//    }
+//
+//    /**
+//     * @inheritDoc
+//     */
+//    public function getRequest()
+//    {
+//    }
+//
+//    /**
+//     * @inheritDoc
+//     */
+//    public function configureApiPaths()
+//    {
+//    }
+//}
+//
