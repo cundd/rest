@@ -93,16 +93,6 @@ class ObjectManagerTest extends AbstractCase
     /**
      * @test
      */
-    public function getDataProviderTest()
-    {
-        $object = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProviderInterface', $object);
-        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProvider', $object);
-    }
-
-    /**
-     * @test
-     */
     public function getAuthenticationProviderTest()
     {
         $object = $this->fixture->getAuthenticationProvider();
@@ -111,106 +101,44 @@ class ObjectManagerTest extends AbstractCase
 
     /**
      * @test
+     * @dataProvider dataProviderTestGenerator
+     * @param string $url
+     * @param string $expectedClass
+     * @param array $classToBuild
+     * @throws \Exception
      */
-    public function getDataProviderForPathTest()
+    public function getDataProviderTest($url, $expectedClass, $classToBuild)
     {
-        $_GET['u'] = 'my_ext-my_model/1';
+        $_GET['u'] = $url;
+        if ($classToBuild) {
+            $this->createClass($classToBuild);
+        }
+
         $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+        $this->assertInstanceOf($expectedClass, $dataProvider);
+        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProviderInterface', $dataProvider);
+        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
     }
 
-    /**
-     * @test
-     */
-    public function getDataProviderForPathWithFormatTest()
+    public function dataProviderTestGenerator()
     {
-        $_GET['u'] = 'my_ext-my_model/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
-    }
+        // 28
+        return array(
+            //     url,                expected,                     classToBuild
+            array('', 'Cundd\\Rest\\DataProvider\\DataProvider', array()),
+            array('my_ext-my_model/1', 'Tx_MyExt_Rest_DataProvider', array()),
+            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_DataProvider', array()),
+            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_DataProvider', array()),
+            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_DataProvider', array()),
 
-    /**
-     * @test
-     */
-    public function getDataProviderForPathUpperCamelCaseTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
-    }
+            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
+            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
+            array('Vendor-NotExistingExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
+            array('Vendor-NotExistingExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array()),
 
-    /**
-     * @test
-     */
-    public function getDataProviderForPathUpperCamelCaseWithFormatTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getNamespacedDataProviderForPathTest()
-    {
-        $_GET['u'] = 'vendor-my_second_ext-my_model/1';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\DataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getNamespacedDataProviderForPathUpperCamelCaseTest()
-    {
-        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\DataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDefaultDataProviderForPathTest()
-    {
-        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDefaultDataProviderForPathWithFormatTest()
-    {
-        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDataProviderForModelWithPathTest()
-    {
-        $this->createClass('Tx_MyThirdExt_Rest_MyModelDataProvider', '', '\\Cundd\\Rest\\DataProvider\\DataProvider');
-        $_GET['u'] = 'MyThirdExt-MyModel/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
-        $this->assertInstanceOf('Tx_MyThirdExt_Rest_MyModelDataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getNamespacedDataProviderForModelWithPathTest()
-    {
-        $this->createClass('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', '\\Cundd\\Rest\\DataProvider\\DataProvider');
-        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
-        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', $dataProvider);
+            array('MyThirdExt-MyModel/1.json', 'Tx_MyThirdExt_Rest_MyModelDataProvider', array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', '\\Cundd\\Rest\\DataProvider\\DataProvider')),
+            array('Vendor-MySecondExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', '\\Cundd\\Rest\\DataProvider\\DataProvider')),
+        );
     }
 
     /**
@@ -350,6 +278,9 @@ class ObjectManagerTest extends AbstractCase
      */
     private function createClass($className, $namespace = '', $extends = '')
     {
+        if (func_num_args() === 1 && is_array($className)) {
+            list($className, $namespace, $extends) = $className;
+        }
         if (!is_string($className)) {
             throw new \InvalidArgumentException('$className must be a string');
         }
@@ -371,5 +302,91 @@ class ObjectManagerTest extends AbstractCase
         $code[] = '{}';
 
         eval(implode(' ', $code));
+
+        if (!class_exists("$namespace\\$className")) {
+            throw new \Exception(sprintf('Could not create class %s', "$namespace\\$className"));
+        }
     }
+
+
+//    /**
+//     * @test
+//     */
+//    public function getDataProviderForPathTest()
+//    {
+//        $_GET['u'] = 'my_ext-my_model/1';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getDataProviderForPathWithFormatTest()
+//    {
+//        $_GET['u'] = 'my_ext-my_model/1.json';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getDataProviderForPathUpperCamelCaseTest()
+//    {
+//        $_GET['u'] = 'MyExt-MyModel/1';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+//    }
+//
+//    /**
+//     * @test
+//     */
+//    public function getDataProviderForPathUpperCamelCaseWithFormatTest()
+//    {
+//        $_GET['u'] = 'MyExt-MyModel/1.json';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('Tx_MyExt_Rest_DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getNamespacedDataProviderForPathTest()
+//    {
+//        $_GET['u'] = 'vendor-my_second_ext-my_model/1';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getNamespacedDataProviderForPathUpperCamelCaseTest()
+//    {
+//        $_GET['u'] = 'Vendor-MySecondExt-MyModel/1';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('\\Vendor\\MySecondExt\\Rest\\DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getDefaultDataProviderForPathTest()
+//    {
+//        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+//    }
+
+//    /**
+//     * @test
+//     */
+//    public function getDefaultDataProviderForPathWithFormatTest()
+//    {
+//        $_GET['u'] = 'Vendor-NotExistingExt-MyModel/1.json';
+//        $dataProvider = $this->fixture->getDataProvider();
+//        $this->assertInstanceOf('\\Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+//    }
+//
 }

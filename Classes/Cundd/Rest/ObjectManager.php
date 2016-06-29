@@ -113,29 +113,11 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
                 // Check for a specific builtin Data Provider
                 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider',
-
-                // Get the default Data Provider
-                'Cundd\\Rest\\DataProvider\\DataProviderInterface',
             );
 
-            $dataProviderClass = $this->getFirstExistingClass($classes);
-            if (!$dataProviderClass) {
-                throw new \Exception('No Data Provider found');
-            }
-            $this->dataProvider = $this->get($dataProviderClass);
+            $this->dataProvider = $this->get($this->getFirstExistingClass($classes,  'Cundd\\Rest\\DataProvider\\DataProviderInterface'));
         }
         return $this->dataProvider;
-    }
-
-
-    private function getFirstExistingClass(array $classes)
-    {
-        foreach ($classes as $class) {
-            if (class_exists($class) || interface_exists($class)) {
-                return $class;
-            }
-        }
-        return '';
     }
 
     /**
@@ -203,24 +185,18 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      */
     public function getHandler()
     {
-        /** @var \Cundd\Rest\HandlerInterface $handler */
         list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
 
-        // Check if an extension provides a Handler
-        $handlerClass = 'Tx_' . $extension . '_Rest_Handler';
-        if (!class_exists($handlerClass)) {
-            $handlerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler';
-        }
+        $classes = array(
+            // Check if an extension provides a Data Provider
+            'Tx_' . $extension . '_Rest_Handler',
+            ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler',
 
-        // Get the specific builtin handler
-        if (!class_exists($handlerClass)) {
-            $handlerClass = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
-            // Get the default handler
-            if (!class_exists($handlerClass)) {
-                $handlerClass = 'Cundd\\Rest\\HandlerInterface';
-            }
-        }
-        return $this->get($handlerClass);
+            // Check for a specific builtin Data Provider
+            'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
+        );
+
+        return $this->get($this->getFirstExistingClass($classes, 'Cundd\\Rest\\HandlerInterface'));
     }
 
     /**
@@ -259,6 +235,29 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     protected function getRequest()
     {
         return $this->getRequestFactory()->getRequest();
+    }
+
+    /**
+     * Returns the first of the classes that exists
+     *
+     * @param string[] $classes
+     * @param string $default
+     * @return string
+     * @throws \Exception
+     */
+    private function getFirstExistingClass(array $classes, $default = '')
+    {
+        foreach ($classes as $class) {
+            if (class_exists($class)) {
+                return $class;
+            }
+        }
+
+        if ($default === '') {
+            throw new \Exception('No existing class found');
+        }
+
+        return $default;
     }
 
     /**
