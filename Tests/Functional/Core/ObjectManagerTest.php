@@ -107,7 +107,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array $classToBuild
      * @throws \Exception
      */
-    public function getDataProviderTest($url, $expectedClass, $classToBuild)
+    public function getDataProviderTest($url, $expectedClass, $classToBuild = array())
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
@@ -133,11 +133,16 @@ class ObjectManagerTest extends AbstractCase
 
             array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
             array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
-            array('Vendor-NotExistingExt-MyModel/1', $defaultDataProvider, array()),
-            array('Vendor-NotExistingExt-MyModel/1.json', $defaultDataProvider, array()),
+            array('Vendor-NotExistingExt-MyModel/1', $defaultDataProvider),
+            array('Vendor-NotExistingExt-MyModel/1.json', $defaultDataProvider),
 
             array('MyThirdExt-MyModel/1.json', 'Tx_MyThirdExt_Rest_MyModelDataProvider', array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider)),
             array('Vendor-MySecondExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
+
+            array('VirtualObject-Page', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
+            array('VirtualObject-Page.json', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
+            array('VirtualObject-Page/1', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
+            array('VirtualObject-Page/1.json', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
         );
     }
 
@@ -177,51 +182,10 @@ class ObjectManagerTest extends AbstractCase
             array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
             array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
 
-            array('Vendor-NotExistingExt-MyModel/1', $defaultHandler, array()),
-            array('Vendor-NotExistingExt-MyModel/1.json', $defaultHandler, array()),
+            array('Vendor-NotExistingExt-MyModel/1', $defaultHandler),
+            array('Vendor-NotExistingExt-MyModel/1.json', $defaultHandler),
         );
     }
-
-    /**
-     * @test
-     */
-    public function getDataProviderForVirtualObjectTest()
-    {
-        $_GET['u'] = 'VirtualObject-Page';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDataProviderForVirtualObjectWithFormatTest()
-    {
-        $_GET['u'] = 'VirtualObject-Page.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDataProviderForVirtualObjectWithPathTest()
-    {
-        $_GET['u'] = 'VirtualObject-Page/1';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
-    }
-
-    /**
-     * @test
-     */
-    public function getDataProviderForVirtualObjectWithPathWithFormatTest()
-    {
-        $_GET['u'] = 'VirtualObject-Page/1.json';
-        $dataProvider = $this->fixture->getDataProvider();
-        $this->assertInstanceOf('Cundd\Rest\DataProvider\VirtualObjectDataProvider', $dataProvider);
-    }
-
 
     /**
      * @param string $className
