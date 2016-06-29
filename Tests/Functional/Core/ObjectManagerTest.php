@@ -155,7 +155,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array $classToBuild
      * @throws \Exception
      */
-    public function getHandlerTest($url, $expectedClass, $classToBuild)
+    public function getHandlerTest($url, $expectedClass, $classToBuild = array())
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
