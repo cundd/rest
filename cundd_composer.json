@@ -7,7 +7,6 @@
   ],
   "homepage": "https://rest.cundd.net/",
   "require": {
-    "react/react": "0.3.*",
     "vlucas/bulletphp": "v1.4.2"
   },
   "authors": [
