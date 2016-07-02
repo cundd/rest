@@ -123,14 +123,6 @@ plugin.tx_rest.settings {
 						column = doktype
 						type = integer
 					}
-#					TSconfig {
-#						column = TSconfig
-#						type = string
-#					}
-					storagePageIdentifier {
-						column = storage_pid
-						type = int
-					}
 					isSiteRoot {
 						column = is_siteroot
 						type = bool
@@ -139,10 +131,6 @@ plugin.tx_rest.settings {
 						column = php_tree_stop
 						type = boolean
 					}
-#					tx_impexp_origuid {
-#						column = tx_impexp_origuid
-#						type = int
-#					}
 					url {
 						column = url
 						type = string

@@ -95,10 +95,6 @@ plugin.tx_rest.settings {
 						column = header
 						type = string
 					}
-					# headerPosition {
-					#	 column = header_position
-					#	 type = string
-					# }
 					bodytext {
 						column = bodytext
 						type = string
@@ -113,10 +109,6 @@ plugin.tx_rest.settings {
 					}
 					imageOrientation {
 						column = imageorient
-						type = int
-					}
-					imageCaption {
-						column = imagecaption
 						type = int
 					}
 					imageColumns {
@@ -167,14 +159,6 @@ plugin.tx_rest.settings {
 						column = subheader
 						type = string
 					}
-					spaceBefore {
-						column = spaceBefore
-						type = int
-					}
-					spaceAfter {
-						column = spaceAfter
-						type = int
-					}
 					feGroup {
 						column = fe_group
 						type = string
@@ -183,65 +167,13 @@ plugin.tx_rest.settings {
 						column = header_link
 						type = string
 					}
-					imageCaptionPosition {
-						column = imagecaption_position
-						type = string
-					}
-					imageLink {
-						column = image_link
-						type = string
-					}
 					imageZoom {
 						column = image_zoom
 						type = integer
 					}
-					imageNoRows {
-						column = image_noRows
-						type = integer
-					}
-					imageEffects {
-						column = image_effects
-						type = integer
-					}
-					imageCompression {
-						column = image_compression
-						type = integer
-					}
-					alternativeText {
-						column = altText
-						type = string
-					}
-					titleText {
-						column = titleText
-						type = string
-					}
-					longdescURL {
-						column = longdescURL
-						type = string
-					}
 					headerLayout {
 						column = header_layout
 						type = string
-					}
-					textAlign {
-						column = text_align
-						type = string
-					}
-					textFace {
-						column = text_face
-						type = string
-					}
-					textSize {
-						column = text_size
-						type = int
-					}
-					textColor {
-						column = text_color
-						type = integer
-					}
-					textProperties {
-						column = text_properties
-						type = integer
 					}
 					menuType {
 						column = menu_type
@@ -249,26 +181,6 @@ plugin.tx_rest.settings {
 					}
 					listType {
 						column = list_type
-						type = string
-					}
-					tableBorder {
-						column = table_border
-						type = int
-					}
-					tableCellSpacing {
-						column = table_cellspacing
-						type = int
-					}
-					tableCellPadding {
-						column = table_cellpadding
-						type = int
-					}
-					tableBackgroundColor {
-						column = table_bgColor
-						type = int
-					}
-					selectKey {
-						column = select_key
 						type = string
 					}
 					sectionIndex {
@@ -287,24 +199,8 @@ plugin.tx_rest.settings {
 						column = target
 						type = string
 					}
-					sectionFrame {
-						column = section_frame
-						type = int
-					}
 					date {
 						column = date
-						type = int
-					}
-					splashLayout {
-						column = splash_layout
-						type = string
-					}
-					multimedia {
-						column = multimedia
-						type = string
-					}
-					imageFrames {
-						column = image_frames
 						type = int
 					}
 					recursive {
@@ -315,18 +211,10 @@ plugin.tx_rest.settings {
 						column = imageheight
 						type = int
 					}
-					rteEnabled {
-						column = rte_enabled
-						type = bool
-					}
 					systemLanguageUid {
 						column = sys_language_uid
 						type = int
 					}
-					# tx_impexp_origuid {
-					#	 column = tx_impexp_origuid
-					#	 type = int
-					# }
 					flexform {
 						column = pi_flexform
 						type = string
