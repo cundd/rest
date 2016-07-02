@@ -1,22 +1,25 @@
 {
-    "name": "cundd/rest",
-    "description": "REST API for TYPO3 CMS",
-    "keywords": ["typo3cms"],
-    "require": {
-		"react/react": "0.3.*",
-		"vlucas/bulletphp": "*"
-    },
-    "authors": [
-        {
-            "name": "Daniel Corn",
-            "email": "info@cundd.net"
-        }
-    ],
-    "minimum-stability": "dev",
-    "license": "GPL-2.0+",
-    "autoload": {
-        "psr-0": {
-            "Cundd\\Rest": "Classes/"
-        }
+  "name": "cundd/rest",
+  "description": "REST API for TYPO3 CMS",
+  "keywords": [
+    "typo3cms",
+    "rest"
+  ],
+  "homepage": "https://rest.cundd.net/",
+  "require": {
+    "react/react": "0.3.*",
+    "vlucas/bulletphp": "v1.4.2"
+  },
+  "authors": [
+    {
+      "name": "Daniel Corn",
+      "email": "info@cundd.net"
     }
+  ],
+  "license": "GPL-2.0+",
+  "autoload": {
+    "psr-0": {
+      "Cundd\\Rest": "Classes/"
+    }
+  }
 }
