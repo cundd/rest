@@ -19,7 +19,12 @@ function get_mysql_client_path {
 
 function check_mysql_credentials {
     `get_mysql_client_path` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null;
-    php -r 'mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or die(mysqli_connect_error());';
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Could not connect to MySQL";
+        exit 1;
+    fi
+
+    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or die(mysqli_connect_error());';
     if [ $? -ne 0 ]; then
         echo "ERROR: Could not connect to MySQL";
         exit 1;
