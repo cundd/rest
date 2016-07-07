@@ -88,7 +88,6 @@ interface ConfigurationInterface
      * Returns the property for the given source property (column)
      *
      * @param $sourceKey
-     * @internal param string $propertyName
      * @return string
      */
     public function getPropertyForSourceKey($sourceKey);
