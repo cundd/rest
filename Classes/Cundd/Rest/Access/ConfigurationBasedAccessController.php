@@ -54,8 +54,9 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      *
      * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
      */
-    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider)
-    {
+    public function injectConfigurationProvider(
+        \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+    ) {
         $this->configurationProvider = $configurationProvider;
     }
 
@@ -75,13 +76,14 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+            throw new InvalidConfigurationException($configurationKey.' configuration not set', 1376826223);
         }
 
         $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return $this->checkAuthentication();
         }
+
         return $access;
     }
 
@@ -101,13 +103,14 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+            throw new InvalidConfigurationException($configurationKey.' configuration not set', 1376826223);
         }
 
         $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return true;
         }
+
         return false;
     }
 
@@ -143,6 +146,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
         if (!$this->request) {
             throw new \UnexpectedValueException('The request isn\'t set', 1376816053);
         }
+
         return $this->getConfigurationForPath($this->request->path());
     }
 
@@ -168,6 +172,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
                 $matchingConfiguration = $configuration;
             }
         }
+
         return $matchingConfiguration;
     }
 
@@ -182,6 +187,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
         if (isset($settings['paths']) && is_array($settings['paths'])) {
             return $settings['paths'];
         }
+
         return isset($settings['paths.']) ? $settings['paths.'] : array();
     }
 }
