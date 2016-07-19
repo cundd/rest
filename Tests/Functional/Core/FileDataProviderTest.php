@@ -83,7 +83,7 @@ class FileDataProviderTest extends AbstractCase
     protected function createFileReferenceMock(array $fileReferenceProperties = array())
     {
         $fileReferenceProperties = array(
-            'uid_local' => time(),
+            'uid_local' => '1467702760',
             'name' => 'Test name',
         ) + $fileReferenceProperties;
         $originalFileMock = $this->createFileMock();
@@ -160,7 +160,8 @@ class FileDataProviderTest extends AbstractCase
                     'size' => 10,
                     'title' => '',
                     'description' => '',
-                    'uid' => 0,
+                    'uid' => 1467702760,
+                    'referenceUid' => 0,
                     '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
                 '__class' => 'Mock_Test_Class'
@@ -194,7 +195,8 @@ class FileDataProviderTest extends AbstractCase
                     'size' => 10,
                     'title' => 'My title',
                     'description' => 'File description',
-                    'uid' => 0,
+                    'uid' => 1467702760,
+                    'referenceUid' => 0,
                     '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
                 '__class' => 'Mock_Test_Class'
@@ -220,7 +222,8 @@ class FileDataProviderTest extends AbstractCase
                 'size' => 10,
                 'title' => '',
                 'description' => '',
-                'uid' => 0,
+                'uid' => 1467702760,
+                'referenceUid' => 0,
                 '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
             ), $result
         );
@@ -248,7 +251,8 @@ class FileDataProviderTest extends AbstractCase
                 'size' => 10,
                 'title' => 'My title',
                 'description' => 'File description',
-                'uid' => 0,
+                'uid' => 1467702760,
+                'referenceUid' => 0,
                 '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
             ), $result
         );

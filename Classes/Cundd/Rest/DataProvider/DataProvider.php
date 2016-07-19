@@ -96,10 +96,11 @@ class DataProvider implements DataProviderInterface
     public function getRepositoryClassForPath($path)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
+        $repositoryClass = 'Tx_'.$extension.'_Domain_Repository_'.$model.'Repository';
         if (!class_exists($repositoryClass)) {
-            $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+            $repositoryClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Repository\\'.$model.'Repository';
         }
+
         return $repositoryClass;
     }
 
@@ -114,7 +115,10 @@ class DataProvider implements DataProviderInterface
         $repositoryClass = $this->getRepositoryClassForPath($path);
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
-        $repository->setDefaultQuerySettings($this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings'));
+        $repository->setDefaultQuerySettings(
+            $this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings')
+        );
+
         return $repository;
     }
 
@@ -127,10 +131,11 @@ class DataProvider implements DataProviderInterface
     public function getModelClassForPath($path)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
+        $modelClass = 'Tx_'.$extension.'_Domain_Model_'.$model;
         if (!class_exists($modelClass)) {
-            $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
+            $modelClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Model\\'.$model;
         }
+
         return $modelClass;
     }
 
@@ -150,7 +155,7 @@ class DataProvider implements DataProviderInterface
      * This method will load existing models.
      *
      * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
+     * @param string           $path API path to get the repository for
      * @return DomainObjectInterface
      */
     public function getModelWithDataForPath($data, $path)
@@ -170,9 +175,10 @@ class DataProvider implements DataProviderInterface
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
             $model = null;
 
-            $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+            $message = 'Uncaught exception #'.$exception->getCode().': '.$exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
+
         return $model;
     }
 
@@ -181,7 +187,7 @@ class DataProvider implements DataProviderInterface
      * Even if the data contains an identifier, the existing model will not be loaded.
      *
      * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
+     * @param string           $path API path to get the repository for
      * @return DomainObjectInterface
      */
     public function getNewModelWithDataForPath($data, $path)
@@ -211,6 +217,7 @@ class DataProvider implements DataProviderInterface
             // Set the saved identifier
             $model->_setProperty('uid', $uid);
         }
+
         return $model;
     }
 
@@ -234,6 +241,7 @@ class DataProvider implements DataProviderInterface
     public function getEmptyModelForPath($path)
     {
         $modelClass = $this->getModelClassForPath($path);
+
         return $this->objectManager->get($modelClass);
     }
 
@@ -241,8 +249,8 @@ class DataProvider implements DataProviderInterface
      * Returns the data for the given lazy object storage
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
-     * @param string $propertyKey
-     * @param DomainObjectInterface $model
+     * @param string                                                   $propertyKey
+     * @param DomainObjectInterface                                    $model
      * @return array<mixed>
      */
     public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model)
@@ -261,6 +269,7 @@ class DataProvider implements DataProviderInterface
         } else {
             $returnData = $this->getUriToNestedResource($propertyKey, $model);
         }
+
         return $returnData;
     }
 
@@ -268,8 +277,8 @@ class DataProvider implements DataProviderInterface
      * Returns the data for the given lazy object storage
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy $proxy
-     * @param string $propertyKey
-     * @param DomainObjectInterface $model
+     * @param string                                                  $propertyKey
+     * @param DomainObjectInterface                                   $model
      * @return array<mixed>
      */
     public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model)
@@ -287,20 +296,21 @@ class DataProvider implements DataProviderInterface
 
             $this->currentModelDataDepth--;
         }
+
         return $returnData;
     }
 
     /**
      * Returns the URI of a nested resource
      *
-     * @param string $resourceKey
+     * @param string                $resourceKey
      * @param DomainObjectInterface $model
      * @return string
      */
     public function getUriToNestedResource($resourceKey, $model)
     {
         $currentUri = '/rest/';
-        $currentUri .= Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
+        $currentUri .= Utility::getPathForClassName(get_class($model)).'/'.$model->getUid().'/';
 
         if ($resourceKey !== null) {
             $currentUri .= $resourceKey;
@@ -310,7 +320,7 @@ class DataProvider implements DataProviderInterface
 
         $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
 
-        return $protocol . '://' . $host . $currentUri;
+        return $protocol.'://'.$host.$currentUri;
     }
 
     /**
@@ -328,7 +338,7 @@ class DataProvider implements DataProviderInterface
      * Returns the property data from the given model
      *
      * @param DomainObjectInterface $model
-     * @param string $propertyKey
+     * @param string                $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey)
@@ -351,6 +361,7 @@ class DataProvider implements DataProviderInterface
         } elseif (!$propertyValue) {
             return null;
         }
+
         return $propertyValue;
     }
 
@@ -359,7 +370,7 @@ class DataProvider implements DataProviderInterface
      * given API path
      *
      * @param DomainObjectInterface $model
-     * @param string $path The API path
+     * @param string                $path The API path
      * @return void
      */
     public function saveModelForPath($model, $path)
@@ -381,7 +392,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param DomainObjectInterface $oldModel
      * @param DomainObjectInterface $newModel
-     * @param string $path The API path
+     * @param string                $path The API path
      * @return void
      */
     public function replaceModelForPath($oldModel, $newModel, $path)
@@ -398,7 +409,7 @@ class DataProvider implements DataProviderInterface
      * given API path
      *
      * @param DomainObjectInterface $model
-     * @param string $path The API path
+     * @param string                $path The API path
      * @return void
      */
     public function removeModelForPath($model, $path)
@@ -423,8 +434,8 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the UID of the model with the given identifier
      *
-     * @param mixed $identifier The identifier
-     * @param string $path The path
+     * @param mixed  $identifier The identifier
+     * @param string $path       The path
      * @return integer|null    Returns the UID of NULL if the object couldn't be found
      */
     protected function getUidOfModelWithIdentityForPath($identifier, $path)
@@ -433,14 +444,15 @@ class DataProvider implements DataProviderInterface
         if (!$model) {
             return null;
         }
+
         return $model->getUid();
     }
 
     /**
      * Loads the model with the given identifier
      *
-     * @param mixed $identifier The identifier
-     * @param string $path The path
+     * @param mixed  $identifier The identifier
+     * @param string $path       The path
      * @return mixed|null|object
      */
     protected function getModelWithIdentityForPath($identifier, $path)
@@ -489,9 +501,11 @@ class DataProvider implements DataProviderInterface
         }
 
         if ($typeMatching) {
-            $findMethod = 'findOneBy' . ucfirst($property);
+            $findMethod = 'findOneBy'.ucfirst($property);
+
             return call_user_func(array($repository, $findMethod), $identifier);
         }
+
         return null;
     }
 
@@ -516,6 +530,7 @@ class DataProvider implements DataProviderInterface
         if (!$this->logger) {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
+
         return $this->logger;
     }
 
@@ -573,6 +588,7 @@ class DataProvider implements DataProviderInterface
             $result = $this->getUriToResource($model);
         }
         static::$handledModels[$modelHash]--;
+
         return $result;
     }
 
@@ -580,7 +596,7 @@ class DataProvider implements DataProviderInterface
      * Transform the properties
      *
      * @param DomainObjectInterface|object $model
-     * @param array $properties
+     * @param array                        $properties
      * @return array
      */
     protected function transformProperties($model, $properties)
@@ -595,9 +611,17 @@ class DataProvider implements DataProviderInterface
 
                 if ($modelRecursionCount < 1) {
                     if ($propertyValue instanceof LazyLoadingProxy) {
-                        $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy($propertyValue, $propertyKey, $model);
+                        $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy(
+                            $propertyValue,
+                            $propertyKey,
+                            $model
+                        );
                     } elseif ($propertyValue instanceof LazyObjectStorage) {
-                        $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage($propertyValue, $propertyKey, $model);
+                        $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage(
+                            $propertyValue,
+                            $propertyKey,
+                            $model
+                        );
                     } else {
                         $properties[$propertyKey] = $this->getModelData($propertyValue);
                     }
@@ -608,6 +632,7 @@ class DataProvider implements DataProviderInterface
                 }
             }
         }
+
         return $properties;
     }
 
@@ -637,6 +662,7 @@ class DataProvider implements DataProviderInterface
             }
             $result = $this->transformFileReference($originalResource->getOriginalResource());
             $depth--;
+
             return $result;
         }
 
@@ -646,6 +672,7 @@ class DataProvider implements DataProviderInterface
                 foreach ($originalResource->getFiles() as $currentFile) {
                     $filesInFolder[] = $this->transformFileReference($currentFile);
                 }
+
                 return $filesInFolder;
             }
 
@@ -656,13 +683,14 @@ class DataProvider implements DataProviderInterface
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
                 return array(
-                    'uid'         => $originalResource->getUid(),
-                    'name'        => $originalResource->getName(),
-                    'mimeType'    => $originalResource->getMimeType(),
-                    'url'         => $originalResource->getPublicUrl(),
-                    'size'        => $originalResource->getSize(),
-                    'title'       => $title,
-                    'description' => $description,
+                    'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
+                    'referenceUid' => $originalResource->getUid(),
+                    'name'         => $originalResource->getName(),
+                    'mimeType'     => $originalResource->getMimeType(),
+                    'url'          => $originalResource->getPublicUrl(),
+                    'size'         => $originalResource->getSize(),
+                    'title'        => $title,
+                    'description'  => $description,
                 );
             }
 
@@ -705,6 +733,7 @@ class DataProvider implements DataProviderInterface
             $message = 'An invalid argument for the description has been passed!';
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
+
         return array($title, $description);
     }
 }
