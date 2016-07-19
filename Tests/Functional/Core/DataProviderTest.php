@@ -92,11 +92,16 @@ class DataProviderTest extends AbstractCase
     public function getRepositoryForPathTest()
     {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
 
 
         $repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
+
+        
+        $this->createClass('MyModelRepository', 'Vendor\\MyExt');
+        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-group-my_model');
+        $this->assertInstanceOf('\\Vendor\\MyExt\\MyModelRepository', $repository);
     }
 
     /**
@@ -105,10 +110,10 @@ class DataProviderTest extends AbstractCase
     public function getNamespacedRepositoryForPathTest()
     {
         $repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
 
         $repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModelRepository', $repository);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
     }
 
     /**
@@ -129,10 +134,10 @@ class DataProviderTest extends AbstractCase
     public function getModelForPathTest()
     {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
         $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
     /**
@@ -141,10 +146,10 @@ class DataProviderTest extends AbstractCase
     public function getNamespacedModelForPathTest()
     {
         $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
         $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
-        $this->assertInstanceOf('\\Cundd\\Rest\Tests\\MyModel', $model);
+        $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
     /**

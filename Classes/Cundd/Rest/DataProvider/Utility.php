@@ -66,7 +66,7 @@ class Utility
         if (strpos($path, '_') !== false) {
             $path = GeneralUtility::underscoredToUpperCamelCase($path);
         }
-        $parts = explode(self::API_PATH_PART_SEPARATOR, $path);
+        $parts = explode(self::API_PATH_PART_SEPARATOR, $path, 3);
         if (count($parts) < 3) {
             array_unshift($parts, '');
         }
@@ -76,9 +76,11 @@ class Utility
             $parts[$lastPartIndex] = static::singularize($parts[$lastPartIndex]);
         }
 
-        return array_map(function ($part) {
-            return ucfirst($part);
-        }, $parts);
+        return array(
+            ucfirst($parts[0]),
+            ucfirst($parts[1]),
+            str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2]))),
+        );
     }
 
     /**

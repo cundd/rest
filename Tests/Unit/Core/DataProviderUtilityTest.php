@@ -23,12 +23,11 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\DataProvider\Utility;
-use Cundd\Rest\Tests\Functional\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
+require_once __DIR__ . '/../../Bootstrap.php';
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -40,7 +39,7 @@ require_once __DIR__ . '/../AbstractCase.php';
  *
  * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderUtilityTest extends AbstractCase
+class DataProviderUtilityTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -48,6 +47,11 @@ class DataProviderUtilityTest extends AbstractCase
     public function getClassNamePartsForPathTest()
     {
         $this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\Model'), Utility::getClassNamePartsForPath('vendor-my_ext-group-model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-group-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-my_group-my_model'));
+        $this->assertEquals(array('MyVendor', 'Ext', 'Group\\Model'), Utility::getClassNamePartsForPath('my_vendor-ext-group-model'));
     }
 
     /**
@@ -62,6 +66,13 @@ class DataProviderUtilityTest extends AbstractCase
         $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
         $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
         $this->assertEquals('vendor-my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
+
+        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\MyModel'));
+        $this->assertEquals('vendor-my_ext-group-model', Utility::getPathForClassName('Vendor\\MyExt\\Group\\Model'));
+        $this->assertEquals('vendor-my_ext-group-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Group\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_group-my_model', Utility::getPathForClassName('Vendor\\MyExt\\MyGroup\\MyModel'));
+        $this->assertEquals('my_vendor-ext-group-model', Utility::getPathForClassName('MyVendor\\Ext\\Group\\Model'));
     }
 
     /**
@@ -84,15 +95,15 @@ class DataProviderUtilityTest extends AbstractCase
     public function registerSingularForPluralTest()
     {
         $singularToPlural = array(
-            'news'      => 'news',
+            'news' => 'news',
             'equipment' => 'equipment',
-            'species'   => 'species',
-            'series'    => 'series',
-            'News'      => 'News',
+            'species' => 'species',
+            'series' => 'series',
+            'News' => 'News',
             'Equipment' => 'Equipment',
-            'Species'   => 'Species',
-            'Series'    => 'Series',
-            'Singular'  => 'Plural',
+            'Species' => 'Species',
+            'Series' => 'Series',
+            'Singular' => 'Plural',
         );
         foreach ($singularToPlural as $singular => $plural) {
             Utility::registerSingularForPlural($singular, $plural);
