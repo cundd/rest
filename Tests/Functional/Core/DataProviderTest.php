@@ -97,11 +97,6 @@ class DataProviderTest extends AbstractCase
 
         $repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
-
-        
-        $this->createClass('MyModelRepository', 'Vendor\\MyExt');
-        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-group-my_model');
-        $this->assertInstanceOf('\\Vendor\\MyExt\\MyModelRepository', $repository);
     }
 
     /**
@@ -126,6 +121,10 @@ class DataProviderTest extends AbstractCase
 
         $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-my_model');
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
+
+        $this->createClass('MyModelRepository', 'Vendor\\MyExt\\Domain\\Repository\\Group', '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository');
+        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-group-my_model');
+        $this->assertInstanceOf('Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository', $repository);
     }
 
     /**
