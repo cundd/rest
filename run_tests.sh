@@ -7,6 +7,12 @@ set +e
 : ${FUNCTIONAL_TESTS="yes"}
 : ${UNIT_TESTS="yes"}
 
+: ${typo3DatabaseName="typo3"}
+: ${typo3DatabaseHost="127.0.0.1"}
+: ${typo3DatabaseUsername="root"}
+: ${typo3DatabasePassword="root"}
+
+
 function get_mysql_client_path {
     if [[ `which mysql > /dev/null` ]]; then
         which mysql;
@@ -32,31 +38,11 @@ function check_mysql_credentials {
 }
 
 function init_database {
-	# Export database credentials
-    if [ -z ${typo3DatabaseName+x} ]; then
-        export typo3DatabaseName="typo3";
-    else
-        export typo3DatabaseName=${typo3DatabaseName};
-    fi
-
-    if [ -z ${typo3DatabaseHost+x} ]; then
-        export typo3DatabaseHost="127.0.0.1";
-    else
-        export typo3DatabaseHost=${typo3DatabaseHost};
-    fi
-
-    if [ -z ${typo3DatabaseUsername+x} ]; then
-        export typo3DatabaseUsername="root";
-    else
-        export typo3DatabaseUsername=${typo3DatabaseUsername};
-    fi
-
-    if [ -z ${typo3DatabasePassword+x} ]; then
-        export typo3DatabasePassword="root";
-    else
-        export typo3DatabasePassword=${typo3DatabasePassword};
-    fi
-
+    # Export database credentials
+    export typo3DatabaseName=${typo3DatabaseName};
+    export typo3DatabaseHost=${typo3DatabaseHost};
+    export typo3DatabaseUsername=${typo3DatabaseUsername};
+    export typo3DatabasePassword=${typo3DatabasePassword};
     echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
