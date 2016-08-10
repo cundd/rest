@@ -4,14 +4,26 @@ set -o nounset
 set -o errexit
 set +e
 
+
 : ${FUNCTIONAL_TESTS="yes"}
 : ${UNIT_TESTS="yes"}
+
+: ${TYPO3_PATH_WEB="not set"}
 
 : ${typo3DatabaseName="typo3"}
 : ${typo3DatabaseHost="127.0.0.1"}
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
+function get_phpunit_path {
+    if [ -x ${TYPO3_PATH_WEB}/bin/phpunit ]; then
+        echo "${TYPO3_PATH_WEB}/bin/phpunit";
+    elif [ -x "${TYPO3_PATH_WEB}/../vendor/bin/phpunit" ]; then
+        echo "${TYPO3_PATH_WEB}/../vendor/bin/phpunit";
+    else
+        echo "phpunit not found";
+    fi
+}
 
 function get_mysql_client_path {
     if [[ `which mysql > /dev/null` ]]; then
@@ -20,6 +32,16 @@ function get_mysql_client_path {
         echo /Applications/MAMP/Library/bin/mysql;
     else
         return 1;
+    fi
+}
+
+function run_functional_tests_parallel {
+    if hash parallel 2> /dev/null; then
+        local phpunit_path=$(get_phpunit_path);
+        time find -L . -name \*Test.php -path "$1" | parallel --halt-on-error 2 --gnu 'echo; echo "Running functional {} test case";  ${phpunit_path} --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml {}'
+    else
+        echo "Command 'parallel' not found. Will run sequential";
+        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$1";
     fi
 }
 
@@ -48,7 +70,7 @@ function init_database {
 
 function init_typo3 {
 	local baseDir=`pwd`;
-	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
+	if [[ $(get_phpunit_path) == "phpunit not found" ]]; then
 		cd ${TYPO3_PATH_WEB};
 		composer install;
 		cd ${baseDir};
@@ -57,7 +79,7 @@ function init_typo3 {
 
 function init {
     # Test the environment
-    if [ -z ${TYPO3_PATH_WEB+x} ]; then
+    if [ "$TYPO3_PATH_WEB" == "not set" ]; then
         echo "Please set the TYPO3_PATH_WEB environment variable";
         exit 1;
     elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
@@ -71,17 +93,20 @@ function init {
 
 function unit_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml "$@";
+        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml "$@";
     else
-        ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml ./Tests/Unit "$@";
+        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml ./Tests/Unit "$@";
     fi
 }
 
 function functional_tests {
-    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$@";
+    if [ "$#" == "1" ] && [[ -d "$1" ]]; then
+        run_functional_tests_parallel "$1";
+    elif [ "$#" -gt "1" ]; then
+        # Can not run parallel with more arguments
+        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$@";
     else
-        ${TYPO3_PATH_WEB}/bin/phpunit --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml ./Tests/Functional "$@";
+        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml ./Tests/Functional "$@";
     fi
 }
 
