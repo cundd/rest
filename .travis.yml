@@ -45,6 +45,11 @@ matrix:
 
 sudo: false
 
+addons:
+  apt:
+    packages:
+      - parallel
+
 notifications:
   webhooks:
     urls:
