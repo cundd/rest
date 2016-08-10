@@ -186,48 +186,4 @@ class ObjectManagerTest extends AbstractCase
             array('Vendor-NotExistingExt-MyModel/1.json', $defaultHandler),
         );
     }
-
-    /**
-     * @param string $className
-     * @param string $namespace
-     * @param string $extends
-     * @throws \Exception
-     */
-    private function createClass($className, $namespace = '', $extends = '')
-    {
-        if (func_num_args() === 1 && is_array($className)) {
-            list($className, $namespace, $extends) = $className;
-        }
-        if (!is_string($className)) {
-            throw new \InvalidArgumentException('$className must be a string');
-        }
-        if (!is_string($namespace)) {
-            throw new \InvalidArgumentException('$namespace must be a string');
-        }
-        if (!is_string($extends)) {
-            throw new \InvalidArgumentException('$extends must be a string');
-        }
-
-        $namespace = trim($namespace, '\\');
-        if (class_exists("$namespace\\$className")) {
-            printf('Class %s already exists' . PHP_EOL, "$namespace\\$className");
-            return;
-        }
-
-        $code = array();
-        if ($namespace) {
-            $code[] = "namespace $namespace;";
-        }
-        $code[] = "class $className";
-        if ($extends) {
-            $code[] = "extends $extends";
-        }
-        $code[] = '{}';
-
-        eval(implode(' ', $code));
-
-        if (!class_exists("$namespace\\$className")) {
-            throw new \Exception(sprintf('Could not create class %s', "$namespace\\$className"));
-        }
-    }
 }
