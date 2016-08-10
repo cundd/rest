@@ -64,7 +64,7 @@ before_script:
     echo "Get TYPO3 source";
     git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
     cd TYPO3.CMS;
-    composer install;
+    time composer install;
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
@@ -103,6 +103,6 @@ script:
       export typo3DatabaseHost="localhost";
       export typo3DatabaseUsername="root";
       export typo3DatabasePassword="";
-      find './typo3conf/ext/$REPO/Tests/Functional' -wholename '*Test.php' | parallel --gnu "echo; echo 'Running functional test suite {}'; $TEST_BINARY --colors  -c typo3/sysext/core/Build/FunctionalTests.xml {}'
+      find './typo3conf/ext/$REPO/Tests/Functional' -wholename '*Test.php' | parallel --gnu "echo; echo 'Running functional test suite {}"; $TEST_BINARY --colors  -c typo3/sysext/core/Build/FunctionalTests.xml {}'
     fi
 
