@@ -38,6 +38,7 @@ function get_mysql_client_path {
 function run_functional_tests_parallel {
     local phpunit_path=$(get_phpunit_path);
     if hash parallel 2> /dev/null; then
+        echo "Perform tests parallel";
         time find -L "$1" -name \*Test.php | parallel --halt-on-error 2 --gnu "echo; echo 'Running functional {} test case';  $phpunit_path --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml {}";
     else
         echo "Command 'parallel' not found. Will run sequential";
