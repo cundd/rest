@@ -100,7 +100,9 @@ function unit_tests {
 }
 
 function functional_tests {
-    if [ "$#" == "1" ] && [[ -d "$1" ]]; then
+    if [ "$#" == "0" ]; then
+        run_functional_tests_parallel ./Tests/Functional;
+    elif [ "$#" == "1" ] && [[ -d "$1" ]]; then
         run_functional_tests_parallel "$1";
     elif [ "$#" -gt "1" ]; then
         # Can not run parallel with more arguments
