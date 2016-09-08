@@ -47,11 +47,11 @@ class PathUtility
     protected static $singularToPlural = array();
 
     /**
-     * Returns an array of class name parts including vendor, extension
+     * Returns a PathInfo instance containing the class name parts including vendor, extension
      * and domain model
      *
      * Example:
-     *   array(
+     *   PathInfo(
      *     Vendor
      *     MyExt
      *     MyModel
@@ -59,7 +59,7 @@ class PathUtility
      *
      * @param string $path
      * @param bool $convertPlural Indicates if plural resource names should be converted
-     * @return array
+     * @return PathInfo
      */
     public static function getClassNamePartsForPath($path, $convertPlural = true)
     {
@@ -76,10 +76,10 @@ class PathUtility
             $parts[$lastPartIndex] = static::singularize($parts[$lastPartIndex]);
         }
 
-        return array(
+        return new PathInfo(
             ucfirst($parts[0]),
             ucfirst($parts[1]),
-            str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2]))),
+            str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2])))
         );
     }
 

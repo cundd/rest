@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\Tests\Unit\Path;
 
+use Cundd\Rest\Path\PathInfo;
 use Cundd\Rest\Path\PathUtility;
 
 require_once __DIR__ . '/../../Bootstrap.php';
@@ -41,12 +42,26 @@ class PathUtilityTest extends \PHPUnit_Framework_TestCase
      */
     public function getClassNamePartsForPathTest()
     {
-        $this->assertEquals(array('', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('my_ext-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\Model'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_group-my_model'));
-        $this->assertEquals(array('MyVendor', 'Ext', 'Group\\Model'), PathUtility::getClassNamePartsForPath('my_vendor-ext-group-model'));
+        $this->assertPathInfoEquals(array('', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('my_ext-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\Model'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_group-my_model'));
+        $this->assertPathInfoEquals(array('MyVendor', 'Ext', 'Group\\Model'), PathUtility::getClassNamePartsForPath('my_vendor-ext-group-model'));
+    }
+
+    /**
+     * @param array $expected
+     * @param PathInfo $actual
+     */
+    private function assertPathInfoEquals(array $expected, $actual)
+    {
+        $this->assertInstanceOf(PathInfo::class, $actual);
+
+        list($vendor, $extension, $model) = $expected;
+        $this->assertSame($vendor, $actual->getVendor());
+        $this->assertSame($extension, $actual->getExtension());
+        $this->assertSame($model, $actual->getModel());
     }
 
     /**
