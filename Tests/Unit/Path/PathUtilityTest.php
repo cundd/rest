@@ -56,7 +56,7 @@ class PathUtilityTest extends \PHPUnit_Framework_TestCase
      */
     private function assertPathInfoEquals(array $expected, $actual)
     {
-        $this->assertInstanceOf(PathInfo::class, $actual);
+        $this->assertInstanceOf('Cundd\\Rest\\Path\\PathInfo', $actual);
 
         list($vendor, $extension, $model) = $expected;
         $this->assertSame($vendor, $actual->getVendor());
