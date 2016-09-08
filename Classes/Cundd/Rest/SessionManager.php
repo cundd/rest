@@ -22,15 +22,15 @@ class SessionManager implements SingletonInterface
     /**
      * @var bool
      */
-    protected $didInitialize = false;
+    private $didInitialize = false;
 
     /**
      * Reads the session data from the database
      */
-    protected function _initialize()
+    private function initialize()
     {
         if (!$this->didInitialize) {
-            $GLOBALS['TSFE']->fe_user->fetchSessionData();
+            $this->getFrontendUser()->fetchSessionData();
             $this->didInitialize = true;
         }
     }
@@ -43,21 +43,31 @@ class SessionManager implements SingletonInterface
      */
     public function valueForKey($key)
     {
-        $this->_initialize();
-        return $GLOBALS['TSFE']->fe_user->getKey('ses', self::KEY_PREFIX . $key);
+        $this->initialize();
+
+        return $this->getFrontendUser()->getKey('ses', self::KEY_PREFIX . $key);
     }
 
     /**
      * Sets the value for the given key
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      * @return $this
      */
     public function setValueForKey($key, $value)
     {
-        $GLOBALS['TSFE']->fe_user->setKey('ses', self::KEY_PREFIX . $key, $value);
-        $GLOBALS['TSFE']->fe_user->storeSessionData();
+        $this->getFrontendUser()->setKey('ses', self::KEY_PREFIX . $key, $value);
+        $this->getFrontendUser()->storeSessionData();
+
         return $this;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     */
+    private function getFrontendUser()
+    {
+        return $GLOBALS['TSFE']->fe_user;
     }
 }
