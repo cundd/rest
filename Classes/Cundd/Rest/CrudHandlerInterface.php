@@ -32,6 +32,8 @@
 
 namespace Cundd\Rest;
 
+use Bullet\Response;
+
 /**
  * Interface for handlers of API requests
  *
@@ -66,35 +68,35 @@ interface CrudHandlerInterface extends HandlerInterface
     /**
      * Returns the data of the current Model
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @return Response|array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function show();
 
     /**
      * Replaces the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @return Response|array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function replace();
 
     /**
      * Updates the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @return Response|array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function update();
 
     /**
      * Deletes the currently matching Model
      *
-     * @return integer Returns 200 an success
+     * @return Response|integer Returns 200 an success
      */
     public function delete();
 
     /**
      * Creates a new Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @return Response|array|integer Returns the Model's data on success, otherwise a descriptive error code
      */
     public function create();
 
