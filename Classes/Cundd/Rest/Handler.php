@@ -2,7 +2,7 @@
 /*
  *  Copyright notice
  *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2016 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -396,6 +396,35 @@ class Handler implements CrudHandlerInterface
             };
             $dispatcher->registerGetMethod($listCallback);
         });
+    }
+
+    protected function callExtbasePlugin($actionName, $pluginName, $controllerName = null, $extensionName = null, array $arguments = null)
+    {
+
+        $pluginNamespace = strtolower('tx_'. $extensionName . '_' . $pluginName);
+
+        $_POST[$pluginNamespace]['controller'] = $controllerName;
+        $_POST[$pluginNamespace]['action'] = $actionName;
+
+        $keys = array_keys($arguments);
+        foreach ($keys as $key) {
+            $_POST[$pluginNamespace][$key] = $arguments[$key];
+        }
+
+        $configuration = [
+            'extensionName' => $extensionName,
+            'pluginName' => $pluginName
+        ];
+
+        if (!empty($vendorName)) {
+            $configuration['vendorName'] = $vendorName;
+        }
+
+        $bootstrap = $this->objectManager->get(\TYPO3\CMS\Extbase\Core\Bootstrap::class);
+
+        $response = $bootstrap->run('', $configuration);
+
+        return $response;
     }
 
     /**
