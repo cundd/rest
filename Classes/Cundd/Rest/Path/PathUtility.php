@@ -58,10 +58,10 @@ class PathUtility
      *   )
      *
      * @param string $path
-     * @param bool $convertPlural Indicates if plural resource names should be converted
+     * @param bool   $convertPlural Indicates if plural resource names should be converted
      * @return PathInfo
      */
-    public static function getClassNamePartsForPath($path, $convertPlural = true)
+    public static function getPathInfoForPath($path, $convertPlural = true)
     {
         if (strpos($path, '_') !== false) {
             $path = GeneralUtility::underscoredToUpperCamelCase($path);
@@ -81,6 +81,17 @@ class PathUtility
             ucfirst($parts[1]),
             str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2])))
         );
+    }
+
+    /**
+     * @param string $path
+     * @param bool   $convertPlural
+     * @return PathInfo
+     * @deprecated use getPathInfoForPath() instead
+     */
+    public static function getClassNamePartsForPath($path, $convertPlural = true)
+    {
+        return self::getPathInfoForPath($path, $convertPlural);
     }
 
     /**
@@ -143,7 +154,8 @@ class PathUtility
             'xes' => 'x',
             'oes' => 'o',
             'ves' => 'f',
-            's'   => '');
+            's'   => '',
+        );
         // Loop through all the rules and do the replacement.
         foreach (array_keys($rules) as $key) {
             // If the end of the word doesn't match the key,
@@ -161,6 +173,7 @@ class PathUtility
             // replacement.
             return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
         }
+
         return $word;
     }
 

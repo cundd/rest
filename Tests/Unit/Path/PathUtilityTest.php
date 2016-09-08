@@ -40,14 +40,14 @@ class PathUtilityTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function getClassNamePartsForPathTest()
+    public function getPathInfoForPathTest()
     {
-        $this->assertPathInfoEquals(array('', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('my_ext-my_model'));
-        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_model'));
-        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\Model'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-model'));
-        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-group-my_model'));
-        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), PathUtility::getClassNamePartsForPath('vendor-my_ext-my_group-my_model'));
-        $this->assertPathInfoEquals(array('MyVendor', 'Ext', 'Group\\Model'), PathUtility::getClassNamePartsForPath('my_vendor-ext-group-model'));
+        $this->assertPathInfoEquals(array('', 'MyExt', 'MyModel'), PathUtility::getPathInfoForPath('my_ext-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyModel'), PathUtility::getPathInfoForPath('vendor-my_ext-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\Model'), PathUtility::getPathInfoForPath('vendor-my_ext-group-model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), PathUtility::getPathInfoForPath('vendor-my_ext-group-my_model'));
+        $this->assertPathInfoEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), PathUtility::getPathInfoForPath('vendor-my_ext-my_group-my_model'));
+        $this->assertPathInfoEquals(array('MyVendor', 'Ext', 'Group\\Model'), PathUtility::getPathInfoForPath('my_vendor-ext-group-model'));
     }
 
     /**
