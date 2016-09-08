@@ -33,7 +33,7 @@
 namespace Cundd\Rest;
 
 use Cundd\Rest\DataProvider\DataProviderInterface;
-use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Path\PathUtility;
 use Traversable;
 
 /**
@@ -169,7 +169,7 @@ class Handler implements CrudHandlerInterface
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($this->getRequest()->getRootObjectKey()) => $result
+                PathUtility::singularize($this->getRequest()->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -204,7 +204,7 @@ class Handler implements CrudHandlerInterface
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                PathUtility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -234,7 +234,7 @@ class Handler implements CrudHandlerInterface
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                PathUtility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;
@@ -287,7 +287,7 @@ class Handler implements CrudHandlerInterface
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                PathUtility::singularize($request->getRootObjectKey()) => $result
             );
         }
         return $result;

@@ -28,9 +28,9 @@ namespace Cundd\Rest;
 use Bullet\Response;
 use Bullet\View\Exception;
 use Cundd\Rest\Cache\Cache;
-use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Path\PathUtility;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\SingletonInterface;
 use Cundd\Rest\Access\AccessControllerInterface;
@@ -547,7 +547,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         $singularToPlural = $this->objectManager->getConfigurationProvider()->getSetting('singularToPlural');
         if ($singularToPlural) {
             foreach ($singularToPlural as $singular => $plural) {
-                Utility::registerSingularForPlural($singular, $plural);
+                PathUtility::registerSingularForPlural($singular, $plural);
             }
         }
     }

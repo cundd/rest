@@ -28,6 +28,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Exception\InvalidIdException;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
+use Cundd\Rest\Path\PathUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
 
@@ -150,7 +151,7 @@ class DocumentDataProvider extends DataProvider
      */
     public function getDatabaseNameFromPath($path)
     {
-        return Utility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
+        return PathUtility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
     }
 
     /**

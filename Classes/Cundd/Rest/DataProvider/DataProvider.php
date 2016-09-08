@@ -26,6 +26,7 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\Path\PathUtility;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -95,10 +96,10 @@ class DataProvider implements DataProviderInterface
      */
     public function getRepositoryClassForPath($path)
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $repositoryClass = 'Tx_'.$extension.'_Domain_Repository_'.$model.'Repository';
+        list($vendor, $extension, $model) = PathUtility::getClassNamePartsForPath($path);
+        $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
-            $repositoryClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Repository\\'.$model.'Repository';
+            $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
         }
 
         return $repositoryClass;
@@ -130,10 +131,10 @@ class DataProvider implements DataProviderInterface
      */
     public function getModelClassForPath($path)
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $modelClass = 'Tx_'.$extension.'_Domain_Model_'.$model;
+        list($vendor, $extension, $model) = PathUtility::getClassNamePartsForPath($path);
+        $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
         if (!class_exists($modelClass)) {
-            $modelClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Model\\'.$model;
+            $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
         }
 
         return $modelClass;
@@ -175,7 +176,7 @@ class DataProvider implements DataProviderInterface
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
             $model = null;
 
-            $message = 'Uncaught exception #'.$exception->getCode().': '.$exception->getMessage();
+            $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
 
@@ -310,7 +311,7 @@ class DataProvider implements DataProviderInterface
     public function getUriToNestedResource($resourceKey, $model)
     {
         $currentUri = '/rest/';
-        $currentUri .= Utility::getPathForClassName(get_class($model)).'/'.$model->getUid().'/';
+        $currentUri .= PathUtility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
 
         if ($resourceKey !== null) {
             $currentUri .= $resourceKey;
@@ -320,7 +321,7 @@ class DataProvider implements DataProviderInterface
 
         $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
 
-        return $protocol.'://'.$host.$currentUri;
+        return $protocol . '://' . $host . $currentUri;
     }
 
     /**
@@ -501,7 +502,7 @@ class DataProvider implements DataProviderInterface
         }
 
         if ($typeMatching) {
-            $findMethod = 'findOneBy'.ucfirst($property);
+            $findMethod = 'findOneBy' . ucfirst($property);
 
             return call_user_func(array($repository, $findMethod), $identifier);
         }
@@ -683,23 +684,23 @@ class DataProvider implements DataProviderInterface
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
                 return array(
-                    'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
+                    'uid' => intval($originalResource->getReferenceProperty('uid_local')),
                     'referenceUid' => $originalResource->getUid(),
-                    'name'         => $originalResource->getName(),
-                    'mimeType'     => $originalResource->getMimeType(),
-                    'url'          => $originalResource->getPublicUrl(),
-                    'size'         => $originalResource->getSize(),
-                    'title'        => $title,
-                    'description'  => $description,
+                    'name' => $originalResource->getName(),
+                    'mimeType' => $originalResource->getMimeType(),
+                    'url' => $originalResource->getPublicUrl(),
+                    'size' => $originalResource->getSize(),
+                    'title' => $title,
+                    'description' => $description,
                 );
             }
 
             if ($originalResource instanceof FileInterface) {
                 return array(
-                    'name'     => $originalResource->getName(),
+                    'name' => $originalResource->getName(),
                     'mimeType' => $originalResource->getMimeType(),
-                    'url'      => $originalResource->getPublicUrl(),
-                    'size'     => $originalResource->getSize(),
+                    'url' => $originalResource->getPublicUrl(),
+                    'size' => $originalResource->getSize(),
                 );
             }
 

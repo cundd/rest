@@ -26,7 +26,7 @@
 namespace Cundd\Rest;
 
 use Bullet\Request as BaseRequest;
-use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Path\PathUtility;
 
 /**
  * Specialized Request
@@ -128,7 +128,7 @@ class Request extends BaseRequest
          */
         if (!$data) {
             $data = $this->get(
-                Utility::singularize($this->getRootObjectKey())
+                PathUtility::singularize($this->getRootObjectKey())
             );
             if (!$data) {
                 $data = json_decode($this->raw(), true);

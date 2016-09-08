@@ -25,7 +25,7 @@
 
 namespace Cundd\Rest;
 
-use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Path\PathUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
@@ -100,7 +100,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getDataProvider()
     {
         if (!$this->dataProvider) {
-            list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension, $model) = PathUtility::getClassNamePartsForPath($this->getRequest()->path());
 
             $classes = array(
                 // Check if an extension provides a Data Provider for the domain model
@@ -128,7 +128,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAuthenticationProvider()
     {
         if (!$this->authenticationProvider) {
-            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = PathUtility::getClassNamePartsForPath($this->getRequest()->path());
 
             // Check if an extension provides a Authentication Provider
             $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
@@ -160,7 +160,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAccessController()
     {
         if (!$this->accessController) {
-            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = PathUtility::getClassNamePartsForPath($this->getRequest()->path());
 
             // Check if an extension provides a Authentication Provider
             $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
@@ -185,7 +185,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      */
     public function getHandler()
     {
-        list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+        list($vendor, $extension,) = PathUtility::getClassNamePartsForPath($this->getRequest()->path());
 
         $classes = array(
             // Check if an extension provides a Data Provider

@@ -31,7 +31,7 @@
 namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
-use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Path\PathUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -288,7 +288,7 @@ class Cache
     protected function _getTags()
     {
         $currentPath = $this->currentRequest->path();
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($currentPath);
+        list($vendor, $extension, $model) = PathUtility::getClassNamePartsForPath($currentPath);
         return array(
             $vendor . '_' . $extension . '_' . $model,
             $extension . '_' . $model,
