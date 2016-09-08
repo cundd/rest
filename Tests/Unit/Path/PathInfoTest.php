@@ -109,6 +109,17 @@ class PathInfoTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function listTest()
+    {
+        list($vendor, $extension, $model) = $this->fixture;
+        $this->assertSame($vendor, 'Cundd');
+        $this->assertSame($extension, 'MyExtension');
+        $this->assertSame($model, 'ModelPath');
+    }
+
+    /**
+     * @test
      * @expectedException \OutOfRangeException
      */
     public function offsetGetOutOfBoundTest()
