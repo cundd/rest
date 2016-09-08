@@ -2,7 +2,7 @@
 /*
  *  Copyright notice
  *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2016 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
@@ -38,7 +38,7 @@ require_once __DIR__ . '/../AbstractCase.php';
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  *
- * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
+ * @author Daniel Corn <info@cundd.net>
  */
 class DispatcherTest extends AbstractCase
 {

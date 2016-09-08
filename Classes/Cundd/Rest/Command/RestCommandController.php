@@ -12,7 +12,7 @@ $autoloadDetector->registerAutoloader();
 /*
  *  Copyright notice
  *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
+ *  (c) 2016 Daniel Corn <info@cundd.net>, cundd
  *
  *  All rights reserved
  *
