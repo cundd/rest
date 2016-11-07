@@ -38,10 +38,13 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
 
         $request = new \Cundd\Rest\Request(null, $uri);
         $request->initWithPathAndOriginalPath($path, $path);
-        $request->injectConfigurationProvider($this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider());
+        $request->injectConfigurationProvider(
+            $this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider()
+        );
         if ($format) {
             $request->format($format);
         }
+
         return $request;
     }
 
@@ -69,6 +72,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
         $namespace = trim($namespace, '\\');
         if (class_exists("$namespace\\$className")) {
             printf('Class %s already exists' . PHP_EOL, "$namespace\\$className");
+
             return;
         }
 
@@ -100,6 +104,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
     {
         if (method_exists('\TYPO3\CMS\Core\Tests\FunctionalTestCase', 'importDataSet')) {
             parent::importDataSet($path);
+
             return;
         }
 
@@ -166,5 +171,20 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
     protected function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @param mixed  $propertyValue
+     * @param string $propertyKey
+     * @param object $object
+     * @return object
+     */
+    public function injectPropertyIntoObject($propertyValue, $propertyKey, $object)
+    {
+        $reflectionMethod = new \ReflectionProperty(get_class($object), $propertyKey);
+        $reflectionMethod->setAccessible(true);
+        $reflectionMethod->setValue($object, $propertyValue);
+
+        return $object;
     }
 }

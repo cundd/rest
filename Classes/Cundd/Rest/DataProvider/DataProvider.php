@@ -68,6 +68,12 @@ class DataProvider implements DataProviderInterface
     protected $reflectionService;
 
     /**
+     * @var \TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder
+     * @inject
+     */
+    protected $configurationBuilder;
+
+    /**
      * The current depth when preparing model data for output
      *
      * @var int
@@ -141,10 +147,7 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns all domain model for the given API path
-     *
-     * @param string $path API path to get the repository for
-     * @return DomainObjectInterface
+     * @inheritdoc
      */
     public function getAllModelsForPath($path)
     {
@@ -172,15 +175,17 @@ class DataProvider implements DataProviderInterface
 
         $data = $this->prepareModelData($data);
         try {
-            $model = $this->propertyMapper->convert($data, $modelClass);
+            return $this->propertyMapper->convert(
+                $data,
+                $modelClass,
+                $this->getPropertyMappingConfigurationForPath($path)
+            );
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
-            $model = null;
-
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
 
-        return $model;
+        return null;
     }
 
     /**
@@ -450,6 +455,17 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
+     * Returns the configuration for property mapping
+     *
+     * @param string $path
+     * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
+     */
+    protected function getPropertyMappingConfigurationForPath($path)
+    {
+        return $this->configurationBuilder->build();
+    }
+
+    /**
      * Loads the model with the given identifier
      *
      * @param mixed  $identifier The identifier
@@ -684,23 +700,23 @@ class DataProvider implements DataProviderInterface
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
                 return array(
-                    'uid' => intval($originalResource->getReferenceProperty('uid_local')),
+                    'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
                     'referenceUid' => $originalResource->getUid(),
-                    'name' => $originalResource->getName(),
-                    'mimeType' => $originalResource->getMimeType(),
-                    'url' => $originalResource->getPublicUrl(),
-                    'size' => $originalResource->getSize(),
-                    'title' => $title,
-                    'description' => $description,
+                    'name'         => $originalResource->getName(),
+                    'mimeType'     => $originalResource->getMimeType(),
+                    'url'          => $originalResource->getPublicUrl(),
+                    'size'         => $originalResource->getSize(),
+                    'title'        => $title,
+                    'description'  => $description,
                 );
             }
 
             if ($originalResource instanceof FileInterface) {
                 return array(
-                    'name' => $originalResource->getName(),
+                    'name'     => $originalResource->getName(),
                     'mimeType' => $originalResource->getMimeType(),
-                    'url' => $originalResource->getPublicUrl(),
-                    'size' => $originalResource->getSize(),
+                    'url'      => $originalResource->getPublicUrl(),
+                    'size'     => $originalResource->getSize(),
                 );
             }
 

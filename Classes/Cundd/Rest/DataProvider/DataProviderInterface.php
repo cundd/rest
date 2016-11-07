@@ -26,6 +26,8 @@
 namespace Cundd\Rest\DataProvider;
 
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 interface DataProviderInterface extends SingletonInterface
 {
@@ -49,7 +51,7 @@ interface DataProviderInterface extends SingletonInterface
      * Returns all domain model for the given API path
      *
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface[]|QueryResultInterface
      */
     public function getAllModelsForPath($path);
 
@@ -59,7 +61,7 @@ interface DataProviderInterface extends SingletonInterface
      *
      * @param array|string|int $data Data of the new model or it's UID
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getModelWithDataForPath($data, $path);
 
@@ -69,7 +71,7 @@ interface DataProviderInterface extends SingletonInterface
      *
      * @param array|string|int $data Data of the new model or it's UID
      * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @return DomainObjectInterface
      */
     public function getNewModelWithDataForPath($data, $path);
 
@@ -84,14 +86,14 @@ interface DataProviderInterface extends SingletonInterface
     /**
      * Returns the data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param DomainObjectInterface|object $model
      */
     public function getModelData($model);
 
     /**
      * Returns the property data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $propertyKey
      * @return mixed
      */
@@ -101,7 +103,7 @@ interface DataProviderInterface extends SingletonInterface
      * Adds or updates the given model in the repository for the
      * given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $path The API path
      * @return void
      */
@@ -111,8 +113,8 @@ interface DataProviderInterface extends SingletonInterface
      * Tells the Data Provider to replace the given old model with the new one
      * in the repository for the given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
+     * @param DomainObjectInterface $oldModel
+     * @param DomainObjectInterface $newModel
      * @param string $path The API path
      * @return void
      */
@@ -122,7 +124,7 @@ interface DataProviderInterface extends SingletonInterface
      * Adds or updates the given model in the repository for the
      * given API path
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @param string $path The API path
      * @return void
      */
