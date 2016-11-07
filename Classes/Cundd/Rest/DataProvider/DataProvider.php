@@ -67,6 +67,12 @@ class DataProvider implements DataProviderInterface
     protected $reflectionService;
 
     /**
+     * @var \TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder
+     * @inject
+     */
+    protected $configurationBuilder;
+
+    /**
      * The current depth when preparing model data for output
      *
      * @var int
@@ -96,9 +102,9 @@ class DataProvider implements DataProviderInterface
     public function getRepositoryClassForPath($path)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $repositoryClass = 'Tx_'.$extension.'_Domain_Repository_'.$model.'Repository';
+        $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
-            $repositoryClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Repository\\'.$model.'Repository';
+            $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
         }
 
         return $repositoryClass;
@@ -131,9 +137,9 @@ class DataProvider implements DataProviderInterface
     public function getModelClassForPath($path)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
-        $modelClass = 'Tx_'.$extension.'_Domain_Model_'.$model;
+        $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
         if (!class_exists($modelClass)) {
-            $modelClass = ($vendor ? $vendor.'\\' : '').$extension.'\\Domain\\Model\\'.$model;
+            $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
         }
 
         return $modelClass;
@@ -171,15 +177,17 @@ class DataProvider implements DataProviderInterface
 
         $data = $this->prepareModelData($data);
         try {
-            $model = $this->propertyMapper->convert($data, $modelClass);
+            return $this->propertyMapper->convert(
+                $data,
+                $modelClass,
+                $this->getPropertyMappingConfigurationForPath($path)
+            );
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
-            $model = null;
-
-            $message = 'Uncaught exception #'.$exception->getCode().': '.$exception->getMessage();
+            $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
 
-        return $model;
+        return null;
     }
 
     /**
@@ -309,8 +317,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getUriToNestedResource($resourceKey, $model)
     {
-        $currentUri = '/rest/';
-        $currentUri .= Utility::getPathForClassName(get_class($model)).'/'.$model->getUid().'/';
+        $currentUri = '/rest/' . Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
 
         if ($resourceKey !== null) {
             $currentUri .= $resourceKey;
@@ -320,7 +327,7 @@ class DataProvider implements DataProviderInterface
 
         $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
 
-        return $protocol.'://'.$host.$currentUri;
+        return $protocol . '://' . $host . $currentUri;
     }
 
     /**
@@ -449,6 +456,17 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
+     * Returns the configuration for property mapping
+     *
+     * @param string $path
+     * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
+     */
+    protected function getPropertyMappingConfigurationForPath($path)
+    {
+        return $this->configurationBuilder->build();
+    }
+
+    /**
      * Loads the model with the given identifier
      *
      * @param mixed  $identifier The identifier
@@ -501,7 +519,7 @@ class DataProvider implements DataProviderInterface
         }
 
         if ($typeMatching) {
-            $findMethod = 'findOneBy'.ucfirst($property);
+            $findMethod = 'findOneBy' . ucfirst($property);
 
             return call_user_func(array($repository, $findMethod), $identifier);
         }
