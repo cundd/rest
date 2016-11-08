@@ -97,10 +97,10 @@ class DataProviderTest extends AbstractCase
      */
     public function convertTest()
     {
-        $data = ['some' => 'Data'];
+        $data = array('some' => 'Data');
 
         $propertyMapperMock = $this->getMockBuilder('\\TYPO3\\CMS\\Extbase\\Property\\PropertyMapper')
-            ->setMethods(['convert'])
+            ->setMethods(array('convert'))
             ->getMock();
         $propertyMapperMock
             ->expects($this->once())
