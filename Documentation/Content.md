@@ -4,11 +4,11 @@ Content via REST
 Setup
 -----
 
-Include the static TypoScript file from `Virtual Object - Content (rest)` and configure the access
+Include the static TypoScript file `Virtual Object - Content (rest)` through the Template editor and configure the access. In this example, the path key `201611161200` is a date/time-based unique number.
 
 	plugin.tx_rest.settings {
 		paths {
-			2010 {
+			201611161200 {
 				path = VirtualObject-Content
 				read = allow
 				write = allow
@@ -34,8 +34,8 @@ The following displays the request body to create a new content element with `he
 			"creationUserId": 2,
 			"hidden": false,
 			"type": "text",
-			"header": "How to creating a new content",
-			"bodytext": "<p>Can you see <strong>this new</strong> content?</p>",
+			"header": "A title for the new content element",
+			"bodytext": "<p>Can you see this <strong>new</strong> content?</p>",
 			"layout": 0,
 			"deleted": false,
 			"columns": 0,
