@@ -4,7 +4,7 @@ Page via REST
 Setup
 -----
 
-Include the TypoScript file from `Virtual Object - Page` and configure the access
+Include the static TypoScript file `Virtual Object - Page (rest)` through the Template editor and configure the access. In this example, the path key `201611161200` is a date/time-based unique number.
 
 	plugin.tx_rest.settings {
 		paths {
