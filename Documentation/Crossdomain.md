@@ -12,9 +12,7 @@ An example which will allow the site *example.com* to make `GET` requests.
 
 	plugin.tx_rest.settings {
 		responseHeaders {
-			201611161200 {
-				Access-Control-Allow-Origin = example.com
-				Access-Control-Allow-Methods = GET
-			}
+			Access-Control-Allow-Origin = example.com
+			Access-Control-Allow-Methods = GET
 		}
 	}
