@@ -3,10 +3,6 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-if (version_compare(TYPO3_version, '6.0.0') < 0) {
-    require_once __DIR__ . '/ext/rest/legacy_core.php';
-}
-
 $tempColumns = array(
     'tx_rest_apikey' => array(
         'exclude' => 1,
