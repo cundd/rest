@@ -2,7 +2,6 @@
 
 set -o nounset
 set -o errexit
-#set +e
 
 : ${FUNCTIONAL_TESTS="yes"}
 : ${UNIT_TESTS="yes"}
@@ -56,17 +55,15 @@ function get_phpunit_path() {
 }
 
 function check_mysql_credentials {
-    `get_mysql_client_path` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null;
-    if [ $? -ne 0 ]; then
+    `get_mysql_client_path` -u${typo3DatabaseUsername} -p${typo3DatabasePassword} -h${typo3DatabaseHost} -D${typo3DatabaseName} -e "exit" 2> /dev/null || {
         print_error "Could not connect to MySQL";
         exit 1;
-    fi
+    }
 
-    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or die(mysqli_connect_error());';
-    if [ $? -ne 0 ]; then
+    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or die(mysqli_connect_error());' || {
         print_error "Could not connect to MySQL";
         exit 1;
-    fi
+    }
 }
 
 function init_database {
