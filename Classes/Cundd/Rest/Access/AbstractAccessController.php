@@ -74,7 +74,7 @@ abstract class AbstractAccessController implements AccessControllerInterface
      * Checks if a valid user is logged in
      *
      * @throws \Exception
-     * @return AccessControllerInterface::ACCESS
+     * @return string AccessControllerInterface::ACCESS
      */
     protected function checkAuthentication()
     {

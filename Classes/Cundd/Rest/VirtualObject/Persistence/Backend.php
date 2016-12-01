@@ -54,7 +54,7 @@ class Backend implements BackendInterface
      * @param string $tableName The database table name
      * @param array $query
      * @param array $row The row to update
-     * @return mixed|void
+     * @return mixed
      */
     public function updateRow($tableName, $query, array $row)
     {
@@ -70,7 +70,7 @@ class Backend implements BackendInterface
      *
      * @param string $tableName The database table name
      * @param array $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
-     * @return mixed|void
+     * @return mixed
      */
     public function removeRow($tableName, array $identifier)
     {
