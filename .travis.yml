@@ -25,6 +25,38 @@ matrix:
     - php: hhvm
       env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
+    # TYPO3 8.4
+    - php: 7.0
+      env: TYPO3=TYPO3_8-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_8-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_8-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  
+    # TYPO3 8.3
+    - php: 7.0
+      env: TYPO3=TYPO3_8-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_8-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_8-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    
+    # TYPO3 8.2
+    - php: 7.0
+      env: TYPO3=TYPO3_8-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_8-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_8-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
+    # TYPO3 8.1
+    - php: 7.0
+      env: TYPO3=TYPO3_8-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_8-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_8-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+   
     # TYPO3 8.0
     - php: 7.0
       env: TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
