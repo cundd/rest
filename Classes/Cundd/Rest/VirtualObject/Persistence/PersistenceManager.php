@@ -140,8 +140,7 @@ class PersistenceManager implements PersistenceManagerInterface
         ) {
             $this->backend->removeRow(
                 $this->getSourceIdentifier(),
-                $identifierQuery,
-                $this->getObjectConverter()->convertFromVirtualObject($object)
+                $identifierQuery
             );
         }
     }
