@@ -67,13 +67,16 @@ class Request extends BaseRequest
     public function initWithPathAndOriginalPath($path, $originalPath)
     {
         if (!is_string($path)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Argument 1 passed must be a string, %s given',
-                gettype($path)
-            ));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Argument 1 passed must be a string, %s given',
+                    gettype($path)
+                )
+            );
         }
         $this->path = $path;
         $this->originalPath = $originalPath;
+
         return $this;
     }
 
@@ -99,6 +102,7 @@ class Request extends BaseRequest
                 $this->path = $pathAlias;
             }
         }
+
         return $this->path;
     }
 
@@ -125,6 +129,7 @@ class Request extends BaseRequest
         if ($this->originalPath === -1) {
             return $this->getPath();
         }
+
         return $this->originalPath;
     }
 
@@ -162,7 +167,37 @@ class Request extends BaseRequest
                 $data = json_decode($this->raw(), true);
             }
         }
+
         return $data;
+    }
+
+    /**
+     * Returns the requested format
+     *
+     * @return string Format
+     */
+    public function getFormat()
+    {
+        if (!$this->_format) {
+            // Detect extension and assign it as the requested format (overrides 'Accept' header)
+            $dotPos = strpos($this->url(), '.');
+            if ($dotPos !== false) {
+                $ext = substr($this->url(), $dotPos + 1);
+                $this->_format = $this->_validateFormat($ext) ? $ext : null;
+            }
+
+            // Check the CONTENT_TYPE header
+            if (!$this->_format && isset($_SERVER['CONTENT_TYPE']) && trim($_SERVER['CONTENT_TYPE'])) {
+                $this->format(trim($_SERVER['CONTENT_TYPE']));
+            }
+
+            // Default to JSON
+            if (!$this->_format) {
+                $this->_format = 'json';
+            }
+        }
+
+        return $this->_format;
     }
 
     /**
@@ -172,6 +207,7 @@ class Request extends BaseRequest
      *
      * @param string $format
      * @return string Format
+     * @deprecated use getFormat() instead. Will be removed in 3.0
      */
     public function format($format = null)
     {
@@ -201,6 +237,7 @@ class Request extends BaseRequest
                 $this->_format = 'json';
             }
         }
+
         return $this->_format;
     }
 
@@ -241,6 +278,7 @@ class Request extends BaseRequest
         if (substr($originalPath, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '-') {
             $originalPath = substr($originalPath, $documentApiPathLength);
         }
+
         return $originalPath;
     }
 
@@ -257,6 +295,7 @@ class Request extends BaseRequest
         if (!$this->configurationProvider) {
             return null;
         }
+
         return $this->configurationProvider->getSetting('aliases.' . $path);
     }
 
