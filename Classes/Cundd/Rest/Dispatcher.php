@@ -416,7 +416,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param string|array $data
      * @param int $status
      * @return Response
-     * @deprecated use ResponseFactory->createErrorResponse()
+     * @deprecated use ResponseFactory->createErrorResponse(). Will be removed in 3.0
      */
     public function createErrorResponse($data, $status)
     {
@@ -430,7 +430,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param string|array $data
      * @param int $status
      * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse()
+     * @deprecated use ResponseFactory->createSuccessResponse(). Will be removed in 3.0
      */
     public function createSuccessResponse($data, $status)
     {
@@ -445,7 +445,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * @param int $status Status code of the response
      * @param bool $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
      * @return Response
-     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse()
+     * @deprecated use ResponseFactory->createSuccessResponse() or ResponseFactory->createErrorResponse(). Will be removed in 3.0
      */
     protected function _createResponse($data, $status, $forceError = false)
     {
@@ -457,7 +457,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
     /**
      * @return string
-     * @deprecated use getRequest()->path() instead
+     * @deprecated use getRequest()->getPath() instead. Will be removed in 3.0
      */
     public function getPath()
     {
@@ -467,7 +467,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
     /**
      * @return string
-     * @deprecated use getRequest()->originalPath() instead
+     * @deprecated use getRequest()->getOriginalPath() instead. Will be removed in 3.0
      */
     public function getOriginalPath()
     {
@@ -480,7 +480,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * @param string $format Reference to be filled with the request format
      * @return string
-     * @deprecated use the RequestFactory::getUri() instead
+     * @deprecated use the RequestFactory::getUri() instead. Will be removed in 3.0
      */
     public function getUri(&$format = '')
     {
@@ -492,7 +492,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * Returns the sent data
      *
      * @return mixed
-     * @deprecated use the request's getSentData()
+     * @deprecated use the request's getSentData(). Will be removed in 3.0
      */
     public function getSentData()
     {
@@ -505,7 +505,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * is enabled
      *
      * @return string
-     * @deprecated use the request's getRootObjectKey()
+     * @deprecated use the request's getRootObjectKey(). Will be removed in 3.0
      */
     public function getRootObjectKey()
     {

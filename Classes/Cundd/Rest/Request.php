@@ -80,7 +80,7 @@ class Request extends BaseRequest
      *
      * @return string
      */
-    public function path()
+    public function getPath()
     {
         if (!$this->path) {
             \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
@@ -101,16 +101,42 @@ class Request extends BaseRequest
     }
 
     /**
+     * Returns the request path (eventually aliases have been mapped)
+     *
+     * @return string
+     * @deprecated use getPath() instead. Will be removed in 3.0
+     */
+    public function path()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+
+        return $this->getPath();
+    }
+
+    /**
      * Returns the request path before mapping aliases
      *
      * @return string
      */
-    public function originalPath()
+    public function getOriginalPath()
     {
         if ($this->originalPath === -1) {
-            return $this->path();
+            return $this->getPath();
         }
         return $this->originalPath;
+    }
+
+    /**
+     * Returns the request path before mapping aliases
+     *
+     * @return string
+     * @deprecated use getOriginalPath() instead. Will be removed in 3.0
+     */
+    public function originalPath()
+    {
+        \TYPO3\CMS\Core\Utility\GeneralUtility::logDeprecatedFunction();
+
+        return $this->getOriginalPath();
     }
 
     /**
@@ -204,7 +230,7 @@ class Request extends BaseRequest
      */
     public function getRootObjectKey()
     {
-        $originalPath = $this->originalPath();
+        $originalPath = $this->getOriginalPath();
         /*
          * Transform Document URLs
          * @Todo: Make this better
