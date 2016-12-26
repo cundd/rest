@@ -6,6 +6,10 @@
     "typo3cms",
     "rest"
   ],
+  "require-dev": {
+    "phpunit/phpunit": "^5.7.4",
+    "psr/http-message": "^1.0.1"
+  },
   "homepage": "https://rest.cundd.net/",
   "authors": [
     {
@@ -15,15 +19,15 @@
   ],
   "license": "GPL-2.0+",
   "autoload": {
-    "psr-0": {
-      "Cundd\\Rest": "Classes/"
+    "psr-4": {
+      "Cundd\\Rest\\": "Classes/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": { "Cundd\\Rest\\Tests\\": "Tests/" }
   },
   "replace": {
     "rest": "self.version",
     "typo3-ter/rest": "self.version"
-  },
-  "suggest": {
-    "vlucas/bulletphp": "Required for the REST extension to work"
   }
 }

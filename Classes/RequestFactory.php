@@ -66,7 +66,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
             $this->request = new Request(null, $uri);
             $this->request->initWithPathAndOriginalPath($path, $originalPath);
-            $this->request->injectConfigurationProvider($this->configurationProvider);
             if ($this->format) {
                 $this->request->format($this->format);
             }

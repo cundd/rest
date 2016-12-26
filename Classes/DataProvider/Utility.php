@@ -25,7 +25,6 @@
 
 namespace Cundd\Rest\DataProvider;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * A utility class with static methods for Data Providers
@@ -58,13 +57,13 @@ class Utility
      *   )
      *
      * @param string $path
-     * @param bool $convertPlural Indicates if plural resource names should be converted
+     * @param bool   $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
     public static function getClassNamePartsForPath($path, $convertPlural = true)
     {
         if (strpos($path, '_') !== false) {
-            $path = GeneralUtility::underscoredToUpperCamelCase($path);
+            $path = static::underscoredToUpperCamelCase($path);
         }
         $parts = explode(self::API_PATH_PART_SEPARATOR, $path, 3);
         if (count($parts) < 3) {
@@ -100,7 +99,7 @@ class Utility
 
         $className = str_replace('\\Domain\\Model\\', '\\', $className);
         $classNameParts = array_map(
-            array('TYPO3\\CMS\\Core\\Utility\\GeneralUtility', 'camelCaseToLowerCaseUnderscored'),
+            array(__CLASS__, 'camelCaseToLowerCaseUnderscored'),
             explode('\\', $className)
         );
 
@@ -143,7 +142,8 @@ class Utility
             'xes' => 'x',
             'oes' => 'o',
             'ves' => 'f',
-            's'   => '');
+            's'   => '',
+        );
         // Loop through all the rules and do the replacement.
         foreach (array_keys($rules) as $key) {
             // If the end of the word doesn't match the key,
@@ -161,6 +161,7 @@ class Utility
             // replacement.
             return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
         }
+
         return $word;
     }
 
@@ -173,5 +174,29 @@ class Utility
     public static function registerSingularForPlural($singular, $plural)
     {
         static::$singularToPlural[$singular] = $plural;
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    private static function underscoredToUpperCamelCase($string)
+    {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
+    }
+
+    /**
+     * @param string $input
+     * @return string
+     */
+    private static function camelCaseToLowerCaseUnderscored($input)
+    {
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+
+        return implode('_', $ret);
     }
 }
