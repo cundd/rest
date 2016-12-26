@@ -61,6 +61,8 @@ class Request extends BaseRequest
      * @param string $path
      * @param string $originalPath
      * @return $this
+     * @deprecated Will be removed in 3.0
+     * @internal
      */
     public function initWithPathAndOriginalPath($path, $originalPath)
     {
