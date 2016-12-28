@@ -122,6 +122,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      *
      * @param string $format Reference to be filled with the request format
      * @return string
+     * @deprecated Will be removed in 3.0.0
      */
     public function getUri(&$format = '')
     {
