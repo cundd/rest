@@ -35,12 +35,4 @@ interface RequestFactoryInterface
      * @return $this
      */
     public function registerCurrentRequest($request);
-
-    /**
-     * Returns the URI
-     *
-     * @param string $format Reference to be filled with the request format
-     * @return string
-     */
-    public function getUri(&$format = '');
 }
