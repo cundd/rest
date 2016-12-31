@@ -28,6 +28,9 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
+use TYPO3\CMS\Extbase\Persistence\Generic\Exception;
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException;
 
 class Backend implements BackendInterface
 {
@@ -35,7 +38,7 @@ class Backend implements BackendInterface
      * Adds a row to the storage
      *
      * @param string $tableName The database table name
-     * @param array $row The row to insert
+     * @param array  $row       The row to insert
      * @return integer the UID of the inserted row
      */
     public function addRow($tableName, array $row)
@@ -45,6 +48,7 @@ class Backend implements BackendInterface
         $this->getAdapter()->exec_INSERTquery($tableName, $row);
         $uid = $this->getAdapter()->sql_insert_id();
         $this->checkSqlErrors();
+
         return (integer)$uid;
     }
 
@@ -52,39 +56,48 @@ class Backend implements BackendInterface
      * Updates a row in the storage
      *
      * @param string $tableName The database table name
-     * @param array $query
-     * @param array $row The row to update
+     * @param array  $query
+     * @param array  $row       The row to update
      * @return mixed
      */
     public function updateRow($tableName, $query, array $row)
     {
         $this->checkTableArgument($tableName);
 
-        $result = $this->getAdapter()->exec_UPDATEquery($tableName, $this->createWhereStatementFromQuery($query, $tableName), $row);
+        $result = $this->getAdapter()->exec_UPDATEquery(
+            $tableName,
+            $this->createWhereStatementFromQuery($query, $tableName),
+            $row
+        );
         $this->checkSqlErrors();
+
         return $result;
     }
 
     /**
      * Deletes a row in the storage
      *
-     * @param string $tableName The database table name
-     * @param array $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
+     * @param string $tableName  The database table name
+     * @param array  $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
      * @return mixed
      */
     public function removeRow($tableName, array $identifier)
     {
         $this->checkTableArgument($tableName);
 
-        $result = $this->getAdapter()->exec_DELETEquery($tableName, $this->createWhereStatementFromQuery($identifier, $tableName));
+        $result = $this->getAdapter()->exec_DELETEquery(
+            $tableName,
+            $this->createWhereStatementFromQuery($identifier, $tableName)
+        );
         $this->checkSqlErrors();
+
         return $result;
     }
 
     /**
      * Returns the number of items matching the query
      *
-     * @param string $tableName The database table name
+     * @param string               $tableName The database table name
      * @param QueryInterface|array $query
      * @return integer
      * @api
@@ -98,18 +111,15 @@ class Backend implements BackendInterface
             $tableName,
             $this->createWhereStatementFromQuery($query, $tableName)
         );
-//			'',
-//			$this->createOrderingStatementFromQuery($query),
-//			$this->createLimitStatementFromQuery($query)
-//		);
         $this->checkSqlErrors();
+
         return intval($row['count']);
     }
 
     /**
      * Returns the object data matching the $query
      *
-     * @param string $tableName The database table name
+     * @param string               $tableName The database table name
      * @param QueryInterface|array $query
      * @return array
      * @api
@@ -127,6 +137,7 @@ class Backend implements BackendInterface
             $this->createLimitStatementFromQuery($query)
         );
         $this->checkSqlErrors();
+
         return $result;
     }
 
@@ -134,14 +145,14 @@ class Backend implements BackendInterface
      * Checks if there are SQL errors in the last query, and if yes, throw an exception.
      *
      * @return void
-     * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException
+     * @throws SqlErrorException
      */
     protected function checkSqlErrors()
     {
         $error = $this->getAdapter()->sql_error();
         if ($error !== '') {
             $error = '#' . $this->getAdapter()->sql_errno() . ': ' . $error;
-            throw new \TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException($error, 1247602160);
+            throw new SqlErrorException($error, 1247602160);
         }
     }
 
@@ -149,9 +160,9 @@ class Backend implements BackendInterface
      * Creates the WHERE-statement from the given key-value query-array
      *
      * @param QueryInterface|array $query
-     * @param string $tableName
-     * @throws Exception\InvalidColumnNameException if one of the column names is invalid
-     * @throws Exception\InvalidTableNameException if the table name is invalid
+     * @param string               $tableName
+     * @throws InvalidColumnNameException if one of the column names is invalid
+     * @throws InvalidTableNameException if the table name is invalid
      * @throws \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
      * @return string
      */
@@ -164,7 +175,7 @@ class Backend implements BackendInterface
             $configuration = $query->getConfiguration();
 
             $statement = $query->getStatement();
-            if ($statement && $statement instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement) {
+            if ($statement && $statement instanceof Statement) {
                 $sql = $statement->getStatement();
                 $parameters = $statement->getBoundVariables();
 
@@ -220,6 +231,7 @@ class Backend implements BackendInterface
                 . $operator
                 . $comparisonValue;
         }
+
         return implode(' AND ', $constraints);
     }
 
@@ -266,6 +278,7 @@ class Backend implements BackendInterface
             default:
                 throw new InvalidOperatorException('Unsupported operator encountered.', 1242816073);
         }
+
         return $operator;
     }
 
@@ -273,17 +286,20 @@ class Backend implements BackendInterface
      * Replace query placeholders in a query part by the given parameters
      *
      * @param string &$sqlString The query part with placeholders
-     * @param array $parameters The parameters
+     * @param array  $parameters The parameters
      * @param string $tableName
      *
-     * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception
+     * @throws Exception
      * @return string
      */
     protected function replacePlaceholders(&$sqlString, array $parameters, $tableName = 'foo')
     {
         // TODO profile this method again
         if (substr_count($sqlString, '?') !== count($parameters)) {
-            throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception('The number of question marks to replace must be equal to the number of parameters.', 1242816074);
+            throw new Exception(
+                'The number of question marks to replace must be equal to the number of parameters.',
+                1242816074
+            );
         }
         $adapter = $this->getAdapter();
         $offset = 0;
@@ -292,7 +308,10 @@ class Backend implements BackendInterface
             if ($markPosition !== false) {
                 if ($parameter === null) {
                     $parameter = 'NULL';
-                } elseif (is_array($parameter) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable) {
+                } elseif (is_array(
+                        $parameter
+                    ) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable
+                ) {
                     $items = array();
                     foreach ($parameter as $item) {
                         $items[] = $adapter->fullQuoteStr($item, $tableName);
@@ -301,10 +320,14 @@ class Backend implements BackendInterface
                 } else {
                     $parameter = $adapter->fullQuoteStr($parameter, $tableName);
                 }
-                $sqlString = substr($sqlString, 0, $markPosition) . $parameter . substr($sqlString, ($markPosition + 1));
+                $sqlString = substr($sqlString, 0, $markPosition) . $parameter . substr(
+                        $sqlString,
+                        ($markPosition + 1)
+                    );
             }
             $offset = $markPosition + strlen($parameter);
         }
+
         return $sqlString;
     }
 
@@ -316,14 +339,15 @@ class Backend implements BackendInterface
      */
     protected function createLimitStatementFromQuery($query)
     {
-        #SELECT * FROM tbl LIMIT 5,10;  # Retrieve rows 6-15
         if ($query instanceof QueryInterface) {
             $limit = '' . $query->getOffset();
             if ($query->getLimit()) {
                 $limit = ($limit ? $limit : '0') . ',' . $query->getLimit();
             }
+
             return $limit;
         }
+
         return '';
     }
 
@@ -337,11 +361,17 @@ class Backend implements BackendInterface
     {
         if ($query instanceof QueryInterface) {
             $orderings = $query->getOrderings();
-            $orderArray = array_map(function ($property, $direction) {
-                return $property . ' ' . $direction;
-            }, array_keys($orderings), $orderings);
+            $orderArray = array_map(
+                function ($property, $direction) {
+                    return $property . ' ' . $direction;
+                },
+                array_keys($orderings),
+                $orderings
+            );
+
             return implode(', ', $orderArray);
         }
+
         return '';
     }
 
@@ -349,12 +379,15 @@ class Backend implements BackendInterface
      * Checks if the given table name is valid
      *
      * @param string $tableName
-     * @throws Exception\InvalidTableNameException
+     * @throws InvalidTableNameException
      */
     protected function checkTableArgument($tableName)
     {
         if (!is_string($tableName)) {
-            throw new InvalidTableNameException('The given table name is of type ' . gettype($tableName) . '. You may have a wrong argument order', 1395677889);
+            throw new InvalidTableNameException(
+                'The given table name is of type ' . gettype($tableName) . '. You may have a wrong argument order',
+                1395677889
+            );
         }
         if (!$tableName) {
             throw new InvalidTableNameException('The given table name is empty', 1395677890);

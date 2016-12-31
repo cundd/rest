@@ -30,8 +30,6 @@ namespace Cundd\Rest\VirtualObject;
  *
  * A Virtual Object Configuration is the definition of a REST resource without an associated Extbase Domain Model. This
  * allows the access to database records without the need to defined a Model class.
- *
- * @package Cundd\Rest\VirtualObject
  */
 class Configuration implements ConfigurationInterface
 {

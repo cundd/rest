@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Router;
 
 
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request;
 use Cundd\Rest\Response;
 
@@ -21,10 +22,10 @@ class Router
     );
 
     /**
-     * @param Request $request
+     * @param RestRequestInterface $request
      * @return Response
      */
-    public function dispatch(Request $request)
+    public function dispatch(RestRequestInterface $request)
     {
         return new Response();
     }

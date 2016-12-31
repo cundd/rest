@@ -25,13 +25,12 @@
 
 namespace Cundd\Rest\Configuration;
 
-use TYPO3\CMS\Core\SingletonInterface;
+use Cundd\Rest\SingletonInterface;
+use Cundd\Rest\Utility\DebugUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 /**
  * Class TypoScriptConfigurationProvider
- *
- * @package Cundd\Rest\Configuration
  */
 class TypoScriptConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface
 {

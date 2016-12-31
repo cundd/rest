@@ -23,25 +23,26 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Unit\Core;
 
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
-use Cundd\Rest\Tests\Functional\AbstractCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
-require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Test case for class new \Cundd\Rest\RequestFactory
  *
- * @version $Id$
+ * @version   $Id$
  * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  *
- * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
+ * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class RequestFactoryTest extends AbstractCase
+class RequestFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestFactoryInterface
@@ -51,7 +52,7 @@ class RequestFactoryTest extends AbstractCase
     public function setUp()
     {
         parent::setUp();
-        require_once __DIR__ . '/../../FixtureClasses.php';
+//        require_once __DIR__ . '/../../FixtureClasses.php';
 
         $this->fixture = $this->buildRequestFactory();
     }
@@ -70,8 +71,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -81,8 +82,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/2', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -92,8 +93,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/2.html';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/2', $request->url());
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
+        $this->assertEquals('html', $request->getFormat());
     }
 
     /**
@@ -103,8 +104,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'myAlias/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -114,8 +115,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'myAlias/2.json';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/2', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -125,28 +126,28 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'myAlias/2.html';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel/2', $request->url());
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
+        $this->assertEquals('html', $request->getFormat());
     }
 
     /**
      * @test
      */
-    public function getOriginalPathTest()
+    public function getOriginalResourceTypeTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->originalPath());
+        $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
     /**
      * @test
      */
-    public function getOriginalPathWithFormatTest()
+    public function getOriginalResourceTypeWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->originalPath());
+        $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
     /**
@@ -176,8 +177,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -187,8 +188,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -198,8 +199,8 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('Document-MyExt-MyModel/1', $request->url());
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('html', $request->getFormat());
     }
 
     /**
@@ -208,7 +209,7 @@ class RequestFactoryTest extends AbstractCase
     public function getPathTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -218,7 +219,7 @@ class RequestFactoryTest extends AbstractCase
     public function getPathWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -228,7 +229,7 @@ class RequestFactoryTest extends AbstractCase
     public function getDocumentPathTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
@@ -238,27 +239,27 @@ class RequestFactoryTest extends AbstractCase
     public function getDocumentPathWithFormatTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
     /**
      * @test
      */
-    public function getOriginalPathWithDocumentTest()
+    public function getOriginalResourceTypeWithDocumentTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->originalPath();
+        $path = $this->fixture->getRequest()->getOriginalResourceType();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
     /**
      * @test
      */
-    public function getOriginalPathWithDocumentWithFormatTest()
+    public function getOriginalResourceTypeWithDocumentWithFormatTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->originalPath();
+        $path = $this->fixture->getRequest()->getOriginalResourceType();
         $this->assertEquals('Document-MyExt-MyModel', $path);
     }
 
@@ -288,7 +289,7 @@ class RequestFactoryTest extends AbstractCase
     public function getUnderscoredPathWithFormatAndIdTest()
     {
         $_GET['u'] = 'my_ext-my_model/1.json';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
@@ -298,7 +299,7 @@ class RequestFactoryTest extends AbstractCase
     public function getUnderscoredPathWithFormatTest2()
     {
         $_GET['u'] = 'my_ext-my_model.json';
-        $path = $this->fixture->getRequest()->path();
+        $path = $this->fixture->getRequest()->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
@@ -309,7 +310,7 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -319,7 +320,16 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('json', $request->getFormat());
+    }
+    /**
+     * @test
+     */
+    public function getFormatWithoutPathTest()
+    {
+        $_GET['u'] = '.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -329,7 +339,7 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('html', $request->format());
+        $this->assertEquals('html', $request->getFormat());
     }
 
     /**
@@ -339,7 +349,7 @@ class RequestFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.blur';
         $request = $this->fixture->getRequest();
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -348,8 +358,8 @@ class RequestFactoryTest extends AbstractCase
     public function getUriWithAbsRefPrefixInSubDirectoryTest()
     {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory/'))->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $request = $this->buildRequestFactory(array('absRefPrefix' => '/subDirectory/'))->getRequest();
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
     /**
@@ -358,8 +368,8 @@ class RequestFactoryTest extends AbstractCase
     public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest()
     {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/subDirectory'))->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $request = $this->buildRequestFactory(array('absRefPrefix' => '/subDirectory'))->getRequest();
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
     /**
@@ -368,8 +378,8 @@ class RequestFactoryTest extends AbstractCase
     public function getUriWithAbsRefPrefixSlashTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(array('absRefPrefix', null, '/'))->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $request = $this->buildRequestFactory(array('absRefPrefix' => '/'))->getRequest();
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
     /**
@@ -378,8 +388,8 @@ class RequestFactoryTest extends AbstractCase
     public function getUriWithAbsRefPrefixDomainTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(array('absRefPrefix', null, 'http://example.com/'))->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $request = $this->buildRequestFactory(array('absRefPrefix' => 'http://example.com/'))->getRequest();
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
     /**
@@ -388,32 +398,29 @@ class RequestFactoryTest extends AbstractCase
     public function getUriWithAbsRefPrefixAutoTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(array('absRefPrefix', null, 'auto'))->getRequest();
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
+        $request = $this->buildRequestFactory(array('absRefPrefix' => 'auto'))->getRequest();
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
     /**
      * @test
      */
-    public function urlAndPathShouldNotIncludeQueryDataTest()
+    public function pathShouldNotIncludeQueryDataTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('json', $request->getFormat());
 
         $_GET['u'] = 'MyExt-MyModel/?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel/', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('json', $request->getFormat());
 
         $_GET['u'] = 'MyExt-MyModel?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -423,47 +430,55 @@ class RequestFactoryTest extends AbstractCase
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel/1', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
 
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel/', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('/MyExt-MyModel/', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
 
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel?query=string';
         $request = $this->buildRequestFactory()->getRequest();
-        $this->assertEquals('MyExt-MyModel', $request->path());
-        $this->assertEquals('MyExt-MyModel', $request->url());
-        $this->assertEquals('json', $request->format());
+        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+        $this->assertEquals('/MyExt-MyModel', $request->getPath());
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
-     * @param array ...$configurationProviderSetting
+     * @param array $configurationProviderSetting
      * @return RequestFactory
      */
-    private function buildRequestFactory(array $configurationProviderSetting = null)
+    private function buildRequestFactory($configurationProviderSetting = [])
     {
-        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $configurationProviderMock */
-        $configurationProviderMock = $this->getMockBuilder('Cundd\Rest\Configuration\TypoScriptConfigurationProvider')
-            ->getMock();
+        /** @var TypoScriptConfigurationProvider|ObjectProphecy $configurationProviderMock */
+        $configurationProviderMock = $this->prophesize(TypoScriptConfigurationProvider::class);
 
-        if ($configurationProviderSetting === null) {
+        if (empty($configurationProviderSetting)) {
             $configurationProviderSetting = array(
-                array('aliases.myAlias', null, 'MyExt-MyModel')
+                'aliases.myAlias' => 'MyExt-MyModel',
             );
-        } else {
-            $configurationProviderSetting = func_get_args();
         }
-        $configurationProviderMock
-            ->expects($this->any())
-            ->method('getSetting')
-            ->will($this->returnValueMap($configurationProviderSetting));
+        $configurationProviderMock->getSetting(Argument::type('string'))->will(
+            function ($args) use ($configurationProviderSetting) {
+                if (isset($args[0])) {
+                    $key = $args[0];
 
-        $requestFactory = new RequestFactory();
-        $requestFactory->injectConfigurationProvider($configurationProviderMock);
-        return $requestFactory;
+//                    echo __LINE__.' ';var_dump($key);
+//                    echo __LINE__.' ';var_dump($configurationProviderSetting);
+//                    echo __LINE__.' ';var_dump(isset($configurationProviderSetting[$key]));
+
+                    return isset($configurationProviderSetting[$key]) ? $configurationProviderSetting[$key] : null;
+                }
+
+                return null;
+            }
+        );
+
+        $_SERVER['SERVER_NAME'] = 'rest.cundd.net';
+
+        return new RequestFactory($configurationProviderMock->reveal(), \Zend\Diactoros\ServerRequestFactory::class);
     }
 }

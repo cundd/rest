@@ -27,8 +27,6 @@ namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\DataProvider\Utility;
 
-require_once __DIR__ . '/../../Bootstrap.php';
-
 /**
  * Test case for class new \Cundd\Rest\App
  *
@@ -46,12 +44,12 @@ class DataProviderUtilityTest extends \PHPUnit_Framework_TestCase
      */
     public function getClassNamePartsForPathTest()
     {
-        $this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('my_ext-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\Model'), Utility::getClassNamePartsForPath('vendor-my_ext-group-model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-group-my_model'));
-        $this->assertEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), Utility::getClassNamePartsForPath('vendor-my_ext-my_group-my_model'));
-        $this->assertEquals(array('MyVendor', 'Ext', 'Group\\Model'), Utility::getClassNamePartsForPath('my_vendor-ext-group-model'));
+        $this->assertEquals(array('', 'MyExt', 'MyModel'), Utility::getClassNamePartsForResourceType('my_ext-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'MyModel'), Utility::getClassNamePartsForResourceType('vendor-my_ext-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\Model'), Utility::getClassNamePartsForResourceType('vendor-my_ext-group-model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'Group\\MyModel'), Utility::getClassNamePartsForResourceType('vendor-my_ext-group-my_model'));
+        $this->assertEquals(array('Vendor', 'MyExt', 'MyGroup\\MyModel'), Utility::getClassNamePartsForResourceType('vendor-my_ext-my_group-my_model'));
+        $this->assertEquals(array('MyVendor', 'Ext', 'Group\\Model'), Utility::getClassNamePartsForResourceType('my_vendor-ext-group-model'));
     }
 
     /**
@@ -59,20 +57,20 @@ class DataProviderUtilityTest extends \PHPUnit_Framework_TestCase
      */
     public function getPathForClassNameTest()
     {
-        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MyModel'));
-        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MyModel'));
-        $this->assertEquals('vendor-my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
+        $this->assertEquals('my_ext-my_model', Utility::getResourceTypeForClassName('Tx_MyExt_Domain_Model_MyModel'));
+        $this->assertEquals('my_ext-my_model', Utility::getResourceTypeForClassName('MyExt\\Domain\\Model\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel'));
 
-        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
-        $this->assertEquals('my_ext-my_second_model', Utility::getPathForClassName('MyExt\\Domain\\Model\\MySecondModel'));
-        $this->assertEquals('vendor-my_ext-my_second_model', Utility::getPathForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
+        $this->assertEquals('my_ext-my_second_model', Utility::getResourceTypeForClassName('Tx_MyExt_Domain_Model_MySecondModel'));
+        $this->assertEquals('my_ext-my_second_model', Utility::getResourceTypeForClassName('MyExt\\Domain\\Model\\MySecondModel'));
+        $this->assertEquals('vendor-my_ext-my_second_model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel'));
 
-        $this->assertEquals('my_ext-my_model', Utility::getPathForClassName('MyExt\\MyModel'));
-        $this->assertEquals('vendor-my_ext-my_model', Utility::getPathForClassName('Vendor\\MyExt\\MyModel'));
-        $this->assertEquals('vendor-my_ext-group-model', Utility::getPathForClassName('Vendor\\MyExt\\Group\\Model'));
-        $this->assertEquals('vendor-my_ext-group-my_model', Utility::getPathForClassName('Vendor\\MyExt\\Group\\MyModel'));
-        $this->assertEquals('vendor-my_ext-my_group-my_model', Utility::getPathForClassName('Vendor\\MyExt\\MyGroup\\MyModel'));
-        $this->assertEquals('my_vendor-ext-group-model', Utility::getPathForClassName('MyVendor\\Ext\\Group\\Model'));
+        $this->assertEquals('my_ext-my_model', Utility::getResourceTypeForClassName('MyExt\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\MyModel'));
+        $this->assertEquals('vendor-my_ext-group-model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\Group\\Model'));
+        $this->assertEquals('vendor-my_ext-group-my_model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\Group\\MyModel'));
+        $this->assertEquals('vendor-my_ext-my_group-my_model', Utility::getResourceTypeForClassName('Vendor\\MyExt\\MyGroup\\MyModel'));
+        $this->assertEquals('my_vendor-ext-group-model', Utility::getResourceTypeForClassName('MyVendor\\Ext\\Group\\Model'));
     }
 
     /**

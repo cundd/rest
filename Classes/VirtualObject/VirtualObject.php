@@ -29,8 +29,6 @@ namespace Cundd\Rest\VirtualObject;
  * Class VirtualObject
  *
  * A simple wrapper object for data
- *
- * @package Cundd\Rest
  */
 class VirtualObject
 {

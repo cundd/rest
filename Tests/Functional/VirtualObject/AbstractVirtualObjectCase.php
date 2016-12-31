@@ -35,12 +35,9 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\VirtualObject\Configuration;
 
-require_once __DIR__ . '/../AbstractCase.php';
 
 /**
  * Abstract base class for Virtual Object tests
- *
- * @package Cundd\Rest\Test\VirtualObject
  */
 class AbstractVirtualObjectCase extends AbstractCase
 {
@@ -58,7 +55,7 @@ class AbstractVirtualObjectCase extends AbstractCase
     {
         $testConfiguration = $this->getTestConfigurationData();
         return new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceType']['mapping'])
         );
     }
 
@@ -83,7 +80,7 @@ class AbstractVirtualObjectCase extends AbstractCase
     {
         return <<<CONFIGURATION
 {
-    "ResourceName": {
+    "ResourceType": {
         "mapping": {
         	"identifier": "property1",
             "tableName": "my_resource_table",

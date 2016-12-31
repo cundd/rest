@@ -25,15 +25,15 @@
 
 namespace Cundd\Rest;
 
-use Bullet\Response;
-use Bullet\View\Exception;
-use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Core\SingletonInterface;
-use Cundd\Rest\Access\AccessControllerInterface;
+use Cundd\Rest\Http\Header;
+use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -41,13 +41,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * The dispatcher will first check the access to the requested resource. Then it will check the cache for a stored
  * response for the current request. If no cached response was found,
- *
- * @package Cundd\Rest
  */
 class Dispatcher implements SingletonInterface, ApiConfigurationInterface, DispatcherInterface
 {
     /**
-     * @var \Cundd\Rest\ObjectManager
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -67,7 +65,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     protected $responseFactory;
 
     /**
-     * @var \TYPO3\CMS\Core\Log\Logger
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
 
@@ -80,12 +78,22 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
 
     /**
      * Initialize
+     *
+     * @param ObjectManager $objectManager
+     * @param bool          $performBootstrap
      */
-    public function __construct()
+    public function __construct(ObjectManager $objectManager = null, $performBootstrap = true)
     {
-        $this->app = new \Bullet\App();
+        if ($performBootstrap) {
+            (new Bootstrap())->init();
+        }
 
-        $this->objectManager = GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
+        // Workaround until custom router is implemented
+        if (class_exists(\Bullet\App::class)) {
+            $this->app = new \Bullet\App();
+        }
+
+        $this->objectManager = $objectManager ?: GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
         $this->requestFactory = $this->objectManager->getRequestFactory();
         $this->responseFactory = $this->objectManager->getResponseFactory();
         $this->registerSingularToPlural();
@@ -94,132 +102,164 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     }
 
     /**
-     * Dispatch the request
+     * Process the raw request
      *
-     * @param \Cundd\Rest\Request $request Overwrite the request
-     * @param Response $responsePointer Reference to be filled with the response
-     * @return boolean Returns if the request has been successfully dispatched
+     * Entry point for the PSR 7 middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @return ResponseInterface
      */
-    public function dispatch(Request $request = null, Response &$responsePointer = null)
+    public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if ($request) {
-            $this->requestFactory->registerCurrentRequest($request);
-            $this->objectManager->reassignRequest();
-        } else {
-            $request = $this->requestFactory->getRequest();
-        }
+        $this->requestFactory->registerCurrentRequest($request);
+        $this->objectManager->reassignRequest();
 
-        $requestPath = $request->path();
+        return $this->dispatch($this->requestFactory->getRequest(), $response);
+    }
+
+    /**
+     * Dispatch the REST request
+     *
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
+     * @return ResponseInterface
+     */
+    public function dispatch(RestRequestInterface $request, ResponseInterface $response)
+    {
+        $requestPath = $request->getPath();
         if (!$requestPath) {
             return $this->greet();
         }
 
         // Checks if the request needs authentication
-        switch ($this->objectManager->getAccessController()->getAccess()) {
+        switch ($this->objectManager->getAccessController()->getAccess($request)) {
             case AccessControllerInterface::ACCESS_ALLOW:
                 break;
 
             case AccessControllerInterface::ACCESS_UNAUTHORIZED:
-                echo $this->responseFactory->createErrorResponse('Unauthorized', 401);
-                return false;
+                return $this->responseFactory->createErrorResponse('Unauthorized', 401);
 
             case AccessControllerInterface::ACCESS_DENY:
             default:
-                echo $this->responseFactory->createErrorResponse('Forbidden', 403);
-                return false;
+                return $this->responseFactory->createErrorResponse('Forbidden', 403);
         }
 
-        /** @var Cache $cache */
-        $cache = $this->objectManager->getCache();
-        $response = $cache->getCachedValueForRequest($request);
+        $newResponse = $this->addAdditionalHeaders($this->getCachedResponseOrCallHandler($request, $response));
 
-        $success = true;
+        $this->logResponse(
+            'response: ' . $newResponse->getStatusCode(),
+            array('response' => (string)$newResponse->getBody())
+        );
+
+        return $newResponse;
+    }
+
+    /**
+     * Checks the cache for an entry for the current request and returns it, or calls the handler if nothing is found
+     *
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
+     * @return ResponseInterface
+     */
+    private function getCachedResponseOrCallHandler(RestRequestInterface $request, ResponseInterface $response)
+    {
+        $cache = $this->objectManager->getCache();
+        $cachedResponse = $cache->getCachedValueForRequest($request);
+
+        // If a cached response exists return it
+        if ($cachedResponse) {
+            return $cachedResponse;
+        }
 
         // If no cached response exists
-        if (!$response) {
+        $newResponse = $this->callHandler($request);
 
-            // If a path is given let the handler build up the routes
-            if ($requestPath) {
-                $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->method()));
-                $this->objectManager->getHandler()->configureApiPaths();
-            }
+        // Cache the response
+        $cache->setCachedValueForRequest($request, $newResponse);
 
-            // Let Bullet PHP do the hard work
-            $response = $this->app->run($request);
+        return $newResponse;
+    }
 
+    /**
+     * Call the handler for the current request
+     *
+     * @param RestRequestInterface $request
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    private function callHandler(RestRequestInterface $request)
+    {
+        $requestPath = $request->getPath();
+        // If a path is given let the handler build up the routes
+        $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->getMethod()));
+
+        $this->objectManager->getHandler()->configureApiPaths();
+
+
+        // Let Bullet PHP do the hard work
+        $newResponse = $this->app->run($request->getMethod());
+        if (class_exists(\Bullet\Response::class) && $newResponse instanceof \Bullet\Response) {
             // Handle exceptions
-            if ($response->content() instanceof \Exception) {
-                $success = false;
-
-                $exception = $response->content();
+            if ($newResponse->content() instanceof \Exception) {
+                $exception = $newResponse->content();
                 $this->logException($exception);
-                $response = $this->exceptionToResponse($exception);
-            } else {
-                // Cache the response
-                $cache->setCachedValueForRequest($request, $response);
+
+                return $this->exceptionToResponse($exception);
             }
+
+            return $this->responseFactory->createResponse($newResponse->content(), 200)
+                ->withHeader(
+                    Header::CONTENT_TYPE,
+                    $newResponse->contentType() . "; charset=" . $newResponse->encoding()
+                );
         }
 
-        // Additional custom headers
-        $additionalResponseHeaders = $this->objectManager->getConfigurationProvider()->getSetting('responseHeaders', array());
-        if (is_array($additionalResponseHeaders) && count($additionalResponseHeaders)) {
-            foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
-                if (is_string($value)) {
-                    $response->header($responseHeaderType, $value);
-                } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
-                    $response->header(rtrim($responseHeaderType, '.'), GeneralUtility::callUserFunction($value['userFunc'], $value, $this));
-                }
-            }
-        }
-
-        $responsePointer = $response;
-        $responseString = (string)$response;
-        $this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
-        echo $responseString;
-        return $success;
+        /** @var ResponseInterface $newResponse */
+        return $newResponse;
     }
 
     /**
      * Print the greeting
      *
-     * @return boolean Returns if the request has been successfully dispatched
+     * @return ResponseInterface
      */
     public function greet()
     {
-        /** @var \Cundd\Rest\Request $request */
-        $request = $this->requestFactory->getRequest();
+        $greeting = 'What\'s up?';
+        $hour = date('H');
+        if ($hour <= '10') {
+            $greeting = 'Good Morning!';
+        } elseif ($hour >= '23') {
+            $greeting = 'Hy! Still awake?';
+        }
 
-        $this->app->path('/', function ($request) {
-            $greeting = 'What\'s up?';
-            $hour = date('H');
-            if ($hour <= '10') {
-                $greeting = 'Good Morning!';
-            } elseif ($hour >= '23') {
-                $greeting = 'Hy! Still awake?';
-            }
-            return $greeting;
-        });
+        $response = $this->responseFactory->createSuccessResponse($greeting, 200);
 
-        $response = $this->app->run($request);
+        $this->logResponse(
+            'response: ' . $response->getStatusCode(),
+            array('response' => (string)$response->getBody())
+        );
 
-        $responseString = (string)$response;
-        $this->logResponse('response: ' . $response->status(), array('response' => '' . $responseString));
-        echo $responseString;
-        return true;
+        return $response;
     }
 
     /**
      * Catch and report the exception, that occurred during the request
      *
      * @param \Exception $exception
-     * @return Response
+     * @return ResponseInterface
      */
     public function exceptionToResponse($exception)
     {
-        if (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
-            return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception->getCode(), 501);
+        $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        if ($clientAddress === '127.0.0.1' || $clientAddress === '::1') {
+            $exceptionDetails = $this->getDebugDetails($exception);
+        } else {
+            $exceptionDetails = sprintf('Sorry! Something is wrong. Exception code #%d', $exception->getCode());
         }
-        return $this->responseFactory->createErrorResponse('Sorry! Something is wrong. Exception code: ' . $exception, 501);
+
+        return $this->responseFactory->createErrorResponse($exceptionDetails, 501);
     }
 
     /**
@@ -227,7 +267,8 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      *
      * Better use the RequestFactory::getRequest() instead
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
+     * @deprecated
      */
     public function getRequest()
     {
@@ -249,26 +290,28 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     /**
      * Register the callback for the given parameter
      *
-     * @param string $param
+     * @param string   $param
      * @param \Closure $callback
      * @return $this
      */
     public function registerParameter($param, \Closure $callback)
     {
         $this->app->param($param, $callback);
+
         return $this;
     }
 
     /**
      * Register the callback for the given path segment
      *
-     * @param string $path
+     * @param string   $path
      * @param \Closure $callback
      * @return $this
      */
     public function registerPath($path, \Closure $callback)
     {
         $this->app->path($path, $callback);
+
         return $this;
     }
 
@@ -281,6 +324,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     public function registerGetMethod(\Closure $callback)
     {
         $this->app->method('GET', $callback);
+
         return $this;
     }
 
@@ -293,6 +337,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     public function registerPostMethod(\Closure $callback)
     {
         $this->app->method('POST', $callback);
+
         return $this;
     }
 
@@ -305,6 +350,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     public function registerPutMethod(\Closure $callback)
     {
         $this->app->method('PUT', $callback);
+
         return $this;
     }
 
@@ -317,6 +363,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     public function registerDeleteMethod(\Closure $callback)
     {
         $this->app->method('DELETE', $callback);
+
         return $this;
     }
 
@@ -329,32 +376,35 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     public function registerPatchMethod(\Closure $callback)
     {
         $this->app->method('PATCH', $callback);
+
         return $this;
     }
 
     /**
      * Register the callback for the given HTTP method(s)
      *
-     * @param string ]string[] $method
+     * @param          string ]string[] $method
      * @param \Closure $callback
      * @return $this
      */
     public function registerHttpMethod($methods, \Closure $callback)
     {
         $this->app->method($methods, $callback);
+
         return $this;
     }
 
     /**
      * Returns the logger
      *
-     * @return \TYPO3\CMS\Core\Log\Logger
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger()
     {
         if (!$this->logger) {
             $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
+
         return $this->logger;
     }
 
@@ -362,7 +412,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * Logs the given request message and data
      *
      * @param string $message
-     * @param array $data
+     * @param array  $data
      */
     public function logRequest($message, $data = null)
     {
@@ -375,7 +425,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * Logs the given response message and data
      *
      * @param string $message
-     * @param array $data
+     * @param array  $data
      */
     public function logResponse($message, $data = null)
     {
@@ -399,7 +449,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
      * Logs the given message and data
      *
      * @param string $message
-     * @param array $data
+     * @param array  $data
      */
     public function log($message, $data = null)
     {
@@ -430,10 +480,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             }
         }
 
-        if (isset($configuration[$key])) {
-            return $configuration[$key];
-        }
-        return null;
+        return isset($configuration[$key]) ? $configuration[$key] : null;
     }
 
     /**
@@ -459,6 +506,77 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
         if (!self::$sharedDispatcher) {
             new static();
         }
+
         return self::$sharedDispatcher;
+    }
+
+    /**
+     * Add additional custom response headers
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    private function addAdditionalHeaders(ResponseInterface $response)
+    {
+        $additionalResponseHeaders = $this->objectManager
+            ->getConfigurationProvider()
+            ->getSetting('responseHeaders', null);
+        if (is_array($additionalResponseHeaders)) {
+            foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
+                if (is_string($value)) {
+                    $response = $response->withAddedHeader(
+                        $responseHeaderType,
+                        $value
+                    );
+                } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
+                    $response = $response->withAddedHeader(
+                        rtrim($responseHeaderType, '.'),
+                        GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
+                    );
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param $exception
+     * @return array
+     */
+    private function getDebugTrace(\Exception $exception)
+    {
+        return array_map(
+            function ($step) {
+                $arguments = count($step['args']) > 0 ? sprintf('(%d Arguments)', count($step['args'])) : '()';
+                if (isset($step['class'])) {
+                    return $step['class'] . $step['type'] . $step['function'] . $arguments;
+                }
+                if (isset($step['function'])) {
+
+                    return $step['function'] . $arguments;
+                }
+
+                return '';
+            },
+            $exception->getTrace()
+        );
+    }
+
+    /**
+     * @param $exception
+     * @return array
+     */
+    private function getDebugDetails(\Exception $exception)
+    {
+        return [
+            'error' => sprintf(
+                '%s #%d: %s',
+                get_class($exception),
+                $exception->getCode(),
+                $exception->getMessage()
+            ),
+            'trace' => $this->getDebugTrace($exception),
+        ];
     }
 }

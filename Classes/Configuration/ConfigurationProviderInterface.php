@@ -8,9 +8,7 @@
 namespace Cundd\Rest\Configuration;
 
 /**
- * Class TypoScriptConfigurationProvider
- *
- * @package Cundd\Rest\Configuration
+ * Interface for configuration providers
  */
 interface ConfigurationProviderInterface
 {

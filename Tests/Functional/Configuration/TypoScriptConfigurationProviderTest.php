@@ -31,8 +31,6 @@
 
 namespace Cundd\Rest\Tests\Functional\Configuration;
 
-require_once __DIR__ . '/../AbstractCase.php';
-
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 

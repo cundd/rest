@@ -31,8 +31,6 @@ use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 
 /**
  * A converter responsible for transforming Virtual Objects from and to their source data
- *
- * @package Cundd\Rest\VirtualObject
  */
 class ObjectConverter
 {

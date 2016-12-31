@@ -34,8 +34,6 @@ namespace Cundd\Rest;
 
 /**
  * Interface for handlers of API requests
- *
- * @package Cundd\Rest
  */
 interface CrudHandlerInterface extends HandlerInterface
 {

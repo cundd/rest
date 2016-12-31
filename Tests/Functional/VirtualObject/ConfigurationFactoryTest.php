@@ -32,14 +32,14 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 /**
  * Class ConfigurationTest
- *
- * @package Cundd\Rest\Test\VirtualObject
  */
 class ConfigurationFactoryTest extends AbstractVirtualObjectCase
 {
@@ -50,39 +50,39 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
 
     protected $typoScriptDummyArray = array(
         'mapping.' => array(
-            'identifier' => 'property1',
-            'tableName' => 'my_resource_table',
+            'identifier'  => 'property1',
+            'tableName'   => 'my_resource_table',
             'properties.' => array(
-                'property1.' => array(
-                    'type' => 'string',
+                'property1.'      => array(
+                    'type'   => 'string',
                     'column' => 'property_one',
                 ),
-                'property2.' => array(
-                    'type' => 'float',
+                'property2.'      => array(
+                    'type'   => 'float',
                     'column' => 'property_two',
                 ),
-                'property3.' => array(
-                    'type' => 'int',
+                'property3.'      => array(
+                    'type'   => 'int',
                     'column' => 'property_three',
                 ),
-                'property4.' => array(
-                    'type' => 'integer',
+                'property4.'      => array(
+                    'type'   => 'integer',
                     'column' => 'property_four',
                 ),
-                'property5.' => array(
-                    'type' => 'bool',
+                'property5.'      => array(
+                    'type'   => 'bool',
                     'column' => 'property_five',
                 ),
-                'property6.' => array(
-                    'type' => 'boolean',
+                'property6.'      => array(
+                    'type'   => 'boolean',
                     'column' => 'property_six',
                 ),
                 'property_seven.' => array(
                     'type' => 'boolean',
                 ),
                 'property_eight.' => 'boolean',
-            )
-        )
+            ),
+        ),
     );
 
     public function setUp()
@@ -93,12 +93,14 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
         $typoScriptDummyArray = $this->typoScriptDummyArray;
 
         /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $typeScriptConfigurationStub */
-        $typeScriptConfigurationStub = $this->getMock('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+        $typeScriptConfigurationStub = $this->getMockObjectGenerator()->getMock(
+            'Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider'
+        );
         $typeScriptConfigurationStub->expects($this->any())
             ->method('getSetting')
             ->will($this->returnValue($typoScriptDummyArray));
 
-        $this->fixture->injectConfigurationProvider($typeScriptConfigurationStub);
+        $this->fixture = new ConfigurationFactory($typeScriptConfigurationStub);
     }
 
     public function tearDown()
@@ -120,7 +122,10 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function createFromArrayTest()
     {
-        $configurationObject = $this->fixture->createFromArrayForPath($this->getTestConfigurationData(), 'ResourceName');
+        $configurationObject = $this->fixture->createFromArrayForResourceType(
+            $this->getTestConfigurationData(),
+            new ResourceType('ResourceType')
+        );
         $this->validateConfiguration($configurationObject);
     }
 
@@ -139,7 +144,9 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function createFromTypoScriptForPathTest()
     {
-        $configurationObject = $this->fixture->createFromTypoScriptForPath('ResourceName');
+        $configurationObject = $this->fixture->createFromTypoScriptForResourceType(
+            new ResourceType('ResourceType')
+        );
         $this->validateConfiguration($configurationObject);
     }
 
@@ -148,7 +155,10 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function createFromJsonTest()
     {
-        $configurationObject = $this->fixture->createFromJsonForPath($this->getTestConfigurationJSONString(), 'ResourceName');
+        $configurationObject = $this->fixture->createFromJsonForResourceType(
+            $this->getTestConfigurationJSONString(),
+            new ResourceType('ResourceType')
+        );
         $this->validateConfiguration($configurationObject);
     }
 

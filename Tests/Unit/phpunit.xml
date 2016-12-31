@@ -1,0 +1,30 @@
+<!--
+	Functional test suites setup
+
+	Functional tests should extend from \TYPO3\CMS\Core\Tests\FunctionalTestCase,
+	take a look at this class for further documentation on how to run the suite.
+
+	TYPO3 CMS functional test suite also needs phpunit bootstrap code, the
+	file is located next to this .xml as FunctionalTestsBootstrap.php
+-->
+<phpunit
+        backupGlobals="true"
+        backupStaticAttributes="false"
+        bootstrap="Bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertWarningsToExceptions="true"
+        forceCoversAnnotation="false"
+        processIsolation="true"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        verbose="false"
+        >
+    <testsuites>
+        <testsuite name="Unit tests">
+            <directory>./*</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

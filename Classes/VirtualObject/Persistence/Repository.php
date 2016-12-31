@@ -28,11 +28,10 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\VirtualObject;
+use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 
 /**
  * Repository for Virtual Objects
- *
- * @package Cundd\Rest\VirtualObject\Persistence
  */
 class Repository implements RepositoryInterface
 {
@@ -156,10 +155,11 @@ class Repository implements RepositoryInterface
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
         $this->persistenceManager->setConfiguration($configuration);
+
         return $this;
     }
 
@@ -174,6 +174,7 @@ class Repository implements RepositoryInterface
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);
         }
+
         return $this->configuration;
     }
 
@@ -209,11 +210,11 @@ class Repository implements RepositoryInterface
     /**
      * Sets the default query settings to be used in this repository
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings The query settings to be used by default
+     * @param QuerySettingsInterface $defaultQuerySettings The query settings to be used by default
      * @return void
      * @api
      */
-    public function setDefaultQuerySettings(\TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface $defaultQuerySettings)
+    public function setDefaultQuerySettings(QuerySettingsInterface $defaultQuerySettings)
     {
         // TODO: Implement setDefaultQuerySettings() method.
     }
@@ -229,6 +230,7 @@ class Repository implements RepositoryInterface
         /** @var QueryInterface $query */
         $query = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\QueryInterface');
         $query->setConfiguration($this->getConfiguration());
+
         return $query;
     }
 }

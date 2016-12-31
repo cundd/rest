@@ -25,10 +25,11 @@
 
 namespace Cundd\Rest\Authentication;
 
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request;
+
 /**
  * Authentication Provider for login data sent through Basic Auth
- *
- * @package Cundd\Rest\Authentication
  */
 class BasicAuthenticationProvider extends AbstractAuthenticationProvider
 {
@@ -43,9 +44,10 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * Tries to authenticate the current request
      *
+     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate()
+    public function authenticate(RestRequestInterface $request)
     {
         $username = null;
         $password = null;

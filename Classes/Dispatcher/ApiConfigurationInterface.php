@@ -11,8 +11,6 @@ use Closure;
 
 /**
  * Interface to configure the API paths and methods
- *
- * @package Cundd\Rest
  */
 interface ApiConfigurationInterface
 {

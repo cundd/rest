@@ -27,65 +27,68 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Exception\InvalidIdException;
 use Cundd\Rest\Domain\Model\Document;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Domain\Repository\DocumentRepository;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 class DocumentDataProvider extends DataProvider
 {
 
     /**
-     * Returns the domain model repository class name for the given API path
+     * Returns the domain model repository class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path)
+    public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
         return 'Cundd\\Rest\\Domain\\Repository\\DocumentRepository';
     }
 
     /**
-     * Returns the domain model class name for the given API path
+     * Returns the domain model class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getModelClassForPath($path)
+    public function getModelClassForResourceType(ResourceType $resourceType)
     {
         return 'Cundd\\Rest\\Domain\\Model\\Document';
     }
 
     /**
-     * Returns all domain model for the given API path
+     * Returns all domain model for the given API resource type
      *
-     * @param string $path API path to get the repository for
-     * @return DomainObjectInterface
+     * @param ResourceType $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface[]|QueryResultInterface
      */
-    public function getAllModelsForPath($path)
+    public function getAllModelsForResourceType(ResourceType $resourceType)
     {
-        $documentDatabase = $this->getDatabaseNameFromPath($path);
+        $documentDatabase = $this->getDatabaseNameFromResourceType($resourceType);
 
         /** @var DocumentRepository $documentRepository */
-        $documentRepository = $this->getRepositoryForPath($path);
+        $documentRepository = $this->getRepositoryForResourceType($resourceType);
         $documentRepository->setDatabase($documentDatabase);
+
         return $documentRepository->findAll();
     }
 
     /**
      * Adds or updates the given model in the repository for the
-     * given API path
+     * given API resource type
      *
-     * @param Document $model
-     * @param string $path The API path
+     * @param Document     $model
+     * @param ResourceType $resourceType The API resource type
      * @return void
      */
-    public function saveModelForPath($model, $path)
+    public function saveModelForResourceType($model, ResourceType $resourceType)
     {
-        $documentDatabase = $this->getDatabaseNameFromPath($path);
+        $documentDatabase = $this->getDatabaseNameFromResourceType($resourceType);
 
         /** @var DocumentRepository $repository */
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->setDatabase($documentDatabase);
         $model->_setDb($documentDatabase);
         if ($repository) {
@@ -113,8 +116,8 @@ class DocumentDataProvider extends DataProvider
                 $properties = $model->_getProperties();
             }
             $properties['_meta'] = array(
-                'db' => $model->_getDb(),
-                'guid' => $model->getGuid(),
+                'db'     => $model->_getDb(),
+                'guid'   => $model->getGuid(),
                 'tstamp' => $model->valueForKey('tstamp'),
                 'crdate' => $model->valueForKey('crdate'),
             );
@@ -143,31 +146,31 @@ class DocumentDataProvider extends DataProvider
     }
 
     /**
-     * Returns the Document database name for the given path
+     * Returns the Document database name for the given resource type
      *
-     * @param string $path
+     * @param ResourceType $resourceType
      * @return string
      */
-    public function getDatabaseNameFromPath($path)
+    public function getDatabaseNameFromResourceType(ResourceType $resourceType)
     {
-        return Utility::singularize(strtolower(substr($path, 9))); // Strip 'Document-' and singularize
+        return Utility::singularize(strtolower(substr($resourceType, 9))); // Strip 'Document-' and singularize
     }
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * This method will load existing models.
      *
-     * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param array|string|int $data         Data of the new model or it's UID
+     * @param ResourceType     $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path)
+    public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
         // If no data is given return NULL
         if (!$data) {
             return null;
         } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForPath($data, $path);
+            return $this->getModelWithIdentityForResourceType($data, $resourceType);
         }
 
         $data = $this->prepareModelData($data);
@@ -175,10 +178,10 @@ class DocumentDataProvider extends DataProvider
             if (!isset($data['id']) || !$data['id']) {
                 throw new InvalidIdException('Missing object ID', 1390319238);
             }
-            $documentDatabase = $this->getDatabaseNameFromPath($path);
+            $documentDatabase = $this->getDatabaseNameFromResourceType($resourceType);
 
             /** @var DocumentRepository $repository */
-            $repository = $this->getRepositoryForPath($path);
+            $repository = $this->getRepositoryForResourceType($resourceType);
             $repository->setDatabase($documentDatabase);
 
             $model = $repository->convertToDocument($data);
@@ -189,6 +192,7 @@ class DocumentDataProvider extends DataProvider
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
+
         return $model;
     }
 }

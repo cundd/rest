@@ -39,8 +39,6 @@ use Cundd\Rest\VirtualObject\Configuration;
 
 /**
  * Abstract base class for Virtual Object tests with database support
- *
- * @package Cundd\Rest\Test\VirtualObject
  */
 class AbstractDatabaseCase extends AbstractVirtualObjectCase
 {
@@ -84,7 +82,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
     protected function getTestConfiguration()
     {
         $testConfiguration = $this->getTestConfigurationData();
-        return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceName']['mapping']);
+        return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceType']['mapping']);
     }
 
     /**
@@ -102,7 +100,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
 
         $testConfigurationJson = <<<CONFIGURATION
 {
-    "ResourceName": {
+    "ResourceType": {
         "mapping": {
         	"identifier": "uid",
             "tableName": "$testDatabaseTable",

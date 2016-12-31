@@ -32,25 +32,25 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Http\RestRequestInterface;
+
 /**
  * Interface for handlers of API requests
- *
- * @package Cundd\Rest
  */
 interface HandlerInterface
 {
     /**
      * Sets the current request
      *
-     * @param \Cundd\Rest\Request $request
+     * @param RestRequestInterface $request
      * @return $this
      */
-    public function setRequest($request);
+    public function setRequest(RestRequestInterface $request);
 
     /**
      * Returns the current request
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function getRequest();
 

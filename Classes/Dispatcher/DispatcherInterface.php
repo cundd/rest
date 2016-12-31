@@ -8,21 +8,33 @@
 namespace Cundd\Rest\Dispatcher;
 
 use Bullet\Response;
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface for the main dispatcher of REST requests
- *
- * @package Cundd\Rest
  */
 interface DispatcherInterface
 {
     /**
+     * Process the raw request
+     *
+     * Entry point for the PSR 7 middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @return ResponseInterface
+     */
+    public function processRequest(ServerRequestInterface $request, ResponseInterface $response);
+
+    /**
      * Dispatch the request
      *
-     * @param Request $request Overwrite the request
-     * @param Response $responsePointer Reference to be filled with the response
-     * @return boolean Returns if the request has been successfully dispatched
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
+     * @return ResponseInterface
      */
-    public function dispatch(Request $request = null, Response &$responsePointer = null);
+    public function dispatch(RestRequestInterface $request, ResponseInterface $response);
 }

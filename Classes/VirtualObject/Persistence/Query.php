@@ -8,10 +8,10 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
+
 /**
  * Query implementation
- *
- * @package Cundd\Rest\VirtualObject\Persistence
  */
 class Query implements QueryInterface
 {
@@ -55,7 +55,7 @@ class Query implements QueryInterface
     protected $sourceIdentifier;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
+     * @var Statement
      */
     protected $statement;
 
@@ -96,6 +96,7 @@ class Query implements QueryInterface
     public function setOrderings(array $orderings)
     {
         $this->orderings = $orderings;
+
         return $this;
     }
 
@@ -111,6 +112,7 @@ class Query implements QueryInterface
     public function setLimit($limit)
     {
         $this->limit = $limit;
+
         return $this;
     }
 
@@ -126,6 +128,7 @@ class Query implements QueryInterface
     public function setOffset($offset)
     {
         $this->offset = $offset;
+
         return $this;
     }
 
@@ -187,6 +190,7 @@ class Query implements QueryInterface
     public function setConstraint($constraint)
     {
         $this->constraint = $constraint;
+
         return $this;
     }
 
@@ -209,6 +213,7 @@ class Query implements QueryInterface
     public function setConfiguration($configuration)
     {
         $this->persistenceManager->setConfiguration($configuration);
+
         return $this;
     }
 
@@ -227,20 +232,21 @@ class Query implements QueryInterface
      * Sets the statement of this query programmatically. If you use this, you will lose the abstraction from a concrete
      * storage backend (database)
      *
-     * @param string $statement The statement
-     * @param array $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
+     * @param string $statement  The statement
+     * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
      * @return QueryInterface
      */
     public function statement($statement, array $parameters = array())
     {
-        $this->statement = new \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement($statement, $parameters);
+        $this->statement = new Statement($statement, $parameters);
+
         return $this;
     }
 
     /**
      * Returns the statement of this query.
      *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
+     * @return Statement
      */
     public function getStatement()
     {

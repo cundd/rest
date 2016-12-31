@@ -28,6 +28,9 @@ function get_mysql_client_path {
 }
 
 function get_phpunit_path() {
+#    if [ -e "./vendor/bin/phpunit" ]; then
+#        echo "./vendor/bin/phpunit";
+#    elif
     if [ -e "$TYPO3_PATH_WEB/bin/phpunit" ]; then
         echo "$TYPO3_PATH_WEB/bin/phpunit";
     elif [ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]; then
@@ -84,18 +87,23 @@ function init {
 
 function unit_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml "$@";
+        $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml "$@";
     else
-        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/UnitTests.xml ./Tests/Unit "$@";
+        $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
     fi
 }
 
 function functional_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$@";
+        $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml "$@";
     else
-        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml ./Tests/Functional "$@";
+        $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
     fi
+#    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
+#        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$@";
+#    else
+#        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml ./Tests/Functional "$@";
+#    fi
 }
 
 function main {

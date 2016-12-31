@@ -33,6 +33,9 @@
 
 namespace Cundd\Rest\Access;
 
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request;
+
 interface AccessControllerInterface
 {
     /**
@@ -60,32 +63,20 @@ interface AccessControllerInterface
      */
     const ACCESS_UNAUTHORIZED = 'unauthorized';
 
-
     /**
-     * Returns if the current request has access to the requested resource
+     * Returns if the current request's client has access to the requested resource
      *
-     * @return AccessControllerInterface::ACCESS
+     * @param RestRequestInterface $request
+     * @return string Returns one of the constants AccessControllerInterface::ACCESS
      */
-    public function getAccess();
+    public function getAccess(RestRequestInterface $request);
 
     /**
      * Returns if the given request needs authentication
      *
+     * @param RestRequestInterface $request
      * @return bool
      */
-    public function requestNeedsAuthentication();
+    public function requestNeedsAuthentication(RestRequestInterface $request);
 
-    /**
-     * Returns the current request
-     *
-     * @return \Bullet\Request
-     */
-    public function getRequest();
-
-    /**
-     * Sets the current request
-     *
-     * @param \Cundd\Rest\Request $request
-     */
-    public function setRequest(\Cundd\Rest\Request $request);
 }

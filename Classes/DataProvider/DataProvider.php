@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\DataProvider;
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManager;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Resource\FileInterface;
@@ -36,11 +37,10 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 /**
  * DataProvider instance
- *
- * @package Cundd\Rest\DataProvider
  */
 class DataProvider implements DataProviderInterface
 {
@@ -94,14 +94,14 @@ class DataProvider implements DataProviderInterface
     protected static $handledModels = array();
 
     /**
-     * Returns the domain model repository class name for the given API path
+     * Returns the domain model repository class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path)
+    public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
+        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
         $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
             $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
@@ -111,14 +111,14 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns the domain model repository for the models the given API path points to
+     * Returns the domain model repository for the models the given API resource type points to
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
      */
-    public function getRepositoryForPath($path)
+    public function getRepositoryForResourceType(ResourceType $resourceType)
     {
-        $repositoryClass = $this->getRepositoryClassForPath($path);
+        $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
         $repository->setDefaultQuerySettings(
@@ -129,14 +129,14 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns the domain model class name for the given API path
+     * Returns the domain model class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getModelClassForPath($path)
+    public function getModelClassForResourceType(ResourceType $resourceType)
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($path);
+        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
         $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
         if (!class_exists($modelClass)) {
             $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
@@ -146,33 +146,33 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns all domain model for the given API path
+     * Returns all domain model for the given API resource type
      *
-     * @param string $path API path to get the repository for
-     * @return DomainObjectInterface
+     * @param ResourceType $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface[]|QueryResultInterface
      */
-    public function getAllModelsForPath($path)
+    public function getAllModelsForResourceType(ResourceType $resourceType)
     {
-        return $this->getRepositoryForPath($path)->findAll();
+        return $this->getRepositoryForResourceType($resourceType)->findAll();
     }
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * This method will load existing models.
      *
-     * @param array|string|int $data Data of the new model or it's UID
-     * @param string           $path API path to get the repository for
+     * @param array|string|int $data         Data of the new model or it's UID
+     * @param ResourceType     $resourceType API resource type to get the repository for
      * @return DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path)
+    public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
-        $modelClass = $this->getModelClassForPath($path);
+        $modelClass = $this->getModelClassForResourceType($resourceType);
 
         // If no data is given return a new instance
         if (!$data) {
-            return $this->getEmptyModelForPath($path);
+            return $this->getEmptyModelForResourceType($resourceType);
         } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForPath($data, $path);
+            return $this->getModelWithIdentityForResourceType($data, $resourceType);
         }
 
         $data = $this->prepareModelData($data);
@@ -180,7 +180,7 @@ class DataProvider implements DataProviderInterface
             return $this->propertyMapper->convert(
                 $data,
                 $modelClass,
-                $this->getPropertyMappingConfigurationForPath($path)
+                $this->getPropertyMappingConfigurationForResourceType($resourceType)
             );
         } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
@@ -191,25 +191,25 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * Even if the data contains an identifier, the existing model will not be loaded.
      *
-     * @param array|string|int $data Data of the new model or it's UID
-     * @param string           $path API path to get the repository for
+     * @param array|string|int $data         Data of the new model or it's UID
+     * @param ResourceType     $resourceType API resource type to get the repository for
      * @return DomainObjectInterface
      */
-    public function getNewModelWithDataForPath($data, $path)
+    public function getNewModelWithDataForResourceType($data, ResourceType $resourceType)
     {
         $uid = null;
         // If no data is given return a new instance
         if (!$data) {
-            return $this->getEmptyModelForPath($path);
+            return $this->getEmptyModelForResourceType($resourceType);
         }
 
         // Save the identifier and remove it from the data array
         if (isset($data['__identity']) && $data['__identity']) {
             // Load the UID of the existing model
-            $uid = $this->getUidOfModelWithIdentityForPath($data['__identity'], $path);
+            $uid = $this->getUidOfModelWithIdentityForResourceType($data['__identity'], $resourceType);
         } elseif (isset($data['uid']) && $data['uid']) {
             $uid = $data['uid'];
         }
@@ -219,7 +219,7 @@ class DataProvider implements DataProviderInterface
         }
 
         // Get a fresh model
-        $model = $this->getModelWithDataForPath($data, $path);
+        $model = $this->getModelWithDataForResourceType($data, $resourceType);
 
         if ($model) {
             // Set the saved identifier
@@ -230,27 +230,25 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns a new domain model for the given API path
+     * Returns a new domain model for the given API resource type
      *
-     * @param string $path
+     * @param ResourceType $resourceType
      * @return DomainObjectInterface
      */
-    public function getModelForPath($path)
+    public function getModelForResourceType(ResourceType $resourceType)
     {
-        return $this->getModelWithDataForPath(array(), $path);
+        return $this->getModelWithDataForResourceType(array(), $resourceType);
     }
 
     /**
-     * Returns a new domain model for the given API path points to
+     * Returns a new domain model for the given API resource type points to
      *
-     * @param string $path API path to get the model for
+     * @param ResourceType $resourceType API resource type to get the model for
      * @return DomainObjectInterface
      */
-    public function getEmptyModelForPath($path)
+    public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
-        $modelClass = $this->getModelClassForPath($path);
-
-        return $this->objectManager->get($modelClass);
+        return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
 
     /**
@@ -317,7 +315,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getUriToNestedResource($resourceKey, $model)
     {
-        $currentUri = '/rest/' . Utility::getPathForClassName(get_class($model)) . '/' . $model->getUid() . '/';
+        $currentUri = '/rest/' . Utility::getResourceTypeForClassName(get_class($model)) . '/' . $model->getUid() . '/';
 
         if ($resourceKey !== null) {
             $currentUri .= $resourceKey;
@@ -374,15 +372,15 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Adds or updates the given model in the repository for the
-     * given API path
+     * given API resource type
      *
      * @param DomainObjectInterface $model
-     * @param string                $path The API path
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function saveModelForPath($model, $path)
+    public function saveModelForResourceType($model, ResourceType $resourceType)
     {
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
         if ($repository) {
             if ($model->_isNew()) {
                 $repository->add($model);
@@ -395,16 +393,16 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Tells the Data Provider to replace the given old model with the new one
-     * in the repository for the given API path
+     * in the repository for the given API resource type
      *
      * @param DomainObjectInterface $oldModel
      * @param DomainObjectInterface $newModel
-     * @param string                $path The API path
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function replaceModelForPath($oldModel, $newModel, $path)
+    public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType)
     {
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
         if ($repository) {
             $repository->update($newModel);
             $this->persistAllChanges();
@@ -413,15 +411,15 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Adds or updates the given model in the repository for the
-     * given API path
+     * given API resource type
      *
      * @param DomainObjectInterface $model
-     * @param string                $path The API path
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function removeModelForPath($model, $path)
+    public function removeModelForResourceType($model, ResourceType $resourceType)
     {
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
         if ($repository) {
             $repository->remove($model);
             $this->persistAllChanges();
@@ -441,13 +439,13 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the UID of the model with the given identifier
      *
-     * @param mixed  $identifier The identifier
-     * @param string $path       The path
-     * @return integer|null    Returns the UID of NULL if the object couldn't be found
+     * @param mixed        $identifier   The identifier
+     * @param ResourceType $resourceType The resource type
+     * @return int|null Returns the UID of NULL if the object couldn't be found
      */
-    protected function getUidOfModelWithIdentityForPath($identifier, $path)
+    protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
-        $model = $this->getModelWithIdentityForPath($identifier, $path);
+        $model = $this->getModelWithIdentityForResourceType($identifier, $resourceType);
         if (!$model) {
             return null;
         }
@@ -458,10 +456,10 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the configuration for property mapping
      *
-     * @param string $path
+     * @param ResourceType|string $resourceType
      * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
      */
-    protected function getPropertyMappingConfigurationForPath($path)
+    protected function getPropertyMappingConfigurationForResourceType(ResourceType $resourceType)
     {
         return $this->configurationBuilder->build();
     }
@@ -469,13 +467,13 @@ class DataProvider implements DataProviderInterface
     /**
      * Loads the model with the given identifier
      *
-     * @param mixed  $identifier The identifier
-     * @param string $path       The path
+     * @param mixed               $identifier
+     * @param ResourceType|string $resourceType
      * @return mixed|null|object
      */
-    protected function getModelWithIdentityForPath($identifier, $path)
+    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
 
         // Tries to fetch the object by UID
         $object = $repository->findByUid($identifier);
@@ -488,7 +486,7 @@ class DataProvider implements DataProviderInterface
         $type = null;
         $property = null;
         try {
-            $classSchema = $this->reflectionService->getClassSchema($this->getModelClassForPath($path));
+            $classSchema = $this->reflectionService->getClassSchema($this->getModelClassForResourceType($resourceType));
             $identityProperties = $classSchema->getIdentityProperties();
 
             $type = reset($identityProperties);

@@ -12,8 +12,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterfa
 
 /**
  * Interface for the specialized Object Manager
- *
- * @package Cundd\Rest
  */
 interface ObjectManagerInterface extends TYPO3ObjectManagerInterface
 {
@@ -69,7 +67,7 @@ interface ObjectManagerInterface extends TYPO3ObjectManagerInterface
     /**
      * Returns the Cache instance
      *
-     * @return \Cundd\Rest\Cache\Cache
+     * @return \Cundd\Rest\Cache\CacheInterface
      */
     public function getCache();
 }

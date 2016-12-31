@@ -25,12 +25,12 @@
 
 namespace Cundd\Rest\VirtualObject;
 
-use TYPO3\CMS\Core\SingletonInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\SingletonInterface;
 
 /**
  * The Configuration Factory allows the creation of Virtual Object Configurations from various sources
- *
- * @package Cundd\Rest\VirtualObject
  */
 class ConfigurationFactory implements SingletonInterface
 {
@@ -40,9 +40,11 @@ class ConfigurationFactory implements SingletonInterface
     protected $configurationProvider;
 
     /**
-     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     * ConfigurationFactory constructor.
+     *
+     * @param ConfigurationProviderInterface $configurationProvider
      */
-    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider)
+    public function __construct(ConfigurationProviderInterface $configurationProvider)
     {
         $this->configurationProvider = $configurationProvider;
     }
@@ -54,36 +56,40 @@ class ConfigurationFactory implements SingletonInterface
      */
     public function create()
     {
-        return $this->_createWithConfigurationData(array());
+        return $this->createWithConfigurationData(array());
     }
 
     /**
      * Tries to read the configuration from the given array
      *
-     * @param array $configurationArray
-     * @param       $path
+     * @param array        $configurationArray
+     * @param ResourceType $resourceType
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromArrayForPath($configurationArray, $path)
+    public function createFromArrayForResourceType($configurationArray, ResourceType $resourceType)
     {
+        $resourceTypeString = (string)$resourceType;
         if (
-            isset($configurationArray[$path]) && is_array($configurationArray[$path])
-            && isset($configurationArray[$path]['mapping']) && is_array($configurationArray[$path]['mapping'])
+            isset($configurationArray[$resourceTypeString]) && is_array($configurationArray[$resourceTypeString])
+            && isset($configurationArray[$resourceTypeString]['mapping']) && is_array(
+                $configurationArray[$resourceTypeString]['mapping']
+            )
         ) {
-            return $this->_createWithConfigurationData($configurationArray[$path]['mapping']);
+            return $this->createWithConfigurationData($configurationArray[$resourceTypeString]['mapping']);
         }
+
         return null;
     }
 
     /**
      * Tries to read the configuration from TypoScript
      *
-     * @param string $path
+     * @param ResourceType $resourceType
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromTypoScriptForPath($path)
+    public function createFromTypoScriptForResourceType(ResourceType $resourceType)
     {
-        $configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $path);
+        $configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $resourceType);
         if (!isset($configurationData['mapping.'])) {
             return null;
         }
@@ -95,29 +101,31 @@ class ConfigurationFactory implements SingletonInterface
 
         $mergedConfigurationData = array(
             'identifier' => $mapping['identifier'],
-            'tableName' => $mapping['tableName'],
-            'properties' => $mapping['properties.']
+            'tableName'  => $mapping['tableName'],
+            'properties' => $mapping['properties.'],
         );
 
         if (isset($mapping['skipUnknownProperties'])) {
             $mergedConfigurationData['skipUnknownProperties'] = $mapping['skipUnknownProperties'];
         }
-        return $this->_createWithConfigurationData($mergedConfigurationData);
+
+        return $this->createWithConfigurationData($mergedConfigurationData);
     }
 
     /**
      * Tries to read the configuration from the given JSON string
      *
      * @param string $jsonString
-     * @param        $path
+     * @param        $resourceType
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromJsonForPath($jsonString, $path)
+    public function createFromJsonForResourceType($jsonString, ResourceType $resourceType)
     {
         $configurationData = json_decode($jsonString, true);
         if ($configurationData) {
-            return $this->createFromArrayForPath($configurationData, $path);
+            return $this->createFromArrayForResourceType($configurationData, $resourceType);
         }
+
         return null;
     }
 
@@ -129,22 +137,12 @@ class ConfigurationFactory implements SingletonInterface
      */
     public function createWithConfigurationData($configurationData)
     {
-        return $this->_createWithConfigurationData($configurationData);
-    }
-
-    /**
-     * Returns a new Configuration instance with the given data
-     *
-     * @param array $configurationData
-     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
-     */
-    protected function _createWithConfigurationData($configurationData)
-    {
         $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
         if (isset($configurationData['skipUnknownProperties'])) {
             $configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
         }
+
         return $configurationObject;
     }
 
@@ -193,12 +191,13 @@ class ConfigurationFactory implements SingletonInterface
                 }
 
                 $propertyMappingPrepared[$propertyKey] = array(
-                    'type' => $type,
+                    'type'   => $type,
                     'column' => $column,
                 );
             }
             $mapping['properties'] = $propertyMappingPrepared;
         }
+
         return $mapping;
     }
 }

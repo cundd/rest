@@ -7,17 +7,18 @@
  */
 namespace Cundd\Rest;
 
+use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * Factory class to get the current Request
- *
- * @package Cundd\Rest
  */
 interface RequestFactoryInterface
 {
     /**
      * Returns the request
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function getRequest();
 
@@ -31,16 +32,8 @@ interface RequestFactoryInterface
     /**
      * Register/overwrite the current request
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return $this
      */
     public function registerCurrentRequest($request);
-
-    /**
-     * Returns the URI
-     *
-     * @param string $format Reference to be filled with the request format
-     * @return string
-     */
-    public function getUri(&$format = '');
 }

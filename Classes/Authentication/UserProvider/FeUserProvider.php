@@ -37,8 +37,6 @@ use Cundd\Rest\Authentication\UserProviderInterface;
 
 /**
  * User Provider implementation for FeUsers
- *
- * @package Cundd\Rest\Authentication\UserProvider
  */
 class FeUserProvider implements UserProviderInterface
 {
@@ -56,15 +54,17 @@ class FeUserProvider implements UserProviderInterface
      */
     public function checkCredentials($username, $password)
     {
-        /** @var \t3lib_DB $databaseAdapter */
         $databaseAdapter = $this->getDatabaseAdapter();
 
-        $whereClause = $this->buildWhereStatement(array(
-            'username' => $username,
-            'password' => $password
-        ));
+        $whereClause = $this->buildWhereStatement(
+            array(
+                'username' => $username,
+                'password' => $password,
+            )
+        );
         $result = $databaseAdapter->exec_SELECTquery('COUNT(*)', 'fe_users', $whereClause);
         $row = $databaseAdapter->sql_fetch_row($result);
+
         return (bool)$row[0];
     }
 
@@ -93,6 +93,7 @@ class FeUserProvider implements UserProviderInterface
         $whereParts[] = '(`deleted`=0)';
         $whereParts[] = sprintf('(`starttime`<=%d)', time());
         $whereParts[] = sprintf('(endtime=0 OR endtime>%d)', time());
+
         return implode(' AND ', $whereParts);
     }
 

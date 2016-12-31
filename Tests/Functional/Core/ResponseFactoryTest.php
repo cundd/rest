@@ -12,8 +12,6 @@ use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
-
 class ResponseFactoryTest extends AbstractCase
 {
     /**
@@ -43,26 +41,22 @@ class ResponseFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createErrorResponse('Everything ok', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"error":"Everything ok"}', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"error":"Everything ok"}', (string)$response->getBody());
 
-        $this->requestFactory->getRequest()->format('html');
+        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
         $response = $this->fixture->createErrorResponse('HTML format is currently not supported', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', (string)$response->getBody());
 
-        $this->requestFactory->getRequest()->format('blur');
-        $response = $this->fixture->createErrorResponse('This will default to JSON', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"error":"This will default to JSON"}', $response->content());
-
+        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
         $response = $this->fixture->createErrorResponse(null, 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"error":"OK"}', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"error":"OK"}', (string)$response->getBody());
 
         $response = $this->fixture->createErrorResponse(null, 404);
-        $this->assertEquals(404, $response->status());
-        $this->assertEquals('{"error":"Not Found"}', $response->content());
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());
     }
 
     /**
@@ -72,26 +66,22 @@ class ResponseFactoryTest extends AbstractCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $response = $this->fixture->createSuccessResponse('Everything ok', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"message":"Everything ok"}', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"message":"Everything ok"}', (string)$response->getBody());
 
-        $this->requestFactory->getRequest()->format('html');
+        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
         $response = $this->fixture->createSuccessResponse('HTML format is currently not supported', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('Unsupported format: html. Please set the Accept header to application/json', (string)$response->getBody());
 
-        $this->requestFactory->getRequest()->format('blur');
-        $response = $this->fixture->createSuccessResponse('This will default to JSON', 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"message":"This will default to JSON"}', $response->content());
-
+        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
         $response = $this->fixture->createSuccessResponse(null, 200);
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('{"message":"OK"}', $response->content());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"message":"OK"}', (string)$response->getBody());
 
         // This will be an error
         $response = $this->fixture->createSuccessResponse(null, 404);
-        $this->assertEquals(404, $response->status());
-        $this->assertEquals('{"error":"Not Found"}', $response->content());
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());
     }
 }

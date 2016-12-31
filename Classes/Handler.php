@@ -34,19 +34,18 @@ namespace Cundd\Rest;
 
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Http\RestRequestInterface;
 use Traversable;
 
 /**
  * Handler for requests
- *
- * @package Cundd\Rest
  */
 class Handler implements CrudHandlerInterface
 {
     /**
      * Current request
      *
-     * @var Request
+     * @var RestRequestInterface
      */
     protected $request;
 
@@ -70,46 +69,42 @@ class Handler implements CrudHandlerInterface
     protected $responseFactory;
 
     /**
-     * Inject the object manager instance
+     * Handler constructor
      *
-     * @param \Cundd\Rest\ObjectManager $objectManager
+     * @param ObjectManager            $objectManager
+     * @param ResponseFactoryInterface $responseFactory
      */
-    public function injectObjectManager(\Cundd\Rest\ObjectManager $objectManager)
+    public function __construct(ObjectManager $objectManager, ResponseFactoryInterface $responseFactory)
     {
         $this->objectManager = $objectManager;
-    }
-
-    /**
-     * @param \Cundd\Rest\ResponseFactoryInterface $responseFactory
-     */
-    public function injectResponseFActory(\Cundd\Rest\ResponseFactoryInterface $responseFactory)
-    {
         $this->responseFactory = $responseFactory;
     }
 
     /**
      * Sets the current request
      *
-     * @param \Cundd\Rest\Request $request
+     * @param RestRequestInterface $request
      * @return $this
      */
-    public function setRequest($request)
+    public function setRequest(RestRequestInterface $request)
     {
         $this->request = $request;
         $this->identifier = null;
+
         return $this;
     }
 
     /**
      * Returns the current request
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function getRequest()
     {
         if (!$this->request) {
             return $this->objectManager->getRequestFactory()->getRequest();
         }
+
         return $this->request;
     }
 
@@ -132,6 +127,7 @@ class Handler implements CrudHandlerInterface
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+
         return $this;
     }
 
@@ -144,10 +140,11 @@ class Handler implements CrudHandlerInterface
     public function getProperty($propertyKey)
     {
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
+
         return $dataProvider->getModelProperty($model, $propertyKey);
     }
 
@@ -162,16 +159,17 @@ class Handler implements CrudHandlerInterface
         /* SHOW
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($this->getRequest()->getRootObjectKey()) => $result
+                Utility::singularize($this->getRequest()->getRootObjectKey()) => $result,
             );
         }
+
         return $result;
     }
 
@@ -189,24 +187,25 @@ class Handler implements CrudHandlerInterface
         $data['__identity'] = $this->getIdentifier();
         Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
-        $oldModel = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
+        $oldModel = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
         if (!$oldModel) {
-            return $this->responseFactory->createSuccessResponse(null, 404);
+            return $this->responseFactory->createErrorResponse(null, 404);
         }
 
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
-        $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 400);
+            return $this->responseFactory->createErrorResponse(null, 400);
         }
 
-        $dataProvider->saveModelForPath($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result,
             );
         }
+
         return $result;
     }
 
@@ -224,19 +223,20 @@ class Handler implements CrudHandlerInterface
         $data['__identity'] = $this->getIdentifier();
         Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
-        $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
 
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
 
-        $dataProvider->saveModelForPath($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result,
             );
         }
+
         return $result;
     }
 
@@ -251,11 +251,12 @@ class Handler implements CrudHandlerInterface
         /* REMOVE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForPath($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
-        $dataProvider->removeModelForPath($model, $this->getPath());
+        $dataProvider->removeModelForResourceType($model, $this->getPath());
+
         return $this->responseFactory->createSuccessResponse(null, 200);
     }
 
@@ -278,18 +279,19 @@ class Handler implements CrudHandlerInterface
         /**
          * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
          */
-        $model = $dataProvider->getModelWithDataForPath($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 400);
         }
 
-        $dataProvider->saveModelForPath($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $this->getPath());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($request->getRootObjectKey()) => $result
+                Utility::singularize($request->getRootObjectKey()) => $result,
             );
         }
+
         return $result;
     }
 
@@ -305,7 +307,7 @@ class Handler implements CrudHandlerInterface
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
 
-        $allModels = $dataProvider->getAllModelsForPath($this->getPath());
+        $allModels = $dataProvider->getAllModelsForResourceType($this->getPath());
         if (!is_array($allModels) && $allModels instanceof Traversable) {
             $allModels = iterator_to_array($allModels);
         }
@@ -313,9 +315,10 @@ class Handler implements CrudHandlerInterface
         $result = array_map(array($dataProvider, 'getModelData'), $allModels);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                $this->getRequest()->getRootObjectKey() => $result
+                $this->getRequest()->getRootObjectKey() => $result,
             );
         }
+
         return $result;
     }
 
@@ -329,73 +332,79 @@ class Handler implements CrudHandlerInterface
         /** @var HandlerInterface */
         $handler = $this;
 
-        $dispatcher->registerPath($this->getPath(), function ($request) use ($handler, $dispatcher) {
-            $handler->setRequest($request);
-
-            /*
-             * Handle a specific Model
-             */
-            $dispatcher->registerParameter('slug', function ($request, $identifier) use ($handler, $dispatcher) {
-                $handler->setIdentifier($identifier);
+        $dispatcher->registerPath(
+            $this->getPath(),
+            function () use ($handler, $dispatcher) {
+                $handler->setRequest($dispatcher->getRequest());
 
                 /*
-                 * Get single property
+                 * Handle a specific Model
                  */
-                $getPropertyCallback = function ($request, $propertyKey) use ($handler) {
-                    return $handler->getProperty($propertyKey);
-                };
-                $dispatcher->registerParameter('slug', $getPropertyCallback);
+                $dispatcher->registerParameter(
+                    'slug',
+                    function ($_, $identifier) use ($handler, $dispatcher) {
+                        $handler->setIdentifier($identifier);
+
+                        /*
+                         * Get single property
+                         */
+                        $getPropertyCallback = function ($_, $propertyKey) use ($handler) {
+                            return $handler->getProperty($propertyKey);
+                        };
+                        $dispatcher->registerParameter('slug', $getPropertyCallback);
+
+                        /*
+                         * Show a single Model
+                         */
+                        $getCallback = function () use ($handler) {
+                            return $handler->show();
+                        };
+                        $dispatcher->registerGetMethod($getCallback);
+
+                        /*
+                         * Replace a Model
+                         */
+                        $replaceCallback = function () use ($handler) {
+                            return $handler->replace();
+                        };
+                        $dispatcher->registerPutMethod($replaceCallback);
+                        $dispatcher->registerPostMethod($replaceCallback);
+
+                        /*
+                         * Update a Model
+                         */
+                        $updateCallback = function () use ($handler) {
+                            return $handler->update();
+                        };
+                        $dispatcher->registerPatchMethod($updateCallback);
+
+                        /*
+                         * Delete a Model
+                         */
+                        $deleteCallback = function () use ($handler) {
+                            return $handler->delete();
+                        };
+                        $dispatcher->registerDeleteMethod($deleteCallback);
+                    }
+                );
 
                 /*
-                 * Show a single Model
+                 * Create a Model
                  */
-                $getCallback = function ($request) use ($handler) {
-                    return $handler->show();
+                $createCallback = function ($request) use ($handler) {
+                    return $handler->create();
                 };
-                $dispatcher->registerGetMethod($getCallback);
+                $dispatcher->registerPostMethod($createCallback);
 
                 /*
-                 * Replace a Model
+                 * List all Models
                  */
-                $replaceCallback = function ($request) use ($handler) {
-                    return $handler->replace();
+                $listCallback = function ($request) use ($handler) {
+                    return $handler->listAll();
                 };
-                $dispatcher->registerPutMethod($replaceCallback);
-                $dispatcher->registerPostMethod($replaceCallback);
-
-                /*
-                 * Update a Model
-                 */
-                $updateCallback = function ($request) use ($handler) {
-                    return $handler->update();
-                };
-                $dispatcher->registerPatchMethod($updateCallback);
-
-                /*
-                 * Delete a Model
-                 */
-                $deleteCallback = function ($request) use ($handler) {
-                    return $handler->delete();
-                };
-                $dispatcher->registerDeleteMethod($deleteCallback);
-            });
-
-            /*
-             * Create a Model
-             */
-            $createCallback = function ($request) use ($handler) {
-                return $handler->create();
-            };
-            $dispatcher->registerPostMethod($createCallback);
-
-            /*
-             * List all Models
-             */
-            $listCallback = function ($request) use ($handler) {
-                return $handler->listAll();
-            };
-            $dispatcher->registerGetMethod($listCallback);
-        });
+                $dispatcher->registerGetMethod($listCallback);
+            }
+        );
     }
 
     /**
@@ -415,6 +424,6 @@ class Handler implements CrudHandlerInterface
      */
     protected function getPath()
     {
-        return $this->getRequest()->path();
+        return $this->getRequest()->getResourceType();
     }
 }

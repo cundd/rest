@@ -35,12 +35,11 @@ namespace Cundd\Rest\Handler;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Handler;
 use Cundd\Rest\HandlerInterface;
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request;
 
 /**
  * Handler for the credentials authorization
- *
- * @package Cundd\Rest\Handler
  */
 class AuthHandler implements HandlerInterface
 {
@@ -62,7 +61,7 @@ class AuthHandler implements HandlerInterface
     /**
      * Current request
      *
-     * @var Request
+     * @var RestRequestInterface
      */
     protected $request;
 
@@ -89,25 +88,27 @@ class AuthHandler implements HandlerInterface
     /**
      * Sets the current request
      *
-     * @param \Cundd\Rest\Request $request
+     * @param RestRequestInterface $request
      * @return $this
      */
-    public function setRequest($request)
+    public function setRequest(RestRequestInterface $request)
     {
         $this->request = $request;
+
         return $this;
     }
 
     /**
      * Returns the current request
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function getRequest()
     {
         if (!$this->request) {
             return $this->requestFactory->getRequest();
         }
+
         return $this->request;
     }
 
@@ -122,8 +123,9 @@ class AuthHandler implements HandlerInterface
         if ($loginStatus === null) {
             $loginStatus = self::STATUS_LOGGED_OUT;
         }
+
         return array(
-            'status' => $loginStatus
+            'status' => $loginStatus,
         );
     }
 
@@ -147,8 +149,9 @@ class AuthHandler implements HandlerInterface
             }
             $this->sessionManager->setValueForKey('loginStatus', $loginStatus);
         }
+
         return array(
-            'status' => $loginStatus
+            'status' => $loginStatus,
         );
     }
 
@@ -160,8 +163,9 @@ class AuthHandler implements HandlerInterface
     public function logout()
     {
         $this->sessionManager->setValueForKey('loginStatus', self::STATUS_LOGGED_OUT);
+
         return array(
-            'status' => self::STATUS_LOGGED_OUT
+            'status' => self::STATUS_LOGGED_OUT,
         );
     }
 
@@ -175,32 +179,41 @@ class AuthHandler implements HandlerInterface
         /** @var AuthHandler */
         $handler = $this;
 
-        $dispatcher->registerPath($this->getRequest()->path(), function ($request) use ($handler, $dispatcher) {
-            $handler->setRequest($request);
+        $dispatcher->registerPath(
+            $this->getRequest()->getResourceType(),
+            function ($request) use ($handler, $dispatcher) {
+                $handler->setRequest($request);
 
-            $dispatcher->registerPath('login', function ($request) use ($handler, $dispatcher) {
-                $getCallback = function ($request) use ($handler) {
-                    return $handler->getStatus();
-                };
-                $dispatcher->registerGetMethod($getCallback);
+                $dispatcher->registerPath(
+                    'login',
+                    function ($request) use ($handler, $dispatcher) {
+                        $getCallback = function ($request) use ($handler) {
+                            return $handler->getStatus();
+                        };
+                        $dispatcher->registerGetMethod($getCallback);
 
-                /**
-                 * @param Request $request
-                 * @return array
-                 */
-                $loginCallback = function ($request) use ($handler) {
-                    return $handler->checkLogin($request->getSentData());
-                };
-                $dispatcher->registerPostMethod($loginCallback);
-            });
+                        /**
+                         * @param RestRequestInterface $request
+                         * @return array
+                         */
+                        $loginCallback = function ($request) use ($handler) {
+                            return $handler->checkLogin($request->getSentData());
+                        };
+                        $dispatcher->registerPostMethod($loginCallback);
+                    }
+                );
 
-            $dispatcher->registerPath('logout', function ($request) use ($handler, $dispatcher) {
-                $postCallback = function ($request) use ($handler) {
-                    return $handler->logout();
-                };
-                $dispatcher->registerGetMethod($postCallback);
-                $dispatcher->registerPostMethod($postCallback);
-            });
-        });
+                $dispatcher->registerPath(
+                    'logout',
+                    function () use ($handler, $dispatcher) {
+                        $postCallback = function () use ($handler) {
+                            return $handler->logout();
+                        };
+                        $dispatcher->registerGetMethod($postCallback);
+                        $dispatcher->registerPostMethod($postCallback);
+                    }
+                );
+            }
+        );
     }
 }

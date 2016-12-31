@@ -25,12 +25,11 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 /**
  * Interface for the Repository for Virtual Objects
- *
- * @package Cundd\Rest\VirtualObject\Persistence
  */
 interface RepositoryInterface
 {
@@ -96,7 +95,7 @@ interface RepositoryInterface
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration);
+    public function setConfiguration(ConfigurationInterface $configuration);
 
     /**
      * Returns the configuration to use when converting

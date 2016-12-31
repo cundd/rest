@@ -29,8 +29,6 @@ use Cundd\Rest\VirtualObject\Exception;
 
 /**
  * Exception thrown if an invalid comparison operator is detected
- *
- * @package Cundd\Rest\VirtualObject\Exception
  */
 class InvalidOperatorException extends Exception
 {

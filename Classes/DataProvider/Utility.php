@@ -28,15 +28,13 @@ namespace Cundd\Rest\DataProvider;
 
 /**
  * A utility class with static methods for Data Providers
- *
- * @package Cundd\Rest\DataProvider
  */
 class Utility
 {
     /**
-     * Separator between vendor, extension and model in the API path
+     * Separator between vendor, extension and model in the API resource type
      */
-    const API_PATH_PART_SEPARATOR = '-';
+    const API_RESOURCE_TYPE_PART_SEPARATOR = '-';
 
     /**
      * Mapping from singular to plural
@@ -46,8 +44,7 @@ class Utility
     protected static $singularToPlural = array();
 
     /**
-     * Returns an array of class name parts including vendor, extension
-     * and domain model
+     * Returns an array of class name parts including vendor, extension and domain model
      *
      * Example:
      *   array(
@@ -56,16 +53,16 @@ class Utility
      *     MyModel
      *   )
      *
-     * @param string $path
+     * @param string $resourceType
      * @param bool   $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
-    public static function getClassNamePartsForPath($path, $convertPlural = true)
+    public static function getClassNamePartsForResourceType($resourceType, $convertPlural = true)
     {
-        if (strpos($path, '_') !== false) {
-            $path = static::underscoredToUpperCamelCase($path);
+        if (strpos($resourceType, '_') !== false) {
+            $resourceType = static::underscoredToUpperCamelCase($resourceType);
         }
-        $parts = explode(self::API_PATH_PART_SEPARATOR, $path, 3);
+        $parts = explode(self::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceType, 3);
         if (count($parts) < 3) {
             array_unshift($parts, '');
         }
@@ -83,12 +80,12 @@ class Utility
     }
 
     /**
-     * Tries to generate the API path for the given class name
+     * Tries to generate the API resource type for the given class name
      *
      * @param string $className
-     * @return string|bool Returns the path or FALSE if it couldn't be determined
+     * @return string|bool Returns the resource type or FALSE if it couldn't be determined
      */
-    public static function getPathForClassName($className)
+    public static function getResourceTypeForClassName($className)
     {
         if (strpos($className, '\\') === false) {
             if (substr($className, 0, 3) === 'Tx_') {
@@ -103,7 +100,7 @@ class Utility
             explode('\\', $className)
         );
 
-        return implode(self::API_PATH_PART_SEPARATOR, $classNameParts);
+        return implode(self::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts);
     }
 
     /**

@@ -25,10 +25,10 @@
 
 namespace Cundd\Rest\Authentication;
 
+use Cundd\Rest\Http\RestRequestInterface;
+
 /**
  * Authentication Provider that tests a collection of Authentication Providers
- *
- * @package Cundd\Rest\Authentication
  */
 class AuthenticationProviderCollection implements AuthenticationProviderInterface
 {
@@ -59,29 +59,31 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Loops through each Authentication Provider in the collection and tries to authenticate the current request
      *
+     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate()
+    public function authenticate(RestRequestInterface $request)
     {
         /** @var AuthenticationProviderInterface $authenticationProvider */
         foreach ($this->providers as $authenticationProvider) {
-            if ($authenticationProvider->authenticate()) {
+            if ($authenticationProvider->authenticate($request)) {
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * @param \Bullet\Request|\Cundd\Rest\Request $request
+     * @param \Bullet\Request|RestRequestInterface $request
      * @return mixed|void
      */
-    public function setRequest(\Cundd\Rest\Request $request)
+    public function setRequest(RestRequestInterface $request)
     {
-        /** @var AuthenticationProviderInterface $authenticationProvider */
-        foreach ($this->providers as $authenticationProvider) {
-            $authenticationProvider->setRequest($request);
-        }
+//        /** @var AuthenticationProviderInterface $authenticationProvider */
+//        foreach ($this->providers as $authenticationProvider) {
+//            $authenticationProvider->setRequest($request);
+//        }
     }
 
     /**
@@ -93,6 +95,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     public function setProviders($providers)
     {
         $this->providers = $providers;
+
         return $this;
     }
 
@@ -115,6 +118,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     public function addProvider(AuthenticationProviderInterface $provider)
     {
         $this->providers->attach($provider);
+
         return $this;
     }
 
@@ -127,6 +131,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     public function removeProvider(AuthenticationProviderInterface $provider)
     {
         $this->providers->detach($provider);
+
         return $this;
     }
 }

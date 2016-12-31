@@ -27,8 +27,6 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 
 /**
  * Interface for the database backend
- *
- * @package Cundd\Rest\VirtualObject\Persistence
  */
 interface BackendInterface
 {

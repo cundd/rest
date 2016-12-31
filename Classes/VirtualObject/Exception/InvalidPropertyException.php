@@ -29,8 +29,6 @@ use Cundd\Rest\VirtualObject\Exception;
 
 /**
  * Exception thrown if the current property is not valid (i.e. it is not defined in the mapping)
- *
- * @package Cundd\Rest\VirtualObject\Exception
  */
 class InvalidPropertyException extends Exception
 {

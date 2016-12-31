@@ -32,16 +32,17 @@
 
 namespace Cundd\Rest\DataProvider;
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Property\Exception;
 
 /**
  * Data Provider for Virtual Objects
- *
- * @package Cundd\Rest\DataProvider
  */
 class VirtualObjectDataProvider extends DataProvider
 {
@@ -59,101 +60,109 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Returns the Object Converter with the currently matching configuration
      *
-     * @param string $path
+     * @param ResourceType|string $resourceType
      * @return \Cundd\Rest\VirtualObject\ObjectConverter
      */
-    public function getObjectConverterForPath($path)
+    public function getObjectConverterForResourceType(ResourceType $resourceType)
     {
-        if (!isset($this->objectConverterMap[$path])) {
+        if (!isset($this->objectConverterMap[$resourceType])) {
             $objectConverter = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ObjectConverter');
-            $objectConverter->setConfiguration($this->getConfigurationForPath($path));
+            $objectConverter->setConfiguration($this->getConfigurationForResourceType($resourceType));
 
-            $this->objectConverterMap[$path] = $objectConverter;
+            $this->objectConverterMap[$resourceType] = $objectConverter;
+
             return $objectConverter;
         }
-        return $this->objectConverterMap[$path];
+
+        return $this->objectConverterMap[$resourceType];
     }
 
     /**
-     * Returns the Configuration for the given path
+     * Returns the Configuration for the given resource type
      *
-     * @param string $path
+     * @param string $resourceType
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      * @return ConfigurationInterface
      */
-    public function getConfigurationForPath($path)
+    public function getConfigurationForResourceType(ResourceType $resourceType)
     {
-        $path = substr($path, strpos($path, '-') + 1); // Strip the "VirtualObject-" from the path
-        if (!$path) {
-            throw new MissingConfigurationException('Could not get configuration for empty path', 1395932408);
+        $newResourceTypeString = substr(
+            $resourceType,
+            strpos($resourceType, '-') + 1
+        ); // Strip the "VirtualObject-" from the resource type
+        if (!$newResourceTypeString) {
+            throw new MissingConfigurationException('Could not get configuration for empty resource type', 1395932408);
         }
-        return $this->configurationFactory->createFromTypoScriptForPath($path);
+
+        return $this->configurationFactory->createFromTypoScriptForResourceType(new ResourceType($newResourceTypeString));
     }
 
     /**
-     * Returns the domain model repository class name for the given API path
+     * Returns the domain model repository class name for the given resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path)
+    public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
         return 'Cundd\\Rest\\VirtualObject\\Persistence\\Repository';
     }
 
     /**
-     * Returns the domain model repository for the models the given API path points to
+     * Returns the domain model repository for the models the given API resource type points to
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
      */
-    public function getRepositoryForPath($path)
+    public function getRepositoryForResourceType(ResourceType $resourceType)
     {
-        $repositoryClass = $this->getRepositoryClassForPath($path);
+        $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         /** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
-        $repository->setConfiguration($this->getConfigurationForPath($path));
+        $repository->setConfiguration($this->getConfigurationForResourceType($resourceType));
+
         return $repository;
     }
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * This method will load existing models.
      *
      * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param ResourceType     $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path)
+    public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
         // If no data is given return a new instance
         if (!$data) {
-            return $this->getEmptyModelForPath($path);
+            return $this->getEmptyModelForResourceType($resourceType);
         } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForPath($data, $path);
+            return $this->getModelWithIdentityForResourceType($data, $resourceType);
         }
 
         $data = $this->prepareModelData($data);
         try {
-            $objectConverter = $this->getObjectConverterForPath($path);
+            $objectConverter = $this->getObjectConverterForResourceType($resourceType);
             $modelData = $objectConverter->convertFromVirtualObject($data);
             $model = $objectConverter->convertToVirtualObject($modelData);
-        } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
+        } catch (Exception $exception) {
             $model = null;
 
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
+
         return $model;
     }
 
     /**
-     * Returns a new domain model for the given API path points to
+     * Returns a new domain model for the given API resource type points to
      *
-     * @param string $path API path to get the model for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param ResourceType $resourceType API resource type to get the model for
+     * @return DomainObjectInterface
      */
-    public function getEmptyModelForPath($path)
+    public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
         return new VirtualObject();
     }
@@ -161,7 +170,7 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Returns the data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
+     * @param DomainObjectInterface $model
      * @return array<mixed>
      */
     public function getModelData($model)
@@ -170,14 +179,15 @@ class VirtualObjectDataProvider extends DataProvider
         if ($properties === $model) {
             return array();
         }
+
         return $properties;
     }
 
     /**
      * Returns the property data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-     * @param string $propertyKey
+     * @param DomainObjectInterface $model
+     * @param string                $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey)
@@ -187,21 +197,22 @@ class VirtualObjectDataProvider extends DataProvider
         if (isset($modelData[$propertyKey])) {
             return $modelData[$propertyKey];
         }
+
         return null;
     }
 
     /**
-     * Adds or updates the given model in the repository for the given API path
+     * Adds or updates the given model in the repository for the given API resource type
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-     * @param string $path The API path
+     * @param DomainObjectInterface $model
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function saveModelForPath($model, $path)
+    public function saveModelForResourceType($model, ResourceType $resourceType)
     {
         /** @var VirtualObject $model */
         /** @var RepositoryInterface $repository */
-        $repository = $this->getRepositoryForPath($path);
+        $repository = $this->getRepositoryForResourceType($resourceType);
         if ($repository) {
             $repository->registerObject($model);
             $this->persistAllChanges();

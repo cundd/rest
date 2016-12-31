@@ -8,70 +8,60 @@
 
 namespace Cundd\Rest;
 
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Domain\Model\Format;
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Factory class to get the current Request
- *
- * @package Cundd\Rest
  */
 class RequestFactory implements SingletonInterface, RequestFactoryInterface
 {
     /**
-     * API path
-     *
+     * @var RestRequestInterface
+     */
+    private $request;
+
+    /**
+     * @var ServerRequestInterface
+     */
+    private $originalRequest;
+
+    /**
+     * @var \Cundd\Rest\Configuration\ConfigurationProviderInterface
+     */
+    private $configurationProvider;
+
+    /**
      * @var string
      */
-    protected $uri;
+    private $factoryClass;
 
     /**
-     * The response format
+     * Request Factory constructor
      *
-     * @var string
+     * @param ConfigurationProviderInterface $configurationProvider
+     * @param string                         $factoryClass Class name of the factory for the original request
      */
-    protected $format;
-
-    /**
-     * @var \Cundd\Rest\Request
-     */
-    protected $request;
-
-    /**
-     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-     * @inject
-     */
-    protected $configurationProvider;
+    public function __construct(
+        ConfigurationProviderInterface $configurationProvider,
+        $factoryClass = '\TYPO3\CMS\Core\Http\ServerRequestFactory'
+    ) {
+        $this->configurationProvider = $configurationProvider;
+        $this->factoryClass = $factoryClass;
+    }
 
     /**
      * Returns the request
      *
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function getRequest()
     {
         if (!$this->request) {
-            $uri = $this->getUri();
-
-            /*
-             * Transform Document URLs
-             * @Todo: Make this more flexible
-             */
-            if ($this->stringHasPrefix($uri, Request::API_PATH_DOCUMENT . '/')) {
-                $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
-                $uri = Request::API_PATH_DOCUMENT . '-' . substr($uri, $documentApiPathLength);
-            }
-
-            list($uri, $originalPath, $path) = $this->getRequestPathAndUriForUri($uri);
-
-            $this->request = new Request(null, $uri);
-            $this->request->initWithPathAndOriginalPath($path, $originalPath);
-            if ($this->format) {
-                $this->request->format($this->format);
-            }
-//            fwrite(STDOUT, PHP_EOL . '-> ' . spl_object_hash($this) . ' ' . $uri . ' - ' . $this->getArgument('u', FILTER_SANITIZE_URL) . PHP_EOL);
-//        } else {
-//            fwrite(STDOUT, PHP_EOL . '<- ' . spl_object_hash($this) . ' ' . $this->getUri() . PHP_EOL);
+            $this->request = $this->buildRequest();
         }
 
         return $this->request;
@@ -85,8 +75,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     public function resetRequest()
     {
         $this->request = null;
-        $this->uri = null;
-        $this->format = null;
+        $this->originalRequest = null;
 
         return $this;
     }
@@ -94,13 +83,17 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     /**
      * Register/overwrite the current request
      *
-     * @param Request $request
+     * @param RestRequestInterface $request
      * @return $this
      */
     public function registerCurrentRequest($request)
     {
         $this->resetRequest();
-        $this->request = $request;
+        if ($request instanceof Request) {
+            $this->request = $request;
+        } else {
+            $this->originalRequest = $request;
+        }
 
         return $this;
     }
@@ -111,129 +104,106 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param string $path
      * @return string
      */
-    public function getAliasForPath($path)
+    protected function getAliasForPath($path)
     {
         return $this->configurationProvider->getSetting('aliases.' . $path);
     }
 
     /**
-     * Returns the URI
+     * Returns the path and original path for the given input path respecting configured aliases
      *
-     * @param string $format Reference to be filled with the request format
-     * @return string
+     * @return \stdClass
      */
-    public function getUri(&$format = '')
+    protected function determineAndAnalyseInputPath()
     {
-        if (!$this->uri) {
-            $uri = $this->getArgument('u', FILTER_SANITIZE_URL);
-            if (!$uri) {
-                $uri = $this->removePathPrefixes($_SERVER['REQUEST_URI']);
-                $uri = filter_var(substr($uri, 6), FILTER_SANITIZE_URL);
-            }
+        $pathAndFormat = $this->determinePathAndFormat();
+        $inputPath = $pathAndFormat->path;
 
-            // Strip the format from the URI
-            $resourceName = basename($uri);
-            $lastDotPosition = strrpos($resourceName, '.');
-            if ($lastDotPosition !== false) {
-                $newUri = '';
-                if ($uri !== $resourceName) {
-                    $newUri = dirname($uri) . '/';
-                }
-                $newUri .= substr($resourceName, 0, $lastDotPosition);
-                $uri = $newUri;
+        $pathInfo = (object)[
+            'path'         => '',
+            'originalPath' => '',
+            'resourceType' => '',
+            'format'       => $pathAndFormat->format,
+        ];
 
-                $this->format = $format = substr($resourceName, $lastDotPosition + 1);
-            }
-            $this->uri = $uri;
+        // Strip the query
+        $path = strtok($inputPath, '?');
+        if (!$path) {
+            return $pathInfo;
         }
 
-        return $this->uri;
-    }
-
-    /**
-     * Returns the URI, path and original path for the given URI respecting configured aliases
-     *
-     * @param string $uri
-     * @return string[]
-     */
-    protected function getRequestPathAndUriForUri($uri)
-    {
-        if (!$uri) {
-            return array('', '', '');
+        // Get the first part of the path
+        $resourceType = strtok($path, '/');
+        if (!$resourceType) {
+            return $pathInfo;
         }
-        $originalPath = $path = strtok(strtok($uri, '?'), '/');
 
         // Check for path aliases
-        $pathAlias = $this->getAliasForPath($path);
-        if ($pathAlias) {
-            $oldPath = $path;
-
-            // Update the URL
-            $uri = preg_replace('!' . $oldPath . '!', $pathAlias, $uri, 1);
-            $path = $pathAlias;
+        $resourceTypeAlias = $this->getAliasForPath($resourceType);
+        if ($resourceTypeAlias) {
+            return (object)[
+                'path'         => preg_replace('!' . $resourceType . '!', $resourceTypeAlias, $path, 1),
+                'originalPath' => $path,
+                'resourceType' => $resourceTypeAlias,
+                'format'       => $pathAndFormat->format,
+            ];
         }
 
-        return array($uri, $originalPath, $path);
+        return (object)[
+            'path'         => $path,
+            'originalPath' => $path,
+            'resourceType' => $resourceType,
+            'format'       => $pathAndFormat->format,
+        ];
     }
 
     /**
-     * Get a request variable
-     *
-     * @param string $name    Argument name
-     * @param int    $filter  Filter for the input
-     * @param mixed  $default Default value to use if no argument with the given name exists
-     * @return mixed
+     * @return ServerRequestInterface
      */
-    protected function getArgument($name, $filter = FILTER_SANITIZE_STRING, $default = null)
+    private function getOriginalRequest()
     {
-        $argument = GeneralUtility::_GP($name);
-        $argument = filter_var($argument, $filter);
-        if ($argument === null) {
-            $argument = $default;
+        if ($this->originalRequest) {
+            return $this->originalRequest;
+        }
+        if (!class_exists($this->factoryClass)) {
+            throw new \LogicException(sprintf('PSR7 factory class "%s" not found', $this->factoryClass));
         }
 
-        return $argument;
+        return call_user_func($this->factoryClass . '::fromGlobals');
     }
 
     /**
-     * Inject the configuration provider instance
-     *
-     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
-     */
-    public function injectConfigurationProvider(\Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider)
-    {
-        $this->configurationProvider = $configurationProvider;
-    }
-
-    /**
-     * @param string $uri
+     * @param string $path
      * @return string
      */
-    private function removePathPrefixes($uri)
+    private function removePathPrefixes($path)
     {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
         if ($pathPrefix === false) {
             $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
         }
 
-        return $this->removePathPrefix($uri, $pathPrefix);
+        $path = $this->removePathPrefix($path, $pathPrefix);
+        $path = $this->removePathPrefix($path, '/rest/');
+
+        return $path;
     }
 
     /**
-     * @param string $uri
+     * @param string $path
      * @param string $pathPrefix
      * @return string
      */
-    private function removePathPrefix($uri, $pathPrefix)
+    private function removePathPrefix($path, $pathPrefix)
     {
         if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
-            $pathPrefix = '/'. trim($pathPrefix, '/');
-            if ($this->stringHasPrefix($uri, $pathPrefix)) {
-                $uri = substr($uri, strlen($pathPrefix));
+            $pathPrefix = '/' . trim($pathPrefix, '/');
+            if ($this->stringHasPrefix($path, $pathPrefix)) {
+                $path = substr($path, strlen($pathPrefix));
             }
         }
 
-        return $uri;
+        return $path;
     }
 
     /**
@@ -244,5 +214,155 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     private function stringHasPrefix($input, $prefix)
     {
         return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
+    }
+
+    /**
+     * Split path and format
+     *
+     * @param string $path
+     * @return object
+     */
+    private function splitPathAndFormat($path)
+    {
+        $format = '';
+
+        // Strip the format from the path
+        $resourceName = basename($path);
+        $lastDotPosition = strrpos($resourceName, '.');
+        if ($lastDotPosition !== false) {
+            $directory = '';
+            if ($resourceName !== $path) {
+                $directory = rtrim(dirname($path), '/') . '/';
+            }
+            $path = $directory . substr($resourceName, 0, $lastDotPosition);
+            $format = substr($resourceName, $lastDotPosition + 1);
+        }
+
+        return (object)[
+            'path'   => $path,
+            'format' => $format,
+        ];
+    }
+
+    /**
+     * @return object
+     */
+    private function determinePathAndFormat()
+    {
+        $path = $this->getRawPath();
+        $format = Format::DEFAULT_FORMAT;
+
+        /*
+         * Transform Document URLs
+         * @Todo: Make this more flexible
+         */
+        if ($this->stringHasPrefix($path, Request::API_PATH_DOCUMENT . '/')) {
+            $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
+            $path = Request::API_PATH_DOCUMENT . '-' . substr($path, $documentApiPathLength);
+        }
+
+        // Strip the query
+        $path = strtok($path, '?');
+        if (!$path) {
+            return (object)[
+                'path'   => '',
+                'format' => $format,
+            ];
+        }
+
+        // Extract path and format
+        $pathAndFormat = $this->splitPathAndFormat($path);
+        $format = $pathAndFormat->format;
+        $path = '/' . ltrim($pathAndFormat->path, '/');
+
+        if (!$format || !$this->isValidFormat($format)) {
+            $format = Format::DEFAULT_FORMAT;
+        }
+
+        return (object)[
+            'path'   => $path,
+            'format' => $format,
+        ];
+    }
+
+    /**
+     * @return RestRequestInterface
+     */
+    private function buildRequest()
+    {
+        $pathInfo = $this->determineAndAnalyseInputPath();
+        $originalRequest = $this->getOriginalRequest();
+        $internalUri = $originalRequest->getUri()->withPath($pathInfo->path);
+
+        return new Request(
+            $originalRequest,
+            $internalUri,
+            $pathInfo->originalPath,
+            new ResourceType($pathInfo->resourceType),
+            new Format($pathInfo->format)
+        );
+    }
+
+    /**
+     * Returns if the given format is valid
+     *
+     * @param $format
+     * @return boolean
+     */
+    public static function isValidFormat($format)
+    {
+        if (!$format) {
+            return false;
+        }
+        // Mimetypes
+        $mimeTypes = array(
+            'txt'   => 'text/plain',
+            'html'  => 'text/html',
+            'xhtml' => 'application/xhtml+xml',
+            'xml'   => 'application/xml',
+            'css'   => 'text/css',
+            'js'    => 'application/javascript',
+            'json'  => 'application/json',
+            'csv'   => 'text/csv',
+            // images
+            'png'   => 'image/png',
+            'jpe'   => 'image/jpeg',
+            'jpeg'  => 'image/jpeg',
+            'jpg'   => 'image/jpeg',
+            'gif'   => 'image/gif',
+            'bmp'   => 'image/bmp',
+            'ico'   => 'image/vnd.microsoft.icon',
+            'tiff'  => 'image/tiff',
+            'tif'   => 'image/tiff',
+            'svg'   => 'image/svg+xml',
+            'svgz'  => 'image/svg+xml',
+            // archives
+            'zip'   => 'application/zip',
+            'rar'   => 'application/x-rar-compressed',
+            // adobe
+            'pdf'   => 'application/pdf',
+        );
+
+        return isset($mimeTypes[$format]);
+    }
+
+    /**
+     * @return string
+     */
+    private function getRawPath()
+    {
+        $path = '';
+//        if (class_exists(GeneralUtility::class)) {
+//            $path = filter_var(GeneralUtility::_GP('u'), FILTER_SANITIZE_URL);
+//        }
+        if (!$path && isset($_GET['u'])) {
+            $path = filter_var($this->removePathPrefixes($_GET['u']), FILTER_SANITIZE_URL);
+        }
+
+        if (!$path && isset($_SERVER['REQUEST_URI'])) {
+            $path = filter_var($this->removePathPrefixes($_SERVER['REQUEST_URI']), FILTER_SANITIZE_URL);
+        }
+
+        return (string)$path;
     }
 }

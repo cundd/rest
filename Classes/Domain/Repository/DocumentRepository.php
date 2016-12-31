@@ -96,6 +96,7 @@ class DocumentRepository extends Repository
         if (func_num_args() > 0) {
             $this->setDatabase(func_get_arg(0));
         }
+
         return $this->getDatabase();
     }
 
@@ -115,6 +116,7 @@ class DocumentRepository extends Repository
     {
         if (is_object($data) && $data instanceof Document) {
             $this->registerObject($data);
+
             return $data;
         } else {
             return $this->registerData($data);
@@ -140,6 +142,7 @@ class DocumentRepository extends Repository
             throw new InvalidDocumentException('Could not convert the given data to a Document', 1389286531);
         }
         $this->registerObject($object);
+
         return $object;
     }
 
@@ -169,6 +172,7 @@ class DocumentRepository extends Repository
         } else {
             $this->update($object);
         }
+
         return $object;
     }
 
@@ -185,7 +189,10 @@ class DocumentRepository extends Repository
         if (!$object->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
-                throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+                throw new NoDatabaseSelectedException(
+                    'The given object and the repository have no database set',
+                    1389257938
+                );
             }
             $object->_setDb($currentDatabase);
         }
@@ -207,7 +214,10 @@ class DocumentRepository extends Repository
         if (!$object->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
-                throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+                throw new NoDatabaseSelectedException(
+                    'The given object and the repository have no database set',
+                    1389257938
+                );
             }
             $object->_setDb($currentDatabase);
         }
@@ -229,7 +239,10 @@ class DocumentRepository extends Repository
         if (!$modifiedObject->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
-                throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+                throw new NoDatabaseSelectedException(
+                    'The given object and the repository have no database set',
+                    1389257938
+                );
             }
             $modifiedObject->_setDb($currentDatabase);
         }
@@ -254,6 +267,7 @@ class DocumentRepository extends Repository
 
         $query = $this->createQuery();
         $query->matching($query->equals('db', $currentDatabase));
+
         return $this->convertCollection($query->execute());
     }
 
@@ -278,6 +292,7 @@ class DocumentRepository extends Repository
             $query->getQuerySettings()->setReturnRawQueryResult(true);
         }
         $query->matching($query->equals('db', $currentDatabase));
+
         return $query->execute();
     }
 
@@ -292,6 +307,7 @@ class DocumentRepository extends Repository
     public function findByDatabase($database)
     {
         $this->setDatabase($database);
+
         return $this->findAll();
     }
 
@@ -325,6 +341,7 @@ class DocumentRepository extends Repository
         if ($result instanceof QueryResultInterface) {
             return $result->getFirst();
         }
+
         return null;
     }
 
@@ -349,11 +366,14 @@ class DocumentRepository extends Repository
         if ($result instanceof QueryResultInterface) {
             return $result->getFirst();
         }
+
         return null;
     }
 
     /**
      * @see findOneById()
+     * @param $id
+     * @return Document
      */
     public function findById($id)
     {
@@ -387,6 +407,7 @@ class DocumentRepository extends Repository
 
         $query = $this->createQuery();
         $query->matching($query->equals('db', $currentDatabase));
+
         return $query->execute()->count();
     }
 
@@ -436,9 +457,10 @@ class DocumentRepository extends Repository
             'tx_rest_domain_model_document',
             $where,
             array(
-                'deleted' => 1
+                'deleted' => 1,
             )
         );
+
         return $result;
     }
 
@@ -498,7 +520,7 @@ class DocumentRepository extends Repository
      * Dispatches magic methods (findBy[Property]())
      *
      * @param string $methodName The name of the magic method
-     * @param string $arguments The arguments of the magic method
+     * @param string $arguments  The arguments of the magic method
      * @throws \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException
      * @return mixed
      * @api
@@ -532,7 +554,9 @@ class DocumentRepository extends Repository
 //			$result = $query->matching($query->equals($propertyName, $arguments[0]))->execute()->count();
 //			return $result;
 //		}
-        throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException('The method "' . $methodName . '" is not supported by the repository.', 1233180480);
+        throw new \TYPO3\CMS\Extbase\Persistence\Generic\Exception\UnsupportedMethodException(
+            'The method "' . $methodName . '" is not supported by the repository.', 1233180480
+        );
     }
 
     /**
@@ -550,15 +574,16 @@ class DocumentRepository extends Repository
         if (method_exists($querySettings, 'setReturnRawQueryResult')) {
             $querySettings->setReturnRawQueryResult($this->useRawQueryResults);
         }
+
         return $query;
     }
 
     /**
      * Search for Documents matching the given properties
      *
-     * @param array $properties Dictionary of property keys and values
-     * @param bool $count Return the number of matches
-     * @param integer $limit Limit the number of matches
+     * @param array   $properties Dictionary of property keys and values
+     * @param bool    $count      Return the number of matches
+     * @param integer $limit      Limit the number of matches
      * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
      * @return mixed|null|object
      */
@@ -625,6 +650,7 @@ class DocumentRepository extends Repository
                 }
             }
         }
+
         return $filteredResultCollection;
     }
 
@@ -640,6 +666,7 @@ class DocumentRepository extends Repository
             if (is_object($resultCollection) && $resultCollection->count() === 0) {
                 return array();
             }
+
             return $resultCollection;
         }
         $convertedObjects = array();
@@ -718,11 +745,6 @@ class DocumentRepository extends Repository
          * assign it to the Document
          */
         foreach ($inputData as $key => $value) {
-            //			if (ctype_lower($key[0])) { // Preserve the case
-//				$key = GeneralUtility::underscoredToLowerCamelCase($key);
-//			} else {
-//				$key = GeneralUtility::underscoredToUpperCamelCase($key);
-//			}
             $convertedObject->setValueForKey($key, $value);
         }
 
@@ -732,17 +754,21 @@ class DocumentRepository extends Repository
         if (!$convertedObject->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
-                throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+                throw new NoDatabaseSelectedException(
+                    'The given object and the repository have no database set',
+                    1389257938
+                );
             }
             $convertedObject->_setDb($currentDatabase);
         }
+
         return $convertedObject;
     }
 
     /**
      * Merges two Documents
      *
-     * @param Document $oldDocument
+     * @param Document                 $oldDocument
      * @param Document|array|\stdClass $newDocument
      * @throws \Cundd\Rest\Domain\Exception\NoDatabaseSelectedException if the converted Document has no database
      * @return Document
@@ -758,10 +784,14 @@ class DocumentRepository extends Repository
         if (!$oldDocument->_getDb()) {
             $currentDatabase = $this->getDatabase();
             if (!$currentDatabase) {
-                throw new NoDatabaseSelectedException('The given object and the repository have no database set', 1389257938);
+                throw new NoDatabaseSelectedException(
+                    'The given object and the repository have no database set',
+                    1389257938
+                );
             }
             $oldDocument->_setDb($currentDatabase);
         }
+
         return $oldDocument;
     }
 

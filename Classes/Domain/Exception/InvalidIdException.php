@@ -33,8 +33,6 @@ namespace Cundd\Rest\Domain\Exception;
 
 /**
  * Exception thrown if the given ID is invalid
- *
- * @package Cundd\Rest\Domain\Repository\Exception
  */
 class InvalidIdException extends DomainException
 {

@@ -33,8 +33,6 @@ namespace Cundd\Rest\Domain\Exception;
 
 /**
  * Exception thrown if the given database name is invalid
- *
- * @package Cundd\Rest\Domain\Repository\Exception
  */
 class InvalidDatabaseNameException extends DomainException
 {

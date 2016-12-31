@@ -34,8 +34,6 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
-require_once __DIR__ . '/AbstractDatabaseCase.php';
-
 class BackendTest extends AbstractDatabaseCase
 {
     /**

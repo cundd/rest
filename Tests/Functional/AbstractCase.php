@@ -8,10 +8,15 @@
 
 namespace Cundd\Rest\Tests\Functional;
 
-require_once __DIR__ . '/../Bootstrap.php';
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Tests\RequestBuilderTrait;
+use Cundd\Rest\Tests\ResponseBuilderTrait;
 
 class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
 {
+    use ResponseBuilderTrait;
+    use RequestBuilderTrait;
+
     /**
      * @var \TYPO3\CMS\Extbase\Object\ObjectManager
      */
@@ -20,6 +25,9 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
     public function setUp()
     {
         parent::setUp();
+
+        $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
+
         $this->objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
     }
 
@@ -28,24 +36,19 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
      *
      * @param string $uri
      * @param string $format
-     * @return \Cundd\Rest\Request
+     * @return RestRequestInterface
      */
     public function buildRequestWithUri($uri, $format = null)
     {
-        $uri = filter_var($uri, FILTER_SANITIZE_URL);
-
-        $path = strtok($uri, '/');
-
-        $request = new \Cundd\Rest\Request(null, $uri);
-        $request->initWithPathAndOriginalPath($path, $path);
-        $request->injectConfigurationProvider(
-            $this->objectManager->get('Cundd\\Rest\\ObjectManager')->getConfigurationProvider()
+        return \Cundd\Rest\Tests\RequestBuilderTrait::buildTestRequest(
+            $uri,
+            null,       // $method
+            array(),    // $params
+            array(),    // $headers
+            null,       // $rawBody
+            null,       // $parsedBody
+            $format
         );
-        if ($format) {
-            $request->format($format);
-        }
-
-        return $request;
     }
 
     /**

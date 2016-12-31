@@ -32,113 +32,109 @@ namespace Cundd\Rest\Cache;
 
 use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Http\Header;
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request;
+use Cundd\Rest\ResponseFactory;
+use Cundd\Rest\ResponseFactoryInterface;
+use MongoDB\Driver\Server;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The class caches responses of requests
- *
- * @package Cundd\Rest\Cache
  */
-class Cache
+class Cache implements CacheInterface
 {
-    /**
-     * @var \Cundd\Rest\ObjectManager
-     * @inject
-     */
-    protected $objectManager;
-
-    /**
-     * Current request
-     *
-     * @var \Cundd\Rest\Request
-     */
-    protected $currentRequest;
-
     /**
      * Concrete cache instance
      *
      * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
      */
-    protected $cacheInstance;
+    private $cacheInstance;
 
     /**
      * Cache life time
      *
      * @var integer
      */
-    protected $cacheLifeTime = null;
+    private $cacheLifeTime;
 
     /**
      * Life time defined in the expires header
      *
      * @var integer
      */
-    protected $expiresHeaderLifeTime = null;
+    private $expiresHeaderLifeTime;
 
     /**
-     * Returns the cached value for the given request or NULL if it is not
-     * defined
-     *
-     * @param \Cundd\Rest\Request $request
-     * @return \Bullet\Response
+     * @var ResponseFactory
      */
-    public function getCachedValueForRequest(\Cundd\Rest\Request $request)
-    {
-        $this->currentRequest = $request;
+    private $responseFactory;
 
-        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
-        $cacheInstance = null;
+    /**
+     * Cache constructor
+     *
+     * @param ResponseFactoryInterface $responseFactory
+     */
+    public function __construct(ResponseFactoryInterface $responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
+    /**
+     * Returns the cached value for the given request or NULL if it is not defined
+     *
+     * @param RestRequestInterface $request
+     * @return ResponseInterface|null
+     */
+    public function getCachedValueForRequest(RestRequestInterface $request)
+    {
         $cacheLifeTime = $this->getCacheLifeTime();
 
         /*
          * Use caching if the cache life time configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifeTime !== -1) && $request->path();
+        $useCaching = ($cacheLifeTime !== -1) && $request->getPath();
         if (!$useCaching) {
             return null;
         }
 
-        $cacheInstance = $this->_getCacheInstance();
-        $responseArray = $cacheInstance->get($this->_getCacheKey());
-        if (!$responseArray) {
+        $cacheInstance = $this->getCacheInstance();
+        $responseData = $cacheInstance->get($this->getCacheKeyForRequest($request));
+        if (!$responseData) {
             return null;
         }
 
         if (!$request->isRead()) {
-            $this->_clearCache();
+            $this->clearCache($request);
+
             return null;
         }
 
         /** TODO: Send 304 status if appropriate */
-        $response = new Response($responseArray['content'], $responseArray['status']);
-        $response->contentType($responseArray['content-type']);
-        $response->encoding($responseArray['encoding']);
-        $response->header('Last-Modified', $responseArray['last-modified']);
-        $response->header('Expires', $this->getHttpDate(time() + $this->getExpiresHeaderLifeTime()));
+        $response = $this->responseFactory->createResponse($responseData['content'], intval($responseData['status']));
 
-        $response->header('cundd-rest-cached', 'true');
-        return $response;
+        return $response
+            ->withHeader(Header::CONTENT_TYPE, $responseData[Header::CONTENT_TYPE])
+            ->withHeader(Header::LAST_MODIFIED, $responseData[Header::LAST_MODIFIED])
+            ->withHeader(Header::EXPIRES, $this->getHttpDate(time() + $this->getExpiresHeaderLifeTime()))
+            ->withHeader(Header::CUNDD_REST_CACHED, 'true');
     }
 
     /**
      * Sets the cache value for the given request
      *
-     * @param \Cundd\Rest\Request $request
-     * @param \Bullet\Response $response
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
      */
-    public function setCachedValueForRequest(\Cundd\Rest\Request $request, Response $response)
+    public function setCachedValueForRequest(RestRequestInterface $request, ResponseInterface $response)
     {
-        $this->currentRequest = $request;
-
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
         $cacheInstance = null;
-
-        // Don't cache exceptions
-        if ($response->content() instanceof \Exception) {
-            return;
-        }
 
         // Don't cache write requests
         if ($request->isWrite()) {
@@ -151,33 +147,41 @@ class Cache
          * Use caching if the cache life time configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifeTime !== -1) && $request->path();
+        $useCaching = ($cacheLifeTime !== -1) && $request->getPath();
         if (!$useCaching) {
             return;
         }
 
-        $cacheInstance = $this->_getCacheInstance();
-        $cacheInstance->set($this->_getCacheKey(), array(
-            'content' => (string)$response,
-            'status' => $response->status(),
-            'encoding' => $response->encoding(),
-            'content-type' => $response->contentType(),
-            'last-modified' => $this->getHttpDate(time()),
-        ), $this->_getTags(), $cacheLifeTime);
+        $cacheInstance = $this->getCacheInstance();
+        $cacheInstance->set(
+            $this->getCacheKeyForRequest($request),
+            array(
+                'content'             => (string)$response->getBody(),
+                'status'              => $response->getStatusCode(),
+                Header::CONTENT_TYPE  => $response->getHeader(Header::CONTENT_TYPE),
+                Header::LAST_MODIFIED => $this->getHttpDate(time()),
+            ),
+            $this->getTags($request),
+            $cacheLifeTime
+        );
     }
 
     /**
      * Returns the cache key for the given request
      *
-     * @param \Cundd\Rest\Request $request
+     * @param RestRequestInterface $request
      * @return string
      */
-    public function getCacheKeyForRequest(\Cundd\Rest\Request $request)
+    public function getCacheKeyForRequest(RestRequestInterface $request)
     {
-        $this->currentRequest = $request;
-        return $this->_getCacheKey();
-    }
+        $cacheKey = sha1($request->getUri() . '_' . $request->getFormat() . '_' . $request->getMethod());
+        $params = $request->getQueryParams();
+        if ($request->getMethod() === 'GET' && count($params)) {
+            $cacheKey = sha1($cacheKey . serialize($params));
+        }
 
+        return $cacheKey;
+    }
 
     /**
      * Sets the cache life time
@@ -188,6 +192,7 @@ class Cache
     public function setCacheLifeTime($cacheLifeTime)
     {
         $this->cacheLifeTime = $cacheLifeTime;
+
         return $this;
     }
 
@@ -198,13 +203,6 @@ class Cache
      */
     public function getCacheLifeTime()
     {
-        if ($this->cacheLifeTime === null) {
-            $readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('cacheLifeTime');
-            if ($readCacheLifeTime === null) {
-                $readCacheLifeTime = -1;
-            }
-            $this->cacheLifeTime = intval($readCacheLifeTime);
-        }
         return $this->cacheLifeTime;
     }
 
@@ -217,6 +215,7 @@ class Cache
     public function setExpiresHeaderLifeTime($expiresHeaderLifeTime)
     {
         $this->expiresHeaderLifeTime = $expiresHeaderLifeTime;
+
         return $this;
     }
 
@@ -227,10 +226,6 @@ class Cache
      */
     public function getExpiresHeaderLifeTime()
     {
-        if ($this->expiresHeaderLifeTime === null) {
-            $readCacheLifeTime = $this->objectManager->getConfigurationProvider()->getSetting('expiresHeaderLifeTime');
-            $this->expiresHeaderLifeTime = ($readCacheLifeTime !== null) ? intval($readCacheLifeTime) : $this->getCacheLifeTime();
-        }
         return $this->expiresHeaderLifeTime;
     }
 
@@ -240,7 +235,7 @@ class Cache
      * @param $date
      * @return string
      */
-    protected function getHttpDate($date)
+    private function getHttpDate($date)
     {
         return gmdate('D, d M Y H:i:s \G\M\T', $date);
     }
@@ -248,15 +243,16 @@ class Cache
     /**
      * Returns the cache instance
      *
-     * @return \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface|\TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
      */
-    protected function _getCacheInstance()
+    private function getCacheInstance()
     {
         if (!$this->cacheInstance) {
             /** @var CacheManager $cacheManager */
             $cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
             $this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
         }
+
         return $this->cacheInstance;
     }
 
@@ -264,6 +260,7 @@ class Cache
      * Sets the concrete Cache instance
      *
      * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
+     * @internal
      */
     public function setCacheInstance($cacheInstance)
     {
@@ -272,42 +269,31 @@ class Cache
 
     /**
      * Clears the cache for the current request
+     *
+     * @param RestRequestInterface $request
      */
-    protected function _clearCache()
+    private function clearCache(RestRequestInterface $request)
     {
-        $allTags = $this->_getTags();
+        $allTags = $this->getTags($request);
         $firstTag = $allTags[0];
-        $this->_getCacheInstance()->flushByTag($firstTag);
+        $this->getCacheInstance()->flushByTag($firstTag);
     }
 
     /**
      * Returns the tags for the current request
      *
-     * @return array[string]
+     * @param RestRequestInterface $request
+     * @return array [string]
      */
-    protected function _getTags()
+    private function getTags(RestRequestInterface $request)
     {
-        $currentPath = $this->currentRequest->path();
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($currentPath);
+        $currentPath = $request->getPath();
+        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($currentPath);
+
         return array(
             $vendor . '_' . $extension . '_' . $model,
             $extension . '_' . $model,
-            $currentPath
+            $currentPath,
         );
-    }
-
-    /**
-     * Returns the cache key for the current request
-     *
-     * @return string
-     */
-    protected function _getCacheKey()
-    {
-        $cacheKey = sha1($this->currentRequest->url() . '_' . $this->currentRequest->format() . '_' . $this->currentRequest->method());
-        $params = $this->currentRequest->params();
-        if ($this->currentRequest->isGet() && count($params)) {
-            $cacheKey = sha1($cacheKey . serialize($this->currentRequest->params()));
-        }
-        return $cacheKey;
     }
 }

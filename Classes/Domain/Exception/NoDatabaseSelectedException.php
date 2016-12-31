@@ -33,8 +33,6 @@ namespace Cundd\Rest\Domain\Exception;
 
 /**
  * Exception thrown if no database is selected
- *
- * @package Cundd\Rest\Domain\Repository\Exception
  */
 class NoDatabaseSelectedException extends DomainException
 {

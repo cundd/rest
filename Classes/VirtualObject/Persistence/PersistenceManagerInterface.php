@@ -29,8 +29,6 @@ use Cundd\Rest\VirtualObject\VirtualObject;
 
 /**
  * Interface for the Repository for Virtual Objects
- *
- * @package Cundd\Rest\VirtualObject\Persistence
  */
 interface PersistenceManagerInterface
 {

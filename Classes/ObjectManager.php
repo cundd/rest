@@ -25,15 +25,21 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Cache\CacheFactory;
+use Cundd\Rest\Cache\CacheInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
-use TYPO3\CMS\Core\SingletonInterface;
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Utility\DebugUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
-use \TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
+use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 
 /**
  * Specialized Object Manager
  *
- * @package Cundd\Rest
+ * @method mixed get($class)
+ * @method bool isRegistered($class)
  */
 class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInterface, ObjectManagerInterface, SingletonInterface
 {
@@ -62,13 +68,14 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the configuration provider
      *
-     * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     * @return ConfigurationProviderInterface
      */
     public function getConfigurationProvider()
     {
         if (!$this->configurationProvider) {
-            $this->configurationProvider = $this->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+            $this->configurationProvider = $this->get(ConfigurationProviderInterface::class);
         }
+
         return $this->configurationProvider;
     }
 
@@ -100,7 +107,9 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getDataProvider()
     {
         if (!$this->dataProvider) {
-            list($vendor, $extension, $model) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType(
+                $this->getRequest()->getResourceType()
+            );
 
             $classes = array(
                 // Check if an extension provides a Data Provider for the domain model
@@ -115,8 +124,11 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
                 'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider',
             );
 
-            $this->dataProvider = $this->get($this->getFirstExistingClass($classes,  'Cundd\\Rest\\DataProvider\\DataProviderInterface'));
+            $this->dataProvider = $this->get(
+                $this->getFirstExistingClass($classes, 'Cundd\\Rest\\DataProvider\\DataProviderInterface')
+            );
         }
+
         return $this->dataProvider;
     }
 
@@ -128,7 +140,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAuthenticationProvider()
     {
         if (!$this->authenticationProvider) {
-            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($this->getRequest()->getResourceType());
 
             // Check if an extension provides a Authentication Provider
             $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
@@ -141,14 +153,16 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
                 $this->authenticationProvider = $this->get($authenticationProviderClass);
             } else {
                 // Use the default Authentication Provider
-                $this->authenticationProvider = $this->get('Cundd\\Rest\\Authentication\\AuthenticationProviderCollection', array(
-                    $this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
-                    $this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
-                ));
+                $this->authenticationProvider = $this->get(
+                    'Cundd\\Rest\\Authentication\\AuthenticationProviderCollection',
+                    array(
+                        $this->get('Cundd\\Rest\\Authentication\\BasicAuthenticationProvider'),
+                        $this->get('Cundd\\Rest\\Authentication\\CredentialsAuthenticationProvider'),
+                    )
+                );
             }
-
-            $this->authenticationProvider->setRequest($this->getRequest());
         }
+
         return $this->authenticationProvider;
     }
 
@@ -160,7 +174,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getAccessController()
     {
         if (!$this->accessController) {
-            list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+            list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($this->getRequest()->getResourceType());
 
             // Check if an extension provides a Authentication Provider
             $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
@@ -173,8 +187,8 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
                 $accessControllerClass = 'Cundd\\Rest\\Access\\ConfigurationBasedAccessController';
             }
             $this->accessController = $this->get($accessControllerClass);
-            $this->accessController->setRequest($this->getRequest());
         }
+
         return $this->accessController;
     }
 
@@ -185,7 +199,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      */
     public function getHandler()
     {
-        list($vendor, $extension,) = Utility::getClassNamePartsForPath($this->getRequest()->path());
+        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($this->getRequest()->getResourceType());
 
         $classes = array(
             // Check if an extension provides a Data Provider
@@ -202,16 +216,14 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the Cache instance
      *
-     * @return \Cundd\Rest\Cache\Cache
+     * @return \Cundd\Rest\Cache\CacheInterface
      */
     public function getCache()
     {
-        $cacheImplementation = $this->getConfigurationProvider()->getSetting('cacheClass');
-        if ($cacheImplementation && $this->isRegistered($cacheImplementation)) {
-            return $this->get($cacheImplementation);
-        } else {
-            return $this->get('Cundd\\Rest\\Cache\\Cache');
-        }
+        /** @var CacheFactory $cacheFactory */
+        $cacheFactory = $this->get(CacheFactory::class);
+
+        return $cacheFactory->buildCache($this->getConfigurationProvider(), $this);
     }
 
     /**
@@ -221,16 +233,13 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      */
     public static function getPersistenceManagerClassName()
     {
-        if (version_compare(TYPO3_version, '6.0.0') < 0) {
-            return 'Tx_Extbase_Persistence_Manager';
-        }
         return 'TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface';
     }
 
     /**
      * Returns the current request
      *
-     * @return Request
+     * @return RestRequestInterface
      */
     protected function getRequest()
     {
@@ -241,7 +250,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * Returns the first of the classes that exists
      *
      * @param string[] $classes
-     * @param string $default
+     * @param string   $default
      * @return string
      * @throws \Exception
      */

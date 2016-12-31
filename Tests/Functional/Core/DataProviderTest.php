@@ -25,6 +25,7 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
@@ -32,7 +33,7 @@ use Cundd\Rest\Tests\MyNestedModel;
 use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-require_once __DIR__ . '/../AbstractCase.php';
+
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -112,7 +113,7 @@ class DataProviderTest extends AbstractCase
             );
 
         $this->injectPropertyIntoObject($propertyMapperMock, 'propertyMapper', $this->fixture);
-        $this->fixture->getModelWithDataForPath($data, 'a_vendor-another_ext-my_model');
+        $this->fixture->getModelWithDataForResourceType($data, new ResourceType('a_vendor-another_ext-my_model'));
     }
 
     /**
@@ -120,10 +121,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getRepositoryForPathTest()
     {
-        $repository = $this->fixture->getRepositoryForPath('MyExt-MyModel');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('MyExt-MyModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
 
-        $repository = $this->fixture->getRepositoryForPath('my_ext-my_model');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('my_ext-my_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
     }
 
@@ -132,10 +133,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedRepositoryForPathTest()
     {
-        $repository = $this->fixture->getRepositoryForPath('MyExt-MySecondModel');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('MyExt-MySecondModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
 
-        $repository = $this->fixture->getRepositoryForPath('my_ext-my_second_model');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('my_ext-my_second_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModelRepository', $repository);
     }
 
@@ -144,10 +145,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedRepositoryForPathWithVendorTest()
     {
-        $repository = $this->fixture->getRepositoryForPath('Vendor-MyExt-MyModel');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('Vendor-MyExt-MyModel'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 
-        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-my_model');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('vendor-my_ext-my_model'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 
         $this->createClass(
@@ -155,7 +156,7 @@ class DataProviderTest extends AbstractCase
             'Vendor\\MyExt\\Domain\\Repository\\Group',
             '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository'
         );
-        $repository = $this->fixture->getRepositoryForPath('vendor-my_ext-group-my_model');
+        $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('vendor-my_ext-group-my_model'));
         $this->assertInstanceOf('Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository', $repository);
     }
 
@@ -164,10 +165,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getModelForPathTest()
     {
-        $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MyModel');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('MyExt-MyModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_model');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('my_ext-my_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
@@ -176,10 +177,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedModelForPathTest()
     {
-        $model = $this->fixture->getModelWithDataForPath(array(), 'MyExt-MySecondModel');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('MyExt-MySecondModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForPath(array(), 'my_ext-my_second_model');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('my_ext-my_second_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
@@ -188,10 +189,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedModelForPathWithVendorTest()
     {
-        $model = $this->fixture->getModelWithDataForPath(array(), 'Vendor-MyExt-MyModel');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('Vendor-MyExt-MyModel'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForPath(array(), 'vendor-my_ext-my_model');
+        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('vendor-my_ext-my_model'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
     }
 
@@ -201,10 +202,10 @@ class DataProviderTest extends AbstractCase
     public function getModelWithEmptyDataTest()
     {
         $data = array();
-        $path = 'MyExt-MyModel';
+        $resourceType = 'MyExt-MyModel';
 
         /** @var \Cundd\Rest\Tests\MyModel $model */
-        $model = $this->fixture->getModelWithDataForPath($data, $path);
+        $model = $this->fixture->getModelWithDataForResourceType($data, new ResourceType($resourceType));
         $this->assertEquals('Initial value', $model->getName());
     }
 
@@ -249,7 +250,7 @@ class DataProviderTest extends AbstractCase
             'child' => array(
                 'base'    => 'Base',
                 'date'    => $testDate,
-                'child'   => 'http:///rest/cundd-rest-tests-my_nested_model/1/child',
+                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
                 'uid'     => 2,
                 'pid'     => null,
                 '__class' => 'Cundd\Rest\Tests\MyNestedModel',
@@ -299,7 +300,7 @@ class DataProviderTest extends AbstractCase
             'pid'      => null,
             '__class'  => 'Cundd\Rest\Tests\MyNestedModelWithObjectStorage',
             'children' => array(
-                0 => 'http:///rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
+                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
                 1 => array( // <- This is $childModel
                     'base'    => 'Base',
                     'date'    => $testDate,

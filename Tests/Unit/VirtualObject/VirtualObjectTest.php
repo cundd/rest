@@ -34,12 +34,8 @@ namespace Cundd\Rest\Tests\Unit\VirtualObject;
 
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-require_once __DIR__ . '/../../Bootstrap.php';
-
 /**
  * Virtual Object tests
- *
- * @package Cundd\Rest\Test\VirtualObject
  */
 class VirtualObjectTest extends \PHPUnit_Framework_TestCase
 {

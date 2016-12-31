@@ -26,11 +26,13 @@
 namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Access\Exception\InvalidConfigurationException;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\ObjectManager;
 
 /**
  * The class determines the access for the current request
- *
- * @package Cundd\Rest\Access
  */
 class ConfigurationBasedAccessController extends AbstractAccessController
 {
@@ -50,38 +52,39 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     protected $configurationProvider;
 
     /**
-     * Inject the configuration provider
+     * ConfigurationBasedAccessController constructor
      *
-     * @param \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
+     * @param ConfigurationProviderInterface $configurationProvider
+     * @param ObjectManager                  $objectManager
      */
-    public function injectConfigurationProvider(
-        \Cundd\Rest\Configuration\TypoScriptConfigurationProvider $configurationProvider
-    ) {
+    public function __construct(ConfigurationProviderInterface $configurationProvider, ObjectManager $objectManager)
+    {
+        parent::__construct($objectManager);
         $this->configurationProvider = $configurationProvider;
     }
 
     /**
-     * Returns if the current request has access to the requested resource
+     * Returns if the current request's client has access to the requested resource
      *
-     * @throws Exception\InvalidConfigurationException if the configuration is incomplete
-     * @return AccessControllerInterface::ACCESS
+     * @param RestRequestInterface $request
+     * @return string Returns one of the constants AccessControllerInterface::ACCESS
      */
-    public function getAccess()
+    public function getAccess(RestRequestInterface $request)
     {
         $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForCurrentPath();
-        if ($this->isWrite()) {
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
+        if ($this->isWrite($request)) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey.' configuration not set', 1376826223);
+            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
         }
 
         $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
-            return $this->checkAuthentication();
+            return $this->checkAuthentication($request);
         }
 
         return $access;
@@ -90,20 +93,21 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     /**
      * Returns if the given request needs authentication
      *
+     * @param RestRequestInterface $request
      * @return bool
      * @throws Exception\InvalidConfigurationException
      */
-    public function requestNeedsAuthentication()
+    public function requestNeedsAuthentication(RestRequestInterface $request)
     {
         $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForCurrentPath();
-        if ($this->isWrite()) {
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
+        if ($this->isWrite($request)) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey.' configuration not set', 1376826223);
+            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
         }
 
         $access = $configuration[$configurationKey];
@@ -115,51 +119,27 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Sets the current request
-     *
-     * @param \Cundd\Rest\Request $request
-     */
-    public function setRequest(\Cundd\Rest\Request $request)
-    {
-        parent::setRequest($request);
-    }
-
-
-    /**
      * Returns if the request wants to write data
      *
+     * @param RestRequestInterface $request
      * @return bool
      */
-    public function isWrite()
+    protected function isWrite(RestRequestInterface $request)
     {
-        return $this->request->isWrite();
+        return $request->isWrite();
     }
 
     /**
-     * Returns the configuration matching the current request's path
+     * Returns the configuration matching the given resource type
      *
-     * @return string
-     * @throws \UnexpectedValueException if the request is not set
-     */
-    public function getConfigurationForCurrentPath()
-    {
-        if (!$this->request) {
-            throw new \UnexpectedValueException('The request isn\'t set', 1376816053);
-        }
-
-        return $this->getConfigurationForPath($this->request->path());
-    }
-
-    /**
-     * Returns the configuration matching the given request path
-     *
-     * @param string $path
+     * @param ResourceType $resourceType
      * @return string
      */
-    public function getConfigurationForPath($path)
+    public function getConfigurationForResourceType(ResourceType $resourceType)
     {
         $configuredPaths = $this->getConfiguredPaths();
         $matchingConfiguration = array();
+        $resourceTypeString = (string)$resourceType;
 
         foreach ($configuredPaths as $configuration) {
             $currentPath = $configuration['path'];
@@ -168,7 +148,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
             $currentPathPattern = "!^$currentPathPattern$!";
             if ($currentPath === 'all' && !$matchingConfiguration) {
                 $matchingConfiguration = $configuration;
-            } elseif (preg_match($currentPathPattern, $path)) {
+            } elseif (preg_match($currentPathPattern, $resourceTypeString)) {
                 $matchingConfiguration = $configuration;
             }
         }
@@ -181,7 +161,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      *
      * @return array
      */
-    public function getConfiguredPaths()
+    private function getConfiguredPaths()
     {
         $settings = $this->configurationProvider->getSettings();
         if (isset($settings['paths']) && is_array($settings['paths'])) {

@@ -8,12 +8,9 @@
 
 namespace Cundd\Rest;
 
-use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Session Manager
- *
- * @package Cundd\Rest
  */
 class SessionManager implements SingletonInterface
 {

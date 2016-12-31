@@ -11,7 +11,7 @@
         backupGlobals="true"
         backupStaticAttributes="false"
         bootstrap="Bootstrap.php"
-        colors="false"
+        colors="true"
         convertErrorsToExceptions="true"
         convertWarningsToExceptions="true"
         forceCoversAnnotation="false"
@@ -24,10 +24,7 @@
         >
     <testsuites>
         <testsuite name="Functional tests">
-            <directory>./Functional/*</directory>
-        </testsuite>
-        <testsuite name="Unit tests">
-            <directory>./Unit/*</directory>
+            <directory>./*</directory>
         </testsuite>
     </testsuites>
 </phpunit>

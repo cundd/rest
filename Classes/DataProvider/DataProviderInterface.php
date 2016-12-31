@@ -25,108 +25,111 @@
 
 namespace Cundd\Rest\DataProvider;
 
-use TYPO3\CMS\Core\SingletonInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\SingletonInterface;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 interface DataProviderInterface extends SingletonInterface
 {
     /**
-     * Returns the domain model repository for the models the given API path points to
+     * Returns the domain model repository for the models the given API resource type points to
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
      */
-    public function getRepositoryForPath($path);
+    public function getRepositoryForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns the domain model repository class name for the given API path
+     * Returns the domain model repository class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getRepositoryClassForPath($path);
+    public function getRepositoryClassForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns all domain model for the given API path
+     * Returns all domain model for the given API resource type
      *
-     * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param ResourceType $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface[]|QueryResultInterface
      */
-    public function getAllModelsForPath($path);
+    public function getAllModelsForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * This method will load existing models.
      *
-     * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param array|string|int $data         Data of the new model or it's UID
+     * @param ResourceType     $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface
      */
-    public function getModelWithDataForPath($data, $path);
+    public function getModelWithDataForResourceType($data, ResourceType $resourceType);
 
     /**
-     * Returns a domain model for the given API path and data
+     * Returns a domain model for the given API resource type and data
      * Even if the data contains an identifier, the existing model will not be loaded.
      *
-     * @param array|string|int $data Data of the new model or it's UID
-     * @param string $path API path to get the repository for
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @param array|string|int $data         Data of the new model or it's UID
+     * @param ResourceType     $resourceType API resource type to get the repository for
+     * @return DomainObjectInterface
      */
-    public function getNewModelWithDataForPath($data, $path);
+    public function getNewModelWithDataForResourceType($data, ResourceType $resourceType);
 
     /**
-     * Returns the domain model class name for the given API path
+     * Returns the domain model class name for the given API resource type
      *
-     * @param string $path API path to get the repository for
+     * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
      */
-    public function getModelClassForPath($path);
+    public function getModelClassForResourceType(ResourceType $resourceType);
 
     /**
      * Returns the data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $model
+     * @param DomainObjectInterface|object $model
      */
     public function getModelData($model);
 
     /**
      * Returns the property data from the given model
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-     * @param string $propertyKey
+     * @param DomainObjectInterface $model
+     * @param string                $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey);
 
     /**
      * Adds or updates the given model in the repository for the
-     * given API path
+     * given API resource type
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-     * @param string $path The API path
+     * @param DomainObjectInterface $model
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function saveModelForPath($model, $path);
+    public function saveModelForResourceType($model, ResourceType $resourceType);
 
     /**
      * Tells the Data Provider to replace the given old model with the new one
-     * in the repository for the given API path
+     * in the repository for the given API resource type
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $oldModel
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $newModel
-     * @param string $path The API path
+     * @param DomainObjectInterface $oldModel
+     * @param DomainObjectInterface $newModel
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function replaceModelForPath($oldModel, $newModel, $path);
+    public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType);
 
     /**
      * Adds or updates the given model in the repository for the
-     * given API path
+     * given API resource type
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-     * @param string $path The API path
+     * @param DomainObjectInterface $model
+     * @param ResourceType          $resourceType The API resource type
      * @return void
      */
-    public function removeModelForPath($model, $path);
+    public function removeModelForResourceType($model, ResourceType $resourceType);
 
     /**
      * Persist all changes to the database

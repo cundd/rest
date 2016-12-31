@@ -45,12 +45,13 @@ plugin.tx_rest.settings {
 	}
 }
 
-
-
 config.tx_extbase {
 	objects {
 		Cundd\Rest\Authentication\UserProviderInterface {
 			className = Cundd\Rest\Authentication\UserProvider\FeUserProvider
+		}
+		Cundd\Rest\Configuration\ConfigurationProviderInterface {
+			className = Cundd\Rest\Configuration\TypoScriptConfigurationProvider
 		}
 	}
 }

@@ -3,7 +3,7 @@
  * Unit Test bootstrapping
  */
 
-namespace Cundd\Rest\Tests;
+namespace Cundd\Rest\Tests\Functional;
 
 class Bootstrap
 {
@@ -11,8 +11,8 @@ class Bootstrap
 
     public function bootstrapSystem()
     {
-        $this->setupTYPO3();
         $this->setupComposer();
+        $this->setupTYPO3();
         $this->setupAbstractCase();
     }
 
@@ -36,8 +36,8 @@ class Bootstrap
             }
         } elseif (file_exists(getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
             require_once getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-        } elseif (file_exists(__DIR__ . '/../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-            require_once __DIR__ . '/../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
+        } elseif (file_exists(__DIR__ . '/../../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
+            require_once __DIR__ . '/../....//../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
         } else {
             return;
         }
@@ -49,17 +49,17 @@ class Bootstrap
         }
     }
 
-    protected function setupComposer()
+    private function setupComposer()
     {
         // Load composer autoloader
-        if (file_exists(__DIR__ . '/../vendor/')) {
-            require_once __DIR__ . '/../vendor/autoload.php';
+        if (file_exists(__DIR__ . '/../../vendor/')) {
+            require_once __DIR__ . '/../../vendor/autoload.php';
         } else {
             if (!class_exists('Cundd\\CunddComposer\\Autoloader')) {
-                require_once __DIR__ . '/../../cundd_composer/Classes/Autoloader.php';
+                require_once __DIR__ . '/../../../cundd_composer/Classes/Autoloader.php';
             }
             if (!class_exists('Cundd\\CunddComposer\\Utility\\GeneralUtility')) {
-                require_once __DIR__ . '/../../cundd_composer/Classes/Utility/GeneralUtility.php';
+                require_once __DIR__ . '/../../../cundd_composer/Classes/Utility/GeneralUtility.php';
             }
             \Cundd\CunddComposer\Autoloader::register();
         }
@@ -67,7 +67,7 @@ class Bootstrap
 
     private function setupAbstractCase()
     {
-        require_once __DIR__ . '/Functional/AbstractCase.php';
+        require_once __DIR__ . '/AbstractCase.php';
     }
 }
 

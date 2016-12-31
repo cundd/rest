@@ -12,12 +12,10 @@ use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
+
 
 /**
  * Test for the FeUser based User Provider
- *
- * @package Cundd\Rest\Test\Authentication
  */
 class FeUserProviderTest extends AbstractCase
 {

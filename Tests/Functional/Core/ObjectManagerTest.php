@@ -35,8 +35,6 @@ namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
-
 class ObjectManagerTest extends AbstractCase
 {
     /**
@@ -104,7 +102,7 @@ class ObjectManagerTest extends AbstractCase
      * @dataProvider dataProviderTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array $classToBuild
+     * @param array  $classToBuild
      * @throws \Exception
      */
     public function getDataProviderTest($url, $expectedClass, $classToBuild = array())
@@ -123,26 +121,78 @@ class ObjectManagerTest extends AbstractCase
     public function dataProviderTestGenerator()
     {
         $defaultDataProvider = '\\Cundd\\Rest\\DataProvider\\DataProvider';
+
         return array(
             //     url,                expected,                     classToBuild
-            array('', 'Cundd\\Rest\\DataProvider\\DataProvider', array()),
-            array('my_ext-my_model/1', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
-            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
-            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
-            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_DataProvider', array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider)),
-
-            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
-            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\DataProvider', array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
-            array('Vendor-NotExistingExt-MyModel/1', $defaultDataProvider),
-            array('Vendor-NotExistingExt-MyModel/1.json', $defaultDataProvider),
-
-            array('MyThirdExt-MyModel/1.json', 'Tx_MyThirdExt_Rest_MyModelDataProvider', array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider)),
-            array('Vendor-MySecondExt-MyModel/1.json', '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider', array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider)),
-
-            array('VirtualObject-Page', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
-            array('VirtualObject-Page.json', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
-            array('VirtualObject-Page/1', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
-            array('VirtualObject-Page/1.json', 'Cundd\Rest\DataProvider\VirtualObjectDataProvider'),
+            array(
+                '',
+                'Cundd\\Rest\\DataProvider\\DataProvider',
+                array(),
+            ),
+            array(
+                'my_ext-my_model/1',
+                'Tx_MyExt_Rest_DataProvider',
+                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
+            ),
+            array(
+                'my_ext-my_model/1.json',
+                'Tx_MyExt_Rest_DataProvider',
+                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
+            ),
+            array(
+                'MyExt-MyModel/1',
+                'Tx_MyExt_Rest_DataProvider',
+                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
+            ),
+            array(
+                'MyExt-MyModel/1.json',
+                'Tx_MyExt_Rest_DataProvider',
+                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
+            ),
+            array(
+                'vendor-my_second_ext-my_model/1',
+                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
+                array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
+            ),
+            array(
+                'Vendor-MySecondExt-MyModel/1',
+                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
+                array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
+            ),
+            array(
+                'Vendor-NotExistingExt-MyModel/1',
+                $defaultDataProvider,
+            ),
+            array(
+                'Vendor-NotExistingExt-MyModel/1.json',
+                $defaultDataProvider,
+            ),
+            array(
+                'MyThirdExt-MyModel/1.json',
+                'Tx_MyThirdExt_Rest_MyModelDataProvider',
+                array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider),
+            ),
+            array(
+                'Vendor-MySecondExt-MyModel/1.json',
+                '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider',
+                array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
+            ),
+            array(
+                'VirtualObject-Page',
+                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+            ),
+            array(
+                'VirtualObject-Page.json',
+                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+            ),
+            array(
+                'VirtualObject-Page/1',
+                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+            ),
+            array(
+                'VirtualObject-Page/1.json',
+                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+            ),
         );
     }
 
@@ -152,11 +202,14 @@ class ObjectManagerTest extends AbstractCase
      * @dataProvider handlerTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array $classToBuild
+     * @param array  $classToBuild
      * @throws \Exception
      */
     public function getHandlerTest($url, $expectedClass, $classToBuild = array())
     {
+//        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+//        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'));
+//        var_dump(GeneralUtility::getIndpEnv('HTTP_HOST'));
         $_GET['u'] = $url;
         if ($classToBuild) {
             $this->createClass($classToBuild);
@@ -174,16 +227,44 @@ class ObjectManagerTest extends AbstractCase
 
         return array(
             //     url,                expected,                     classToBuild
-            array('my_ext-my_model/1', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
-            array('my_ext-my_model/1.json', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
-            array('MyExt-MyModel/1', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
-            array('MyExt-MyModel/1.json', 'Tx_MyExt_Rest_Handler', array('Tx_MyExt_Rest_Handler', '', $defaultHandler)),
-
-            array('vendor-my_second_ext-my_model/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
-            array('Vendor-MySecondExt-MyModel/1', '\\Vendor\\MySecondExt\\Rest\\Handler', array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler)),
-
-            array('Vendor-NotExistingExt-MyModel/1', $defaultHandler),
-            array('Vendor-NotExistingExt-MyModel/1.json', $defaultHandler),
+            array(
+                'my_ext-my_model/1',
+                'Tx_MyExt_Rest_Handler',
+                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
+            ),
+            array(
+                'my_ext-my_model/1.json',
+                'Tx_MyExt_Rest_Handler',
+                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
+            ),
+            array(
+                'MyExt-MyModel/1',
+                'Tx_MyExt_Rest_Handler',
+                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
+            ),
+            array(
+                'MyExt-MyModel/1.json',
+                'Tx_MyExt_Rest_Handler',
+                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
+            ),
+            array(
+                'vendor-my_second_ext-my_model/1',
+                '\\Vendor\\MySecondExt\\Rest\\Handler',
+                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
+            ),
+            array(
+                'Vendor-MySecondExt-MyModel/1',
+                '\\Vendor\\MySecondExt\\Rest\\Handler',
+                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
+            ),
+            array(
+                'Vendor-NotExistingExt-MyModel/1',
+                $defaultHandler,
+            ),
+            array(
+                'Vendor-NotExistingExt-MyModel/1.json',
+                $defaultHandler,
+            ),
         );
     }
 }

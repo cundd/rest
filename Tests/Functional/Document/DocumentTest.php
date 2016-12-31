@@ -28,7 +28,7 @@ namespace Cundd\Rest\Tests\Functional\Document;
 use Cundd\Rest\Domain\Model\Document;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
-require_once __DIR__ . '/../AbstractCase.php';
+
 
 class DummyObject
 {

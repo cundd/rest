@@ -36,8 +36,6 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 /**
  * Class ConfigurationTest
- *
- * @package Cundd\Rest\Test\VirtualObject
  */
 class ConfigurationTest extends AbstractVirtualObjectCase
 {
@@ -52,7 +50,7 @@ class ConfigurationTest extends AbstractVirtualObjectCase
 
         $testConfiguration = $this->getTestConfigurationData();
         $this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceName']['mapping'])
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceType']['mapping'])
         );
     }
 

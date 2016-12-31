@@ -27,8 +27,6 @@ namespace Cundd\Rest;
 
 /**
  * Base class for exceptions thrown by rest
- *
- * @package Cundd\Rest
  */
 class Exception extends \Exception
 {

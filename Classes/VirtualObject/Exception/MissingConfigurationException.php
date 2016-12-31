@@ -29,8 +29,6 @@ use Cundd\Rest\VirtualObject\Exception;
 
 /**
  * Exception thrown if the Configuration is not set
- *
- * @package Cundd\Rest\VirtualObject\Exception
  */
 class MissingConfigurationException extends Exception
 {

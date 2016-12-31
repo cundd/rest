@@ -36,8 +36,6 @@ use TYPO3\CMS\Core\Log\LogLevel;
 
 /**
  * A simple profiling utility
- *
- * @package Cundd\Rest\Utility
  */
 class Profiler
 {

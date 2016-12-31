@@ -28,17 +28,15 @@ namespace Cundd\Rest\Tests\Functional\Core;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use TYPO3\CMS\Core\Resource\FileReference;
 
-require_once __DIR__ . '/../AbstractCase.php';
-
 /**
  * Test case for class file related Data Provider functions
  *
- * @version $Id$
+ * @version   $Id$
  * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  *
- * @author Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
+ * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class FileDataProviderTest extends AbstractCase
 {
@@ -73,6 +71,7 @@ class FileDataProviderTest extends AbstractCase
             ->getMockForAbstractClass();
 
         $fixture->method('_getProperties')->willReturn($properties);
+
         return $fixture;
     }
 
@@ -83,12 +82,12 @@ class FileDataProviderTest extends AbstractCase
     protected function createFileReferenceMock(array $fileReferenceProperties = array())
     {
         $fileReferenceProperties = array(
-            'uid_local' => '1467702760',
-            'name' => 'Test name',
-        ) + $fileReferenceProperties;
+                'uid_local' => '1467702760',
+                'name'      => 'Test name',
+            ) + $fileReferenceProperties;
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMock('\TYPO3\CMS\Core\Resource\ResourceFactory', array('getFileObject'));
+        $factoryMock = $this->getMockObjectGenerator()->getMock('\TYPO3\CMS\Core\Resource\ResourceFactory', array('getFileObject'));
         $factoryMock->expects($this->any())
             ->method('getFileObject')->will(
                 $this->returnValue($originalFileMock)
@@ -105,10 +104,16 @@ class FileDataProviderTest extends AbstractCase
     {
         $originalFileProperties = array(
             'identifier' => sha1('testFile' . time()),
-            'name' => 'Original file name',
-            'mimeType' => 'MimeType',
+            'name'       => 'Original file name',
+            'mimeType'   => 'MimeType',
         );
-        $originalFileMock = $this->getMock('\TYPO3\CMS\Core\Resource\File', array(), array(), 'Mock_TYPO3_CMS_Core_Resource_File', false);
+        $originalFileMock = $this->getMockObjectGenerator()->getMock(
+            '\TYPO3\CMS\Core\Resource\File',
+            array(),
+            array(),
+            'Mock_TYPO3_CMS_Core_Resource_File',
+            false
+        );
         $originalFileMock->expects($this->any())
             ->method('getProperties')
             ->will(
@@ -134,6 +139,7 @@ class FileDataProviderTest extends AbstractCase
             ->will(
                 $this->returnValue(10)
             );
+
         return $originalFileMock;
     }
 
@@ -143,29 +149,32 @@ class FileDataProviderTest extends AbstractCase
      */
     public function getModelDataForModelWithFileReferenceTest()
     {
-        $testModel = $this->createDomainModelFixture(array(
-            'title' => 'Test',
-            'file' => $this->createFileReferenceMock()
-        ));
+        $testModel = $this->createDomainModelFixture(
+            array(
+                'title' => 'Test',
+                'file'  => $this->createFileReferenceMock(),
+            )
+        );
 
         $result = $this->fixture->getModelData($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title' => 'Test',
-                'file' => array(
-                    'name' => 'Original file name',
-                    'mimeType' => 'MimeType',
-                    'url' => 'http://url',
-                    'size' => 10,
-                    'title' => '',
-                    'description' => '',
-                    'uid' => 1467702760,
+                'title'   => 'Test',
+                'file'    => array(
+                    'name'         => 'Original file name',
+                    'mimeType'     => 'MimeType',
+                    'url'          => 'http://url',
+                    'size'         => 10,
+                    'title'        => '',
+                    'description'  => '',
+                    'uid'          => 1467702760,
                     'referenceUid' => 0,
-                    '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
+                    '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
-                '__class' => 'Mock_Test_Class'
-            ), $result
+                '__class' => 'Mock_Test_Class',
+            ),
+            $result
         );
     }
 
@@ -174,33 +183,38 @@ class FileDataProviderTest extends AbstractCase
      */
     public function getModelDataForModelWithFileReferenceAndDataTest()
     {
-        $testModel = $this->createDomainModelFixture(array(
-            'title' => 'Test',
-            'file' => $this->createFileReferenceMock(array(
-                'title' => 'My title',
-                'description' => 'File description',
-                'uid' => 0,
-            ))
-        ));
+        $testModel = $this->createDomainModelFixture(
+            array(
+                'title' => 'Test',
+                'file'  => $this->createFileReferenceMock(
+                    array(
+                        'title'       => 'My title',
+                        'description' => 'File description',
+                        'uid'         => 0,
+                    )
+                ),
+            )
+        );
 
         $result = $this->fixture->getModelData($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title' => 'Test',
-                'file' => array(
-                    'name' => 'Original file name',
-                    'mimeType' => 'MimeType',
-                    'url' => 'http://url',
-                    'size' => 10,
-                    'title' => 'My title',
-                    'description' => 'File description',
-                    'uid' => 1467702760,
+                'title'   => 'Test',
+                'file'    => array(
+                    'name'         => 'Original file name',
+                    'mimeType'     => 'MimeType',
+                    'url'          => 'http://url',
+                    'size'         => 10,
+                    'title'        => 'My title',
+                    'description'  => 'File description',
+                    'uid'          => 1467702760,
                     'referenceUid' => 0,
-                    '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
+                    '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
-                '__class' => 'Mock_Test_Class'
-            ), $result
+                '__class' => 'Mock_Test_Class',
+            ),
+            $result
         );
     }
 
@@ -216,16 +230,17 @@ class FileDataProviderTest extends AbstractCase
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'name' => 'Original file name',
-                'mimeType' => 'MimeType',
-                'url' => 'http://url',
-                'size' => 10,
-                'title' => '',
-                'description' => '',
-                'uid' => 1467702760,
+                'name'         => 'Original file name',
+                'mimeType'     => 'MimeType',
+                'url'          => 'http://url',
+                'size'         => 10,
+                'title'        => '',
+                'description'  => '',
+                'uid'          => 1467702760,
                 'referenceUid' => 0,
-                '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
-            ), $result
+                '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
+            ),
+            $result
         );
     }
 
@@ -235,26 +250,29 @@ class FileDataProviderTest extends AbstractCase
     public function getModelDataForFileReferenceWithDataTest()
     {
         /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock(array(
-            'title' => 'My title',
-            'description' => 'File description',
-            'uid' => 0,
-        ));
+        $testModel = $this->createFileReferenceMock(
+            array(
+                'title'       => 'My title',
+                'description' => 'File description',
+                'uid'         => 0,
+            )
+        );
 
         $result = $this->fixture->getModelData($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'name' => 'Original file name',
-                'mimeType' => 'MimeType',
-                'url' => 'http://url',
-                'size' => 10,
-                'title' => 'My title',
-                'description' => 'File description',
-                'uid' => 1467702760,
+                'name'         => 'Original file name',
+                'mimeType'     => 'MimeType',
+                'url'          => 'http://url',
+                'size'         => 10,
+                'title'        => 'My title',
+                'description'  => 'File description',
+                'uid'          => 1467702760,
                 'referenceUid' => 0,
-                '__class' => 'TYPO3\CMS\Core\Resource\FileReference',
-            ), $result
+                '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
+            ),
+            $result
         );
     }
 
@@ -270,12 +288,13 @@ class FileDataProviderTest extends AbstractCase
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'name' => 'Original file name',
+                'name'     => 'Original file name',
                 'mimeType' => 'MimeType',
-                'url' => 'http://url',
-                'size' => 10,
-                '__class' => 'Mock_TYPO3_CMS_Core_Resource_File',
-            ), $result
+                'url'      => 'http://url',
+                'size'     => 10,
+                '__class'  => 'Mock_TYPO3_CMS_Core_Resource_File',
+            ),
+            $result
         );
     }
 
@@ -285,26 +304,28 @@ class FileDataProviderTest extends AbstractCase
     public function getModelDataForModelWithFileTest()
     {
         /** @var object $testModel */
-        $testModel = $this->createDomainModelFixture(array(
-            'title' => 'Test',
-            'file' => $this->createFileMock()
-        ));
-
+        $testModel = $this->createDomainModelFixture(
+            array(
+                'title' => 'Test',
+                'file'  => $this->createFileMock(),
+            )
+        );
 
         $result = $this->fixture->getModelData($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title' => 'Test',
-                'file' => array(
-                    'name' => 'Original file name',
+                'title'   => 'Test',
+                'file'    => array(
+                    'name'     => 'Original file name',
                     'mimeType' => 'MimeType',
-                    'url' => 'http://url',
-                    'size' => 10,
-                    '__class' => 'Mock_TYPO3_CMS_Core_Resource_File',
+                    'url'      => 'http://url',
+                    'size'     => 10,
+                    '__class'  => 'Mock_TYPO3_CMS_Core_Resource_File',
                 ),
                 '__class' => 'Mock_Test_Class',
-            ), $result
+            ),
+            $result
         );
     }
 }

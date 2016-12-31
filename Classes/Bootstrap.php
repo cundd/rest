@@ -32,26 +32,23 @@ use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
 class Bootstrap
 {
     /**
-     * Initializes the TYPO3 environment.
+     * Initializes the TYPO3 environment
      *
      * @return    void
      */
     public function init()
     {
-        if (method_exists('TYPO3\CMS\Frontend\Utility\EidUtility', 'connectDB')) {
-            EidUtility::connectDB();
-        }
         $this->initTSFE();
     }
 
     /**
-     * Initialize the TSFE.
+     * Initialize the TSFE
      *
      * @param    integer $pageUid The page UID
      * @param    boolean $overrule
      * @return    void
      */
-    public function initTSFE($pageUid = -1, $overrule = false)
+    private function initTSFE($pageUid = -1, $overrule = false)
     {
         $rootLine = null;
         $typo3confVariables = $GLOBALS['TYPO3_CONF_VARS'];
