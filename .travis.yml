@@ -83,7 +83,7 @@ script:
       exit 1;
     fi;
     if [ -e "./bin/phpunit" ]; then
-      echo "Use test binary ./bin/phpunit"
+      echo "Use test binary ./bin/phpunit";
       TEST_BINARY="./bin/phpunit";
     else
       TEST_BINARY="phpunit";
@@ -93,6 +93,7 @@ script:
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
+    export TYPO3_PATH_WEB=../TYPO3.CMS;
 
-    TYPO3_PATH_WEB=../TYPO3.CMS bash $CLI_HOME/run_tests.sh;
-
+    ls -hal $TYPO3_PATH_WEB;
+    bash $CLI_HOME/run_tests.sh;
