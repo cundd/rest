@@ -1,19 +1,17 @@
 language: php
 php:
-  - 5.6
   - 7.0
   - 7.1
   - hhvm
   - nightly
 
 env:
-  - TYPO3=TYPO3_7-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-  - TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_8-1 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_8-2 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_8-3 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=TYPO3_8-4 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+  - TYPO3=TYPO3_8-5-0 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
   - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 matrix:
@@ -21,6 +19,31 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
+
+  include:
+    # TYPO3 7.4
+    - php: 5.6
+      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 7.0
+      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 7.1
+      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+
+    # TYPO3 7.6
+    - php: 5.6
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 7.0
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: 7.1
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: nightly
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
+    - php: hhvm
+      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
 
 sudo: false
 
@@ -70,5 +93,5 @@ script:
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    TYPO3_PATH_WEB=./../TYPO3.CMS/ $CLI_HOME/run_tests.sh;
+    TYPO3_PATH_WEB=./../TYPO3.CMS/ bash $CLI_HOME/run_tests.sh;
 
