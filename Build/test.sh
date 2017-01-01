@@ -42,7 +42,7 @@ function init_database {
     export typo3DatabaseHost=${typo3DatabaseHost};
     export typo3DatabaseUsername=${typo3DatabaseUsername};
     export typo3DatabasePassword=${typo3DatabasePassword};
-    check_mysql_credentials;
+    #check_mysql_credentials;
     print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
