@@ -30,6 +30,14 @@ trait ServerRequestProxyTrait
     abstract protected function setOriginalRequest(ServerRequestInterface $request);
 
     /**
+     * @return ServerRequestProxyTrait
+     */
+    protected function copy()
+    {
+        return clone $this;
+    }
+
+    /**
      * Retrieves the HTTP protocol version as a string.
      *
      * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
@@ -326,7 +334,7 @@ trait ServerRequestProxyTrait
      */
     public function withProtocolVersion($version)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withProtocolVersion($version));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withProtocolVersion($version));
     }
 
     /**
@@ -346,7 +354,7 @@ trait ServerRequestProxyTrait
      */
     public function withHeader($name, $value)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withHeader($name, $value));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withHeader($name, $value));
     }
 
     /**
@@ -367,7 +375,7 @@ trait ServerRequestProxyTrait
      */
     public function withAddedHeader($name, $value)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withAddedHeader($name, $value));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAddedHeader($name, $value));
     }
 
     /**
@@ -384,7 +392,7 @@ trait ServerRequestProxyTrait
      */
     public function withoutHeader($name)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withoutHeader($name));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutHeader($name));
 
     }
 
@@ -403,7 +411,7 @@ trait ServerRequestProxyTrait
      */
     public function withBody(StreamInterface $body)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withBody($body));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withBody($body));
     }
 
     /**
@@ -425,7 +433,7 @@ trait ServerRequestProxyTrait
      */
     public function withRequestTarget($requestTarget)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withRequestTarget($requestTarget));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withRequestTarget($requestTarget));
     }
 
     /**
@@ -445,7 +453,7 @@ trait ServerRequestProxyTrait
      */
     public function withMethod($method)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withMethod($method));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withMethod($method));
     }
 
     /**
@@ -480,7 +488,7 @@ trait ServerRequestProxyTrait
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withUri($uri, $preserveHost));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUri($uri, $preserveHost));
     }
 
     /**
@@ -502,7 +510,7 @@ trait ServerRequestProxyTrait
      */
     public function withCookieParams(array $cookies)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withCookieParams($cookies));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withCookieParams($cookies));
     }
 
     /**
@@ -529,7 +537,7 @@ trait ServerRequestProxyTrait
      */
     public function withQueryParams(array $query)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withQueryParams($query));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withQueryParams($query));
     }
 
     /**
@@ -545,7 +553,7 @@ trait ServerRequestProxyTrait
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withUploadedFiles($uploadedFiles));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUploadedFiles($uploadedFiles));
     }
 
     /**
@@ -578,7 +586,7 @@ trait ServerRequestProxyTrait
      */
     public function withParsedBody($data)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withParsedBody($data));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withParsedBody($data));
     }
 
     /**
@@ -598,7 +606,7 @@ trait ServerRequestProxyTrait
      */
     public function withAttribute($name, $value)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withAttribute($name, $value));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAttribute($name, $value));
     }
 
     /**
@@ -617,6 +625,6 @@ trait ServerRequestProxyTrait
      */
     public function withoutAttribute($name)
     {
-        return (clone $this)->setOriginalRequest($this->getOriginalRequest()->withoutAttribute($name));
+        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutAttribute($name));
     }
 }
