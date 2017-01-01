@@ -57,43 +57,12 @@ notifications:
 
 before_script:
 # Install build dependencies
-  - >
-    echo "Install dependencies";
-    composer install --verbose;
-    composer self-update;
-
-    cd ..;
-    echo "Get TYPO3 source";
-    git clone --single-branch --branch $TYPO3 --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
-    cd TYPO3.CMS;
-    composer install --no-dev;
-    rm -rf typo3/sysext/compatibility6;
-
-    mkdir -p ./typo3conf/ext/;
-    ln -s $CLI_HOME ./typo3conf/ext/$REPO;
-    cd ..;
-
-    mysql -e 'create database typo3;';
+  - bash Build/install.sh;
 
 script:
   - >
-    cd $CLI_HOME;
-    if [ ! -d "../TYPO3.CMS" ]; then
-      echo "TYPO3.CMS folder not found";
-      exit 1;
-    fi;
-    if [ -e "./bin/phpunit" ]; then
-      echo "Use test binary ./bin/phpunit";
-      TEST_BINARY="./bin/phpunit";
-    else
-      TEST_BINARY="phpunit";
-    fi
-
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="localhost";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    export TYPO3_PATH_WEB=../TYPO3.CMS;
-
-    ls -hal $TYPO3_PATH_WEB;
-    bash $CLI_HOME/run_tests.sh;
+    bash Build/test.sh;
