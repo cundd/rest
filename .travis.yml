@@ -94,5 +94,5 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
 
-    TYPO3_PATH_WEB=$(realpath ../TYPO3.CMS) bash $CLI_HOME/run_tests.sh;
+    TYPO3_PATH_WEB=../TYPO3.CMS bash $CLI_HOME/run_tests.sh;
 
