@@ -14,8 +14,28 @@ set -o errexit
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
+function _tput {
+    if hash tput &>/dev/null; then
+        tput $*;
+    fi
+}
+
 function print_error() {
+    >&2 _tput setaf 1;
     >&2 echo "[ERROR] $@";
+    >&2 _tput sgr0;
+}
+
+function print_header() {
+    _tput setaf 2;
+    echo "[TASK] $@";
+    _tput sgr0;
+}
+
+function print_info() {
+    _tput setaf 4;
+    echo "[INFO] $@";
+    _tput sgr0;
 }
 
 function get_mysql_client_path {
@@ -57,7 +77,7 @@ function init_database {
     export typo3DatabaseHost=${typo3DatabaseHost};
     export typo3DatabaseUsername=${typo3DatabaseUsername};
     export typo3DatabasePassword=${typo3DatabasePassword};
-    echo "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
+    print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
 function init_typo3 {
@@ -102,12 +122,12 @@ function functional_tests {
 function main {
     init;
     if [[ "$UNIT_TESTS" == "yes" ]]; then
-        echo "Run Unit Tests";
+        print_header "Run Unit Tests";
         unit_tests "$@";
     fi
 
     if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
-        echo "Run Functional Tests";
+        print_header "Run Functional Tests";
         check_mysql_credentials;
         functional_tests "$@";
     fi
