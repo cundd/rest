@@ -1,6 +1,8 @@
 language: php
 php:
   - 5.6
+  - 7.0
+  - 7.1
   - hhvm
   - nightly
 
@@ -53,9 +55,7 @@ before_script:
 script:
   - >
     cd $CLI_HOME;
-    if [ -d "../TYPO3.CMS" ]; then
-      cd ../TYPO3.CMS/;
-    else
+    if [ ! -d "../TYPO3.CMS" ]; then
       echo "TYPO3.CMS folder not found";
       exit 1;
     fi;
@@ -66,20 +66,9 @@ script:
       TEST_BINARY="phpunit";
     fi
 
-  - >
-    if [[ "$UNIT_TESTS" == "yes" ]]; then
-      echo;
-      echo "Running unit tests";
-      $TEST_BINARY -c typo3conf/ext/$REPO/Tests/Unit/phpunit.xml typo3conf/ext/$REPO/Tests/Unit;
-    fi
-
-  - >
-    if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
-      echo;
-      export typo3DatabaseName="typo3";
-      export typo3DatabaseHost="localhost";
-      export typo3DatabaseUsername="root";
-      export typo3DatabasePassword="";
-      $TEST_BINARY -c typo3conf/ext/$REPO/Tests/Functional/phpunit.xml ./typo3conf/ext/$REPO/Tests/Functional;
-    fi
+    export typo3DatabaseName="typo3";
+    export typo3DatabaseHost="localhost";
+    export typo3DatabaseUsername="root";
+    export typo3DatabasePassword="";
+    TYPO3_PATH_WEB=./../TYPO3.CMS/ $CLI_HOME/run_tests.sh;
 

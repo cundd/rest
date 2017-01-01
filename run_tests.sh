@@ -7,6 +7,7 @@ set -o errexit
 : ${UNIT_TESTS="yes"}
 
 : ${TYPO3_PATH_WEB=""}
+: ${PHP_BINARY="php"}
 
 : ${typo3DatabaseName="typo3"}
 : ${typo3DatabaseHost="127.0.0.1"}
@@ -87,17 +88,17 @@ function init {
 
 function unit_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml "$@";
+        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml "$@";
     else
-        $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
+        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
     fi
 }
 
 function functional_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml "$@";
+        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml "$@";
     else
-        $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
+        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
     fi
 #    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
 #        $(get_phpunit_path) --colors -c ${TYPO3_PATH_WEB}/typo3/sysext/core/Build/FunctionalTests.xml "$@";
