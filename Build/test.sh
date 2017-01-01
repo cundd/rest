@@ -66,7 +66,6 @@ function init {
     fi;
 
 	init_typo3;
-    init_database;
 }
 
 function unit_tests {
@@ -94,7 +93,7 @@ function main {
 
     if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
         print_header "Run Functional Tests";
-        check_mysql_credentials;
+        init_database;
         functional_tests "$@";
     fi
 }
