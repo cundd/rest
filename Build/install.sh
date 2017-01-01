@@ -38,7 +38,7 @@ function install_dependencies {
 }
 
 function install_typo3 {
-    print_header "Get TYPO3 source $TYPO";
+    print_header "Get TYPO3 source $TYPO3";
     cd ..;
 
     if [[ ! -e "TYPO3.CMS" ]]; then
