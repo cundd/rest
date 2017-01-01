@@ -12,39 +12,6 @@ sftp-config.json
 ### SASS Ignores - "Sassy CSS" http://sass-lang.com/
 *.sass-cache
 
-### OSX files
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-### Windows
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-### NetBeans
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-nb-configuration.xml
-
 ### PhpStorm
 .idea/
 
