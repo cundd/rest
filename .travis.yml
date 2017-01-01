@@ -73,7 +73,7 @@ before_script:
     ln -s $CLI_HOME ./typo3conf/ext/$REPO;
     cd ..;
 
-    mysql -e 'create database typo3_test;';
+    mysql -e 'create database typo3;';
 
 script:
   - >
