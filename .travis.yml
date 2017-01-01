@@ -59,8 +59,8 @@ before_script:
 # Install build dependencies
   - >
     echo "Install dependencies";
-    composer --version;
     composer install --verbose;
+    composer self-update;
 
     cd ..;
     echo "Get TYPO3 source";
