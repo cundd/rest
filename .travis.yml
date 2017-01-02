@@ -21,18 +21,6 @@ matrix:
     - php: hhvm
 
   include:
-    # TYPO3 7.4
-    - php: 5.6
-      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-    - php: 7.0
-      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-    - php: 7.1
-      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-    - php: nightly
-      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-    - php: hhvm
-      env: TYPO3=TYPO3_7-4-14 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
-
     # TYPO3 7.6
     - php: 5.6
       env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql UNIT_TESTS=yes FUNCTIONAL_TESTS=yes
