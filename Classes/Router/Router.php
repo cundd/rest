@@ -10,15 +10,14 @@ namespace Cundd\Rest\Router;
 
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 use Cundd\Rest\Response;
 
 class Router
 {
     private $registeredRoutes = array(
-        'GET' => array(),
+        'GET'  => array(),
         'POST' => array(),
-        'PUT' => array(),
+        'PUT'  => array(),
     );
 
     /**
@@ -30,10 +29,15 @@ class Router
         return new Response();
     }
 
+    public function addRoute(Route $route)
+    {
+
+    }
+
     /**
      * @param callable $handler
-     * @param string $path
-     * @param string $method
+     * @param string   $path
+     * @param string   $method
      * @return $this
      */
     public function register(callable $handler, $path, $method)

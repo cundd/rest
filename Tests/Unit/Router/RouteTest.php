@@ -6,13 +6,46 @@
  * Time: 14:45
  */
 
-namespace Cundd\Rest\Router;
+namespace Cundd\Rest\Tests\Unit\Router;
 
 
 use Cundd\Rest\Router\ParameterTypeInterface;
+use Cundd\Rest\Router\Route;
+use Cundd\Rest\Tests\RequestBuilderTrait;
 
 class RouteTest extends \PHPUnit_Framework_TestCase
 {
+    use RequestBuilderTrait;
+
+    /**
+     * @var callable
+     */
+    private $cb;
+
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->cb = function () {
+            return 'hello';
+        };
+    }
+
+    /**
+     * @test
+     */
+    public function processTest()
+    {
+        $this->assertEquals(
+            'hello',
+            Route::routeWithPattern('a/route', $this->cb)->process($this->buildTestRequest('/a/route'))
+        );
+    }
+
     /**
      * @test
      * @dataProvider routeShouldTrimSlashesDataProvider
@@ -21,7 +54,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function routeShouldTrimSlashesTest($inputPattern, $outputPattern)
     {
-        $this->assertEquals($outputPattern, (new Route($inputPattern))->getPattern());
+        $this->assertEquals($outputPattern, (Route::routeWithPattern($inputPattern, $this->cb))->getPattern());
     }
 
     /**
@@ -46,7 +79,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function getDefaultMethodTest()
     {
-        $this->assertEquals('GET', (new Route('/'))->getMethod());
+        $this->assertEquals('GET', (Route::routeWithPattern('/', $this->cb))->getMethod());
     }
 
     /**
@@ -57,7 +90,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function getMethodTest($method, $expected)
     {
-        $this->assertEquals($expected, (new Route('/', $method))->getMethod());
+        $this->assertEquals($expected, (new Route('/', $method, $this->cb))->getMethod());
     }
 
     public function getMethodTestDataProvider()
@@ -89,7 +122,8 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function deeperPathsHaveHigherPriorityTest($patternLowPriority, $patternHighPriority)
     {
         $this->assertTrue(
-            (new Route($patternLowPriority))->getPriority() < (new Route($patternHighPriority))->getPriority()
+            (Route::routeWithPattern($patternLowPriority, $this->cb))->getPriority()
+            < (Route::routeWithPattern($patternHighPriority, $this->cb))->getPriority()
         );
     }
 
@@ -119,7 +153,8 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function patternsWithExpressionsHaveLowerPriorityTest($patternLowPriority, $patternHighPriority)
     {
         $this->assertTrue(
-            (new Route($patternLowPriority))->getPriority() < (new Route($patternHighPriority))->getPriority()
+            (Route::routeWithPattern($patternLowPriority, $this->cb))->getPriority()
+            < (Route::routeWithPattern($patternHighPriority, $this->cb))->getPriority()
         );
     }
 
@@ -147,7 +182,10 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function getParametersTest($pattern, array $expectedParameters)
     {
-        $this->assertEquals($expectedParameters, array_values((new Route($pattern))->getParameters()));
+        $this->assertEquals(
+            $expectedParameters,
+            array_values((Route::routeWithPattern($pattern, $this->cb))->getParameters())
+        );
     }
 
     public function getParametersDataProvider()
@@ -198,6 +236,27 @@ class RouteTest extends \PHPUnit_Framework_TestCase
                 'path/sub-path/{string}/{int}/2/path/item/x/y',
                 [ParameterTypeInterface::SLUG, ParameterTypeInterface::INTEGER],
             ],
+        ];
+    }
+
+    /**
+     * @test
+     * @param string $pattern
+     * @dataProvider shouldThrowForInvalidParametersDataProvider
+     * @expectedException \LogicException
+     */
+    public function shouldThrowForInvalidParametersTest($pattern)
+    {
+        Route::routeWithPattern($pattern, $this->cb);
+    }
+
+    public function shouldThrowForInvalidParametersDataProvider()
+    {
+        return [
+            ['{}'],
+            ['{bool'],
+            ['bool}'],
+            ['{b00l}'],
         ];
     }
 }

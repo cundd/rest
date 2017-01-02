@@ -10,6 +10,8 @@ namespace Cundd\Rest\Router;
 
 
 use Cundd\Rest\Exception\InvalidArgumentException;
+use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Route implements RouteInterface
 {
@@ -34,18 +36,51 @@ class Route implements RouteInterface
     private $method;
 
     /**
+     * @var callable
+     */
+    private $callback;
+
+    /**
      * Route constructor
      *
-     * @param string $pattern
-     * @param string $method
+     * @param string   $pattern
+     * @param string   $method
+     * @param callable $callback
      */
-    public function __construct($pattern, $method = 'GET')
+    public function __construct($pattern, $method, callable $callback)
     {
         $this->assertString($pattern, 'pattern');
         $this->assertString($method, 'method');
 
         $this->pattern = trim($pattern, '/');
         $this->method = strtoupper($method);
+        $this->callback = $callback;
+        $this->parameters = ParameterType::extractParameterTypesFromPattern($pattern);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method GET
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function routeWithPattern($pattern, callable $callback)
+    {
+        return new static($pattern, 'GET', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern, method and callback
+     *
+     * @param string   $pattern
+     * @param string   $method
+     * @param callable $callback
+     * @return static
+     */
+    public static function routeWithPatternAndMethod($pattern, $method, callable $callback)
+    {
+        return new static($pattern, $method, $callback);
     }
 
     /**
@@ -75,11 +110,31 @@ class Route implements RouteInterface
      */
     public function getParameters()
     {
-        if (!$this->parameters) {
-            $this->parameters = array_filter(array_map([$this, 'createParameter'], explode('/', $this->pattern)));
-        }
-
         return $this->parameters;
+    }
+
+    /**
+     * Process the route
+     *
+     * @param RestRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function process(RestRequestInterface $request)
+    {
+        $callback = $this->callback;
+
+        return $callback($request);
+    }
+
+    /**
+     * The __invoke method is called when a script tries to call an object as a function.
+     *
+     * @return mixed
+     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
+     */
+    function __invoke(RestRequestInterface $request)
+    {
+        return $this->process($request);
     }
 
     /**
@@ -100,35 +155,6 @@ class Route implements RouteInterface
         }
 
         return $this->priority;
-    }
-
-    private function createParameter($input)
-    {
-        if (substr($input, 0, 1) !== '{' || substr($input, -1) !== '}') {
-            return null;
-        }
-        $type = substr($input, 1, -1);
-        switch (strtolower($type)) {
-            case 'integer':
-            case 'int':
-                return ParameterTypeInterface::INTEGER;
-
-            case 'slug':
-            case 'string':
-                return ParameterTypeInterface::SLUG;
-
-            case 'float':
-            case 'double':
-            case 'number':
-                return ParameterTypeInterface::FLOAT;
-
-            case 'bool':
-            case 'boolean':
-                return ParameterTypeInterface::BOOLEAN;
-
-            default:
-
-        }
     }
 
     /**
