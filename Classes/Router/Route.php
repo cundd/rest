@@ -132,7 +132,7 @@ class Route implements RouteInterface
      * @return mixed
      * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
      */
-    function __invoke(RestRequestInterface $request)
+    public function __invoke(RestRequestInterface $request)
     {
         return $this->process($request);
     }

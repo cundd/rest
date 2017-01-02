@@ -90,7 +90,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function getMethodTest($method, $expected)
     {
-        $this->assertEquals($expected, (new Route('/', $method, $this->cb))->getMethod());
+        $route = new Route('/', $method, $this->cb);
+
+        $this->assertEquals($expected, $route->getMethod());
     }
 
     public function getMethodTestDataProvider()
