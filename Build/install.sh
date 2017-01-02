@@ -34,7 +34,7 @@ function get_mysql_client_path {
 function install_dependencies {
     print_header "Install dependencies";
     composer self-update;
-    composer install --verbose;
+    composer install --verbose --ignore-platform-reqs;
 }
 
 function install_typo3 {
@@ -49,7 +49,7 @@ function install_typo3 {
         git pull;
     fi
 
-    composer install;
+    composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
