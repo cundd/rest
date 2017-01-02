@@ -24,6 +24,12 @@ function print_info() {
     _tput sgr0;
 }
 
+function print_warning() {
+    _tput setaf 3;
+    echo "[WARNING] $@";
+    _tput sgr0;
+}
+
 function get_mysql_client_path {
     if [[ `which mysql > /dev/null` ]]; then
         which mysql;
