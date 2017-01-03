@@ -37,7 +37,9 @@ trait RequestBuilderTrait
         $parsedBody = null,
         $format = null
     ) {
-        $path = strtok($url, '/');
+        $path = $url;
+//        $path = strtok($url, '/');
+        $resourceType = new ResourceType((string)strtok($url, '/'));
 
         if (null === $format) {
             $format = Format::DEFAULT_FORMAT;
@@ -63,6 +65,6 @@ trait RequestBuilderTrait
             '1.1'
         );
 
-        return new Request($originalRequest, $uri->withPath($path), $path, new ResourceType($path), new Format($format));
+        return new Request($originalRequest, $uri->withPath($path), $path, $resourceType, new Format($format));
     }
 }

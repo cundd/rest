@@ -10,9 +10,12 @@ namespace Cundd\Rest\Router;
 
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Response;
+use Psr\Http\Message\ResponseInterface;
 
-class Router
+/**
+ * Router implementation
+ */
+class Router implements RouterInterface
 {
     private $registeredRoutes = array(
         'GET'  => array(),
@@ -21,100 +24,156 @@ class Router
     );
 
     /**
+     * Dispatch the request
+     *
      * @param RestRequestInterface $request
-     * @return Response
+     * @return ResponseInterface|mixed
      */
     public function dispatch(RestRequestInterface $request)
     {
-        return new Response();
-    }
+        $parameters = $this->getPreparedParameters($request);
+        $route = $this->getMatchingRoute($request);
 
-    public function addRoute(Route $route)
-    {
+        if ($route) {
+            return $route->process($request, ...$parameters);
+        }
 
+        return null;
     }
 
     /**
-     * @param callable $handler
-     * @param string   $path
-     * @param string   $method
+     * Add the given Route
+     *
+     * @param Route $route
      * @return $this
      */
-    public function register(callable $handler, $path, $method)
+    public function add(Route $route)
     {
-        $method = strtoupper($method);
-        $pathParts = array_filter(explode('/', trim($path, '/')));
-//        $last = end($pathParts);
-
+        $method = $route->getMethod();
         if (!isset($this->registeredRoutes[$method])) {
             $this->registeredRoutes[$method] = array();
         }
 
-        $routeTree = $this->appendHandlerToTree($pathParts, $handler, $this->registeredRoutes[$method]);
-        if (!isset($this->registeredRoutes[$method])) {
-            $this->registeredRoutes[$method] = array();
-        }
-
-        $this->registeredRoutes[$method] = array_merge_recursive($this->registeredRoutes[$method], $routeTree);
-
-
-//        $tail['_hndr'] = &$handler;
-//        var_dump($tail);
-////
-//        $routeTree = array_reduce($pathParts, function (array &$carry, $item) {
-//            return $carry[$item] = array();
-//            return $carry;
-//        }, array());
-
-        var_dump($this->registeredRoutes);
-
-        foreach ($pathParts as $part) {
-            if (!isset($routeTree[$part])) {
-                $routeTree[$part] = $handler;
-            }
-        }
-
-//        $last
+        $this->registeredRoutes[$method][$route->getPattern()] = $route;
 
         return $this;
     }
 
-
-    private function appendHandlerToTree(array $pathParts, $handler, array &$carry)
+    /**
+     * @param RestRequestInterface $request
+     * @return Route[]
+     */
+    public function getMatchingRoutes(RestRequestInterface $request)
     {
-        $currentPart = array_shift($pathParts);
-        if (count($pathParts) > 0) {
-            return array(
-                $currentPart => $this->appendHandlerToTree($pathParts, $handler, $carry),
-            );
-//            return array(
-//                $currentPart => array(
-//                    0 => $this->pushHandlerToTree($pathParts, $handler, $carry),
-//                ),
-//            );
+        $method = $request->getMethod();
+        $path = $request->getPath();
+        $matchingRoutes = [];
+        foreach ($this->registeredRoutes[$method] as $pattern => $route) {
+            $regularExpression = $this->patternToRegularExpression($pattern);
+            if (preg_match($regularExpression, $path)) {
+                $matchingRoutes[$pattern] = $route;
+            }
         }
 
-        return array(
-            $currentPart => $handler,
-        );
-//        return array(
-//            $currentPart => array(
-//                1 => $handler,
-//            ),
-//        );
-    }
-
-
-    private function resolveHandler($path)
-    {
-
+        return $this->sortRoutesByPriority($matchingRoutes);
     }
 
     /**
+     * Returns the prepared parameters
+     *
+     * @param RestRequestInterface $request
      * @return array
      */
-    public function dump()
+    public function getPreparedParameters(RestRequestInterface $request)
     {
-        return $this->registeredRoutes;
+        $route = $this->getMatchingRoute($request);
+        if (!$route) {
+            return [];
+        }
+
+        $segments = explode('/', $request->getPath());
+        $parameters = [];
+        foreach ($route->getParameters() as $index => $type) {
+            $parameters[] = $this->getPreparedParameter($type, $segments[$index]);
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * Returns the prepared parameter
+     *
+     * @param string $type
+     * @param string $segment
+     * @return mixed
+     */
+    private function getPreparedParameter($type, $segment)
+    {
+        switch ($type) {
+            case ParameterTypeInterface::SLUG:
+                return (string)$segment;
+            case ParameterTypeInterface::BOOLEAN:
+                return filter_var($segment, FILTER_VALIDATE_BOOLEAN);
+            case ParameterTypeInterface::INTEGER:
+                return filter_var($segment, FILTER_VALIDATE_INT);
+            case ParameterTypeInterface::FLOAT:
+                return filter_var($segment, FILTER_VALIDATE_FLOAT);
+            default:
+                throw new \InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
+        }
+    }
+
+    /**
+     * @param string $pattern
+     * @return string
+     */
+    private function patternToRegularExpression($pattern)
+    {
+        $outputPattern = $pattern;
+        $parameterTypeToRegex = [
+            ParameterTypeInterface::SLUG    => '[a-zA-Z0-9\._\-]+',
+            ParameterTypeInterface::INTEGER => '[0-9]+',
+            ParameterTypeInterface::FLOAT   => '[0-9]+\.[0-9]+',
+            ParameterTypeInterface::BOOLEAN => '(1|true|on|yes|0|false|off|no)',
+        ];
+
+        foreach ($parameterTypeToRegex as $parameterType => $regex) {
+            $outputPattern = str_replace('{' . $parameterType . '}', $regex, $outputPattern);
+        }
+
+        return '!^' . $outputPattern . '$!';
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @return Route
+     */
+    private function getMatchingRoute(RestRequestInterface $request)
+    {
+        $matchingRoutes = $this->getMatchingRoutes($request);
+
+        return reset($matchingRoutes);
+    }
+
+    /**
+     * @param $matchingRoutes
+     * @return array
+     */
+    private function sortRoutesByPriority(array $matchingRoutes)
+    {
+        uasort(
+            $matchingRoutes,
+            function (Route $a, Route $b) {
+                $priorityA = $a->getPriority();
+                $priorityB = $b->getPriority();
+                if ($priorityA === $priorityB) {
+                    return 0;
+                }
+
+                return ($priorityA > $priorityB) ? -1 : 1;
+            }
+        );
+
+        return $matchingRoutes;
     }
 }

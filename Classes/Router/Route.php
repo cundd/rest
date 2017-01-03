@@ -165,24 +165,27 @@ class Route implements RouteInterface
      * Process the route
      *
      * @param RestRequestInterface $request
+     * @param array                $parameters
      * @return ResponseInterface
      */
-    public function process(RestRequestInterface $request)
+    public function process(RestRequestInterface $request, ...$parameters)
     {
         $callback = $this->callback;
 
-        return $callback($request);
+        return $callback($request, ...$parameters);
     }
 
     /**
      * The __invoke method is called when a script tries to call an object as a function.
      *
+     * @param RestRequestInterface $request
+     * @param array                $arguments
      * @return mixed
      * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
      */
-    public function __invoke(RestRequestInterface $request)
+    public function __invoke(RestRequestInterface $request, ...$arguments)
     {
-        return $this->process($request);
+        return $this->process($request, ...$arguments);
     }
 
     /**
