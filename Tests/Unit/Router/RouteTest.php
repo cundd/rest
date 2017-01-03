@@ -54,7 +54,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function routeShouldTrimSlashesTest($inputPattern, $outputPattern)
     {
-        $this->assertEquals($outputPattern, (Route::routeWithPattern($inputPattern, $this->cb))->getPattern());
+        $this->assertEquals($outputPattern, Route::routeWithPattern($inputPattern, $this->cb)->getPattern());
     }
 
     /**
@@ -79,7 +79,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public function getDefaultMethodTest()
     {
-        $this->assertEquals('GET', (Route::routeWithPattern('/', $this->cb))->getMethod());
+        $this->assertEquals('GET', Route::routeWithPattern('/', $this->cb)->getMethod());
     }
 
     /**
@@ -124,8 +124,8 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function deeperPathsHaveHigherPriorityTest($patternLowPriority, $patternHighPriority)
     {
         $this->assertTrue(
-            (Route::routeWithPattern($patternLowPriority, $this->cb))->getPriority()
-            < (Route::routeWithPattern($patternHighPriority, $this->cb))->getPriority()
+            Route::routeWithPattern($patternLowPriority, $this->cb)->getPriority()
+            < Route::routeWithPattern($patternHighPriority, $this->cb)->getPriority()
         );
     }
 
@@ -155,8 +155,8 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function patternsWithExpressionsHaveLowerPriorityTest($patternLowPriority, $patternHighPriority)
     {
         $this->assertTrue(
-            (Route::routeWithPattern($patternLowPriority, $this->cb))->getPriority()
-            < (Route::routeWithPattern($patternHighPriority, $this->cb))->getPriority()
+            Route::routeWithPattern($patternLowPriority, $this->cb)->getPriority()
+            < Route::routeWithPattern($patternHighPriority, $this->cb)->getPriority()
         );
     }
 
@@ -186,7 +186,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expectedParameters,
-            array_values((Route::routeWithPattern($pattern, $this->cb))->getParameters())
+            array_values(Route::routeWithPattern($pattern, $this->cb)->getParameters())
         );
     }
 
