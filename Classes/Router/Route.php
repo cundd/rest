@@ -52,10 +52,10 @@ class Route implements RouteInterface
         $this->assertString($pattern, 'pattern');
         $this->assertString($method, 'method');
 
-        $this->pattern = trim($pattern, '/');
+        $this->pattern = $this->normalizePattern($pattern);
         $this->method = strtoupper($method);
         $this->callback = $callback;
-        $this->parameters = ParameterType::extractParameterTypesFromPattern($pattern);
+        $this->parameters = ParameterType::extractParameterTypesFromPattern($this->pattern);
     }
 
     /**
@@ -84,7 +84,7 @@ class Route implements RouteInterface
     }
 
     /**
-     * Returns the path pattern
+     * Returns the normalized path pattern
      *
      * @return string
      */
@@ -166,5 +166,22 @@ class Route implements RouteInterface
         if (!is_string($input)) {
             throw InvalidArgumentException::buildException($input, 'string', $argumentName);
         }
+    }
+
+    /**
+     * @param string $inputPattern
+     * @return string
+     */
+    private function normalizePattern($inputPattern)
+    {
+        $pattern = trim($inputPattern, '/');
+        $patternParts = explode('/', $pattern);
+        $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);
+
+        foreach ($parameterTypes as $index => $type) {
+            $patternParts[$index] = '{' . $type . '}';
+        }
+
+        return implode('/', $patternParts);
     }
 }

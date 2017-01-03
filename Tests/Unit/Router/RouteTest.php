@@ -178,6 +178,33 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @param string $inputPattern
+     * @param string $expectedPattern
+     * @dataProvider getNormalizedPatternDataProvider
+     */
+    public function getNormalizedPatternTest($inputPattern, $expectedPattern)
+    {
+        $this->assertEquals($expectedPattern, Route::routeWithPattern($inputPattern, $this->cb)->getPattern());
+    }
+
+    public function getNormalizedPatternDataProvider()
+    {
+        return [
+            ['path/{string}', 'path/{slug}'],
+            ['path/{string}/', 'path/{slug}'],
+            ['path/{int}/another', 'path/{integer}/another'],
+            ['path/{float}/another/', 'path/{float}/another'],
+            ['path/{string}/{float}/1', 'path/{slug}/{float}/1'],
+            ['path/sub-path/{string}/1/2/path/item/x', 'path/sub-path/{slug}/1/2/path/item/x'],
+            ['path/sub-path/{string}/1/2/path/item/x/y', 'path/sub-path/{slug}/1/2/path/item/x/y'],
+
+            ['path/sub-path/{string}/{int}/2/path/item/x', 'path/sub-path/{slug}/{integer}/2/path/item/x'],
+            ['path/sub-path/{string}/{int}/2/path/item/x/y', 'path/sub-path/{slug}/{integer}/2/path/item/x/y'],
+        ];
+    }
+
+    /**
+     * @test
      * @param string $pattern
      * @param array  $expectedParameters
      * @dataProvider getParametersDataProvider

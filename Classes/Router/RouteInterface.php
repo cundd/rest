@@ -13,7 +13,7 @@ namespace Cundd\Rest\Router;
 interface RouteInterface
 {
     /**
-     * Returns the path pattern
+     * Returns the normalized path pattern
      *
      * @return string
      */
