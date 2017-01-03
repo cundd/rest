@@ -1,5 +1,5 @@
-rest
-====
+rest v3
+=======
 
 The REST API for TYPO3 CMS
 
