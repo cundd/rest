@@ -65,6 +65,54 @@ class Route implements RouteInterface
      * @param callable $callback
      * @return static
      */
+    public static function get($pattern, callable $callback)
+    {
+        return new static($pattern, 'GET', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method POST
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function post($pattern, callable $callback)
+    {
+        return new static($pattern, 'POST', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method PUT
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function put($pattern, callable $callback)
+    {
+        return new static($pattern, 'PUT', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method DELETE
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function delete($pattern, callable $callback)
+    {
+        return new static($pattern, 'DELETE', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method GET
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
     public static function routeWithPattern($pattern, callable $callback)
     {
         return new static($pattern, 'GET', $callback);

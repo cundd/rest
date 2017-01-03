@@ -288,4 +288,15 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             ['{b00l}'],
         ];
     }
+
+    /**
+     * @test
+     */
+    public function factoryMethodsTest()
+    {
+        $this->assertEquals('GET', Route::get('path/sub-path', $this->cb)->getMethod());
+        $this->assertEquals('POST', Route::post('path/sub-path', $this->cb)->getMethod());
+        $this->assertEquals('PUT', Route::put('path/sub-path', $this->cb)->getMethod());
+        $this->assertEquals('DELETE', Route::delete('path/sub-path', $this->cb)->getMethod());
+    }
 }
