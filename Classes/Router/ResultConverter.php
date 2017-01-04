@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Class to convert simple Router results into Response instances and handle exceptions
  */
-class ResultConverter
+class ResultConverter implements RouterInterface
 {
     /**
      * @var Router
@@ -60,6 +60,19 @@ class ResultConverter
         }
 
         return $this->responseFactory->createSuccessResponse($result, 200, $request);
+    }
+
+    /**
+     * Add the given Route
+     *
+     * @param Route $route
+     * @return RouterInterface
+     */
+    public function add(Route $route)
+    {
+        $this->router->add($route);
+
+        return $this;
     }
 
     /**

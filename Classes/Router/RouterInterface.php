@@ -24,7 +24,7 @@ interface RouterInterface
      * Add the given Route
      *
      * @param Route $route
-     * @return $this
+     * @return RouterInterface
      */
     public function add(Route $route);
 }
