@@ -14,7 +14,7 @@ use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class Route implements RouteInterface
+class Route implements RouteInterface, RouteFactoryInterface
 {
     /**
      * @var string
@@ -221,11 +221,14 @@ class Route implements RouteInterface
     }
 
     /**
+     * Normalize the path pattern
+     *
      * @param string $inputPattern
      * @return string
      */
     private function normalizePattern($inputPattern)
     {
+        // TODO: Check if slashes should really be trimmed
         $pattern = trim((string)$inputPattern, '/');
         $patternParts = explode('/', $pattern);
         $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);
