@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Router;
 
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -60,6 +61,62 @@ class Router implements RouterInterface
     }
 
     /**
+     * Creates and registers a new Route with the given pattern and callback for the method GET
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routeGet($pattern, callable $callback)
+    {
+        $this->add(Route::get($pattern, $callback));
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method POST
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routePost($pattern, callable $callback)
+    {
+        $this->add(Route::post($pattern, $callback));
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method PUT
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routePut($pattern, callable $callback)
+    {
+        $this->add(Route::put($pattern, $callback));
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method DELETE
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routeDelete($pattern, callable $callback)
+    {
+        $this->add(Route::delete($pattern, $callback));
+
+        return $this;
+    }
+
+    /**
      * @param RestRequestInterface $request
      * @return Route[]
      */
@@ -91,7 +148,7 @@ class Router implements RouterInterface
             return [];
         }
 
-        $segments = explode('/', $request->getPath());
+        $segments = explode('/', ltrim($request->getPath(), '/'));
         $parameters = [];
         foreach ($route->getParameters() as $index => $type) {
             $parameters[] = $this->getPreparedParameter($type, $segments[$index]);
@@ -141,7 +198,7 @@ class Router implements RouterInterface
             $outputPattern = str_replace('{' . $parameterType . '}', $regex, $outputPattern);
         }
 
-        return '!^' . $outputPattern . '$!';
+        return '!^/' . $outputPattern . '$!';
     }
 
     /**

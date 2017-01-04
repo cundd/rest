@@ -8,6 +8,7 @@
 
 namespace Cundd\Rest\Router;
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -74,6 +75,63 @@ class ResultConverter implements RouterInterface
 
         return $this;
     }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method GET
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routeGet($pattern, callable $callback)
+    {
+        $this->router->routeGet($pattern, $callback);
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method POST
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routePost($pattern, callable $callback)
+    {
+        $this->router->routePost($pattern, $callback);
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method PUT
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routePut($pattern, callable $callback)
+    {
+        $this->router->routePut($pattern, $callback);
+
+        return $this;
+    }
+
+    /**
+     * Creates and registers a new Route with the given pattern and callback for the method DELETE
+     *
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
+     * @return RouterInterface
+     */
+    public function routeDelete($pattern, callable $callback)
+    {
+        $this->router->routeDelete($pattern, $callback);
+
+        return $this;
+    }
+
 
     /**
      * Convert exceptions that occurred during the dispatching
