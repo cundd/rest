@@ -1,0 +1,133 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: daniel
+ * Date: 04.01.17
+ * Time: 11:24
+ */
+
+namespace Cundd\Rest\Router;
+
+use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+
+/**
+ * Class to convert simple Router results into Response instances and handle exceptions
+ */
+class ResultConverter
+{
+    /**
+     * @var Router
+     */
+    private $router;
+
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
+
+    /**
+     * Result converter constructor
+     *
+     * @param RouterInterface          $router
+     * @param ResponseFactoryInterface $responseFactory
+     */
+    public function __construct(RouterInterface $router, ResponseFactoryInterface $responseFactory)
+    {
+        $this->router = $router;
+        $this->responseFactory = $responseFactory;
+    }
+
+    /**
+     * Dispatch the request to the router and convert the result
+     *
+     * @param RestRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function dispatch(RestRequestInterface $request)
+    {
+        try {
+            $result = $this->router->dispatch($request);
+        } catch (\Exception $exception) {
+            $result = $exception;
+        }
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
+        if ($result instanceof \Exception) {
+            return $this->exceptionToResponse($result, $request);
+        }
+
+        return $this->responseFactory->createSuccessResponse($result, 200, $request);
+    }
+
+    /**
+     * Convert exceptions that occurred during the dispatching
+     *
+     * @param \Exception           $exception
+     * @param RestRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function exceptionToResponse(\Exception $exception, RestRequestInterface $request)
+    {
+        if ($this->getShowDebugInformation()) {
+            $exceptionDetails = $this->getDebugDetails($exception);
+        } else {
+            $exceptionDetails = sprintf('Sorry! Something is wrong. Exception code #%d', $exception->getCode());
+        }
+
+        return $this->responseFactory->createErrorResponse($exceptionDetails, 501, $request);
+    }
+
+    /**
+     * @param $exception
+     * @return array
+     */
+    private function getDebugTrace(\Exception $exception)
+    {
+        return array_map(
+            function ($step) {
+                $arguments = count($step['args']) > 0 ? sprintf('(%d Arguments)', count($step['args'])) : '()';
+                if (isset($step['class'])) {
+                    return $step['class'] . $step['type'] . $step['function'] . $arguments;
+                }
+                if (isset($step['function'])) {
+
+                    return $step['function'] . $arguments;
+                }
+
+                return '';
+            },
+            $exception->getTrace()
+        );
+    }
+
+    /**
+     * @param $exception
+     * @return array
+     */
+    private function getDebugDetails(\Exception $exception)
+    {
+        return [
+            'error' => sprintf(
+                '%s #%d: %s',
+                get_class($exception),
+                $exception->getCode(),
+                $exception->getMessage()
+            ),
+            'trace' => $this->getDebugTrace($exception),
+        ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function getShowDebugInformation()
+    {
+        $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+
+        return $clientAddress === '127.0.0.1' || $clientAddress === '::1';
+    }
+
+}
