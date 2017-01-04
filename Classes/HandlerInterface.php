@@ -33,6 +33,7 @@
 namespace Cundd\Rest;
 
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Router\RouterInterface;
 
 /**
  * Interface for handlers of API requests
@@ -40,22 +41,10 @@ use Cundd\Rest\Http\RestRequestInterface;
 interface HandlerInterface
 {
     /**
-     * Sets the current request
+     * Let the handler configure the routes
      *
+     * @param RouterInterface      $router
      * @param RestRequestInterface $request
-     * @return $this
      */
-    public function setRequest(RestRequestInterface $request);
-
-    /**
-     * Returns the current request
-     *
-     * @return RestRequestInterface
-     */
-    public function getRequest();
-
-    /**
-     * Configures which method is responsible for handling the different request paths
-     */
-    public function configureApiPaths();
+    public function configureRoutes(RouterInterface $router, RestRequestInterface $request);
 }

@@ -35,6 +35,9 @@ namespace Cundd\Rest;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Router\Route;
+use Cundd\Rest\Router\RouterInterface;
+use Psr\Http\Message\ResponseInterface;
 use Traversable;
 
 /**
@@ -81,66 +84,17 @@ class Handler implements CrudHandlerInterface
     }
 
     /**
-     * Sets the current request
-     *
-     * @param RestRequestInterface $request
-     * @return $this
-     */
-    public function setRequest(RestRequestInterface $request)
-    {
-        $this->request = $request;
-        $this->identifier = null;
-
-        return $this;
-    }
-
-    /**
-     * Returns the current request
-     *
-     * @return RestRequestInterface
-     */
-    public function getRequest()
-    {
-        if (!$this->request) {
-            return $this->objectManager->getRequestFactory()->getRequest();
-        }
-
-        return $this->request;
-    }
-
-    /**
-     * Returns the unique identifier of the currently matching Domain Model
-     *
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Sets the unique identifier of the currently matching Domain Model
-     *
-     * @param string $identifier
-     * @return $this
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-
-        return $this;
-    }
-
-    /**
      * Returns the given property of the currently matching Model
      *
-     * @param string $propertyKey
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @param string               $propertyKey
      * @return mixed
      */
-    public function getProperty($propertyKey)
+    public function getProperty(RestRequestInterface $request, $identifier, $propertyKey)
     {
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
@@ -151,22 +105,24 @@ class Handler implements CrudHandlerInterface
     /**
      * Returns the data of the current Model
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param                      $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function show()
+    public function show(RestRequestInterface $request, $identifier)
     {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* SHOW
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                Utility::singularize($this->getRequest()->getRootObjectKey()) => $result,
+                Utility::singularize($request->getRootObjectKey()) => $result,
             );
         }
 
@@ -176,29 +132,30 @@ class Handler implements CrudHandlerInterface
     /**
      * Replaces the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param                      $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function replace()
+    public function replace(RestRequestInterface $request, $identifier)
     {
         $dataProvider = $this->getDataProvider();
 
-        $request = $this->getRequest();
         $data = $request->getSentData();
-        $data['__identity'] = $this->getIdentifier();
+        $data['__identity'] = $identifier;
         Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
-        $oldModel = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
+        $oldModel = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$oldModel) {
             return $this->responseFactory->createErrorResponse(null, 404);
         }
 
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
-        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400);
         }
 
-        $dataProvider->saveModelForResourceType($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
@@ -212,24 +169,25 @@ class Handler implements CrudHandlerInterface
     /**
      * Updates the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param                      $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function update()
+    public function update(RestRequestInterface $request, $identifier)
     {
         $dataProvider = $this->getDataProvider();
 
-        $request = $this->getRequest();
         $data = $request->getSentData();
-        $data['__identity'] = $this->getIdentifier();
+        $data['__identity'] = $identifier;
         Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
 
-        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
 
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
 
-        $dataProvider->saveModelForResourceType($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
@@ -243,19 +201,21 @@ class Handler implements CrudHandlerInterface
     /**
      * Deletes the currently matching Model
      *
-     * @return integer Returns 200 an success
+     * @param RestRequestInterface $request
+     * @param                      $identifier
+     * @return int|ResponseInterface Returns 200 an success
      */
-    public function delete()
+    public function delete(RestRequestInterface $request, $identifier)
     {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* REMOVE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForResourceType($this->getIdentifier(), $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404);
         }
-        $dataProvider->removeModelForResourceType($model, $this->getPath());
+        $dataProvider->removeModelForResourceType($model, $request->getResourceType());
 
         return $this->responseFactory->createSuccessResponse(null, 200);
     }
@@ -263,28 +223,28 @@ class Handler implements CrudHandlerInterface
     /**
      * Creates a new Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function create()
+    public function create(RestRequestInterface $request)
     {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* CREATE																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
 
-        $request = $this->getRequest();
         $data = $request->getSentData();
         Dispatcher::getSharedDispatcher()->logRequest('create request', array('body' => $data));
 
         /**
          * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
          */
-        $model = $dataProvider->getModelWithDataForResourceType($data, $this->getPath());
+        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 400);
         }
 
-        $dataProvider->saveModelForResourceType($model, $this->getPath());
+        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
@@ -298,16 +258,17 @@ class Handler implements CrudHandlerInterface
     /**
      * List all Models
      *
+     * @param RestRequestInterface $request
      * @return array Returns all Models
      */
-    public function listAll()
+    public function listAll(RestRequestInterface $request)
     {
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         /* LIST 																	 */
         /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
 
-        $allModels = $dataProvider->getAllModelsForResourceType($this->getPath());
+        $allModels = $dataProvider->getAllModelsForResourceType($request->getResourceType());
         if (!is_array($allModels) && $allModels instanceof Traversable) {
             $allModels = iterator_to_array($allModels);
         }
@@ -315,7 +276,7 @@ class Handler implements CrudHandlerInterface
         $result = array_map(array($dataProvider, 'getModelData'), $allModels);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
             return array(
-                $this->getRequest()->getRootObjectKey() => $result,
+                $request->getRootObjectKey() => $result,
             );
         }
 
@@ -323,88 +284,23 @@ class Handler implements CrudHandlerInterface
     }
 
     /**
-     * Configure the API paths
+     * Let the handler configure the routes
+     *
+     * @param RouterInterface      $router
+     * @param RestRequestInterface $request
      */
-    public function configureApiPaths()
+    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
-        $dispatcher = Dispatcher::getSharedDispatcher();
-
-        /** @var HandlerInterface */
-        $handler = $this;
-
-        $dispatcher->registerPath(
-            $this->getPath(),
-            function () use ($handler, $dispatcher) {
-                $handler->setRequest($dispatcher->getRequest());
-
-                /*
-                 * Handle a specific Model
-                 */
-                $dispatcher->registerParameter(
-                    'slug',
-                    function ($_, $identifier) use ($handler, $dispatcher) {
-                        $handler->setIdentifier($identifier);
-
-                        /*
-                         * Get single property
-                         */
-                        $getPropertyCallback = function ($_, $propertyKey) use ($handler) {
-                            return $handler->getProperty($propertyKey);
-                        };
-                        $dispatcher->registerParameter('slug', $getPropertyCallback);
-
-                        /*
-                         * Show a single Model
-                         */
-                        $getCallback = function () use ($handler) {
-                            return $handler->show();
-                        };
-                        $dispatcher->registerGetMethod($getCallback);
-
-                        /*
-                         * Replace a Model
-                         */
-                        $replaceCallback = function () use ($handler) {
-                            return $handler->replace();
-                        };
-                        $dispatcher->registerPutMethod($replaceCallback);
-                        $dispatcher->registerPostMethod($replaceCallback);
-
-                        /*
-                         * Update a Model
-                         */
-                        $updateCallback = function () use ($handler) {
-                            return $handler->update();
-                        };
-                        $dispatcher->registerPatchMethod($updateCallback);
-
-                        /*
-                         * Delete a Model
-                         */
-                        $deleteCallback = function () use ($handler) {
-                            return $handler->delete();
-                        };
-                        $dispatcher->registerDeleteMethod($deleteCallback);
-                    }
-                );
-
-                /*
-                 * Create a Model
-                 */
-                $createCallback = function ($request) use ($handler) {
-                    return $handler->create();
-                };
-                $dispatcher->registerPostMethod($createCallback);
-
-                /*
-                 * List all Models
-                 */
-                $listCallback = function ($request) use ($handler) {
-                    return $handler->listAll();
-                };
-                $dispatcher->registerGetMethod($listCallback);
-            }
+        $router->add(Route::get($request->getResourceType() . '/?', [$this, 'listAll']));
+        $router->add(Route::post($request->getResourceType() . '/?', [$this, 'create']));
+        $router->add(Route::get($request->getResourceType() . '/{slug}/?', [$this, 'show']));
+        $router->add(Route::put($request->getResourceType() . '/{slug}/?', [$this, 'replace']));
+        $router->add(Route::post($request->getResourceType() . '/{slug}/?', [$this, 'replace']));
+        $router->add(Route::delete($request->getResourceType() . '/{slug}/?', [$this, 'delete']));
+        $router->add(
+            Route::routeWithPatternAndMethod($request->getResourceType() . '/{slug}/?', 'PATCH', [$this, 'replace'])
         );
+        $router->add(Route::get($request->getResourceType() . '/{slug}/{slug}/?', [$this, 'getProperty']));
     }
 
     /**
@@ -415,15 +311,5 @@ class Handler implements CrudHandlerInterface
     protected function getDataProvider()
     {
         return $this->objectManager->getDataProvider();
-    }
-
-    /**
-     * Returns the current request's path
-     *
-     * @return string
-     */
-    protected function getPath()
-    {
-        return $this->getRequest()->getResourceType();
     }
 }

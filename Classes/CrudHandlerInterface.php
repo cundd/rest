@@ -32,74 +32,73 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Interface for handlers of API requests
  */
 interface CrudHandlerInterface extends HandlerInterface
 {
-
-    /**
-     * Returns the unique identifier of the currently matching Domain Model
-     *
-     * @return string
-     */
-    public function getIdentifier();
-
-    /**
-     * Sets the unique identifier of the currently matching Domain Model
-     *
-     * @param string $identifier
-     * @return $this
-     */
-    public function setIdentifier($identifier);
-
     /**
      * Returns the given property of the currently matching Model
      *
-     * @param string $propertyKey
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @param string               $propertyKey
      * @return mixed
      */
-    public function getProperty($propertyKey);
+    public function getProperty(RestRequestInterface $request, $identifier, $propertyKey);
 
     /**
      * Returns the data of the current Model
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function show();
+    public function show(RestRequestInterface $request, $identifier);
 
     /**
      * Replaces the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function replace();
+    public function replace(RestRequestInterface $request, $identifier);
 
     /**
      * Updates the currently matching Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function update();
+    public function update(RestRequestInterface $request, $identifier);
 
     /**
      * Deletes the currently matching Model
      *
-     * @return integer Returns 200 an success
+     * @param RestRequestInterface $request
+     * @param int|string           $identifier
+     * @return int|ResponseInterface Returns 200 an success
      */
-    public function delete();
+    public function delete(RestRequestInterface $request, $identifier);
 
     /**
      * Creates a new Model with the data from the request
      *
-     * @return array|integer Returns the Model's data on success, otherwise a descriptive error code
+     * @param RestRequestInterface $request
+     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
      */
-    public function create();
+    public function create(RestRequestInterface $request);
 
     /**
      * List all Models
      *
+     * @param RestRequestInterface $request
      * @return array Returns all Models
      */
-    public function listAll();
+    public function listAll(RestRequestInterface $request);
 }

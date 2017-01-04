@@ -29,8 +29,9 @@ use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\ApiConfigurationInterface;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Router\ResultConverter;
+use Cundd\Rest\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LogLevel;
@@ -129,7 +130,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     {
         $requestPath = $request->getPath();
         if (!$requestPath) {
-            return $this->greet();
+            return $this->greet($request);
         }
 
         // Checks if the request needs authentication
@@ -182,6 +183,16 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     }
 
     /**
+     * @return array
+     */
+    private function getResultConverter()
+    {
+        $router = $this->objectManager->get(RouterInterface::class);
+
+        return $this->objectManager->get(ResultConverter::class, [$router, $this->responseFactory]);
+    }
+
+    /**
      * Call the handler for the current request
      *
      * @param RestRequestInterface $request
@@ -191,40 +202,47 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
     private function callHandler(RestRequestInterface $request)
     {
         $requestPath = $request->getPath();
+
+        /** @var RouterInterface $resultConverter */
+        $resultConverter = $this->getResultConverter();
+
         // If a path is given let the handler build up the routes
         $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->getMethod()));
 
-        $this->objectManager->getHandler()->configureApiPaths();
+        $this->objectManager->getHandler()->configureRoutes($resultConverter, $request);
 
-
-        // Let Bullet PHP do the hard work
-        $newResponse = $this->app->run($request->getMethod());
-        if (class_exists(\Bullet\Response::class) && $newResponse instanceof \Bullet\Response) {
-            // Handle exceptions
-            if ($newResponse->content() instanceof \Exception) {
-                $exception = $newResponse->content();
-                $this->logException($exception);
-
-                return $this->exceptionToResponse($exception);
-            }
-
-            return $this->responseFactory->createResponse($newResponse->content(), 200)
-                ->withHeader(
-                    Header::CONTENT_TYPE,
-                    $newResponse->contentType() . "; charset=" . $newResponse->encoding()
-                );
-        }
-
-        /** @var ResponseInterface $newResponse */
-        return $newResponse;
+        return $resultConverter->dispatch($request);
+//
+//
+//        // Let Bullet PHP do the hard work
+//        $newResponse = $this->app->run($request->getMethod());
+//        if (class_exists(\Bullet\Response::class) && $newResponse instanceof \Bullet\Response) {
+//            // Handle exceptions
+//            if ($newResponse->content() instanceof \Exception) {
+//                $exception = $newResponse->content();
+//                $this->logException($exception);
+//
+//                return $this->exceptionToResponse($exception);
+//            }
+//
+//            return $this->responseFactory->createResponse($newResponse->content(), 200)
+//                ->withHeader(
+//                    Header::CONTENT_TYPE,
+//                    $newResponse->contentType() . "; charset=" . $newResponse->encoding()
+//                );
+//        }
+//
+//        /** @var ResponseInterface $newResponse */
+//        return $newResponse;
     }
 
     /**
      * Print the greeting
      *
+     * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function greet()
+    public function greet(RestRequestInterface $request)
     {
         $greeting = 'What\'s up?';
         $hour = date('H');
@@ -234,7 +252,7 @@ class Dispatcher implements SingletonInterface, ApiConfigurationInterface, Dispa
             $greeting = 'Hy! Still awake?';
         }
 
-        $response = $this->responseFactory->createSuccessResponse($greeting, 200);
+        $response = $this->responseFactory->createSuccessResponse($greeting, 200, $request);
 
         $this->logResponse(
             'response: ' . $response->getStatusCode(),
