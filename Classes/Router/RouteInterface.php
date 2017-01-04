@@ -7,6 +7,7 @@
  */
 namespace Cundd\Rest\Router;
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -57,8 +58,8 @@ interface RouteInterface
     /**
      * Creates a new Route with the given pattern and callback for the method GET
      *
-     * @param string   $pattern
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
      * @return static
      */
     public static function get($pattern, callable $callback);
@@ -66,8 +67,8 @@ interface RouteInterface
     /**
      * Creates a new Route with the given pattern and callback for the method POST
      *
-     * @param string   $pattern
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
      * @return static
      */
     public static function post($pattern, callable $callback);
@@ -75,8 +76,8 @@ interface RouteInterface
     /**
      * Creates a new Route with the given pattern and callback for the method PUT
      *
-     * @param string   $pattern
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
      * @return static
      */
     public static function put($pattern, callable $callback);
@@ -84,8 +85,8 @@ interface RouteInterface
     /**
      * Creates a new Route with the given pattern and callback for the method DELETE
      *
-     * @param string   $pattern
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
      * @return static
      */
     public static function delete($pattern, callable $callback);

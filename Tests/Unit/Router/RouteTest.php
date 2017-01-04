@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Tests\Unit\Router;
 
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Router\ParameterTypeInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Tests\RequestBuilderTrait;
@@ -72,6 +73,26 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             ['path/sub-path/', 'path/sub-path'],
             ['path/sub-path', 'path/sub-path'],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function routeShouldAcceptResourceTypeTest()
+    {
+        $this->assertEquals(
+            'path',
+            Route::routeWithPattern(new ResourceType('path'), $this->cb)->getPattern()
+        );
+        $this->assertEquals(
+            'path',
+            Route::routeWithPatternAndMethod(new ResourceType('path'), 'GET', $this->cb)->getPattern()
+        );
+        $route = new Route(new ResourceType('path'), 'GET', $this->cb);
+        $this->assertEquals(
+            'path',
+            $route->getPattern()
+        );
     }
 
     /**

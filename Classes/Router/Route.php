@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Router;
 
 
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -43,7 +44,7 @@ class Route implements RouteInterface
     /**
      * Route constructor
      *
-     * @param string   $pattern
+     * @param string|ResourceType   $pattern
      * @param string   $method
      * @param callable $callback
      */
@@ -214,7 +215,7 @@ class Route implements RouteInterface
      */
     private function assertString($input, $argumentName)
     {
-        if (!is_string($input)) {
+        if (!is_string($input) && !(is_object($input) && method_exists($input, '__toString'))) {
             throw InvalidArgumentException::buildException($input, 'string', $argumentName);
         }
     }
@@ -225,7 +226,7 @@ class Route implements RouteInterface
      */
     private function normalizePattern($inputPattern)
     {
-        $pattern = trim($inputPattern, '/');
+        $pattern = trim((string)$inputPattern, '/');
         $patternParts = explode('/', $pattern);
         $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);
 
