@@ -41,7 +41,6 @@ abstract class AbstractAccessController implements AccessControllerInterface
 {
     /**
      * @var ObjectManager
-     * @inject
      */
     protected $objectManager;
 

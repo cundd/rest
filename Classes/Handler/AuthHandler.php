@@ -32,11 +32,9 @@
 
 namespace Cundd\Rest\Handler;
 
-use Cundd\Rest\Dispatcher;
-use Cundd\Rest\Handler;
 use Cundd\Rest\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
+use Cundd\Rest\Router\RouterInterface;
 
 /**
  * Handler for the credentials authorization
@@ -86,33 +84,6 @@ class AuthHandler implements HandlerInterface
     protected $requestFactory;
 
     /**
-     * Sets the current request
-     *
-     * @param RestRequestInterface $request
-     * @return $this
-     */
-    public function setRequest(RestRequestInterface $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
-    /**
-     * Returns the current request
-     *
-     * @return RestRequestInterface
-     */
-    public function getRequest()
-    {
-        if (!$this->request) {
-            return $this->requestFactory->getRequest();
-        }
-
-        return $this->request;
-    }
-
-    /**
      * Returns the current status
      *
      * @return array
@@ -132,17 +103,19 @@ class AuthHandler implements HandlerInterface
     /**
      * Check the given login data
      *
-     * @param array $sentData
+     * @param RestRequestInterface $request
      * @return array
+     * @internal param array $sentData
      */
-    public function checkLogin($sentData)
+    public function checkLogin(RestRequestInterface $request)
     {
+        $sentData = $request->getSentData();
         $loginStatus = self::STATUS_LOGGED_OUT;
         if (isset($sentData['username']) && isset($sentData['apikey'])) {
             $username = $sentData['username'];
-            $apikey = $sentData['apikey'];
+            $apiKey = $sentData['apikey'];
 
-            if ($this->userProvider->checkCredentials($username, $apikey)) {
+            if ($this->userProvider->checkCredentials($username, $apiKey)) {
                 $loginStatus = self::STATUS_LOGGED_IN;
             } else {
                 $loginStatus = self::STATUS_FAILURE;
@@ -170,50 +143,16 @@ class AuthHandler implements HandlerInterface
     }
 
     /**
-     * Configure the API paths
+     * Let the handler configure the routes
+     *
+     * @param RouterInterface      $router
+     * @param RestRequestInterface $request
      */
-    public function configureApiPaths()
+    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
-        $dispatcher = Dispatcher::getSharedDispatcher();
-
-        /** @var AuthHandler */
-        $handler = $this;
-
-        $dispatcher->registerPath(
-            $this->getRequest()->getResourceType(),
-            function ($request) use ($handler, $dispatcher) {
-                $handler->setRequest($request);
-
-                $dispatcher->registerPath(
-                    'login',
-                    function ($request) use ($handler, $dispatcher) {
-                        $getCallback = function ($request) use ($handler) {
-                            return $handler->getStatus();
-                        };
-                        $dispatcher->registerGetMethod($getCallback);
-
-                        /**
-                         * @param RestRequestInterface $request
-                         * @return array
-                         */
-                        $loginCallback = function ($request) use ($handler) {
-                            return $handler->checkLogin($request->getSentData());
-                        };
-                        $dispatcher->registerPostMethod($loginCallback);
-                    }
-                );
-
-                $dispatcher->registerPath(
-                    'logout',
-                    function () use ($handler, $dispatcher) {
-                        $postCallback = function () use ($handler) {
-                            return $handler->logout();
-                        };
-                        $dispatcher->registerGetMethod($postCallback);
-                        $dispatcher->registerPostMethod($postCallback);
-                    }
-                );
-            }
-        );
+        $router->routeGet($request->getResourceType() . '/login/?', [$this, 'getStatus']);
+        $router->routePost($request->getResourceType() . '/login/?', [$this, 'checkLogin']);
+        $router->routeGet($request->getResourceType() . '/logout/?', [$this, 'logout']);
+        $router->routePost($request->getResourceType() . '/logout/?', [$this, 'logout']);
     }
 }
