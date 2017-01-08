@@ -7,9 +7,7 @@
  */
 namespace Cundd\Rest\Dispatcher;
 
-use Bullet\Response;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
