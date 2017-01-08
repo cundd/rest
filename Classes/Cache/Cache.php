@@ -30,16 +30,12 @@
 
 namespace Cundd\Rest\Cache;
 
-use Bullet\Response;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
-use MongoDB\Driver\Server;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

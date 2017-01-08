@@ -34,7 +34,6 @@
 namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 
 interface AccessControllerInterface
 {

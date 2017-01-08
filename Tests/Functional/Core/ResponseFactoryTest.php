@@ -40,12 +40,12 @@ class ResponseFactoryTest extends AbstractCase
     public function createErrorResponseTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $response = $this->fixture->createErrorResponse('Everything ok', 200);
+        $response = $this->fixture->createErrorResponse('Everything ok', 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"error":"Everything ok"}', (string)$response->getBody());
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
-        $response = $this->fixture->createErrorResponse('HTML format is currently not supported', 200);
+        $response = $this->fixture->createErrorResponse('HTML format is currently not supported', 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             'Unsupported format: html. Please set the Accept header to application/json',
@@ -53,11 +53,11 @@ class ResponseFactoryTest extends AbstractCase
         );
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
-        $response = $this->fixture->createErrorResponse(null, 200);
+        $response = $this->fixture->createErrorResponse(null, 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"error":"OK"}', (string)$response->getBody());
 
-        $response = $this->fixture->createErrorResponse(null, 404);
+        $response = $this->fixture->createErrorResponse(null, 404, $this->requestFactory->getRequest());
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());
     }
@@ -106,12 +106,12 @@ class ResponseFactoryTest extends AbstractCase
     public function createSuccessResponseTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $response = $this->fixture->createSuccessResponse('Everything ok', 200);
+        $response = $this->fixture->createSuccessResponse('Everything ok', 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"message":"Everything ok"}', (string)$response->getBody());
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
-        $response = $this->fixture->createSuccessResponse('HTML format is currently not supported', 200);
+        $response = $this->fixture->createSuccessResponse('HTML format is currently not supported', 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             'Unsupported format: html. Please set the Accept header to application/json',
@@ -119,12 +119,12 @@ class ResponseFactoryTest extends AbstractCase
         );
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
-        $response = $this->fixture->createSuccessResponse(null, 200);
+        $response = $this->fixture->createSuccessResponse(null, 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"message":"OK"}', (string)$response->getBody());
 
         // This will be an error
-        $response = $this->fixture->createSuccessResponse(null, 404);
+        $response = $this->fixture->createSuccessResponse(null, 404, $this->requestFactory->getRequest());
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());
     }

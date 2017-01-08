@@ -26,7 +26,6 @@
 namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\SingletonInterface;
-use Cundd\Rest\Utility\DebugUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 /**

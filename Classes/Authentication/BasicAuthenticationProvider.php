@@ -26,7 +26,6 @@
 namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 
 /**
  * Authentication Provider for login data sent through Basic Auth

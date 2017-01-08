@@ -26,7 +26,6 @@
 namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 
 /**
  * The class expects an existing valid authenticated Frontend User or credentials passed through the request.

@@ -96,7 +96,7 @@ class Handler implements CrudHandlerInterface
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
 
         return $dataProvider->getModelProperty($model, $propertyKey);
@@ -117,7 +117,7 @@ class Handler implements CrudHandlerInterface
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
         $result = $dataProvider->getModelData($model);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
@@ -146,13 +146,13 @@ class Handler implements CrudHandlerInterface
 
         $oldModel = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$oldModel) {
-            return $this->responseFactory->createErrorResponse(null, 404);
+            return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
 
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createErrorResponse(null, 400);
+            return $this->responseFactory->createErrorResponse(null, 400, $request);
         }
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());
@@ -184,7 +184,7 @@ class Handler implements CrudHandlerInterface
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
 
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());
@@ -213,11 +213,11 @@ class Handler implements CrudHandlerInterface
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404);
+            return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
         $dataProvider->removeModelForResourceType($model, $request->getResourceType());
 
-        return $this->responseFactory->createSuccessResponse(null, 200);
+        return $this->responseFactory->createSuccessResponse(null, 200, $request);
     }
 
     /**
@@ -241,7 +241,7 @@ class Handler implements CrudHandlerInterface
          */
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 400);
+            return $this->responseFactory->createSuccessResponse(null, 400, $request);
         }
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());

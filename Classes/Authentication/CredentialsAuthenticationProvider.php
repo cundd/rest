@@ -27,7 +27,6 @@ namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 
 /**
  * Authentication Provider for requests authenticated through the login route (/auth/login)

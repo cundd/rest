@@ -26,7 +26,6 @@
 namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 
 abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface
 {

@@ -25,13 +25,10 @@
 
 namespace Cundd\Rest;
 
-use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Cache\CacheFactory;
-use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Utility\DebugUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 

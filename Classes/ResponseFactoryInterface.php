@@ -7,7 +7,6 @@
  */
 namespace Cundd\Rest;
 
-use Bullet\Response;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
