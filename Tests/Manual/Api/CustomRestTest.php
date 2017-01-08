@@ -8,7 +8,9 @@
 
 namespace Cundd\Rest\Tests\Manual\Api;
 
-
+/**
+ * Test the custom routing using the custom_rest extension (https://github.com/cundd/custom_rest)
+ */
 class CustomRestTest extends AbstractApiCase
 {
     /**

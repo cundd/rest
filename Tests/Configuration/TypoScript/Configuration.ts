@@ -10,7 +10,6 @@ plugin.tx_rest.settings {
             read = allow
             write = allow
         }
-
         2015 {
             path = VirtualObject-Page
             read = allow
@@ -28,12 +27,11 @@ plugin.tx_rest.settings {
             write = require
         }
 
-
-#        3 {
-#            path = GeorgRinger-News-*
-#            read = allow
-#            write = allow
-#        }
+        3 {
+            path = GeorgRinger-News-*
+            read = allow
+            write = allow
+        }
     }
 
     aliases {
