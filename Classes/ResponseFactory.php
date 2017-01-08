@@ -18,21 +18,6 @@ use Psr\Http\Message\ResponseInterface;
 class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 {
     /**
-     * @var \Cundd\Rest\RequestFactoryInterface
-     */
-    protected $requestFactory;
-
-    /**
-     * ResponseFactory constructor.
-     *
-     * @param RequestFactoryInterface $requestFactory
-     */
-    public function __construct(RequestFactoryInterface $requestFactory)
-    {
-        $this->requestFactory = $requestFactory;
-    }
-
-    /**
      * Returns a response with the given content and status code
      *
      * @param string|array $data       Data to send
@@ -61,7 +46,7 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function createErrorResponse($data, $status, RestRequestInterface $request = null)
+    public function createErrorResponse($data, $status, RestRequestInterface $request)
     {
         return $this->createFormattedResponse($data, $status, true, $request);
     }
@@ -77,7 +62,7 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function createSuccessResponse($data, $status, RestRequestInterface $request = null)
+    public function createSuccessResponse($data, $status, RestRequestInterface $request)
     {
         return $this->createFormattedResponse($data, $status, false, $request);
     }
@@ -91,16 +76,12 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function createFormattedResponse($data, $status, $forceError, $request)
+    private function createFormattedResponse($data, $status, $forceError, RestRequestInterface $request)
     {
         $responseClass = $this->getResponseImplementationClass();
         /** @var ResponseInterface $response */
         $response = new $responseClass();
         $response = $response->withStatus($status);
-
-        if (!$request) {
-            $request = $this->requestFactory->getRequest();
-        }
 
         $messageKey = 'message';
         if ($forceError || $status >= 400) {
