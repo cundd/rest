@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Tests\Unit\Router;
 
 
+use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\Router;
 use Cundd\Rest\Tests\Unit\AbstractRequestBasedCase;
@@ -68,7 +69,7 @@ class RouterTest extends AbstractRequestBasedCase
         $result = $this->fixture->dispatch($request);
 
         if ($noResult) {
-            $this->assertNull($result);
+            $this->assertInstanceOf(NotFoundException::class, $result);
         } else {
             $this->assertSame($request, array_shift($result));
             $this->assertSame($expectedParameters, $result);
@@ -88,6 +89,18 @@ class RouterTest extends AbstractRequestBasedCase
 
         $prepareParameters = $this->fixture->getPreparedParameters($this->buildTestRequest($path, 'GET'));
         $this->assertSame($expectedParameters, $prepareParameters);
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchNotFoundTest()
+    {
+        $this->fixture->add(Route::get('some/route', $this->cb));
+
+        $request = $this->buildTestRequest('another/path', 'GET');
+        $result = $this->fixture->dispatch($request);
+        $this->assertInstanceOf(NotFoundException::class, $result);
     }
 
     public function getPreparedParametersDataProvider()

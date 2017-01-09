@@ -12,6 +12,7 @@ namespace Cundd\Rest\Tests\Unit\Router;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\RequestBuilderTrait;
@@ -72,10 +73,27 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function dispatchNotFoundTest()
+    {
+        /** @var ResponseInterface|ObjectProphecy $response */
+        $this->fixture = new ResultConverter($this->buildRouter(new NotFoundException()), $this->responseFactory);
+
+        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertSame(404, $result->getStatusCode());
+        $this->assertSame('{"error":"Not Found"}', (string)$result->getBody());
+    }
+
+    /**
+     * @test
+     */
     public function dispatchArrayTest()
     {
         /** @var ResponseInterface|ObjectProphecy $response */
-        $this->fixture = new ResultConverter($this->buildRouter(['some' => 'data', 'key' => 'hello']), $this->responseFactory);
+        $this->fixture = new ResultConverter(
+            $this->buildRouter(['some' => 'data', 'key' => 'hello']),
+            $this->responseFactory
+        );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);

@@ -11,6 +11,7 @@ namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Router\Exception\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -35,11 +36,11 @@ class Router implements RouterInterface
         $parameters = $this->getPreparedParameters($request);
         $route = $this->getMatchingRoute($request);
 
-        if ($route) {
-            return $route->process($request, ...$parameters);
+        if (!$route) {
+            return new NotFoundException();
         }
 
-        return null;
+        return $route->process($request, ...$parameters);
     }
 
     /**

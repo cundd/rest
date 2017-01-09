@@ -11,6 +11,7 @@ namespace Cundd\Rest\Router;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\Router\Exception\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -55,6 +56,10 @@ class ResultConverter implements RouterInterface
         }
         if ($result instanceof ResponseInterface) {
             return $result;
+        }
+
+        if ($result instanceof NotFoundException) {
+            return $this->responseFactory->createErrorResponse($result->getMessage() ?: null, 404, $request);
         }
         if ($result instanceof \Exception) {
             return $this->exceptionToResponse($result, $request);
