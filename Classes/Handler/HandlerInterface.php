@@ -30,7 +30,7 @@
  * Time: 14:37
  */
 
-namespace Cundd\Rest;
+namespace Cundd\Rest\Handler;
 
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\RouterInterface;

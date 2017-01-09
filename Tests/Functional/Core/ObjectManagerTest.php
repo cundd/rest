@@ -217,13 +217,13 @@ class ObjectManagerTest extends AbstractCase
 
         $handler = $this->fixture->getHandler();
         $this->assertInstanceOf($expectedClass, $handler);
-        $this->assertInstanceOf('Cundd\\Rest\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Cundd\\Rest\\Handler', $handler);
+        $this->assertInstanceOf('Cundd\\Rest\\Handler\\HandlerInterface', $handler);
+        $this->assertInstanceOf('Cundd\\Rest\\Handler\\Handler', $handler);
     }
 
     public function handlerTestGenerator()
     {
-        $defaultHandler = '\\Cundd\\Rest\\Handler';
+        $defaultHandler = '\\Cundd\\Rest\\Handler\\Handler';
 
         return array(
             //     url,                expected,                     classToBuild

@@ -8,6 +8,7 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Handler\HandlerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 
 /**

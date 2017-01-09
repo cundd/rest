@@ -32,7 +32,6 @@
 
 namespace Cundd\Rest\Handler;
 
-use Cundd\Rest\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\RouterInterface;
 

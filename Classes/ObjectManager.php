@@ -28,6 +28,7 @@ namespace Cundd\Rest;
 use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
@@ -207,7 +208,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
             'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
         );
 
-        return $this->get($this->getFirstExistingClass($classes, 'Cundd\\Rest\\HandlerInterface'));
+        return $this->get($this->getFirstExistingClass($classes, 'Cundd\\Rest\\Handler\\HandlerInterface'));
     }
 
     /**
