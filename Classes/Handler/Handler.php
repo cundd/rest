@@ -123,13 +123,8 @@ class Handler implements CrudHandlerInterface
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
         $result = $dataProvider->getModelData($model);
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
-                Utility::singularize($request->getRootObjectKey()) => $result,
-            );
-        }
 
-        return $result;
+        return $this->prepareResult($request, $result);
     }
 
     /**
@@ -160,13 +155,8 @@ class Handler implements CrudHandlerInterface
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
-                Utility::singularize($request->getRootObjectKey()) => $result,
-            );
-        }
 
-        return $result;
+        return $this->prepareResult($request, $result);
     }
 
     /**
@@ -192,13 +182,8 @@ class Handler implements CrudHandlerInterface
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
-                Utility::singularize($request->getRootObjectKey()) => $result,
-            );
-        }
 
-        return $result;
+        return $this->prepareResult($request, $result);
     }
 
     /**
@@ -220,7 +205,7 @@ class Handler implements CrudHandlerInterface
         }
         $dataProvider->removeModelForResourceType($model, $request->getResourceType());
 
-        return $this->responseFactory->createSuccessResponse(null, 200, $request);
+        return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
     }
 
     /**
@@ -249,13 +234,8 @@ class Handler implements CrudHandlerInterface
 
         $dataProvider->saveModelForResourceType($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
-                Utility::singularize($request->getRootObjectKey()) => $result,
-            );
-        }
 
-        return $result;
+        return $this->prepareResult($request, $result);
     }
 
     /**
@@ -314,5 +294,23 @@ class Handler implements CrudHandlerInterface
     protected function getDataProvider()
     {
         return $this->objectManager->getDataProvider();
+    }
+
+    /**
+     * Add the root object key if configured
+     *
+     * @param RestRequestInterface $request
+     * @param mixed                $result
+     * @return array
+     */
+    protected function prepareResult(RestRequestInterface $request, $result)
+    {
+        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+            return array(
+                Utility::singularize($request->getRootObjectKey()) => $result,
+            );
+        }
+
+        return $result;
     }
 }
