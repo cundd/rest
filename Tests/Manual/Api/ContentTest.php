@@ -175,31 +175,6 @@ class ContentCase extends AbstractApiCase
      * @param string $suffix
      * @dataProvider suffixDataProvider
      */
-    public function deleteContentWithIdTest($suffix = '')
-    {
-        // Make sure the Content exists
-        $this->addContentWithIdTest();
-
-        $content = [
-            'id' => 100,
-        ];
-        $response = $this->requestJson(
-            'VirtualObject-Content' . $suffix,
-            'DELETE',
-            $content,
-            ['Content-Type' => 'application/json']
-        );
-
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
-    }
-
-    /**
-     * @test
-     * @param string $suffix
-     * @dataProvider suffixDataProvider
-     */
     public function deleteContentWithIdInUrlTest($suffix = '')
     {
         // Make sure the Content exists
@@ -214,6 +189,6 @@ class ContentCase extends AbstractApiCase
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Deleted"}', $response->body, $this->getErrorDescription($response));
     }
 }

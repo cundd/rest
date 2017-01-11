@@ -44,9 +44,9 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertSame(404, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Not Found"}', $response->body, $this->getErrorDescription($response));
     }
 
     /**
@@ -164,5 +164,63 @@ class CustomRestTest extends AbstractApiCase
             $response->content['data'],
             $this->getErrorDescription($response)
         );
+    }
+
+    /**
+     * @test
+     */
+    public function runExtbaseTest()
+    {
+        $path = 'cundd-custom_rest-route/create';
+        $data = [
+            'firstName' => 'john',
+            'lastName'  => 'john',
+        ];
+        $response = $this->requestJson(
+            $path,
+            'POST',
+            $data,
+            [
+                'Content-Type' => 'application/json',
+            ]
+        );
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('{"success":1}', $response->body, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @test
+     */
+    public function unauthorizedTest()
+    {
+        $path = 'cundd-custom_rest-require';
+        $response = $this->requestJson($path);
+
+        $this->assertSame(401, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Unauthorized"}', $response->body, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @test
+     */
+    public function authorizeTest()
+    {
+        $path = 'cundd-custom_rest-require';
+        $response = $this->requestJson($path, 'GET', null, [] , $this->getApiUser(). ':' . $this->getApiKey());
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Access Granted"}', $response->body, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @test
+     */
+    public function getForbiddenTest()
+    {
+        $this->request('cundd-custom_rest-require');
     }
 }

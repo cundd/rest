@@ -164,31 +164,6 @@ class NewsCase extends AbstractApiCase
      * @param string $suffix
      * @dataProvider suffixDataProvider
      */
-    public function deleteNewsWithIdTest($suffix = '')
-    {
-        // Make sure the News entry exists
-        $id = $this->addNewsAndGetId();
-
-        $content = [
-            '__identity' => $id,
-        ];
-        $response = $this->requestJson(
-            'georg_ringer-news-news' . $suffix,
-            'DELETE',
-            $content,
-            ['Content-Type' => 'application/json']
-        );
-
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
-    }
-
-    /**
-     * @test
-     * @param string $suffix
-     * @dataProvider suffixDataProvider
-     */
     public function deleteNewsWithIdInUrlTest($suffix = '')
     {
         // Make sure the News entry exists
@@ -203,7 +178,7 @@ class NewsCase extends AbstractApiCase
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Deleted"}', $response->body, $this->getErrorDescription($response));
     }
 
     private function addNewsAndGetId()

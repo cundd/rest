@@ -96,21 +96,6 @@ class AuthTest extends AbstractApiCase
         $this->assertSame('{"status":"logged-out"}', $status->body, $this->getErrorDescription($status));
     }
 
-    /**
-     * @return string
-     */
-    private function getApiUser()
-    {
-        return getenv('API_USER') ?: 'daniel';
-    }
-
-    /**
-     * @return string
-     */
-    private function getApiKey()
-    {
-        return getenv('API_KEY') ?: 'api-key';
-    }
 
     /**
      * @return array

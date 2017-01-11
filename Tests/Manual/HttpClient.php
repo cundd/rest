@@ -31,9 +31,9 @@ class HttpClient
         return new self($verbose);
     }
 
-    public function requestJson($path, $method = 'GET', $body = null, array $headers = [])
+    public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
-        $response = $this->request($path, $method, $body, $headers);
+        $response = $this->request($path, $method, $body, $headers, $basicAuth);
         $response->content = json_decode($response->body, true);
         if ($response->content === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
@@ -45,7 +45,7 @@ class HttpClient
         return $response;
     }
 
-    public function request($path, $method = 'GET', $body = null, array $headers = [])
+    public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
         $method = strtoupper($method);
         $url = $this->hasPrefix($this->getBaseUrl(), $path) ? $path : ($this->getBaseUrl() . ltrim($path, '/'));
@@ -64,6 +64,10 @@ class HttpClient
             CURLOPT_CUSTOMREQUEST  => $method,
             CURLOPT_HTTPHEADER     => $this->flattenRequestHeaders($headers),
         ];
+
+        if ($basicAuth) {
+            $options[CURLOPT_USERPWD] = $basicAuth;
+        }
 
         if ($body !== null) {
             if (!is_string($body)) {

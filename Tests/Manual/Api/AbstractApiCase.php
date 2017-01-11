@@ -13,14 +13,14 @@ use Cundd\Rest\Tests\Manual\HttpClient;
 
 abstract class AbstractApiCase extends \PHPUnit_Framework_TestCase
 {
-    public function request($path, $method = 'GET', $body = null, array $headers = [])
+    public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
-        return HttpClient::client()->request($path, $method, $body, $headers);
+        return HttpClient::client()->request($path, $method, $body, $headers, $basicAuth);
     }
 
-    public function requestJson($path, $method = 'GET', $body = null, array $headers = [])
+    public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
-        return HttpClient::client()->requestJson($path, $method, $body, $headers);
+        return HttpClient::client()->requestJson($path, $method, $body, $headers, $basicAuth);
     }
 
     public function suffixDataProvider()
@@ -30,6 +30,22 @@ abstract class AbstractApiCase extends \PHPUnit_Framework_TestCase
             ['/'],
             ['.json'],
         ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getApiUser()
+    {
+        return getenv('API_USER') ?: 'daniel';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getApiKey()
+    {
+        return getenv('API_KEY') ?: 'api-key';
     }
 
     /**

@@ -169,31 +169,6 @@ class PageCase extends AbstractApiCase
      * @param string $suffix
      * @dataProvider suffixDataProvider
      */
-    public function deletePageWithIdTest($suffix = '')
-    {
-        // Make sure the page exists
-        $this->addPageWithIdTest();
-
-        $page = [
-            'id' => 100,
-        ];
-        $response = $this->requestJson(
-            'VirtualObject-Page' . $suffix,
-            'DELETE',
-            $page,
-            ['Content-Type' => 'application/json']
-        );
-
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
-    }
-
-    /**
-     * @test
-     * @param string $suffix
-     * @dataProvider suffixDataProvider
-     */
     public function deletePageWithIdInUrlTest($suffix = '')
     {
         // Make sure the page exists
@@ -208,6 +183,6 @@ class PageCase extends AbstractApiCase
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"OK"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Deleted"}', $response->body, $this->getErrorDescription($response));
     }
 }
