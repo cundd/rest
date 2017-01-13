@@ -250,7 +250,15 @@ class RouteTest extends \PHPUnit_Framework_TestCase
                 [ParameterTypeInterface::SLUG],
             ],
             [
+                'path/{string}.json',
+                [ParameterTypeInterface::SLUG],
+            ],
+            [
                 'path/{int}/another',
+                [ParameterTypeInterface::INTEGER],
+            ],
+            [
+                'path/{int}/another.json',
                 [ParameterTypeInterface::INTEGER],
             ],
             [

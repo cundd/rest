@@ -105,6 +105,34 @@ class RouterTest extends AbstractRequestBasedCase
 
     public function getPreparedParametersDataProvider()
     {
+        $suffixCollection = $this->suffixDataProvider();
+
+        $testSets = [];
+
+        foreach ($suffixCollection as $suffix) {
+            $testSets = array_merge(
+                $testSets,
+                array_map(
+                    function ($testSet) use ($suffix) {
+                        $testSet[0] = $testSet[0] . $suffix;
+
+                        return $testSet;
+                    },
+                    $this->getPreparedParametersDataProviderWithoutSuffix()
+                )
+            );
+        }
+
+        return $testSets;
+    }
+
+    public function suffixDataProvider()
+    {
+        return ['', '/', '.json',];
+    }
+
+    public function getPreparedParametersDataProviderWithoutSuffix()
+    {
         return [
             ['{slug}/{float}/{bool}/{int}', '/slug/1.0/no/9', ['slug', 1.0, false, 9]],
             ['path/{slug}/{float}/{bool}/{int}', '/path/slug/1.0/no/9', ['slug', 1.0, false, 9]],
