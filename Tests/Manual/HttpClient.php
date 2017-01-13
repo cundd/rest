@@ -93,6 +93,10 @@ class HttpClient
 
     private function parseResponseHeaders($headerString)
     {
+        if (!$headerString) {
+            return [];
+        }
+
         $headerLines = explode("\r\n", trim($headerString));
         $headers = array();
 
