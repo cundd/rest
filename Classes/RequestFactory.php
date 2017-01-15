@@ -249,16 +249,22 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      */
     private function determinePathAndFormat()
     {
-        $path = $this->getRawPath();
         $format = Format::DEFAULT_FORMAT;
+        $path = $this->getRawPath();
+
+        // Make sure the path starts with a slash
+        if ($path) {
+            $path = '/' . ltrim((string)$path, '/');
+        }
 
         /*
          * Transform Document URLs
          * @Todo: Make this more flexible
          */
-        if ($this->stringHasPrefix($path, Request::API_PATH_DOCUMENT . '/')) {
-            $documentApiPathLength = strlen(Request::API_PATH_DOCUMENT) + 1;
-            $path = Request::API_PATH_DOCUMENT . '-' . substr($path, $documentApiPathLength);
+        $documentPathPrefix = '/' . Request::API_PATH_DOCUMENT . '/';
+        if ($this->stringHasPrefix($path, $documentPathPrefix)) {
+            $documentApiPathLength = strlen($documentPathPrefix);
+            $path = '/' . Request::API_PATH_DOCUMENT . '-' . substr($path, $documentApiPathLength);
         }
 
         // Strip the query
@@ -352,10 +358,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     private function getRawPath()
     {
         $path = '';
-//        if (class_exists(GeneralUtility::class)) {
-//            $path = filter_var(GeneralUtility::_GP('u'), FILTER_SANITIZE_URL);
-//        }
-        if (!$path && isset($_GET['u'])) {
+        if (isset($_GET['u'])) {
             $path = filter_var($this->removePathPrefixes($_GET['u']), FILTER_SANITIZE_URL);
         }
 
@@ -363,6 +366,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $path = filter_var($this->removePathPrefixes($_SERVER['REQUEST_URI']), FILTER_SANITIZE_URL);
         }
 
-        return (string)$path;
+        return $path;
     }
 }
