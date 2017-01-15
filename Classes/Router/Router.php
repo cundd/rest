@@ -149,7 +149,8 @@ class Router implements RouterInterface
             return [];
         }
 
-        $segments = explode('/', ltrim($request->getPath(), '/'));
+//        $segments = explode('/', ltrim($request->getPath(), '/'));
+        $segments = explode('/', $request->getPath());
         $parameters = [];
         foreach ($route->getParameters() as $index => $type) {
             $parameters[] = $this->getPreparedParameter($type, $segments[$index]);
@@ -199,7 +200,7 @@ class Router implements RouterInterface
             $outputPattern = str_replace('{' . $parameterType . '}', $regex, $outputPattern);
         }
 
-        return '!^/' . $outputPattern . '$!';
+        return '!^' . $outputPattern . '$!';
     }
 
     /**

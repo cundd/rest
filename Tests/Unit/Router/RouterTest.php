@@ -71,6 +71,7 @@ class RouterTest extends AbstractRequestBasedCase
         if ($noResult) {
             $this->assertInstanceOf(NotFoundException::class, $result);
         } else {
+            $this->assertFalse(is_object($result), 'No object as result expected');
             $this->assertSame($request, array_shift($result));
             $this->assertSame($expectedParameters, $result);
         }
@@ -88,7 +89,7 @@ class RouterTest extends AbstractRequestBasedCase
         $this->fixture->add(Route::get($pattern, $this->cb));
 
         $prepareParameters = $this->fixture->getPreparedParameters($this->buildTestRequest($path, 'GET'));
-        $this->assertSame($expectedParameters, $prepareParameters);
+        $this->assertSame($expectedParameters, $prepareParameters, "Failed with pattern '$pattern' for path '$path'");
     }
 
     /**
@@ -105,42 +106,14 @@ class RouterTest extends AbstractRequestBasedCase
 
     public function getPreparedParametersDataProvider()
     {
-        $suffixCollection = $this->suffixDataProvider();
-
-        $testSets = [];
-
-        foreach ($suffixCollection as $suffix) {
-            $testSets = array_merge(
-                $testSets,
-                array_map(
-                    function ($testSet) use ($suffix) {
-                        $testSet[0] = $testSet[0] . $suffix;
-
-                        return $testSet;
-                    },
-                    $this->getPreparedParametersDataProviderWithoutSuffix()
-                )
-            );
-        }
-
-        return $testSets;
-    }
-
-    public function suffixDataProvider()
-    {
-        return ['', '/', '.json',];
-    }
-
-    public function getPreparedParametersDataProviderWithoutSuffix()
-    {
         return [
-            ['{slug}/{float}/{bool}/{int}', '/slug/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/{float}/{bool}/{int}', '/path/slug/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/{float}/{bool}/{int}', '/path/slug/79.1/no/901', ['slug', 79.1, false, 901]],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}', '/path/slug/sub-path/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}', '/slug/sub-path/1.0/no/9', [], true],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}', '/', [], true],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}', '', [], true],
+            ['{slug}/{float}/{bool}/{int}/?', '/slug/1.0/no/9', ['slug', 1.0, false, 9]],
+            ['path/{slug}/{float}/{bool}/{int}/?', '/path/slug/1.0/no/9', ['slug', 1.0, false, 9]],
+            ['path/{slug}/{float}/{bool}/{int}/?', '/path/slug/79.1/no/901', ['slug', 79.1, false, 901]],
+            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/path/slug/sub-path/1.0/no/9', ['slug', 1.0, false, 9]],
+            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/slug/sub-path/1.0/no/9', [], true],
+            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/', [], true],
+            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '', [], true],
         ];
     }
 
@@ -164,14 +137,14 @@ class RouterTest extends AbstractRequestBasedCase
             $this->buildTestRequest('/path/slug_segment-123.txt', $method)
         );
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{slug}', $matchingRoutes['path/{slug}']->getPattern());
+        $this->assertSame('/path/{slug}', $matchingRoutes['/path/{slug}']->getPattern());
 
         $matchingRoutes = $this->fixture->getMatchingRoutes(
             $this->buildTestRequest('/path/perfect-match', $method)
         );
         $this->assertCount(2, $matchingRoutes);
         $firstMatch = reset($matchingRoutes);
-        $this->assertSame('path/perfect-match', $firstMatch->getPattern());
+        $this->assertSame('/path/perfect-match', $firstMatch->getPattern());
     }
 
     /**
@@ -199,7 +172,7 @@ class RouterTest extends AbstractRequestBasedCase
             $this->buildTestRequest('/path/slug_segment-123.txt', $method)
         );
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{slug}', $matchingRoutes['path/{slug}']->getPattern());
+        $this->assertSame('/path/{slug}', $matchingRoutes['/path/{slug}']->getPattern());
     }
 
     /**
@@ -238,19 +211,19 @@ class RouterTest extends AbstractRequestBasedCase
             $this->buildTestRequest('/path/123', $method)
         );
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{integer}', $matchingRoutes['path/{integer}']->getPattern());
+        $this->assertSame('/path/{integer}', $matchingRoutes['/path/{integer}']->getPattern());
 
         $matchingRoutes = $this->fixture->getMatchingRoutes(
             $this->buildTestRequest('/path/1', $method)
         );
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{integer}', $matchingRoutes['path/{integer}']->getPattern());
+        $this->assertSame('/path/{integer}', $matchingRoutes['/path/{integer}']->getPattern());
 
         $matchingRoutes = $this->fixture->getMatchingRoutes(
             $this->buildTestRequest('/path/0', $method)
         );
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{integer}', $matchingRoutes['path/{integer}']->getPattern());
+        $this->assertSame('/path/{integer}', $matchingRoutes['/path/{integer}']->getPattern());
     }
 
     /**
@@ -275,15 +248,15 @@ class RouterTest extends AbstractRequestBasedCase
 
         $matchingRoutes = $this->fixture->getMatchingRoutes($this->buildTestRequest('/path/123.1', $method));
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{float}', $matchingRoutes['path/{float}']->getPattern());
+        $this->assertSame('/path/{float}', $matchingRoutes['/path/{float}']->getPattern());
 
         $matchingRoutes = $this->fixture->getMatchingRoutes($this->buildTestRequest('/path/1.0', $method));
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{float}', $matchingRoutes['path/{float}']->getPattern());
+        $this->assertSame('/path/{float}', $matchingRoutes['/path/{float}']->getPattern());
 
         $matchingRoutes = $this->fixture->getMatchingRoutes($this->buildTestRequest('/path/0.0', $method));
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{float}', $matchingRoutes['path/{float}']->getPattern());
+        $this->assertSame('/path/{float}', $matchingRoutes['/path/{float}']->getPattern());
     }
 
     /**
@@ -329,7 +302,7 @@ class RouterTest extends AbstractRequestBasedCase
 
         $matchingRoutes = $this->fixture->getMatchingRoutes($this->buildTestRequest($path, $method));
         $this->assertCount(1, $matchingRoutes);
-        $this->assertSame('path/{boolean}', $matchingRoutes['path/{boolean}']->getPattern());
+        $this->assertSame('/path/{boolean}', $matchingRoutes['/path/{boolean}']->getPattern());
     }
 
     public function getMatchingRoutesBooleanMatchesDataProvider()

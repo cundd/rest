@@ -44,9 +44,9 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Route constructor
      *
-     * @param string|ResourceType   $pattern
-     * @param string   $method
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param string              $method
+     * @param callable            $callback
      */
     public function __construct($pattern, $method, callable $callback)
     {
@@ -199,11 +199,7 @@ class Route implements RouteInterface, RouteFactoryInterface
     public function getPriority()
     {
         if (!$this->priority) {
-            if ('' === $this->pattern) {
-                $this->priority = 0;
-            } else {
-                $this->priority = 1 + 10 * substr_count($this->pattern, '/') - substr_count($this->pattern, '{');
-            }
+            $this->priority = $this->determinePriority();
         }
 
         return $this->priority;
@@ -228,8 +224,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      */
     private function normalizePattern($inputPattern)
     {
-        // TODO: Check if slashes should really be trimmed
-        $pattern = trim((string)$inputPattern, '/');
+        $pattern = '/' . ltrim((string)$inputPattern, '/');
         $patternParts = explode('/', $pattern);
         $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);
 
@@ -238,5 +233,19 @@ class Route implements RouteInterface, RouteFactoryInterface
         }
 
         return implode('/', $patternParts);
+    }
+
+    /**
+     * @return int
+     */
+    private function determinePriority()
+    {
+        if ('/' === $this->pattern) {
+            return 0;
+        }
+
+        $pattern = ltrim($this->pattern, '/');
+
+        return 1 + 10 * substr_count($pattern, '/') - substr_count($pattern, '{');
     }
 }

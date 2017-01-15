@@ -53,7 +53,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      * @param string $inputPattern
      * @param string $outputPattern
      */
-    public function routeShouldTrimSlashesTest($inputPattern, $outputPattern)
+    public function routeShouldStartWithSlashTest($inputPattern, $outputPattern)
     {
         $this->assertEquals($outputPattern, Route::routeWithPattern($inputPattern, $this->cb)->getPattern());
     }
@@ -64,14 +64,14 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function routeShouldTrimSlashesDataProvider()
     {
         return [
-            ['/', ''],
-            ['path/', 'path'],
-            ['/path', 'path'],
-            ['/path/', 'path'],
-            ['/path/sub-path', 'path/sub-path'],
-            ['/path/sub-path/', 'path/sub-path'],
-            ['path/sub-path/', 'path/sub-path'],
-            ['path/sub-path', 'path/sub-path'],
+            ['/', '/'],
+            ['path/', '/path/'],
+            ['/path', '/path'],
+            ['/path/', '/path/'],
+            ['/path/sub-path', '/path/sub-path'],
+            ['/path/sub-path/', '/path/sub-path/'],
+            ['path/sub-path/', '/path/sub-path/'],
+            ['path/sub-path', '/path/sub-path'],
         ];
     }
 
@@ -81,16 +81,16 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function routeShouldAcceptResourceTypeTest()
     {
         $this->assertEquals(
-            'path',
+            '/path',
             Route::routeWithPattern(new ResourceType('path'), $this->cb)->getPattern()
         );
         $this->assertEquals(
-            'path',
+            '/path',
             Route::routeWithPatternAndMethod(new ResourceType('path'), 'GET', $this->cb)->getPattern()
         );
         $route = new Route(new ResourceType('path'), 'GET', $this->cb);
         $this->assertEquals(
-            'path',
+            '/path',
             $route->getPattern()
         );
     }
@@ -211,16 +211,16 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function getNormalizedPatternDataProvider()
     {
         return [
-            ['path/{string}', 'path/{slug}'],
-            ['path/{string}/', 'path/{slug}'],
-            ['path/{int}/another', 'path/{integer}/another'],
-            ['path/{float}/another/', 'path/{float}/another'],
-            ['path/{string}/{float}/1', 'path/{slug}/{float}/1'],
-            ['path/sub-path/{string}/1/2/path/item/x', 'path/sub-path/{slug}/1/2/path/item/x'],
-            ['path/sub-path/{string}/1/2/path/item/x/y', 'path/sub-path/{slug}/1/2/path/item/x/y'],
+            ['path/{string}', '/path/{slug}'],
+            ['path/{string}/', '/path/{slug}/'],
+            ['path/{int}/another', '/path/{integer}/another'],
+            ['path/{float}/another/', '/path/{float}/another/'],
+            ['path/{string}/{float}/1', '/path/{slug}/{float}/1'],
+            ['path/sub-path/{string}/1/2/path/item/x', '/path/sub-path/{slug}/1/2/path/item/x'],
+            ['path/sub-path/{string}/1/2/path/item/x/y', '/path/sub-path/{slug}/1/2/path/item/x/y'],
 
-            ['path/sub-path/{string}/{int}/2/path/item/x', 'path/sub-path/{slug}/{integer}/2/path/item/x'],
-            ['path/sub-path/{string}/{int}/2/path/item/x/y', 'path/sub-path/{slug}/{integer}/2/path/item/x/y'],
+            ['path/sub-path/{string}/{int}/2/path/item/x', '/path/sub-path/{slug}/{integer}/2/path/item/x'],
+            ['path/sub-path/{string}/{int}/2/path/item/x/y', '/path/sub-path/{slug}/{integer}/2/path/item/x/y'],
         ];
     }
 
