@@ -238,6 +238,17 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $format = substr($resourceName, $lastDotPosition + 1);
         }
 
+        $path = '/' . ltrim($path, '/');
+
+        // If the format is numeric it must not be a format
+        if (is_numeric($format)) {
+            $path = $path . '.' . $format;
+            $format = '';
+        }
+        if (!$format || !$this->isValidFormat($format)) {
+            $format = Format::DEFAULT_FORMAT;
+        }
+
         return (object)[
             'path'   => $path,
             'format' => $format,
@@ -249,7 +260,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      */
     private function determinePathAndFormat()
     {
-        $format = Format::DEFAULT_FORMAT;
         $path = $this->getRawPath();
 
         // Make sure the path starts with a slash
@@ -272,23 +282,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         if (!$path) {
             return (object)[
                 'path'   => '',
-                'format' => $format,
+                'format' => Format::DEFAULT_FORMAT,
             ];
         }
 
         // Extract path and format
-        $pathAndFormat = $this->splitPathAndFormat($path);
-        $format = $pathAndFormat->format;
-        $path = '/' . ltrim($pathAndFormat->path, '/');
-
-        if (!$format || !$this->isValidFormat($format)) {
-            $format = Format::DEFAULT_FORMAT;
-        }
-
-        return (object)[
-            'path'   => $path,
-            'format' => $format,
-        ];
+        return $this->splitPathAndFormat($path);
     }
 
     /**

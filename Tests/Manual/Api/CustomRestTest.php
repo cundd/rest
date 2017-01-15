@@ -137,11 +137,11 @@ class CustomRestTest extends AbstractApiCase
 
     /**
      * @test
+     * @dataProvider getWithParameterFloatDataProvider
      */
-    public function getWithParameterFloatTest()
+    public function getWithParameterFloatTest($suffix)
     {
-        // TODO: make this work without .json
-        $path = 'cundd-custom_rest-route/decimal/12.0.json';
+        $path = 'cundd-custom_rest-route/decimal/12.0'. $suffix;
         $response = $this->requestJson($path);
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
@@ -149,6 +149,14 @@ class CustomRestTest extends AbstractApiCase
         $this->assertSame('double', $response->content['parameterType'], $this->getErrorDescription($response));
         $this->assertSame(12, $response->content['value'], $this->getErrorDescription($response));
         $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+    }
+
+    public function getWithParameterFloatDataProvider()
+    {
+        return [
+            [''],
+            ['.json'],
+        ];
     }
 
     /**

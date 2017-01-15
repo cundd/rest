@@ -26,6 +26,9 @@
 namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Domain\Model\Format;
+use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Request;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Prophecy\Argument;
@@ -52,7 +55,6 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-//        require_once __DIR__ . '/../../FixtureClasses.php';
 
         $this->fixture = $this->buildRequestFactory();
     }
@@ -136,6 +138,7 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function getOriginalResourceTypeTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
+        /** @var Request $request */
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
@@ -146,6 +149,7 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function getOriginalResourceTypeWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
+        /** @var Request $request */
         $request = $this->fixture->getRequest();
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
@@ -249,8 +253,9 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function getOriginalResourceTypeWithDocumentTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->getOriginalResourceType();
-        $this->assertEquals('Document-MyExt-MyModel', $path);
+        /** @var Request $request */
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('Document-MyExt-MyModel', $request->getOriginalResourceType());
     }
 
     /**
@@ -259,8 +264,9 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     public function getOriginalResourceTypeWithDocumentWithFormatTest()
     {
         $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->getOriginalResourceType();
-        $this->assertEquals('Document-MyExt-MyModel', $path);
+        /** @var Request $request */
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('Document-MyExt-MyModel', $request->getOriginalResourceType());
     }
 
     /**
@@ -322,6 +328,7 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
         $request = $this->fixture->getRequest();
         $this->assertEquals('json', $request->getFormat());
     }
+
     /**
      * @test
      */
@@ -340,6 +347,36 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
         $_GET['u'] = 'MyExt-MyModel/1.html';
         $request = $this->fixture->getRequest();
         $this->assertEquals('html', $request->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function getFormatWithDecimalSegmentJsonFormatTest()
+    {
+        $_GET['u'] = 'MyExt-MyModel/1.0.json';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('json', $request->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function getFormatWithDecimalSegmentHtmlFormatTest()
+    {
+        $_GET['u'] = 'MyExt-MyModel/1.0.html';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('html', $request->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function getFormatWithDecimalSegmentTest()
+    {
+        $_GET['u'] = 'MyExt-MyModel/1.0';
+        $request = $this->fixture->getRequest();
+        $this->assertEquals('json', $request->getFormat());
     }
 
     /**
@@ -445,6 +482,36 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('/MyExt-MyModel', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
+    }
+
+    /**
+     * @test
+     * @dataProvider createRequestTestDataProvider
+     */
+    public function createRequestTest($input, $resourceType, $path, $format)
+    {
+        $_SERVER['REQUEST_URI'] = $input;
+        $request = $this->buildRequestFactory()->getRequest();
+        $this->assertInstanceOf(ResourceType::class, $request->getResourceType());
+        $this->assertSame($resourceType, (string)$request->getResourceType());
+        $this->assertSame($path, $request->getPath());
+        $this->assertInstanceOf(Format::class, $request->getFormat());
+        $this->assertSame($format, (string)$request->getFormat());
+    }
+
+    public function createRequestTestDataProvider()
+    {
+        return [
+            ['/rest/MyExt-MyModel', 'MyExt-MyModel', '/MyExt-MyModel', 'json'],
+            ['/rest/MyExt-MyModel/', 'MyExt-MyModel', '/MyExt-MyModel/', 'json'],
+            ['/rest/MyExt-MyModel/1.0', 'MyExt-MyModel', '/MyExt-MyModel/1.0', 'json'],
+            ['/rest/MyExt-MyModel/1.0.json', 'MyExt-MyModel', '/MyExt-MyModel/1.0', 'json'],
+            ['/rest/MyExt-MyModel/1.0.html', 'MyExt-MyModel', '/MyExt-MyModel/1.0', 'html'],
+            ['/rest/MyExt-MyModel/198.0.html', 'MyExt-MyModel', '/MyExt-MyModel/198.0', 'html'],
+            ['/rest/MyExt-MyModel/19.80', 'MyExt-MyModel', '/MyExt-MyModel/19.80', 'json'],
+            ['/rest/MyExt-MyModel/19.80.html', 'MyExt-MyModel', '/MyExt-MyModel/19.80', 'html'],
+            ['/rest/MyExt-MyModel/19.8.html', 'MyExt-MyModel', '/MyExt-MyModel/19.8', 'html'],
+        ];
     }
 
     /**
