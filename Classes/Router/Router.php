@@ -149,7 +149,6 @@ class Router implements RouterInterface
             return [];
         }
 
-//        $segments = explode('/', ltrim($request->getPath(), '/'));
         $segments = explode('/', $request->getPath());
         $parameters = [];
         foreach ($route->getParameters() as $index => $type) {
