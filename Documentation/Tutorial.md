@@ -157,7 +157,7 @@ A routing system would be incomplete without the ability to pass variable parts 
 Extracts the value from segments matching the regular expression `[a-zA-Z0-9\._\-]+`
 
 ```php
-$myRoute = Route::get($request->getResourceType() . '/{slug}', function(RestRequestInterface $request, $theParameter) {
+Route::get($request->getResourceType() . '/{slug}', function(RestRequestInterface $request, $theParameter) {
     // Callback will be invoked for
     # curl -X GET http://localhost:8888/rest/customhandler/some-string
     // with $theParameter set to 'some-string'
@@ -170,10 +170,23 @@ $myRoute = Route::get($request->getResourceType() . '/{slug}', function(RestRequ
 Extracts integer values
 
 ```php
-$myRoute = Route::get($request->getResourceType() . '/{integer}', function(RestRequestInterface $request, $theParameter) {
+Route::get($request->getResourceType() . '/{integer}', function(RestRequestInterface $request, $theParameter) {
     // Callback will be invoked for
     # curl -X GET http://localhost:8888/rest/customhandler/109
     // with $theParameter set to 109
+});
+```
+
+
+### Matching `float`s
+
+Extracts integer values
+
+```php
+Route::get($request->getResourceType() . '/{float}', function(RestRequestInterface $request, $theParameter) {
+    // Callback will be invoked for
+    # curl -X GET http://localhost:8888/rest/customhandler/109.0
+    // with $theParameter set to 109.0
 });
 ```
 
@@ -183,17 +196,24 @@ $myRoute = Route::get($request->getResourceType() . '/{integer}', function(RestR
 Extracts the value from segments matching the regular expression `(1|true|on|yes|0|false|off|no)` and converts it into a boolean
 
 ```php
-$myRoute = Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInterface $request, $theParameter) {
+Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInterface $request, $theParameter) {
     // Callback will be invoked for
     # curl -X GET http://localhost:8888/rest/customhandler/yes
     // with $theParameter set to true
 });
 ```
 
+
+Response
+--------
+
+The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation fitting the format from the request's `getFormat()` method. 
+
+If a specific response should be sent to the client, without additional formatting, the handler callback can return an instance of `\Psr\Http\Message\ResponseInterface` (e.g. built using `\Cundd\Rest\ResponseFactory::createResponse($data, int $status)`).
+
+
 Putting it together
 -------------------
-
-
 
 ```php
 use Cundd\Rest\Router\Route;

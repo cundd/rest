@@ -47,6 +47,8 @@ curl -X POST \
 "http://your-domain.com/rest/..."
 ```
 
+In a custom handler the sent data can be retrieved through the request's `getSentData()` method.
+
 
 Customize the output of a model
 -------------------------------
