@@ -98,6 +98,31 @@ class CustomRestTest extends AbstractApiCase
     /**
      * @test
      */
+    public function getWithParameterTest()
+    {
+        $path = 'cundd-custom_rest-route/parameter/slug.json';
+        $response = $this->requestJson($path);
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertArrayHasKey('slug', $response->content, $this->getErrorDescription($response));
+        $this->assertSame('slug', $response->content['slug'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(
+            '/cundd-custom_rest-route/parameter/slug',
+            $response->content['path'],
+            $this->getErrorDescription($response)
+        );
+        $this->assertSame(
+            'cundd-custom_rest-route',
+            $response->content['resourceType'],
+            $this->getErrorDescription($response)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function postDataTest()
     {
         $path = 'cundd-custom_rest-route/subpath.json';
