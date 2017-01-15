@@ -98,7 +98,7 @@ class CustomRestTest extends AbstractApiCase
     /**
      * @test
      */
-    public function getWithParameterTest()
+    public function getWithParameterSlugTest()
     {
         $path = 'cundd-custom_rest-route/parameter/slug.json';
         $response = $this->requestJson($path);
@@ -118,6 +118,69 @@ class CustomRestTest extends AbstractApiCase
             $response->content['resourceType'],
             $this->getErrorDescription($response)
         );
+    }
+
+    /**
+     * @test
+     */
+    public function getWithParameterIntegerTest()
+    {
+        $path = 'cundd-custom_rest-route/12.json';
+        $response = $this->requestJson($path);
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('integer', $response->content['parameterType'], $this->getErrorDescription($response));
+        $this->assertSame(12, $response->content['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @test
+     */
+    public function getWithParameterFloatTest()
+    {
+        // TODO: make this work without .json
+        $path = 'cundd-custom_rest-route/decimal/12.0.json';
+        $response = $this->requestJson($path);
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('double', $response->content['parameterType'], $this->getErrorDescription($response));
+        $this->assertSame(12, $response->content['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @test
+     * @dataProvider boolSuffixDataProvider
+     * @param $suffix
+     * @param $expected
+     */
+    public function getWithParameterBoolTest($suffix, $expected)
+    {
+        $path = 'cundd-custom_rest-route/bool/' . $suffix;
+        $response = $this->requestJson($path);
+
+        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
+        $this->assertSame('boolean', $response->content['parameterType'], $this->getErrorDescription($response));
+        $this->assertSame($expected, $response->content['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+    }
+
+    public function boolSuffixDataProvider()
+    {
+        return [
+            ['yes', true],
+            ['true', true],
+            ['on', true],
+            ['1', true],
+            ['no', false],
+            ['false', false],
+            ['off', false],
+            ['0', false],
+        ];
     }
 
     /**
@@ -234,7 +297,7 @@ class CustomRestTest extends AbstractApiCase
     public function authorizeTest()
     {
         $path = 'cundd-custom_rest-require';
-        $response = $this->requestJson($path, 'GET', null, [] , $this->getApiUser(). ':' . $this->getApiKey());
+        $response = $this->requestJson($path, 'GET', null, [], $this->getApiUser() . ':' . $this->getApiKey());
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
