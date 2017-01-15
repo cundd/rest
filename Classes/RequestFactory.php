@@ -319,34 +319,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         if (!$format) {
             return false;
         }
-        // Mimetypes
-        $mimeTypes = array(
-            'txt'   => 'text/plain',
-            'html'  => 'text/html',
-            'xhtml' => 'application/xhtml+xml',
-            'xml'   => 'application/xml',
-            'css'   => 'text/css',
-            'js'    => 'application/javascript',
-            'json'  => 'application/json',
-            'csv'   => 'text/csv',
-            // images
-            'png'   => 'image/png',
-            'jpe'   => 'image/jpeg',
-            'jpeg'  => 'image/jpeg',
-            'jpg'   => 'image/jpeg',
-            'gif'   => 'image/gif',
-            'bmp'   => 'image/bmp',
-            'ico'   => 'image/vnd.microsoft.icon',
-            'tiff'  => 'image/tiff',
-            'tif'   => 'image/tiff',
-            'svg'   => 'image/svg+xml',
-            'svgz'  => 'image/svg+xml',
-            // archives
-            'zip'   => 'application/zip',
-            'rar'   => 'application/x-rar-compressed',
-            // adobe
-            'pdf'   => 'application/pdf',
-        );
+        $mimeTypes = Format::MIME_TYPES;
 
         return isset($mimeTypes[$format]);
     }
