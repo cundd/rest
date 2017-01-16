@@ -153,8 +153,6 @@ class DocumentDataProvider extends DataProvider
      */
     public function getDatabaseNameFromResourceType(ResourceType $resourceType)
     {
-        var_dump($resourceType);
-
         return Utility::singularize(strtolower(substr($resourceType, 9))); // Strip 'Document-' and singularize
     }
 
