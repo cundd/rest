@@ -67,12 +67,7 @@ class DocumentRepository extends Repository
      */
     public function setDatabase($database)
     {
-        if (!ctype_alnum($database)) {
-            throw new InvalidDatabaseNameException('The given database name contains invalid characters', 1389258923);
-        }
-        if (strtolower($database) !== $database) {
-            throw new InvalidDatabaseNameException('The given database name must be lowercase', 1389348390);
-        }
+        $this->assertDatabaseName($database);
         $this->database = $database;
     }
 
@@ -166,7 +161,6 @@ class DocumentRepository extends Repository
             $object = $this->mergeDocuments($foundObject, $object);
         }
 
-        //if ($this->persistenceManager->isNewObject($object) || $this->useRawQueryResults) {
         if ($object->_isNew() || $this->useRawQueryResults) {
             $this->add($object);
         } else {
@@ -321,7 +315,8 @@ class DocumentRepository extends Repository
     {
         /** @var Query $query */
         $query = $this->createQuery();
-        list($database, $id) = explode('-', $guid, 2);
+        list($database, $id) = $this->splitGuid($guid);
+        $this->assertDatabaseName($database);
         $query->matching(
             $query->logicalAnd(
                 $query->equals('db', $database),
@@ -432,9 +427,8 @@ class DocumentRepository extends Repository
                 throw new NoDatabaseSelectedException('No Document database has been selected', 1389258204);
             }
 
-            $GLOBALS['TYPO3_DB']->store_lastBuiltQuery = true;
-            /** @var DatabaseConnection $databaseConnection */
-            $databaseConnection = $GLOBALS['TYPO3_DB'];
+            $databaseConnection = $this->getDatabaseConnection();
+            $databaseConnection->store_lastBuiltQuery = true;
 
             $query = sprintf('UPDATE tx_rest_domain_model_document SET deleted=2 WHERE db = \'%s\'', $currentDatabase);
             $databaseConnection->sql_query($query);
@@ -449,11 +443,9 @@ class DocumentRepository extends Repository
      */
     public function removeAllFromDatabase($database)
     {
-        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-        $databaseConnection = $GLOBALS['TYPO3_DB'];
-
+        $this->assertDatabaseName($database);
         $where = 'db = \'' . $database . '\'';
-        $result = $databaseConnection->exec_UPDATEquery(
+        $result = $this->getDatabaseConnection()->exec_UPDATEquery(
             'tx_rest_domain_model_document',
             $where,
             array(
@@ -595,7 +587,8 @@ class DocumentRepository extends Repository
         $constraintsCollection = array();
 
         if (isset($properties['guid'])) {
-            list($database, $id) = explode('-', $properties['guid'], 2);
+            $guid = $properties['guid'];
+            list($database, $id) = $this->splitGuid($guid);
             $constraintsCollection[] = $query->equals('db', $database);
             $constraintsCollection[] = $query->equals('id', $id);
             unset($properties['guid']);
@@ -658,7 +651,7 @@ class DocumentRepository extends Repository
      * Converts the query result into objects
      *
      * @param array|QueryResultInterface $resultCollection
-     * @return array<Document>
+     * @return Document[]
      */
     public function convertCollection($resultCollection)
     {
@@ -669,6 +662,7 @@ class DocumentRepository extends Repository
 
             return $resultCollection;
         }
+
         $convertedObjects = array();
         foreach ($resultCollection as $resultSet) {
             $convertedObjects[] = $this->convertToDocument($resultSet);
@@ -820,11 +814,47 @@ class DocumentRepository extends Repository
      */
     protected function getRepositoryClassName()
     {
-        new Document();
-        if (version_compare(TYPO3_version, '6.0.0') < 0) {
-            return 'Tx_Rest_Domain_Repository_DocumentRepository';
-        }
-
         return __CLASS__;
+    }
+
+    /**
+     * @return DatabaseConnection
+     */
+    private function getDatabaseConnection()
+    {
+        return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @param $database
+     */
+    private function assertDatabaseName($database)
+    {
+        if (!is_string($database)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Argument database must be of type string "%s" given',
+                    is_object($database) ? get_class($database) : gettype($database)
+                )
+            );
+        }
+        if (!ctype_alnum($database)) {
+            throw new InvalidDatabaseNameException('The given database name contains invalid characters', 1389258923);
+        }
+        if (strtolower($database) !== $database) {
+            throw new InvalidDatabaseNameException('The given database name must be lowercase', 1389348390);
+        }
+    }
+
+    /**
+     * @param string $guid
+     * @return array
+     */
+    private function splitGuid($guid)
+    {
+        list($database, $id) = explode('-', (string)$guid, 2);
+        $this->assertDatabaseName($database);
+
+        return array($database, $id);
     }
 }

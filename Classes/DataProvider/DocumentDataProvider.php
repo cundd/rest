@@ -44,7 +44,7 @@ class DocumentDataProvider extends DataProvider
      */
     public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
-        return 'Cundd\\Rest\\Domain\\Repository\\DocumentRepository';
+        return DocumentRepository::class;
     }
 
     /**
@@ -55,7 +55,7 @@ class DocumentDataProvider extends DataProvider
      */
     public function getModelClassForResourceType(ResourceType $resourceType)
     {
-        return 'Cundd\\Rest\\Domain\\Model\\Document';
+        return Document::class;
     }
 
     /**
@@ -109,40 +109,40 @@ class DocumentDataProvider extends DataProvider
      */
     public function getModelData($model)
     {
-        $properties = null;
-        if (is_object($model)) {
-            // Get the data from the model
-            if ($model instanceof DomainObjectInterface) {
-                $properties = $model->_getProperties();
-            }
-            $properties['_meta'] = array(
-                'db'     => $model->_getDb(),
-                'guid'   => $model->getGuid(),
-                'tstamp' => $model->valueForKey('tstamp'),
-                'crdate' => $model->valueForKey('crdate'),
-            );
-
-
-            $documentData = $model->_getUnpackedData();
-
-            // Remove hidden fields
-            unset($documentData['tstamp']);
-            unset($documentData['crdate']);
-            unset($documentData['cruser_id']);
-            unset($documentData['cruserId']);
-            unset($documentData['deleted']);
-            unset($documentData['hidden']);
-            unset($documentData['starttime']);
-            unset($documentData['endtime']);
-
-            // Remove the already assigned entries
-            unset($properties[Document::DATA_PROPERTY_NAME]);
-            unset($properties['db']);
-
-            $properties = array_merge($documentData, $properties);
+        if (!is_object($model)) {
+            return null;
         }
+        // Get the data from the model
+        if ($model instanceof DomainObjectInterface) {
+            $properties = $model->_getProperties();
+        } else {
+            $properties = [];
+        }
+        $properties['_meta'] = array(
+            'db'     => $model->_getDb(),
+            'guid'   => $model->getGuid(),
+            'tstamp' => $model->valueForKey('tstamp'),
+            'crdate' => $model->valueForKey('crdate'),
+        );
 
-        return $properties;
+
+        $documentData = $model->_getUnpackedData();
+
+        // Remove hidden fields
+        unset($documentData['tstamp']);
+        unset($documentData['crdate']);
+        unset($documentData['cruser_id']);
+        unset($documentData['cruserId']);
+        unset($documentData['deleted']);
+        unset($documentData['hidden']);
+        unset($documentData['starttime']);
+        unset($documentData['endtime']);
+
+        // Remove the already assigned entries
+        unset($properties[Document::DATA_PROPERTY_NAME]);
+        unset($properties['db']);
+
+        return array_merge($documentData, $properties);
     }
 
     /**
@@ -153,6 +153,8 @@ class DocumentDataProvider extends DataProvider
      */
     public function getDatabaseNameFromResourceType(ResourceType $resourceType)
     {
+        var_dump($resourceType);
+
         return Utility::singularize(strtolower(substr($resourceType, 9))); // Strip 'Document-' and singularize
     }
 
@@ -186,11 +188,12 @@ class DocumentDataProvider extends DataProvider
 
             $model = $repository->convertToDocument($data);
             $model->_setDb($documentDatabase);
-        } catch (\Exception $exception) {
-            $model = null;
 
+        } catch (\Exception $exception) {
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+
+            return null;
         }
 
         return $model;
