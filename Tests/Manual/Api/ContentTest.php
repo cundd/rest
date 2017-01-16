@@ -9,7 +9,7 @@
 namespace Cundd\Rest\Tests\Manual\Api;
 
 
-class ContentCase extends AbstractApiCase
+class ContentTest extends AbstractApiCase
 {
     /**
      * @test

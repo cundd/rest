@@ -9,7 +9,7 @@
 namespace Cundd\Rest\Tests\Manual\Api;
 
 
-class PageCase extends AbstractApiCase
+class PageTest extends AbstractApiCase
 {
     /**
      * @test

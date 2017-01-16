@@ -11,7 +11,7 @@ namespace Cundd\Rest\Tests\Manual\Api;
 /**
  * Test the default Data Provider using the News extension (https://github.com/georgringer/news)
  */
-class NewsCase extends AbstractApiCase
+class NewsTest extends AbstractApiCase
 {
     /**
      * @test
