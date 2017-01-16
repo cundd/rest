@@ -30,10 +30,24 @@
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
+return array(
+    'ctrl' => array(
+        'title' => 'LLL:EXT:rest/Resources/Private/Language/locallang_db.xlf:tx_rest_domain_model_document',
+        'label' => 'id',
+        'tstamp' => 'tstamp',
+        'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
+        'dividers2tabs' => true,
 
-
-$TCA['tx_rest_domain_model_document'] = array(
-    'ctrl' => $TCA['tx_rest_domain_model_document']['ctrl'],
+        'delete' => 'deleted',
+        'enablecolumns' => array(
+            'disabled' => 'hidden',
+            'starttime' => 'starttime',
+            'endtime' => 'endtime',
+        ),
+        'searchFields' => 'id,db,',
+        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('rest') . 'Resources/Public/Icons/document.svg'
+    ),
     'interface' => array(
         'showRecordFieldList' => 'hidden, id, data_protected, db',
     ),

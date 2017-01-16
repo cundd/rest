@@ -18,20 +18,20 @@ The Document class is a flexible, schema-less object. It's (required) core prope
 Get the value for a key:
 
 ```php
-$document->valueForKey($key)
+$document->valueForKey($key);
 ```
 
 Get the value for a key path (i.e. "foo.bar"):
 
 ```php
-$document->valueForKeyPath($keyPath)
+$document->valueForKeyPath($keyPath);
 ```
 
 
 Set the value for a key:
 
 ```php
-$document->setValueForKey($key, $value)
+$document->setValueForKey($key, $value);
 ```
 	
 	
@@ -42,14 +42,14 @@ The object's ID is it's unique identifier inside the database.
 Setting the ID:
 
 ```php
-$document->setId($id)
+$document->setId($id);
 ```
 
 
 Retrieving the ID:
 
 ```php
-$document->getId()
+$document->getId();
 ```
 
 
@@ -60,13 +60,13 @@ The accessor methods for the database property contain a leading underscore to p
 Setting the database:
 
 ```php
-$document->_setDb(alphanumericLowercaseDatabaseName)
+$document->_setDb(alphanumericLowercaseDatabaseName);
 ```
 
 Retrieving the database:
 	
 ```php
-$document->_getDb()
+$document->_getDb();
 ```
 	
 
@@ -85,7 +85,7 @@ public function getGuid() {
 There is no setter method for the GUID, but it can be retrieved through:
 
 ```php
-$document->getGuid()
+$document->getGuid();
 ```
 
 
@@ -102,14 +102,14 @@ When managing Documents the repository has to know which database the current Do
 Setting the repository's database:
 
 ```php
-$documentRepository->setDatabase($alphanumericLowercaseDatabaseName)
+$documentRepository->setDatabase($alphanumericLowercaseDatabaseName);
 ```
 
 
 Setting the Document's database (as seen above):
 
 ```php
-$aDocument->_setDb(alphanumericLowercaseDatabaseName)
+$aDocument->_setDb(alphanumericLowercaseDatabaseName);
 ```
 
 	
@@ -120,7 +120,7 @@ If a Document has the database set, this will be used instead of the repository'
 Find an object by it's GUID:
 
 ```php
-$documentRepository->findByGuid($guid)
+$documentRepository->findByGuid($guid);
 ```
 
 
@@ -128,21 +128,21 @@ Find all Documents in one database:
 
 ```php
 $documentRepository->setDatabase($database);
-$documentRepository->findAll()
+$documentRepository->findAll();
 ```
 
 
 Search for Documents matching the given dictionary (associative array) of property keys and values:
 
 ```php
-$documentRepository->findWithProperties($properties, $count, $limit)
+$documentRepository->findWithProperties($properties, $count, $limit);
 ```
 
 
 Find all Documents ignoring their database:
 
 ```php
-$documentRepository->findAllIgnoreDatabase()
+$documentRepository->findAllIgnoreDatabase();
 ```
 
 
@@ -151,34 +151,34 @@ $documentRepository->findAllIgnoreDatabase()
 Adding an object:
 
 ```php
-$documentRepository->add($object)
+$documentRepository->add($object);
 ```
 
 
 Updating an object:
 
 ```php
-$documentRepository->update($modifiedObject)
+$documentRepository->update($modifiedObject);
 ```
 
 
 Removing an object:
 
 ```php	
-$documentRepository->remove($object)
+$documentRepository->remove($object);
 ```
 
 	
 Remove all Documents from one database:
 
 ```php	
-$documentRepository->removeAllFromDatabase($database)
+$documentRepository->removeAllFromDatabase($database);
 ```
 
 
 The register() method is a shorthand for: Object exists? Yes -> update / No -> add
 
 ```php
-$documentRepository->register($data)
+$documentRepository->register($data);
 ```
 
