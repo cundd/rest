@@ -5,30 +5,30 @@
 
 plugin.tx_rest.settings {
     paths {
-        2010 {
+        virtualobject-content {
             path = VirtualObject-Content
             read = allow
             write = allow
         }
-        2015 {
+        virtualobject-page {
             path = VirtualObject-Page
             read = allow
             write = allow
         }
 
-        400 {
+        cundd-custom_rest-route {
             path = cundd-custom_rest-route
             read = allow
             write = allow
         }
-        401 {
+        cundd-custom_rest-require {
             path = cundd-custom_rest-require
             read = require
             write = require
         }
 
-        3 {
-            path = GeorgRinger-News-*
+        georgringer-news {
+            path = georg_ringer-news-*
             read = allow
             write = allow
         }
