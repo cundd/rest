@@ -30,15 +30,25 @@ class ResultConverter implements RouterInterface
     private $responseFactory;
 
     /**
+     * @var callable
+     */
+    private $exceptionHandler;
+
+    /**
      * Result converter constructor
      *
      * @param RouterInterface          $router
      * @param ResponseFactoryInterface $responseFactory
+     * @param callable                 $exceptionHandler
      */
-    public function __construct(RouterInterface $router, ResponseFactoryInterface $responseFactory)
-    {
+    public function __construct(
+        RouterInterface $router,
+        ResponseFactoryInterface $responseFactory,
+        callable $exceptionHandler
+    ) {
         $this->router = $router;
         $this->responseFactory = $responseFactory;
+        $this->exceptionHandler = $exceptionHandler;
     }
 
     /**
@@ -147,6 +157,12 @@ class ResultConverter implements RouterInterface
      */
     private function exceptionToResponse(\Exception $exception, RestRequestInterface $request)
     {
+        try {
+            $exceptionHandler = $this->exceptionHandler;
+            $exceptionHandler($exception, $request);
+        } catch (\Exception $handlerError) {
+        }
+
         if ($this->getShowDebugInformation()) {
             $exceptionDetails = $this->getDebugDetails($exception);
         } else {
@@ -205,5 +221,4 @@ class ResultConverter implements RouterInterface
 
         return $clientAddress === '127.0.0.1' || $clientAddress === '::1';
     }
-
 }

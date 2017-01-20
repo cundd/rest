@@ -50,11 +50,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     protected $objectManager;
 
     /**
-     * @var \Bullet\App
-     */
-    protected $app;
-
-    /**
      * @var RequestFactoryInterface
      */
     protected $requestFactory;
@@ -183,7 +178,16 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $router = $this->objectManager->get(RouterInterface::class);
 
-        return $this->objectManager->get(ResultConverter::class, [$router, $this->responseFactory]);
+        return $this->objectManager->get(
+            ResultConverter::class,
+            [
+                $router,
+                $this->responseFactory,
+                function (\Exception $exception) {
+                    $this->logException($exception);
+                },
+            ]
+        );
     }
 
     /**

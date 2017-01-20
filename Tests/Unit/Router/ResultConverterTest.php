@@ -36,6 +36,11 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     protected $responseFactory;
 
     /**
+     * @var callable
+     */
+    private $exceptionHandler;
+
+    /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
@@ -43,6 +48,8 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->responseFactory = new ResponseFactory($this->prophesize(RequestFactoryInterface::class)->reveal());
+        $this->exceptionHandler = function () {
+        };
     }
 
     /**
@@ -62,7 +69,11 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     public function dispatchTest()
     {
         /** @var ResponseInterface|ObjectProphecy $response */
-        $this->fixture = new ResultConverter($this->buildRouter('some result'), $this->responseFactory);
+        $this->fixture = new ResultConverter(
+            $this->buildRouter('some result'),
+            $this->responseFactory,
+            $this->exceptionHandler
+        );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);
@@ -76,7 +87,11 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     public function dispatchNotFoundTest()
     {
         /** @var ResponseInterface|ObjectProphecy $response */
-        $this->fixture = new ResultConverter($this->buildRouter(new NotFoundException()), $this->responseFactory);
+        $this->fixture = new ResultConverter(
+            $this->buildRouter(new NotFoundException()),
+            $this->responseFactory,
+            $this->exceptionHandler
+        );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);
@@ -92,7 +107,9 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
         /** @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
             $this->buildRouter(['some' => 'data', 'key' => 'hello']),
-            $this->responseFactory
+            $this->responseFactory,
+            function () {
+            }
         );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
@@ -115,7 +132,11 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
         $this->responseFactory = $responseFactoryProphecy->reveal();
 
         /** @var ResponseInterface|ObjectProphecy $response */
-        $this->fixture = new ResultConverter($this->buildRouter('some result'), $this->responseFactory);
+        $this->fixture = new ResultConverter(
+            $this->buildRouter('some result'),
+            $this->responseFactory,
+            $this->exceptionHandler
+        );
 
         $this->fixture->dispatch($request);
     }
@@ -127,7 +148,11 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ResponseInterface|ObjectProphecy $response */
         $response = $this->prophesize(ResponseInterface::class)->reveal();
-        $this->fixture = new ResultConverter($this->buildRouter($response), $this->responseFactory);
+        $this->fixture = new ResultConverter(
+            $this->buildRouter($response),
+            $this->responseFactory,
+            $this->exceptionHandler
+        );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
 
@@ -144,7 +169,9 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
                 function () {
                     throw new \Exception('An exception', 1483531241);
                 }
-            ), $this->responseFactory
+            ),
+            $this->responseFactory,
+            $this->exceptionHandler
         );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
@@ -164,7 +191,8 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     {
         $this->fixture = new ResultConverter(
             $this->buildRouter(new \Exception('An exception', 1483531241)),
-            $this->responseFactory
+            $this->responseFactory,
+            $this->exceptionHandler
         );
 
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
