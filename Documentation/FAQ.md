@@ -68,13 +68,13 @@ implements JsonSerializable {
 ```
 
 
-### Remove the __class property 
+### Show information about the models using __class property 
 
-The extension will automatically add a property to the JSON output that provides the object's class name. This can easily be disabled with TypoScript:
+The extension can add a property to the JSON output that provides the object's class name. This can easily be enabled with TypoScript:
 
 ```typoscript
 plugin.tx_rest.settings {
-    doNotAddClass = 1
+    addClass = 1
 }
 ```
 

@@ -592,11 +592,7 @@ class DataProvider implements DataProviderInterface
             if (is_array($properties)) {
                 $properties = $this->transformProperties($model, $properties);
 
-                if (!isset($properties['__class'])
-                    && false === (bool)$this->objectManager->getConfigurationProvider()->getSetting('doNotAddClass', 0)
-                ) {
-                    $properties['__class'] = get_class($model);
-                }
+                $properties = $this->addClassProperty($model, $properties);
             }
 
             $result = $properties;
@@ -751,5 +747,23 @@ class DataProvider implements DataProviderInterface
         }
 
         return array($title, $description);
+    }
+
+    /**
+     * @param mixed $model
+     * @param array $properties
+     * @return mixed
+     */
+    protected function addClassProperty($model, array $properties)
+    {
+        if (isset($properties['__class'])) {
+            return $properties;
+        }
+
+        if (true === (bool)$this->objectManager->getConfigurationProvider()->getSetting('addClass', 0)) {
+            $properties['__class'] = is_object($model) ? get_class($model) : gettype($model);
+        }
+
+        return $properties;
     }
 }
