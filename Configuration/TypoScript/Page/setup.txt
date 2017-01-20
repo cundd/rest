@@ -1,6 +1,6 @@
 plugin.tx_rest.settings {
 	paths {
-		2015 {
+		virtualobject-page {
 			path = VirtualObject-Page
 			read = deny
 			write = deny

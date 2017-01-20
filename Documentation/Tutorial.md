@@ -12,7 +12,7 @@ Configure the access
 The following lines configure read and write access to all paths matching `cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`, `your-domain.com/rest/cundd-custom_rest-path`, `your-domain.com/rest/cundd-custom_rest-whatever`, etc. 
 
 	plugin.tx_rest.settings.paths {
-		400 {
+		cundd-custom_rest {
 			path = cundd-custom_rest-*
 	
 			read = allow

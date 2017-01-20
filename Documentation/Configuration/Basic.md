@@ -9,7 +9,7 @@ Configure the access rules for different URI paths. `path` defines the URI path 
 The default access is defined with the path `all`:
 
     plugin.tx_rest.settings.paths {
-        1 {
+        all {
             path = all
             read = deny
             write = deny
@@ -19,7 +19,7 @@ The default access is defined with the path `all`:
 Allow read and write access to the model `MyModel` of the extension `MyExt`:
 
         ...
-        2 {
+        my_ext-my_model {
             path = my_ext-my_model
             read = allow
             write = allow
@@ -29,7 +29,7 @@ Allow read and write access to the model `MyModel` of the extension `MyExt`:
 Allow read and write access for all models of the extension `MySecondext`:
 
         ...
-        3 {
+        my_secondext {
             path = my_secondext-*
             read = allow
             write = allow
@@ -39,7 +39,7 @@ Allow read and write access for all models of the extension `MySecondext`:
 Additionally you can require a valid user login for write operations:
 
         ...
-        4 {
+        my_protectedext {
             path = my_protectedext-*
             read = allow
             write = require
@@ -53,7 +53,7 @@ Learn more on [Authentication](/Configuration/Authentication/).
 Extensions that are created with a vendor prefix have to include their prefix into the path. `\Vendor\MyExtension\Domain\Model\MyModel` as an example would need the path `vendor-my_ext-my_model`.
 
 		...
-		5 {
+		vendor-my_ext-my_model {
 			path = vendor-my_ext-my_model
 			read = allow
 			write = deny

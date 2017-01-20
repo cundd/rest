@@ -170,7 +170,7 @@ Example: Document Storage
 *a)*
 
 	plugin.tx_rest.settings.paths {
-		10 {
+		path {
 			path = pix-gallery
 			read = allow
 			write = allow
@@ -181,7 +181,7 @@ Example: Document Storage
 *b)*
 
 	plugin.tx_rest.settings.paths {
-		10 {
+		path {
 			path = cundd-foo-bar
 			read = allow
 			write = allow
@@ -192,7 +192,7 @@ Example: Document Storage
 *c)*
 
 	plugin.tx_rest.settings.paths {
-		10 {
+		path {
 			path = Document-db
 			read = allow
 			write = allow
@@ -205,7 +205,7 @@ Example: Document Storage
 Assume the class `\Cundd\Daa\Rest\DataProvider` exists.
 
 	plugin.tx_rest.settings.paths {
-		10 {
+		path {
 			path = Cundd-Daa-Bar
 			read = allow
 			write = allow

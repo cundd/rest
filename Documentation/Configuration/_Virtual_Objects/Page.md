@@ -4,11 +4,11 @@ Page via REST
 Setup
 -----
 
-Include the static TypoScript file `Virtual Object - Page (rest)` through the Template editor and configure the access. In this example, the path key `2015` is intended to be a unique number.
+Include the static TypoScript file `Virtual Object - Page (rest)` through the Template editor and configure the access.
 
 	plugin.tx_rest.settings {
 		paths {
-			2015 {
+			virtualobject-page {
 				path = VirtualObject-Page
 				read = allow
 				write = allow

@@ -31,7 +31,7 @@ To require a user to be authenticated to access a path set the `read` and/or `wr
 
 ```
 plugin.tx_rest.settings.paths {
-    4 {
+    my_protectedext {
         path = my_protectedext-*
         read = require
         write = require
