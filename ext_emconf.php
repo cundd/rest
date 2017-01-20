@@ -33,8 +33,6 @@ $EM_CONF[$_EXTKEY] = array(
             'typo3' => '7.4-8.99.99',
         ),
         'conflicts' => array(),
-        'suggests'  => array(
-            'cundd_composer' => '2.0',
-        ),
+        'suggests'  => array(),
     ),
 );
