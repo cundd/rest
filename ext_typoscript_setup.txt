@@ -1,17 +1,17 @@
 plugin.tx_rest.settings {
 	paths {
-		1 {
+		all {
 			path = all
 			read = deny
 			write = deny
 		}
 
-		2000 {
+		document {
 			path = Document
 			read = deny
 			write = deny
 		}
-		2005 {
+		auth {
 			path = auth
 			read = allow
 			write = allow
