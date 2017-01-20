@@ -172,22 +172,13 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     }
 
     /**
-     * @return array
+     * @return ResultConverter
      */
     private function getResultConverter()
     {
         $router = $this->objectManager->get(RouterInterface::class);
 
-        return $this->objectManager->get(
-            ResultConverter::class,
-            [
-                $router,
-                $this->responseFactory,
-                function (\Exception $exception) {
-                    $this->logException($exception);
-                },
-            ]
-        );
+        return new ResultConverter($router, $this->responseFactory, [$this, 'logException']);
     }
 
     /**
