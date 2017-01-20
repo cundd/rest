@@ -5,9 +5,6 @@ set -o errexit
 
 CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
-: ${FUNCTIONAL_TESTS="yes"}
-: ${UNIT_TESTS="yes"}
-
 : ${TYPO3_PATH_WEB="$CLI_HOME/../TYPO3.CMS"}
 : ${PHP_BINARY="php"}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
@@ -89,6 +86,23 @@ function functional_tests {
 
 function main {
     init;
+
+    local _functional_tests="yes";
+    local _unit_tests="yes";
+
+    if [[ "$#" -gt "0" ]]; then
+        if [[ "$1" == "--no-unit" ]]; then
+            _unit_tests="no";
+            shift;
+        elif [[ "$1" == "--no-functional" ]]; then
+            _functional_tests="no";
+            shift;
+        fi
+    fi
+
+    : ${FUNCTIONAL_TESTS="$_functional_tests"}
+    : ${UNIT_TESTS="$_unit_tests"}
+
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         print_header "Run Unit Tests";
         unit_tests "$@";
