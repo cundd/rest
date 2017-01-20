@@ -1,6 +1,6 @@
 <?php
 /**
- * Unit Test bootstrapping
+ * Functional Test bootstrapping
  */
 
 namespace Cundd\Rest\Tests\Functional;
