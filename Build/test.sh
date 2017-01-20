@@ -64,7 +64,7 @@ function init {
         print_error "Please set the TYPO3_PATH_WEB environment variable";
         exit 1;
     elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
-        print_error "The defined TYPO3_PATH_WEB does not seem to be a directory";
+        print_error "The defined TYPO3_PATH_WEB '$TYPO3_PATH_WEB' does not seem to be a directory";
         exit 1;
     fi;
 
