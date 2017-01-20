@@ -61,7 +61,11 @@ function install_typo3 {
 
 function prepare_database {
     if [[ "$(get_mysql_client_path)" != "" ]]; then
-        $(get_mysql_client_path) -e "create database $typo3DatabaseName;" || {
+        $(get_mysql_client_path) \
+            -h${typo3DatabaseHost} \
+            -u${typo3DatabaseUsername} \
+            -p${typo3DatabasePassword} \
+            -e "create database $typo3DatabaseName;" || {
             print_warning "Database $typo3DatabaseName not created";
         };
     fi
