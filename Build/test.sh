@@ -27,10 +27,10 @@ function get_phpunit_path_for_functional_tests() {
     fi
 }
 function get_phpunit_path_for_unit_tests() {
-    if [ -e "bin/phpunit" ]; then
-        echo "bin/phpunit";
-    elif [ -e "vendor/bin/phpunit" ]; then
-        echo "vendor/bin/phpunit";
+    if [ -e "`pwd`/bin/phpunit" ]; then
+        echo "`pwd`/bin/phpunit";
+    elif [ -e "`pwd`/vendor/bin/phpunit" ]; then
+        echo "`pwd`/vendor/bin/phpunit";
     else
         get_phpunit_path_for_functional_tests;
     fi
@@ -166,18 +166,18 @@ function main {
     : ${MANUAL_TESTS="$_manual_tests"}
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
-        print_header "Run Unit Tests";
+        print_header "Run Unit Tests (using $(get_phpunit_path_for_unit_tests))";
         unit_tests "$@";
     fi
 
     if [[ "$FUNCTIONAL_TESTS" == "yes" ]]; then
-        print_header "Run Functional Tests";
+        print_header "Run Functional Tests (using $(get_phpunit_path_for_functional_tests))";
         init_database;
         functional_tests "$@";
     fi
 
     if [[ "$MANUAL_TESTS" == "yes" ]]; then
-        print_header "Run Manual Tests";
+        print_header "Run Manual Tests (using $(get_phpunit_path_for_unit_tests))";
         init_database;
         manual_tests "$@";
     fi
