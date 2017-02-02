@@ -5,13 +5,13 @@
 
 plugin.tx_rest.settings {
     paths {
-        virtualobject-content {
-            path = VirtualObject-Content
+        virtual_object-content {
+            path = virtual_object-content
             read = allow
             write = allow
         }
-        virtualobject-page {
-            path = VirtualObject-Page
+        virtual_object-page {
+            path = virtual_object-page
             read = allow
             write = allow
         }

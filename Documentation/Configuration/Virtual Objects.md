@@ -13,6 +13,7 @@ plugin.tx_rest.settings.virtualObjects {
 	
     # Name of this Virtual Object resource 
     # which will be used in the URL rest/VirtualObject-MyResourceName/
+    # or in the URL rest/virtual_object-my_resource_name/
     MyResourceName {
     
         mapping {

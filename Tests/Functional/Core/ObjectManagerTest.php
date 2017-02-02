@@ -178,19 +178,19 @@ class ObjectManagerTest extends AbstractCase
                 array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
             ),
             array(
-                'VirtualObject-Page',
+                'virtual_object-page',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
             ),
             array(
-                'VirtualObject-Page.json',
+                'virtual_object-page.json',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
             ),
             array(
-                'VirtualObject-Page/1',
+                'virtual_object-page/1',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
             ),
             array(
-                'VirtualObject-Page/1.json',
+                'virtual_object-page/1.json',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
             ),
         );

@@ -27,6 +27,7 @@ namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManager;
@@ -137,9 +138,19 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getConfigurationForResourceType(ResourceType $resourceType)
     {
-        $configuredPaths = $this->getConfiguredPaths();
+        $configuredPaths = $this->getConfiguredResourceTypes();
         $matchingConfiguration = array();
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = Utility::normalizeResourceType($resourceType);
+
+        if (!$resourceTypeString) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Invalid normalized Resource Type "%s"',
+                    is_null($resourceTypeString) ? 'null' : $resourceTypeString
+                )
+            );
+        }
+
 
         foreach ($configuredPaths as $configuration) {
             $currentPath = $configuration['path'];
@@ -161,7 +172,25 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      *
      * @return array
      */
-    private function getConfiguredPaths()
+    private function getConfiguredResourceTypes()
+    {
+        $configurationCollection = [];
+        foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
+            // If no explicit path is configured use the current key
+            $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
+            $normalizeResourceType = Utility::normalizeResourceType($resourceType);
+            $configuration['path'] = $normalizeResourceType;
+
+            $configurationCollection[$normalizeResourceType] = $configuration;
+        }
+
+        return $configurationCollection;
+    }
+
+    /**
+     * @return array
+     */
+    private function getRawConfiguredResourceTypes()
     {
         $settings = $this->configurationProvider->getSettings();
         if (isset($settings['paths']) && is_array($settings['paths'])) {

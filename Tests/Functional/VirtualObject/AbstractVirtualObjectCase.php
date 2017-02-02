@@ -54,8 +54,11 @@ class AbstractVirtualObjectCase extends AbstractCase
     protected function getTestConfiguration()
     {
         $testConfiguration = $this->getTestConfigurationData();
+
         return new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceType']['mapping'])
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping(
+                $testConfiguration['resource_type']['mapping']
+            )
         );
     }
 
@@ -70,6 +73,7 @@ class AbstractVirtualObjectCase extends AbstractCase
             return $this->testConfiguration;
         }
         $this->testConfiguration = json_decode($this->getTestConfigurationJSONString(), true);
+
         return $this->testConfiguration;
     }
 
@@ -80,11 +84,47 @@ class AbstractVirtualObjectCase extends AbstractCase
     {
         return <<<CONFIGURATION
 {
-    "ResourceType": {
+    "resource_type": {
         "mapping": {
-        	"identifier": "property1",
+            "identifier": "property1",
             "tableName": "my_resource_table",
-
+            "properties": {
+                "property1": {
+                    "type": "string",
+                    "column": "property_one"
+                },
+                "property2": {
+                    "type": "float",
+                    "column": "property_two"
+                },
+                "property3": {
+                    "type": "int",
+                    "column": "property_three"
+                },
+                "property4": {
+                    "type": "integer",
+                    "column": "property_four"
+                },
+                "property5": {
+                    "type": "bool",
+                    "column": "property_five"
+                },
+                "property6": {
+                    "type": "boolean",
+                    "column": "property_six"
+                },
+                "property_seven": {
+                    "type": "boolean",
+                    "column": "property_seven"
+                },
+                "property_eight": "boolean"
+            }
+        }
+    },
+    "MyOtherResourceType": {
+        "mapping": {
+            "identifier": "property1",
+            "tableName": "my_resource_table",
             "properties": {
                 "property1": {
                     "type": "string",

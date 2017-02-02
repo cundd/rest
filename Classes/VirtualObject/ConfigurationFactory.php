@@ -26,8 +26,10 @@
 namespace Cundd\Rest\VirtualObject;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\SingletonInterface;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 
 /**
  * The Configuration Factory allows the creation of Virtual Object Configurations from various sources
@@ -68,12 +70,12 @@ class ConfigurationFactory implements SingletonInterface
      */
     public function createFromArrayForResourceType($configurationArray, ResourceType $resourceType)
     {
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = Utility::normalizeResourceType($resourceType);
         if (
-            isset($configurationArray[$resourceTypeString]) && is_array($configurationArray[$resourceTypeString])
-            && isset($configurationArray[$resourceTypeString]['mapping']) && is_array(
-                $configurationArray[$resourceTypeString]['mapping']
-            )
+            isset($configurationArray[$resourceTypeString])
+            && is_array($configurationArray[$resourceTypeString])
+            && isset($configurationArray[$resourceTypeString]['mapping'])
+            && is_array($configurationArray[$resourceTypeString]['mapping'])
         ) {
             return $this->createWithConfigurationData($configurationArray[$resourceTypeString]['mapping']);
         }
@@ -86,17 +88,34 @@ class ConfigurationFactory implements SingletonInterface
      *
      * @param ResourceType $resourceType
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     * @throws MissingConfigurationException
      */
     public function createFromTypoScriptForResourceType(ResourceType $resourceType)
     {
-        $configurationData = $this->configurationProvider->getSetting('virtualObjects.' . $resourceType);
+        $normalizedConfiguration = $this->normalizedVirtualObjectConfigurations(
+            $this->configurationProvider->getSetting('virtualObjects')
+        );
+
+        $normalizeResourceType = Utility::normalizeResourceType($resourceType);
+
+        if (!isset($normalizedConfiguration[$normalizeResourceType])) {
+            throw new MissingConfigurationException(
+                sprintf('Could not find configuration for Resource Type "%s"', (string)$resourceType)
+            );
+        }
+        $configurationData = $normalizedConfiguration[$normalizeResourceType];
+
         if (!isset($configurationData['mapping.'])) {
-            return null;
+            throw new MissingConfigurationException(
+                sprintf('Key "mapping." not found in configuration for Resource Type "%s"', (string)$resourceType)
+            );
         }
         $mapping = $configurationData['mapping.'];
 
         if (!isset($mapping['properties.'])) {
-            return null;
+            throw new MissingConfigurationException(
+                sprintf('Key "properties." not found in the mapping for Resource Type "%s"', (string)$resourceType)
+            );
         }
 
         $mergedConfigurationData = array(
@@ -123,7 +142,10 @@ class ConfigurationFactory implements SingletonInterface
     {
         $configurationData = json_decode($jsonString, true);
         if ($configurationData) {
-            return $this->createFromArrayForResourceType($configurationData, $resourceType);
+            return $this->createFromArrayForResourceType(
+                $this->normalizedVirtualObjectConfigurations($configurationData),
+                $resourceType
+            );
         }
 
         return null;
@@ -144,6 +166,22 @@ class ConfigurationFactory implements SingletonInterface
         }
 
         return $configurationObject;
+    }
+
+    /**
+     * Normalizes the Resource-Type-keys in the given configuration
+     *
+     * @param array $rawConfiguration
+     * @return array
+     */
+    private function normalizedVirtualObjectConfigurations(array $rawConfiguration)
+    {
+        $normalizedConfiguration = [];
+        foreach ($rawConfiguration as $resourceType => $configuration) {
+            $normalizedConfiguration[Utility::normalizeResourceType($resourceType)] = $configuration;
+        }
+
+        return $normalizedConfiguration;
     }
 
     /**

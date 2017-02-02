@@ -20,13 +20,12 @@ class NewsTest extends AbstractApiCase
      */
     public function getNewsCollectionTest($suffix = '')
     {
-        $response = $this->requestJson('GeorgRinger-News-news' . $suffix);
+        $response = $this->requestJson('georg_ringer-news-news' . $suffix);
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
         $this->assertArrayHasKey('uid', reset($response->content), $this->getErrorDescription($response));
 
-
-        $response = $this->requestJson('georg_ringer-news-news' . $suffix);
+        $response = $this->requestJson('GeorgRinger-News-news' . $suffix);
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
         $this->assertArrayHasKey('uid', reset($response->content), $this->getErrorDescription($response));

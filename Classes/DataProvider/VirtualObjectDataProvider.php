@@ -35,6 +35,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
+use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -65,36 +66,44 @@ class VirtualObjectDataProvider extends DataProvider
      */
     public function getObjectConverterForResourceType(ResourceType $resourceType)
     {
-        if (!isset($this->objectConverterMap[$resourceType])) {
+        $resourceTypeString = (string)$resourceType;
+        if (!isset($this->objectConverterMap[$resourceTypeString])) {
+            /** @var ObjectConverter $objectConverter */
             $objectConverter = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ObjectConverter');
             $objectConverter->setConfiguration($this->getConfigurationForResourceType($resourceType));
 
-            $this->objectConverterMap[$resourceType] = $objectConverter;
+            $this->objectConverterMap[$resourceTypeString] = $objectConverter;
 
             return $objectConverter;
         }
 
-        return $this->objectConverterMap[$resourceType];
+        return $this->objectConverterMap[$resourceTypeString];
     }
 
     /**
      * Returns the Configuration for the given resource type
      *
-     * @param string $resourceType
+     * @param ResourceType $resourceType
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      * @return ConfigurationInterface
      */
     public function getConfigurationForResourceType(ResourceType $resourceType)
     {
-        $newResourceTypeString = substr(
+        $virtualResourceTypeString = substr(
             $resourceType,
             strpos($resourceType, '-') + 1
         ); // Strip the "VirtualObject-" from the resource type
-        if (!$newResourceTypeString) {
+        if (!$virtualResourceTypeString) {
             throw new MissingConfigurationException('Could not get configuration for empty resource type', 1395932408);
         }
 
-        return $this->configurationFactory->createFromTypoScriptForResourceType(new ResourceType($newResourceTypeString));
+        try {
+            return $this->configurationFactory->createFromTypoScriptForResourceType(
+                new ResourceType($virtualResourceTypeString)
+            );
+        } catch (MissingConfigurationException $exception) {
+            return null;
+        }
     }
 
     /**
@@ -117,7 +126,7 @@ class VirtualObjectDataProvider extends DataProvider
     public function getRepositoryForResourceType(ResourceType $resourceType)
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
-        /** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface $repository */
+        /** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface|\TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
         $repository->setConfiguration($this->getConfigurationForResourceType($resourceType));
 
@@ -128,9 +137,9 @@ class VirtualObjectDataProvider extends DataProvider
      * Returns a domain model for the given API resource type and data
      * This method will load existing models.
      *
-     * @param array|string|int $data Data of the new model or it's UID
+     * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface
+     * @return DomainObjectInterface|VirtualObject
      */
     public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
@@ -160,7 +169,7 @@ class VirtualObjectDataProvider extends DataProvider
      * Returns a new domain model for the given API resource type points to
      *
      * @param ResourceType $resourceType API resource type to get the model for
-     * @return DomainObjectInterface
+     * @return DomainObjectInterface|VirtualObject
      */
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {

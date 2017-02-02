@@ -8,7 +8,10 @@
 
 namespace Cundd\Rest\Domain\Model;
 
-
+/**
+ * The resource type is a identifier for a model class.
+ * It is the first segment of the request path, after alias mapping has been applied.
+ */
 class ResourceType
 {
     /**

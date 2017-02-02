@@ -75,6 +75,31 @@ class DataProviderUtilityTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @param $resourceType
+     * @param $expected
+     * @dataProvider normalizeResourceTypeDataProvider
+     */
+    public function normalizeResourceTypeTest($resourceType, $expected)
+    {
+        $this->assertEquals($expected, Utility::normalizeResourceType($resourceType));
+    }
+
+    /**
+     * @return array
+     */
+    public function normalizeResourceTypeDataProvider()
+    {
+        return [
+            ['Document-MyExt-MyModel', 'document-my_ext-my_model'],
+            ['MyExt-MyModel', 'my_ext-my_model'],
+            ['MyExt-*', 'my_ext-*'],
+            ['GeorgRinger-News-news', 'georg_ringer-news-news'],
+            ['GeorgRinger-News-*', 'georg_ringer-news-*'],
+        ];
+    }
+
+    /**
+     * @test
      */
     public function singularizeTest()
     {

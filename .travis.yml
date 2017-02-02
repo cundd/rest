@@ -54,4 +54,5 @@ script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     export CHECK_MYSQL_CREDENTIALS="no";
+    export MANUAL_TESTS="no";
     bash Build/test.sh;

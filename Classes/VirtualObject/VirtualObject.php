@@ -53,6 +53,7 @@ class VirtualObject
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -81,12 +82,13 @@ class VirtualObject
      * Sets the value for the given key
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      * @return $this
      */
     public function setValueForKey($key, $value)
     {
         $this->data[$key] = $value;
+
         return $this;
     }
 

@@ -1,18 +1,18 @@
 plugin.tx_rest.settings {
 	paths {
-		virtualobject-content {
-			path = VirtualObject-Content
+		virtual_object-content {
+			path = virtual_object-content
 			read = deny
 			write = deny
 		}
 	}
 	
 	aliases {
-		#	content = VirtualObject-Content
+		#	content = virtual_object-content
 	}
 	
 	virtualObjects {
-		Content {
+		content {
 			mapping {
 				identifier = id
 				tableName = tt_content

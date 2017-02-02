@@ -18,7 +18,7 @@ class PageTest extends AbstractApiCase
      */
     public function getPagesTest($suffix = '')
     {
-        $response = $this->requestJson('VirtualObject-Page' . $suffix);
+        $response = $this->requestJson('virtual_object-page' . $suffix);
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
@@ -32,7 +32,7 @@ class PageTest extends AbstractApiCase
      */
     public function getPageTest($suffix = '')
     {
-        $response = $this->requestJson('VirtualObject-Page/1' . $suffix);
+        $response = $this->requestJson('virtual_object-page/1' . $suffix);
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
@@ -47,7 +47,7 @@ class PageTest extends AbstractApiCase
      */
     public function getPageNotFoundTest($suffix = '')
     {
-        $response = $this->requestJson('VirtualObject-Page/2300' . $suffix);
+        $response = $this->requestJson('virtual_object-page/2300' . $suffix);
 
         $this->assertSame(404, $response->status, $this->getErrorDescription($response));
         $this->assertSame('{"error":"Not Found"}', $response->body, $this->getErrorDescription($response));
@@ -66,7 +66,7 @@ class PageTest extends AbstractApiCase
             'pageIdentifier' => 1, // the parent
         ];
         $response = $this->requestJson(
-            'VirtualObject-Page' . $suffix,
+            'virtual_object-page' . $suffix,
             'POST',
             $page,
             ['Content-Type' => 'application/json']
@@ -92,7 +92,7 @@ class PageTest extends AbstractApiCase
             'pageIdentifier' => 1, // the parent
         ];
         $response = $this->requestJson(
-            'VirtualObject-Page' . $suffix,
+            'virtual_object-page' . $suffix,
             'POST',
             $page,
             ['Content-Type' => 'application/json']
@@ -121,7 +121,7 @@ class PageTest extends AbstractApiCase
             'pageIdentifier' => 1, // the parent
         ];
         $response = $this->requestJson(
-            'VirtualObject-Page/100' . $suffix,
+            'virtual_object-page/100' . $suffix,
             'POST',
             $page,
             ['Content-Type' => 'application/json']
@@ -151,7 +151,7 @@ class PageTest extends AbstractApiCase
             'pageIdentifier' => 1, // the parent
         ];
         $response = $this->requestJson(
-            'VirtualObject-Page' . $suffix,
+            'virtual_object-page' . $suffix,
             'POST',
             $page,
             ['Content-Type' => 'application/json']
@@ -175,7 +175,7 @@ class PageTest extends AbstractApiCase
         $this->addPageWithIdTest();
 
         $response = $this->requestJson(
-            'VirtualObject-Page/100' . $suffix,
+            'virtual_object-page/100' . $suffix,
             'DELETE',
             null,
             ['Content-Type' => 'application/json']

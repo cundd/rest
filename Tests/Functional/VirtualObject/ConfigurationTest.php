@@ -50,7 +50,7 @@ class ConfigurationTest extends AbstractVirtualObjectCase
 
         $testConfiguration = $this->getTestConfigurationData();
         $this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['ResourceType']['mapping'])
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['resource_type']['mapping'])
         );
     }
 

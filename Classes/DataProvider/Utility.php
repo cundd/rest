@@ -25,6 +25,8 @@
 
 namespace Cundd\Rest\DataProvider;
 
+use Cundd\Rest\Domain\Model\ResourceType;
+
 
 /**
  * A utility class with static methods for Data Providers
@@ -62,7 +64,7 @@ class Utility
         if (strpos($resourceType, '_') !== false) {
             $resourceType = static::underscoredToUpperCamelCase($resourceType);
         }
-        $parts = explode(self::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceType, 3);
+        $parts = explode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceType, 3);
         if (count($parts) < 3) {
             array_unshift($parts, '');
         }
@@ -96,11 +98,11 @@ class Utility
 
         $className = str_replace('\\Domain\\Model\\', '\\', $className);
         $classNameParts = array_map(
-            array(__CLASS__, 'camelCaseToLowerCaseUnderscored'),
+            array(get_called_class(), 'camelCaseToLowerCaseUnderscored'),
             explode('\\', $className)
         );
 
-        return implode(self::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts);
+        return implode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts);
     }
 
     /**
@@ -174,6 +176,29 @@ class Utility
     }
 
     /**
+     * Transforms UpperCamelCase Resource Types into lower_case_underscore
+     *
+     * @param string|ResourceType $resourceType
+     * @return string
+     */
+    public static function normalizeResourceType($resourceType)
+    {
+        return implode(
+            '-',
+            array_map(
+                function ($part) {
+                    if ($part === '*') {
+                        return '*';
+                    }
+
+                    return static::camelCaseToLowerCaseUnderscored($part);
+                },
+                explode('-', (string)$resourceType)
+            )
+        );
+    }
+
+    /**
      * @param string $string
      * @return string
      */
@@ -183,6 +208,8 @@ class Utility
     }
 
     /**
+     * Convert a camelCase string to lowercase_underscore
+     *
      * @param string $input
      * @return string
      */

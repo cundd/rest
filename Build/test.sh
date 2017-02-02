@@ -144,6 +144,23 @@ function main {
         shift;
     done
 
+    # If the next argument is a directory or a file look if it tells us what kind of tests to run
+    if [[ "$#" -gt "0" ]] && [[ -e "$1" ]]; then
+        if [[ "$1" == Tests/Functional* ]]; then
+            _functional_tests="yes";
+            _unit_tests="no";
+            _manual_tests="no";
+        elif [[ "$1" == Tests/Unit* ]]; then
+            _functional_tests="no";
+            _unit_tests="yes";
+            _manual_tests="no";
+        elif [[ "$1" == Tests/Manual* ]]; then
+            _functional_tests="no";
+            _unit_tests="no";
+            _manual_tests="yes";
+        fi
+    fi
+
     : ${FUNCTIONAL_TESTS="$_functional_tests"}
     : ${UNIT_TESTS="$_unit_tests"}
     : ${MANUAL_TESTS="$_manual_tests"}

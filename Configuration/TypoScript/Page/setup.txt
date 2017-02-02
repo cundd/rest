@@ -1,23 +1,23 @@
 plugin.tx_rest.settings {
 	paths {
-		virtualobject-page {
-			path = VirtualObject-Page
+		virtual_object-page {
+			path = virtual_object-page
 			read = deny
 			write = deny
 		}
 	}
-	
+
 	aliases {
-		#	page = VirtualObject-Page
+		#	page = virtual_object-page
 	}
-		
+
 	virtualObjects {
-		Page {
+		page {
 			mapping {
 				identifier = id
 				tableName = pages
 				skipUnknownProperties = true
-					
+
 				properties{
 					id {
 						column = uid
@@ -114,7 +114,7 @@ plugin.tx_rest.settings {
 					hidden {
 						column = hidden
 						type = bool
-					}		
+					}
 					title {
 						column = title
 						type = string

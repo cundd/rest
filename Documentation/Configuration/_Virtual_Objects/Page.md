@@ -8,8 +8,8 @@ Include the static TypoScript file `Virtual Object - Page (rest)` through the Te
 
 	plugin.tx_rest.settings {
 		paths {
-			virtualobject-page {
-				path = VirtualObject-Page
+			virtual_object-page {
+				path = virtual_object-page
 				read = allow
 				write = allow
 			}
@@ -20,7 +20,7 @@ Include the static TypoScript file `Virtual Object - Page (rest)` through the Te
 Retrieving pages
 ----------------
 
-Send a GET request to `http://your-domain.com/rest/VirtualObject-Page/`.
+Send a GET request to `http://your-domain.com/rest/virtual_object-page/`.
 
 
 Creating a new page
@@ -29,7 +29,7 @@ Creating a new page
 The following displays the request body to create a new page element with `title` and `doktype` on the parent page with UID `pageIdentifer`.
 
 	{
-		"VirtualObject-Page": {
+		"virtual_object-page": {
 			"pageIdentifer": 1,
 			"sorting": 32,
 			"deleted": false,
