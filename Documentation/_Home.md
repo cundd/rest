@@ -13,7 +13,7 @@ Features
 - Builtin support for Extbase Models
 - [Authentication mechanisms](/Configuration/Authentication/) (Basic Access Authentication, login per POST)
 - Mapping for any [database table](/Configuration/Virtual+Objects/)
-- [Custom web services](Tutorial.md)
+- [Custom web services](/Tutorial/)
 - JSON formatted output
 - Support for TYPO3 7.6-8.x
 
