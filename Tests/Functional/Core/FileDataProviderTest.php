@@ -170,9 +170,7 @@ class FileDataProviderTest extends AbstractCase
                     'description'  => '',
                     'uid'          => 1467702760,
                     'referenceUid' => 0,
-                    '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
-                '__class' => 'Mock_Test_Class',
             ),
             $result
         );
@@ -210,9 +208,7 @@ class FileDataProviderTest extends AbstractCase
                     'description'  => 'File description',
                     'uid'          => 1467702760,
                     'referenceUid' => 0,
-                    '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
                 ),
-                '__class' => 'Mock_Test_Class',
             ),
             $result
         );
@@ -238,7 +234,6 @@ class FileDataProviderTest extends AbstractCase
                 'description'  => '',
                 'uid'          => 1467702760,
                 'referenceUid' => 0,
-                '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
             ),
             $result
         );
@@ -270,7 +265,6 @@ class FileDataProviderTest extends AbstractCase
                 'description'  => 'File description',
                 'uid'          => 1467702760,
                 'referenceUid' => 0,
-                '__class'      => 'TYPO3\CMS\Core\Resource\FileReference',
             ),
             $result
         );
@@ -292,7 +286,6 @@ class FileDataProviderTest extends AbstractCase
                 'mimeType' => 'MimeType',
                 'url'      => 'http://url',
                 'size'     => 10,
-                '__class'  => 'Mock_TYPO3_CMS_Core_Resource_File',
             ),
             $result
         );
@@ -321,9 +314,7 @@ class FileDataProviderTest extends AbstractCase
                     'mimeType' => 'MimeType',
                     'url'      => 'http://url',
                     'size'     => 10,
-                    '__class'  => 'Mock_TYPO3_CMS_Core_Resource_File',
                 ),
-                '__class' => 'Mock_Test_Class',
             ),
             $result
         );

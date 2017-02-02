@@ -221,7 +221,6 @@ class DataProviderTest extends AbstractCase
                 'name'    => 'Initial value',
                 'uid'     => null,
                 'pid'     => null,
-                '__class' => 'Cundd\\Rest\\Tests\\MyModel',
             ),
             $properties
         );
@@ -253,12 +252,10 @@ class DataProviderTest extends AbstractCase
                 'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
                 'uid'     => 2,
                 'pid'     => null,
-                '__class' => 'Cundd\Rest\Tests\MyNestedModel',
             ),
 
             'uid'     => 1,
             'pid'     => null,
-            '__class' => 'Cundd\Rest\Tests\MyNestedModel',
         );
 
         $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
@@ -292,13 +289,11 @@ class DataProviderTest extends AbstractCase
             'child' => array(
                 'uid'     => null,
                 'pid'     => null,
-                '__class' => 'Cundd\Rest\Tests\MyModel',
                 'name'    => 'Initial value',
             ),
 
             'uid'      => 1,
             'pid'      => null,
-            '__class'  => 'Cundd\Rest\Tests\MyNestedModelWithObjectStorage',
             'children' => array(
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
                 1 => array( // <- This is $childModel
@@ -306,12 +301,10 @@ class DataProviderTest extends AbstractCase
                     'date'    => $testDate,
                     'uid'     => 2,
                     'pid'     => null,
-                    '__class' => 'Cundd\Rest\Tests\MyNestedModel',
                     'child'   => array(
                         'name'    => 'Initial value',
                         'uid'     => null,
                         'pid'     => null,
-                        '__class' => 'Cundd\Rest\Tests\MyModel',
 
                     ),
                 ),
@@ -344,9 +337,7 @@ class DataProviderTest extends AbstractCase
                     'name'    => 'Initial value',
                     'uid'     => null,
                     'pid'     => null,
-                    '__class' => 'Cundd\\Rest\\Tests\\MyModel',
                 ),
-                '__class' => 'Cundd\\Rest\\Tests\\MyNestedModel',
             ),
             $properties
         );
@@ -366,9 +357,7 @@ class DataProviderTest extends AbstractCase
                     'name'    => 'Initial value',
                     'uid'     => null,
                     'pid'     => null,
-                    '__class' => 'Cundd\\Rest\\Tests\\MyModel',
                 ),
-                '__class' => 'Cundd\\Rest\\Tests\\MyNestedJsonSerializeModel',
             ),
             $properties
         );
