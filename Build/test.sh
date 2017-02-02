@@ -16,7 +16,7 @@ CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 source "$CLI_HOME/Build/lib.sh";
 
-function get_phpunit_path() {
+function get_phpunit_path_for_functional_tests() {
     if [ -e "$TYPO3_PATH_WEB/bin/phpunit" ]; then
         echo "$TYPO3_PATH_WEB/bin/phpunit";
     elif [ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]; then
@@ -24,6 +24,15 @@ function get_phpunit_path() {
     else
         print_error "Could not find phpunit";
         exit 1;
+    fi
+}
+function get_phpunit_path_for_unit_tests() {
+    if [ -e "bin/phpunit" ]; then
+        echo "bin/phpunit";
+    elif [ -e "vendor/bin/phpunit" ]; then
+        echo "vendor/bin/phpunit";
+    else
+        get_phpunit_path_for_functional_tests;
     fi
 }
 
@@ -70,18 +79,38 @@ function init {
 
 function unit_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml "$@";
+        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Unit/phpunit.xml "$@";
     else
-        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
+        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
+    fi
+}
+
+function manual_tests {
+    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
+        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Manual/phpunit.xml "$@";
+    else
+        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Manual/phpunit.xml ./Tests/Manual "$@";
     fi
 }
 
 function functional_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml "$@";
+        ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c ./Tests/Functional/phpunit.xml "$@";
     else
-        ${PHP_BINARY} $(get_phpunit_path) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
+        ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
     fi
+}
+
+function show_help() {
+    echo "Usage $0 [options] -- [phpunit-options] [<directory>]
+
+Example $0 --no-functional -- Tests/Unit/Router/ResultConverterTest.php
+
+  --no-unit             Do not run Unit tests
+  --no-functional       Do not run Functional tests
+  --no-manual           Do not run manual tests
+  -h|--help             Print this information
+";
 }
 
 function main {
@@ -89,19 +118,35 @@ function main {
 
     local _functional_tests="yes";
     local _unit_tests="yes";
+    local _manual_tests="yes";
 
-    if [[ "$#" -gt "0" ]]; then
-        if [[ "$1" == "--no-unit" ]]; then
+    # Consume all arguments until "--" is found
+    while [[ "$#" -gt "0" ]]; do
+        if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+            show_help;
+            exit 0;
+        elif [[ "$1" == "--no-unit" ]]; then
             _unit_tests="no";
-            shift;
         elif [[ "$1" == "--no-functional" ]]; then
             _functional_tests="no";
+        elif [[ "$1" == "--no-manual" ]]; then
+            _manual_tests="no";
+        elif [[ "$1" == "--" ]]; then
             shift;
+            break;
+        else
+            print_error "Unknown argument '$1'";
+            echo;
+            show_help;
+            exit 1;
         fi
-    fi
+
+        shift;
+    done
 
     : ${FUNCTIONAL_TESTS="$_functional_tests"}
     : ${UNIT_TESTS="$_unit_tests"}
+    : ${MANUAL_TESTS="$_manual_tests"}
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         print_header "Run Unit Tests";
@@ -112,6 +157,12 @@ function main {
         print_header "Run Functional Tests";
         init_database;
         functional_tests "$@";
+    fi
+
+    if [[ "$MANUAL_TESTS" == "yes" ]]; then
+        print_header "Run Manual Tests";
+        init_database;
+        manual_tests "$@";
     fi
 }
 
