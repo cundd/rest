@@ -56,7 +56,7 @@ before_script:
   # Create the database "typo3" if it does not exist
   - mysql -e 'CREATE DATABASE IF NOT EXISTS typo3;'
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
-  - composer remove phpunit/phpunit --dev
+  - composer remove phpunit/phpunit --dev && composer update
 
 script:
   - >
@@ -66,4 +66,4 @@ script:
     export typo3DatabasePassword="";
     export CHECK_MYSQL_CREDENTIALS="no";
     export MANUAL_TESTS="no";
-    bash Build/test.sh;
+    bash Build/test.sh -- -v;
