@@ -9,12 +9,12 @@ You can find the tutorial extension under [https://github.com/cundd/custom_rest]
 Configure the access
 --------------------
 
-The following lines configure read and write access to all paths matching `cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`, `your-domain.com/rest/cundd-custom_rest-path`, `your-domain.com/rest/cundd-custom_rest-whatever`, etc. 
+The following lines configure read and write access to all paths matching `cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`, `your-domain.com/rest/cundd-custom_rest-path`, `your-domain.com/rest/cundd-custom_rest-whatever`, etc.
 
 	plugin.tx_rest.settings.paths {
 		cundd-custom_rest {
 			path = cundd-custom_rest-*
-	
+
 			read = allow
 			write = allow
 		}
@@ -31,7 +31,7 @@ The paths shown above are not esthetic, but enable the extensions flexibility. T
 	plugin.tx_rest.settings.aliases {
 		customhandler = cundd-custom_rest-custom_handler
 	}
-	
+
 File: [ext_typoscript_setup.txt](https://github.com/cundd/custom_rest/blob/master/ext_typoscript_setup.txt)
 
 This allows us to call `your-domain.com/rest/customhandler` instead of `your-domain.com/rest/cundd-custom_rest-custom_handler`.
@@ -40,7 +40,7 @@ This allows us to call `your-domain.com/rest/customhandler` instead of `your-dom
 Creating the Handler
 --------------------
 
-Now lets have a look at the core of the custom extension: the Handler. To ship a Handler with your extension create a class in the format `\YourVendor\YourExtensionName\Rest\Handler` and make it implement `\Cundd\Rest\Handler\HandlerInterface`. REST's Object Manager will then automatically use this class for any request to the [resource types](http://localhost:9000/FAQ/) matching `cundd-custom_rest-*`.
+Now lets have a look at the core of the custom extension: the Handler. To ship a Handler with your extension create a class in the format `\YourVendor\YourExtensionName\Rest\Handler` and make it implement `\Cundd\Rest\Handler\HandlerInterface`. REST's Object Manager will then automatically use this class for any request to the [resource types](/FAQ/) matching `cundd-custom_rest-*`.
 
 The more interesting method is `configureRoutes(RouterInterface $router, RestRequestInterface $request)`. REST provides a custom routing implementation since version 3.0 and this is the place where the actual routing is configured.
 
@@ -207,7 +207,7 @@ Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInter
 Response
 --------
 
-The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation fitting the format from the request's `getFormat()` method. 
+The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation fitting the format from the request's `getFormat()` method.
 
 If a specific response should be sent to the client, without additional formatting, the handler callback can return an instance of `\Psr\Http\Message\ResponseInterface` (e.g. built using `\Cundd\Rest\ResponseFactory::createResponse($data, int $status)`).
 
@@ -244,7 +244,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
                 }
             )
         );
-    
+
         # curl -X GET http://localhost:8888/rest/customhandler/subpath
         $router->add(
             Route::get(
@@ -258,7 +258,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
                 }
             )
         );
-    
+
         # curl -X POST -d '{"username":"johndoe","password":"123456"}' http://localhost:8888/rest/customhandler/subpath
         $router->add(
             Route::post(
@@ -273,7 +273,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
                 }
             )
         );
-    
+
         # curl -X POST -H "Content-Type: application/json" -d '{"firstName":"john","lastName":"john"}' http://localhost:8888/rest/customhandler/create
         $router->add(
             Route::post(
@@ -283,7 +283,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
                     $arguments = [
                         'person' => $request->getSentData(),
                     ];
-    
+
                     return $this->callExtbasePlugin(
                         'myPlugin',
                         'Cundd',
@@ -300,13 +300,13 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
 
 
 // This is how the Dispatcher will invoke your configureRoutes() method
-$handler = new CustomHandler(); // Actually get the Handler instance from the Object Manager 
+$handler = new CustomHandler(); // Actually get the Handler instance from the Object Manager
 $handler->configureRoutes($router, $request);
 ```
 
 To access the POST data sent by the client use the request's `getSentData()` which will return an array.
 
-Finally the web service can be tested with 
+Finally the web service can be tested with
 
 ```bash
 curl -X GET http://your-domain.com/rest/customhandler
