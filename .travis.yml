@@ -35,6 +35,11 @@ matrix:
 
 sudo: false
 
+## Cache composer bits
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 notifications:
   webhooks:
     urls:
