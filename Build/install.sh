@@ -22,7 +22,9 @@ CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 source "$CLI_HOME/Build/lib.sh";
 
 function get_mysql_client_path {
-    if [[ `which mysql > /dev/null` ]]; then
+    if hash mysql 2>/dev/null; then
+        echo mysql;
+    elif [[ `which mysql > /dev/null` ]]; then
         which mysql;
     elif [[ -x /Applications/MAMP/Library/bin/mysql ]]; then
         echo /Applications/MAMP/Library/bin/mysql;
@@ -68,6 +70,8 @@ function prepare_database {
             -e "create database $typo3DatabaseName;" || {
             print_warning "Database $typo3DatabaseName not created";
         };
+    else
+        print_warning "MySQL client not found";
     fi
 }
 
