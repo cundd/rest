@@ -46,7 +46,7 @@ notifications:
 before_script:
 # Install build dependencies
   - bash Build/install.sh;
-  - composer remove phpunit/phpunit
+  - composer remove phpunit/phpunit --dev
 
 script:
   - >
