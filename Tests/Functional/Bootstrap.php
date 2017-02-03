@@ -31,10 +31,6 @@ class Bootstrap
                 require_once $restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
 
                 return;
-            } else {
-                throw new \RuntimeException(
-                    sprintf('Directory "typo3/" not found in given REST_TYPO3_BASE_PATH "%s"', $restTypo3BasePath)
-                );
             }
         }
 
