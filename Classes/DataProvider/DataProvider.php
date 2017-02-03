@@ -719,7 +719,10 @@ class DataProvider implements DataProviderInterface
                 'name' => $originalResource->getName(),
             );
         } catch (\RuntimeException $exception) {
-            return array();
+            return array(
+                'code'    => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            );
         }
     }
 
