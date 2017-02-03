@@ -29,18 +29,19 @@ class Bootstrap
         if ($restTypo3BasePath) {
             if (file_exists($restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
                 require_once $restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
+
+                return;
             } else {
                 throw new \RuntimeException(
                     sprintf('Directory "typo3/" not found in given REST_TYPO3_BASE_PATH "%s"', $restTypo3BasePath)
                 );
             }
-        } elseif (file_exists(getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-            require_once getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-        } elseif (file_exists(__DIR__ . '/../../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-            require_once      __DIR__ . '/../../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-        } elseif (file_exists(__DIR__ . '/../../../TYPO3.CMS/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-            require_once      __DIR__ . '/../../../TYPO3.CMS/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-        } elseif (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
+        }
+
+        if (!$this->lookForTypo3(realpath(__DIR__) ?: __DIR__)) {
+            $this->lookForTypo3(getcwd());
+        }
+        if (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
             throw new \Exception('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found');
         }
     }
@@ -64,6 +65,27 @@ class Bootstrap
     private function setupAbstractCase()
     {
         require_once __DIR__ . '/AbstractCase.php';
+    }
+
+    private function lookForTypo3($startPath)
+    {
+        $cur = $startPath;
+        while ($cur !== '/') {
+            if (file_exists($cur . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
+                require_once $cur . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
+
+                return true;
+            } elseif (file_exists($cur . '/TYPO3.CMS/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
+                require_once $cur . '/TYPO3.CMS/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
+
+                return true;
+            }
+
+            $cur = dirname($cur);
+
+        }
+
+        return false;
     }
 }
 
