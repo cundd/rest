@@ -29,24 +29,18 @@ class Bootstrap
             if (file_exists($restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
                 require_once $restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
             } else {
-                throw new \RuntimeException(sprintf(
-                    'Directory "typo3/" not found in given REST_TYPO3_BASE_PATH "%s"',
-                    $restTypo3BasePath
-                ));
+                throw new \RuntimeException(
+                    sprintf(
+                        'Directory "typo3/" not found in given REST_TYPO3_BASE_PATH "%s"',
+                        $restTypo3BasePath
+                    )
+                );
             }
         } elseif (file_exists(getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
             require_once getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
         } elseif (file_exists(__DIR__ . '/../../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
             require_once __DIR__ . '/../..../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-        } else {
-            return;
-        }
-
-        if (class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
-            $bootstrap = new \TYPO3\CMS\Core\Build\FunctionalTestsBootstrap();
-            $bootstrap->bootstrapSystem();
-            unset($bootstrap);
-        } else {
+        } elseif (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
             throw new \Exception('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found');
         }
     }
