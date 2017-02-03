@@ -18,7 +18,7 @@ class Bootstrap
 
     protected function setupTYPO3()
     {
-        if (defined('TYPO3_MODE')) {
+        if (defined('TYPO3_MODE') && defined('ORIGINAL_ROOT')) {
             return;
         }
         $restTypo3BasePath = getenv('REST_TYPO3_BASE_PATH');
@@ -37,7 +37,7 @@ class Bootstrap
         } elseif (file_exists(getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
             require_once getcwd() . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
         } elseif (file_exists(__DIR__ . '/../../../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-            require_once __DIR__ . '/../....//../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
+            require_once __DIR__ . '/../..../../../typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
         } else {
             return;
         }
@@ -46,6 +46,8 @@ class Bootstrap
             $bootstrap = new \TYPO3\CMS\Core\Build\FunctionalTestsBootstrap();
             $bootstrap->bootstrapSystem();
             unset($bootstrap);
+        } else {
+            throw new \Exception('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found');
         }
     }
 
