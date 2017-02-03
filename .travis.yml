@@ -44,8 +44,18 @@ notifications:
     on_start: never     # options: [always|never|change] default: always
 
 before_script:
-# Install build dependencies
-  - bash Build/install.sh;
+  # We don't need xdebug right now
+  - phpenv config-rm xdebug.ini
+  - >
+    export typo3DatabaseName="typo3";
+    export typo3DatabaseHost="localhost";
+    export typo3DatabaseUsername="root";
+    export typo3DatabasePassword="";
+    export CHECK_MYSQL_CREDENTIALS="no";
+    bash Build/install.sh;
+  # Create the database "typo3" if it does not exist
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS typo3;'
+  # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
   - composer remove phpunit/phpunit --dev
 
 script:
