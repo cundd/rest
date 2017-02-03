@@ -3,9 +3,9 @@
 set -o nounset
 set -o errexit
 
-CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
+REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
-: ${TYPO3_PATH_WEB="$CLI_HOME/../TYPO3.CMS"}
+: ${TYPO3_PATH_WEB="$REST_HOME/../TYPO3.CMS"}
 : ${PHP_BINARY="php"}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
 
@@ -14,7 +14,7 @@ CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
-source "$CLI_HOME/Build/lib.sh";
+source "$REST_HOME/Build/lib.sh";
 
 function get_phpunit_path_for_functional_tests() {
     if [ -e "$TYPO3_PATH_WEB/bin/phpunit" ]; then

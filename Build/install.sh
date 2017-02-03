@@ -19,7 +19,7 @@ CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
-source "$CLI_HOME/Build/lib.sh";
+source "$REST_HOME/Build/lib.sh";
 
 function get_mysql_client_path {
     if hash mysql 2>/dev/null; then
@@ -50,6 +50,7 @@ function install_typo3 {
         cd TYPO3.CMS;
         git pull;
     fi
+    export TYPO3_PATH_WEB="`pwd`";
 
     composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
