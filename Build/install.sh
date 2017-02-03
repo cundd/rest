@@ -3,7 +3,7 @@
 set -o nounset
 set -o errexit
 
-CLI_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
+REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${TYPO3="TYPO3_7-6"}
 : ${REPO="rest"}
@@ -57,7 +57,7 @@ function install_typo3 {
 
     mkdir -p ./typo3conf/ext/;
     if [[ ! -e "./typo3conf/ext/$REPO" ]]; then
-        ln -s ${CLI_HOME} "./typo3conf/ext/$REPO";
+        ln -s ${REST_HOME} "./typo3conf/ext/$REPO";
     fi
     cd ..;
 }
@@ -86,7 +86,7 @@ function prepare_database {
 }
 
 function main {
-    cd ${CLI_HOME};
+    cd ${REST_HOME};
 
     install_dependencies;
     install_typo3;
