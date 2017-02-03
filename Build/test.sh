@@ -116,6 +116,8 @@ Example $0 --no-functional -- Tests/Unit/Router/ResultConverterTest.php
 function main {
     init;
 
+
+
     local _functional_tests="yes";
     local _unit_tests="yes";
     local _manual_tests="yes";
@@ -164,6 +166,9 @@ function main {
     : ${FUNCTIONAL_TESTS="$_functional_tests"}
     : ${UNIT_TESTS="$_unit_tests"}
     : ${MANUAL_TESTS="$_manual_tests"}
+
+	export TYPO3_PATH_WEB="$TYPO3_PATH_WEB";
+
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         print_header "Run Unit Tests (using $(get_phpunit_path_for_unit_tests))";
