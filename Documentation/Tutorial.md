@@ -50,6 +50,8 @@ Building a route
 
 A route is an instance of `\Cundd\Rest\Router\Route`. It encapsulates the necessary information to be compared to the current request and a callback that will be invoked if the route matches. One required information is the pattern that will be compared against the request URI. The second important part is the request method a route belongs to.  
 
+> Important thing about the route: The extension suffix will be removed from the sent URL. E.g. `http://localhost:8888/rest/customhandler.json` will be treated as `http://localhost:8888/rest/customhandler`.
+
 Lets create a route:
 
 We want to provide a service if a GET request to the URL for this Handler is invoked. So we create a route that will match if the requested Resource Type matches the Handlers Resource Type:
