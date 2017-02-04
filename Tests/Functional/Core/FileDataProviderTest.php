@@ -81,13 +81,21 @@ class FileDataProviderTest extends AbstractCase
      */
     protected function createFileReferenceMock(array $fileReferenceProperties = array())
     {
-        $fileReferenceProperties = array(
-                'uid_local' => '1467702760',
-                'name'      => 'Test name',
-            ) + $fileReferenceProperties;
+        $fileReferenceProperties = array_merge(
+            [
+                'uid_local'   => '1467702760',
+                'name'        => 'Test name',
+                'title'       => 'Test title',
+                'description' => 'The original files description',
+            ],
+            $fileReferenceProperties
+        );
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMockObjectGenerator()->getMock('\TYPO3\CMS\Core\Resource\ResourceFactory', array('getFileObject'));
+        $factoryMock = $this->getMockObjectGenerator()->getMock(
+            '\TYPO3\CMS\Core\Resource\ResourceFactory',
+            array('getFileObject')
+        );
         $factoryMock->expects($this->any())
             ->method('getFileObject')->will(
                 $this->returnValue($originalFileMock)
@@ -107,6 +115,7 @@ class FileDataProviderTest extends AbstractCase
             'name'       => 'Original file name',
             'mimeType'   => 'MimeType',
         );
+        /** @var  \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject $originalFileMock */
         $originalFileMock = $this->getMockObjectGenerator()->getMock(
             '\TYPO3\CMS\Core\Resource\File',
             array(),
@@ -143,15 +152,11 @@ class FileDataProviderTest extends AbstractCase
         return $originalFileMock;
     }
 
-
     /**
      * @test
      */
     public function getModelDataForModelWithFileReferenceTest()
     {
-        if (getenv('TRAVIS')) {
-            $this->markTestSkipped('Currently not working on Travis. Will throw  #1321804422 "Could not open log file "');
-        }
         $testModel = $this->createDomainModelFixture(
             array(
                 'title' => 'Test',
@@ -163,14 +168,14 @@ class FileDataProviderTest extends AbstractCase
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title'   => 'Test',
-                'file'    => array(
+                'title' => 'Test',
+                'file'  => array(
                     'name'         => 'Original file name',
                     'mimeType'     => 'MimeType',
                     'url'          => 'http://url',
                     'size'         => 10,
-                    'title'        => '',
-                    'description'  => '',
+                    'title'        => 'Test title',
+                    'description'  => 'The original files description',
                     'uid'          => 1467702760,
                     'referenceUid' => 0,
                 ),
@@ -201,8 +206,8 @@ class FileDataProviderTest extends AbstractCase
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title'   => 'Test',
-                'file'    => array(
+                'title' => 'Test',
+                'file'  => array(
                     'name'         => 'Original file name',
                     'mimeType'     => 'MimeType',
                     'url'          => 'http://url',
@@ -222,9 +227,6 @@ class FileDataProviderTest extends AbstractCase
      */
     public function getModelDataForFileReferenceTest()
     {
-        if (getenv('TRAVIS')) {
-            $this->markTestSkipped('Currently not working on Travis. Will throw  #1321804422 "Could not open log file "');
-        }
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock();
 
@@ -236,8 +238,8 @@ class FileDataProviderTest extends AbstractCase
                 'mimeType'     => 'MimeType',
                 'url'          => 'http://url',
                 'size'         => 10,
-                'title'        => '',
-                'description'  => '',
+                'title'        => 'Test title',
+                'description'  => 'The original files description',
                 'uid'          => 1467702760,
                 'referenceUid' => 0,
             ),
@@ -314,8 +316,8 @@ class FileDataProviderTest extends AbstractCase
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
-                'title'   => 'Test',
-                'file'    => array(
+                'title' => 'Test',
+                'file'  => array(
                     'name'     => 'Original file name',
                     'mimeType' => 'MimeType',
                     'url'      => 'http://url',
