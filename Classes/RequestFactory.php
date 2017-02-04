@@ -267,16 +267,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $path = '/' . ltrim((string)$path, '/');
         }
 
-        /*
-         * Transform Document URLs
-         * @Todo: Make this more flexible
-         */
-        $documentPathPrefix = '/' . Request::API_PATH_DOCUMENT . '/';
-        if ($this->stringHasPrefix($path, $documentPathPrefix)) {
-            $documentApiPathLength = strlen($documentPathPrefix);
-            $path = '/' . Request::API_PATH_DOCUMENT . '-' . substr($path, $documentApiPathLength);
-        }
-
         // Strip the query
         $path = strtok($path, '?');
         if (!$path) {

@@ -177,39 +177,6 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function getDocumentUriTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $request = $this->fixture->getRequest();
-        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
-        $this->assertEquals('json', $request->getFormat());
-    }
-
-    /**
-     * @test
-     */
-    public function getDocumentUriWithFormatTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $request = $this->fixture->getRequest();
-        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
-        $this->assertEquals('json', $request->getFormat());
-    }
-
-    /**
-     * @test
-     */
-    public function getDocumentUriWithHtmlFormatTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1.html';
-        $request = $this->fixture->getRequest();
-        $this->assertEquals('/Document-MyExt-MyModel/1', $request->getPath());
-        $this->assertEquals('html', $request->getFormat());
-    }
-
-    /**
-     * @test
-     */
     public function getPathTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
@@ -224,68 +191,6 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
         $path = $this->fixture->getRequest()->getResourceType();
-        $this->assertEquals('MyExt-MyModel', $path);
-    }
-
-    /**
-     * @test
-     */
-    public function getDocumentPathTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->getResourceType();
-        $this->assertEquals('Document-MyExt-MyModel', $path);
-    }
-
-    /**
-     * @test
-     */
-    public function getDocumentPathWithFormatTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->getResourceType();
-        $this->assertEquals('Document-MyExt-MyModel', $path);
-    }
-
-    /**
-     * @test
-     */
-    public function getOriginalResourceTypeWithDocumentTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1';
-        /** @var Request $request */
-        $request = $this->fixture->getRequest();
-        $this->assertEquals('Document-MyExt-MyModel', $request->getOriginalResourceType());
-    }
-
-    /**
-     * @test
-     */
-    public function getOriginalResourceTypeWithDocumentWithFormatTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        /** @var Request $request */
-        $request = $this->fixture->getRequest();
-        $this->assertEquals('Document-MyExt-MyModel', $request->getOriginalResourceType());
-    }
-
-    /**
-     * @test
-     */
-    public function getRootObjectKeyWithDocumentTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->getRootObjectKey();
-        $this->assertEquals('MyExt-MyModel', $path);
-    }
-
-    /**
-     * @test
-     */
-    public function getRootObjectKeyWithDocumentWithFormatTest()
-    {
-        $_GET['u'] = 'Document/MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->getRootObjectKey();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 

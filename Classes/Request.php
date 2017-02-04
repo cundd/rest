@@ -40,11 +40,6 @@ class Request implements ServerRequestInterface, RestRequestInterface
     use ServerRequestProxyTrait;
 
     /**
-     * Path prefix for the Document Store
-     */
-    const API_PATH_DOCUMENT = 'Document';
-
-    /**
      * @var ServerRequestInterface
      */
     private $originalRequest;
@@ -198,18 +193,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     public function getRootObjectKey()
     {
-        $originalPath = $this->getOriginalResourceType();
-
-        /*
-         * Transform Document URLs
-         * @Todo: Make this better
-         */
-        $documentApiPathLength = strlen(self::API_PATH_DOCUMENT) + 1;
-        if (substr($originalPath, 0, $documentApiPathLength) === self::API_PATH_DOCUMENT . '-') {
-            $originalPath = substr($originalPath, $documentApiPathLength);
-        }
-
-        return $originalPath;
+        return $this->getOriginalResourceType();
     }
 
     /**
