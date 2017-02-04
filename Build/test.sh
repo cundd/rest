@@ -101,38 +101,50 @@ function functional_tests {
     fi
 }
 
+function documentation_tests {
+    ${PHP_BINARY} vendor/bin/test-flight "$@";
+}
+
 function show_help() {
     echo "Usage $0 [options] -- [phpunit-options] [<directory>]
 
 Example $0 --no-functional -- Tests/Unit/Router/ResultConverterTest.php
 
-  --no-unit             Do not run Unit tests
-  --no-functional       Do not run Functional tests
-  --no-manual           Do not run manual tests
-  -h|--help             Print this information
+  --unit                    Run Unit tests
+  --functional              Run Functional tests
+  --manual                  Run manual tests
+  --doc|--documentation     Run documentation tests
+  -h|--help                 Print this information
 ";
 }
 
 function main {
     init;
 
+    local _functional_tests="no";
+    local _unit_tests="no";
+    local _manual_tests="no";
+    local _documentation_tests="no";
 
-
-    local _functional_tests="yes";
-    local _unit_tests="yes";
-    local _manual_tests="yes";
+    local _tests_selected="no";
 
     # Consume all arguments until "--" is found
     while [[ "$#" -gt "0" ]]; do
         if [[ "$1" == "--help" || "$1" == "-h" ]]; then
             show_help;
             exit 0;
-        elif [[ "$1" == "--no-unit" ]]; then
-            _unit_tests="no";
-        elif [[ "$1" == "--no-functional" ]]; then
-            _functional_tests="no";
-        elif [[ "$1" == "--no-manual" ]]; then
-            _manual_tests="no";
+        elif [[ "$1" == "--unit" ]]; then
+            _tests_selected="yes";
+            _unit_tests="yes";
+        elif [[ "$1" == "--functional" ]]; then
+            _tests_selected="yes";
+            _functional_tests="yes";
+        elif [[ "$1" == "--manual" ]]; then
+            _tests_selected="yes";
+            _manual_tests="yes";
+        elif [[ "$1" == "--doc" ]] || [[ "$1" == "--documentation" ]]; then
+            _tests_selected="yes";
+            _documentation_tests="yes";
         elif [[ "$1" == "--" ]]; then
             shift;
             break;
@@ -149,26 +161,35 @@ function main {
     # If the next argument is a directory or a file look if it tells us what kind of tests to run
     if [[ "$#" -gt "0" ]] && [[ -e "$1" ]]; then
         if [[ "$1" == Tests/Functional* ]] || [[ "$1" == `pwd`/Tests/Functional* ]]; then
+            _tests_selected="yes";
             _functional_tests="yes";
-            _unit_tests="no";
-            _manual_tests="no";
         elif [[ "$1" == Tests/Unit* ]] || [[ "$1" == `pwd`/Tests/Unit* ]]; then
-            _functional_tests="no";
+            _tests_selected="yes";
             _unit_tests="yes";
-            _manual_tests="no";
         elif [[ "$1" == Tests/Manual* ]] || [[ "$1" == `pwd`/Tests/Manual* ]]; then
-            _functional_tests="no";
-            _unit_tests="no";
+            _tests_selected="yes";
             _manual_tests="yes";
+        elif [[ "$1" == Documentation* ]] || [[ "$1" == `pwd`/Documentation* ]]; then
+            _tests_selected="yes";
+            _documentation_tests="yes";
         fi
     fi
 
+    # If no tests have been selected (either by '--unit' or passing 'Tests/Unit') run all tests
+    if [[ "$_tests_selected" == "no" ]]; then
+        _functional_tests="yes";
+        _unit_tests="yes";
+        _manual_tests="yes";
+        _documentation_tests="yes";
+    fi
+
+    # Environmental variables will override the value
     : ${FUNCTIONAL_TESTS="$_functional_tests"}
     : ${UNIT_TESTS="$_unit_tests"}
     : ${MANUAL_TESTS="$_manual_tests"}
+    : ${DOCUMENTATION_TESTS="$_documentation_tests"}
 
 	export TYPO3_PATH_WEB="$TYPO3_PATH_WEB";
-
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         print_header "Run Unit Tests (using $(get_phpunit_path_for_unit_tests))";
@@ -185,6 +206,11 @@ function main {
         print_header "Run Manual Tests (using $(get_phpunit_path_for_unit_tests))";
         init_database;
         manual_tests "$@";
+    fi
+
+    if [[ "$DOCUMENTATION_TESTS" == "yes" ]]; then
+        print_header "Run Documentation Tests";
+        documentation_tests "$@";
     fi
 }
 

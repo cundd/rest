@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 function _tput {
-    if hash tput &>/dev/null; then
+    : ${TERM="dumb"}
+    if [ "$TERM" != "dumb" ] && hash tput &>/dev/null; then
         tput $*;
     fi
 }
