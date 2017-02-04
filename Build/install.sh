@@ -5,7 +5,7 @@ set -o errexit
 
 REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
-: ${TYPO3="TYPO3_7-6"}
+: ${TYPO3="master"}
 : ${REPO="rest"}
 
 : ${FUNCTIONAL_TESTS="yes"}
@@ -69,14 +69,14 @@ function prepare_database {
                 -h${typo3DatabaseHost} \
                 -u${typo3DatabaseUsername} \
                 -p${typo3DatabasePassword} \
-                -e "create database $typo3DatabaseName;" || {
+                -e "CREATE DATABASE IF NOT EXISTS $typo3DatabaseName;" || {
                 print_warning "Database $typo3DatabaseName not created";
             };
         else
             $(get_mysql_client_path) \
                 -h${typo3DatabaseHost} \
                 -u${typo3DatabaseUsername} \
-                -e "create database $typo3DatabaseName;" || {
+                -e "CREATE DATABASE IF NOT EXISTS $typo3DatabaseName;" || {
                 print_warning "Database $typo3DatabaseName not created";
             };
         fi
