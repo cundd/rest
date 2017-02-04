@@ -70,13 +70,11 @@ class TypoScriptConfigurationProviderTest extends AbstractCase
      */
     public function getSettingTest()
     {
-        if (count($this->fixture->getSettings()) === 0) {
-            $this->markTestSkipped('ext_typoscript_setup.txt not loaded');
+        if (count($this->fixture->getSettings()) > 0) {
+            $this->assertInternalType('array', $this->fixture->getSetting('paths'));
+            $this->assertInternalType('array', $this->fixture->getSetting('paths.1'));
+            $this->assertEquals('all', $this->fixture->getSetting('paths.1.path'));
         }
-
-        $this->assertInternalType('array', $this->fixture->getSetting('paths'));
-        $this->assertInternalType('array', $this->fixture->getSetting('paths.1'));
-        $this->assertEquals('all', $this->fixture->getSetting('paths.1.path'));
     }
 
     /**
