@@ -50,7 +50,7 @@ notifications:
 
 before_script:
   # We don't need xdebug right now
-  - phpenv config-rm xdebug.ini || { echo "xdebug.ini not removed" }
+  - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
   - >
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="localhost";
