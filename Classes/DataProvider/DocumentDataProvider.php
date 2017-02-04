@@ -62,7 +62,7 @@ class DocumentDataProvider extends DataProvider
      * Returns all domain model for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface[]|QueryResultInterface
+     * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
     public function getAllModelsForResourceType(ResourceType $resourceType)
     {
@@ -105,7 +105,7 @@ class DocumentDataProvider extends DataProvider
      * Returns the data from the given model
      *
      * @param Document $model
-     * @return array<mixed>
+     * @return array
      */
     public function getModelData($model)
     {

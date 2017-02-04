@@ -27,17 +27,21 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
+use TYPO3\CMS\Extbase\Domain\Model\Category as Typo3CoreCategory;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 
 /**
  * DataProvider instance
@@ -122,7 +126,7 @@ class DataProvider implements DataProviderInterface
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
         $repository->setDefaultQuerySettings(
-            $this->objectManager->get('Cundd\\Rest\\Persistence\\Generic\\RestQuerySettings')
+            $this->objectManager->get(RestQuerySettings::class)
         );
 
         return $repository;
@@ -149,7 +153,7 @@ class DataProvider implements DataProviderInterface
      * Returns all domain model for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface[]|QueryResultInterface
+     * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
     public function getAllModelsForResourceType(ResourceType $resourceType)
     {
@@ -162,7 +166,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface
+     * @return object
      */
     public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
@@ -182,7 +186,7 @@ class DataProvider implements DataProviderInterface
                 $modelClass,
                 $this->getPropertyMappingConfigurationForResourceType($resourceType)
             );
-        } catch (\TYPO3\CMS\Extbase\Property\Exception $exception) {
+        } catch (ExtbaseException $exception) {
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
             $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
         }
@@ -196,7 +200,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface
+     * @return object|DomainObjectInterface
      */
     public function getNewModelWithDataForResourceType($data, ResourceType $resourceType)
     {
@@ -233,7 +237,7 @@ class DataProvider implements DataProviderInterface
      * Returns a new domain model for the given API resource type
      *
      * @param ResourceType $resourceType
-     * @return DomainObjectInterface
+     * @return object|DomainObjectInterface
      */
     public function getModelForResourceType(ResourceType $resourceType)
     {
@@ -244,7 +248,7 @@ class DataProvider implements DataProviderInterface
      * Returns a new domain model for the given API resource type points to
      *
      * @param ResourceType $resourceType API resource type to get the model for
-     * @return DomainObjectInterface
+     * @return object
      */
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
@@ -256,8 +260,8 @@ class DataProvider implements DataProviderInterface
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
      * @param string                                                   $propertyKey
-     * @param DomainObjectInterface                                    $model
-     * @return array<mixed>
+     * @param object|DomainObjectInterface                             $model
+     * @return array
      */
     public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model)
     {
@@ -284,8 +288,8 @@ class DataProvider implements DataProviderInterface
      *
      * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy $proxy
      * @param string                                                  $propertyKey
-     * @param DomainObjectInterface                                   $model
-     * @return array<mixed>
+     * @param object|DomainObjectInterface                            $model
+     * @return array
      */
     public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model)
     {
@@ -295,7 +299,7 @@ class DataProvider implements DataProviderInterface
          * Get the first level of nested objects and all built in TYPO3
          * categories
          */
-        if ($this->currentModelDataDepth < 1 && $model instanceof \TYPO3\CMS\Extbase\Domain\Model\Category) {
+        if ($this->currentModelDataDepth < 1 && $model instanceof Typo3CoreCategory) {
             $this->currentModelDataDepth++;
 
             $returnData = $this->getModelData($proxy->_loadRealInstance());
@@ -309,8 +313,8 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the URI of a nested resource
      *
-     * @param string                $resourceKey
-     * @param DomainObjectInterface $model
+     * @param string                       $resourceKey
+     * @param object|DomainObjectInterface $model
      * @return string
      */
     public function getUriToNestedResource($resourceKey, $model)
@@ -331,7 +335,7 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the URI of a resource
      *
-     * @param DomainObjectInterface $model
+     * @param object|DomainObjectInterface $model
      * @return string
      */
     public function getUriToResource($model)
@@ -342,8 +346,8 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the property data from the given model
      *
-     * @param DomainObjectInterface $model
-     * @param string                $propertyKey
+     * @param object|DomainObjectInterface $model
+     * @param string                       $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey)
@@ -374,8 +378,8 @@ class DataProvider implements DataProviderInterface
      * Adds or updates the given model in the repository for the
      * given API resource type
      *
-     * @param DomainObjectInterface $model
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $model
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function saveModelForResourceType($model, ResourceType $resourceType)
@@ -395,9 +399,9 @@ class DataProvider implements DataProviderInterface
      * Tells the Data Provider to replace the given old model with the new one
      * in the repository for the given API resource type
      *
-     * @param DomainObjectInterface $oldModel
-     * @param DomainObjectInterface $newModel
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $oldModel
+     * @param object|DomainObjectInterface $newModel
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType)
@@ -413,8 +417,8 @@ class DataProvider implements DataProviderInterface
      * Adds or updates the given model in the repository for the
      * given API resource type
      *
-     * @param DomainObjectInterface $model
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $model
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function removeModelForResourceType($model, ResourceType $resourceType)
@@ -553,8 +557,8 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the data from the given model
      *
-     * @param DomainObjectInterface|object $model
-     * @return array<mixed>
+     * @param object|DomainObjectInterface|object $model
+     * @return array
      */
     public function getModelData($model)
     {
@@ -562,7 +566,7 @@ class DataProvider implements DataProviderInterface
             return $model;
         }
 
-        if ($model instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage && !method_exists($model, 'jsonSerialize')) {
+        if ($model instanceof ObjectStorage && !method_exists($model, 'jsonSerialize')) {
             return $this->transformObjectStorage($model);
         }
 
@@ -750,6 +754,8 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
+     * Adds the __class property to the export data if configured
+     *
      * @param mixed $model
      * @param array $properties
      * @return mixed

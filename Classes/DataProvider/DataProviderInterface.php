@@ -52,7 +52,7 @@ interface DataProviderInterface extends SingletonInterface
      * Returns all domain model for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface[]|QueryResultInterface
+     * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
     public function getAllModelsForResourceType(ResourceType $resourceType);
 
@@ -62,7 +62,7 @@ interface DataProviderInterface extends SingletonInterface
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface
+     * @return object|DomainObjectInterface
      */
     public function getModelWithDataForResourceType($data, ResourceType $resourceType);
 
@@ -72,7 +72,7 @@ interface DataProviderInterface extends SingletonInterface
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface
+     * @return object|DomainObjectInterface
      */
     public function getNewModelWithDataForResourceType($data, ResourceType $resourceType);
 
@@ -87,15 +87,16 @@ interface DataProviderInterface extends SingletonInterface
     /**
      * Returns the data from the given model
      *
-     * @param DomainObjectInterface|object $model
+     * @param object|DomainObjectInterface $model
+     * @return array
      */
     public function getModelData($model);
 
     /**
      * Returns the property data from the given model
      *
-     * @param DomainObjectInterface $model
-     * @param string                $propertyKey
+     * @param object|DomainObjectInterface $model
+     * @param string                       $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey);
@@ -104,8 +105,8 @@ interface DataProviderInterface extends SingletonInterface
      * Adds or updates the given model in the repository for the
      * given API resource type
      *
-     * @param DomainObjectInterface $model
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $model
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function saveModelForResourceType($model, ResourceType $resourceType);
@@ -114,9 +115,9 @@ interface DataProviderInterface extends SingletonInterface
      * Tells the Data Provider to replace the given old model with the new one
      * in the repository for the given API resource type
      *
-     * @param DomainObjectInterface $oldModel
-     * @param DomainObjectInterface $newModel
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $oldModel
+     * @param object|DomainObjectInterface $newModel
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType);
@@ -125,8 +126,8 @@ interface DataProviderInterface extends SingletonInterface
      * Adds or updates the given model in the repository for the
      * given API resource type
      *
-     * @param DomainObjectInterface $model
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $model
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function removeModelForResourceType($model, ResourceType $resourceType);

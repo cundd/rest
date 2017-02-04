@@ -36,6 +36,7 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
+use Cundd\Rest\VirtualObject\Persistence\Repository;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 use TYPO3\CMS\Core\Log\LogLevel;
@@ -69,7 +70,7 @@ class VirtualObjectDataProvider extends DataProvider
         $resourceTypeString = (string)$resourceType;
         if (!isset($this->objectConverterMap[$resourceTypeString])) {
             /** @var ObjectConverter $objectConverter */
-            $objectConverter = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ObjectConverter');
+            $objectConverter = $this->objectManager->get(ObjectConverter::class);
             $objectConverter->setConfiguration($this->getConfigurationForResourceType($resourceType));
 
             $this->objectConverterMap[$resourceTypeString] = $objectConverter;
@@ -114,7 +115,7 @@ class VirtualObjectDataProvider extends DataProvider
      */
     public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
-        return 'Cundd\\Rest\\VirtualObject\\Persistence\\Repository';
+        return Repository::class;
     }
 
     /**
@@ -139,7 +140,7 @@ class VirtualObjectDataProvider extends DataProvider
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return DomainObjectInterface|VirtualObject
+     * @return object|DomainObjectInterface|VirtualObject
      */
     public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
@@ -169,7 +170,7 @@ class VirtualObjectDataProvider extends DataProvider
      * Returns a new domain model for the given API resource type points to
      *
      * @param ResourceType $resourceType API resource type to get the model for
-     * @return DomainObjectInterface|VirtualObject
+     * @return object|VirtualObject
      */
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
@@ -179,8 +180,8 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Returns the data from the given model
      *
-     * @param DomainObjectInterface $model
-     * @return array<mixed>
+     * @param object|DomainObjectInterface $model
+     * @return array
      */
     public function getModelData($model)
     {
@@ -195,8 +196,8 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Returns the property data from the given model
      *
-     * @param DomainObjectInterface $model
-     * @param string                $propertyKey
+     * @param object|DomainObjectInterface $model
+     * @param string                       $propertyKey
      * @return mixed
      */
     public function getModelProperty($model, $propertyKey)
@@ -213,8 +214,8 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Adds or updates the given model in the repository for the given API resource type
      *
-     * @param DomainObjectInterface $model
-     * @param ResourceType          $resourceType The API resource type
+     * @param object|DomainObjectInterface $model
+     * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
     public function saveModelForResourceType($model, ResourceType $resourceType)
