@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use TYPO3\CMS\Core\Resource\FileReference;
