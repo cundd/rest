@@ -50,6 +50,10 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
         }
     }
 
+    public function __wakeup()
+    {
+    }
+
     /**
      * Reconstitutes a property. Only for internal use.
      *
@@ -73,17 +77,6 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
         return $this->uid;
     }
 
-//    /**
-//     * Returns the property value of the given property name. Only for internal use.
-//     *
-//     * @param string $propertyName
-//     * @return mixed The propertyValue
-//     */
-//    public function _getProperty($propertyName)
-//    {
-//        return $this->{$propertyName};
-//    }
-//
     /**
      * Returns a hash map of property names and property values. Only for internal use.
      *
@@ -100,17 +93,6 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 
         return $properties;
     }
-//
-//    /**
-//     * Returns the property value of the given property name. Only for internal use.
-//     *
-//     * @param string $propertyName
-//     * @return bool TRUE bool true if the property exists, FALSE if it doesn't exist or NULL in case of an error.
-//     */
-//    public function _hasProperty($propertyName)
-//    {
-//        return property_exists($this, $propertyName);
-//    }
 }
 
 class MyModel extends BaseModel
@@ -145,8 +127,6 @@ class MyModel extends BaseModel
     {
         return $this->name;
     }
-
-
 }
 
 class MyModelRepository extends Repository
@@ -290,6 +270,4 @@ class SimpleClassJsonSerializable extends SimpleClass implements \JsonSerializab
             "pid"       => $this->pid,
         ];
     }
-
-
 }
