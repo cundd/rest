@@ -19,10 +19,8 @@ use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
-use TYPO3\CMS\Extbase\Domain\Model\Category as Typo3CoreCategory;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 
 /**
  * Class to prepare/extract the data to be sent from objects
@@ -78,6 +76,28 @@ class Extractor implements ExtractorInterface
      */
     public function extract($input)
     {
+        return $this->extractData($input, null, null);
+    }
+
+    /**
+     * Returns the data from the given input
+     *
+     * @param mixed       $input
+     * @param string|null $key
+     * @param object|null $owner
+     * @return mixed
+     */
+    private function extractData($input, $key, $owner)
+    {
+        assert(
+            is_null($owner) || is_object($owner),
+            sprintf('Owner must be either Null or an object, %s given', gettype($owner))
+        );
+        assert(
+            is_null($key) || is_scalar($key),
+            sprintf('Key must be either Null or scalar, %s given', is_object($key) ? get_class($key) : gettype($key))
+        );
+
         $this->assertExtractableType($input);
 
         if (is_null($input)) {
@@ -88,66 +108,89 @@ class Extractor implements ExtractorInterface
             return $input;
         }
 
-        // Indexed array
-        if (is_array($input) && $this->isIndexedArray($input)) {
-            return $this->transformTraversable($input);
+        // Indexed array and dictionary
+        if (is_array($input)) {
+            return $this->transformCollection($input);
         }
 
         // Traversable
         if ($input instanceof \Traversable && !method_exists($input, 'jsonSerialize')) {
-            return $this->transformTraversable($input);
+            return $this->transformCollection(array_values(iterator_to_array($input)));
         }
 
-        // Dictionary/associative array
-        if (is_array($input) && $this->isAssociativeArray($input)) {
-            return $this->transformArrayProperties($input);
+        // Proxy
+        if ($input instanceof LazyLoadingProxy) {
+            return $this->extractData($input->_loadRealInstance(), $key, $owner);
         }
 
         // DateTime
-        if (is_object($input) && $input instanceof DateTimeInterface) {
+        if ($input instanceof DateTimeInterface) {
             return $input->format(DateTime::ATOM);
         }
 
         // General object
         if (is_object($input)) {
-            return $this->extractObjectDataIfNotRecursion($input);
+            return $this->extractObjectDataIfNotRecursion($input, $key, $owner);
         }
 
         throw new \InvalidArgumentException(sprintf('Can not extract data from type %s', gettype($input)));
     }
 
     /**
-     * @param $input
-     * @return array
+     * @param object      $input
+     * @param string|null $key
+     * @param object|null $owner
+     * @return array|string
      */
-    private function extractObjectDataIfNotRecursion($input)
+    private function extractObjectDataIfNotRecursion($input, $key, $owner)
     {
         assert(is_object($input), sprintf('Input must be an object %s given', gettype($input)));
+        assert(
+            is_null($owner) || is_object($owner),
+            sprintf('Owner must be either Null or an object, %s given', gettype($owner))
+        );
+        assert(
+            is_null($key) || is_scalar($key),
+            sprintf('Key must be either Null or scalar, %s given', is_object($key) ? get_class($key) : gettype($key))
+        );
 
-        $modelHash = spl_object_hash($input);
-        if (isset(static::$handledModels[$modelHash])) {
-            static::$handledModels[$modelHash] += 1;
-        } else {
-            static::$handledModels[$modelHash] = 1;
-        }
+        $this->increaseObjectRecursionValue($input);
 
-        if (static::$handledModels[$modelHash] < 2) {
-            $result = $this->extractObjectData($input);
+        // Check for recursion
+        if ($this->getObjectRecursionValue($input) < 2) {
+            $result = $this->extractObjectData($input, $key, $owner);
         } else {
-            $result = $this->getUriToResource($input);
+            // Object is processed recursively, so we only return a URI
+            if ($key && $owner) {
+                // If a key and owner are given, this is a nested resource and we return an URI relative to the
+                // owner/parent object
+                $result = $this->getUriToNestedResource($key, $owner);
+            } else {
+                $result = $this->getUriToResource($input);
+            }
         }
-        static::$handledModels[$modelHash] -= 1;
+        $this->decreaseObjectRecursionValue($input);
 
         return $result;
     }
 
     /**
-     * @param object $input
+     * @param object      $input
+     * @param string|null $key
+     * @param object|null $owner
      * @return mixed
      */
-    private function extractObjectData($input)
+    private function extractObjectData($input, $key, $owner)
     {
         assert(is_object($input), sprintf('Input must be an object %s given', gettype($input)));
+        assert(
+            is_null($owner) || is_object($owner),
+            sprintf('Owner must be either Null or an object, %s given', gettype($owner))
+        );
+        assert(
+            is_null($key) || is_scalar($key),
+            sprintf('Key must be either Null or scalar, %s given', is_object($key) ? get_class($key) : gettype($key))
+        );
 
         if (method_exists($input, 'jsonSerialize')) {
             // jsonSerialize() can return anything but `resource`
@@ -181,67 +224,31 @@ class Extractor implements ExtractorInterface
     private function transformObjectProperties($model, array $properties)
     {
         assert(is_object($model), sprintf('Input must be an object %s given', gettype($model)));
+        $transformedCollection = [];
 
         // Transform objects recursive
         foreach ($properties as $propertyKey => $propertyValue) {
-            $this->assertExtractableType($propertyValue);
-            if (is_scalar($propertyValue) || $propertyValue === null) {
-                // Go on with the next value
-                continue;
-            }
-
-            if (is_object($propertyValue)) {
-                $properties[$propertyKey] = $this->transformObjectProperty($propertyValue, $propertyKey, $model);
-            } elseif (is_array($propertyValue)) {
-                $properties[$propertyKey] = $this->transformArrayProperties($propertyValue);
-            } else {
-                assert(false, sprintf('Property value is of type %s', gettype($propertyValue)));
-            }
+            $transformedCollection[$propertyKey] = $this->extractData($propertyValue, $propertyKey, $model);
         }
 
-        return $properties;
+        return $transformedCollection;
     }
 
     /**
-     * Transform the properties
+     * Transform the values of a collection type
      *
-     * @param array $properties
+     * @param array $collection
      * @return array
      */
-    private function transformArrayProperties(array $properties)
+    private function transformCollection(array $collection)
     {
-        // Transform array recursive
-        foreach ($properties as $propertyKey => $propertyValue) {
-            $this->assertExtractableType($propertyValue);
-            if (is_scalar($propertyValue) || $propertyValue === null) {
-                // Go on with the next value
-                continue;
-            }
+        $transformedCollection = [];
 
-            if (is_object($propertyValue)) {
-                $properties[$propertyKey] = $this->transformObjectProperty($propertyValue, $propertyKey);
-            } elseif (is_array($propertyValue)) {
-                $properties[$propertyKey] = $this->transformArrayProperties($propertyValue);
-            } else {
-                assert(false, sprintf('Property value is of type %s', gettype($propertyValue)));
-            }
+        foreach ($collection as $propertyKey => $propertyValue) {
+            $transformedCollection[$propertyKey] = $this->extractData($propertyValue, $propertyKey, null);
         }
 
-        return $properties;
-    }
-
-    private function isAssociativeArray(array $input)
-    {
-        if (array() === $input) {
-            return false;
-        }
-
-        return array_keys($input) !== range(0, count($input) - 1);
-    }
-
-    private function isIndexedArray(array $input)
-    {
-        return !$this->isAssociativeArray($input);
+        return $transformedCollection;
     }
 
     /**
@@ -274,15 +281,7 @@ class Extractor implements ExtractorInterface
      */
     private function getUriToNestedResource($resourceKey, $model)
     {
-        $currentUri = 'rest/'
-            . Utility::getResourceTypeForClassName(get_class($model))
-            . '/' . intval($model->getUid()) . '/';
-
-        if ($resourceKey !== null) {
-            $currentUri .= $resourceKey;
-        }
-
-        return $this->getUriRequestBase() . $currentUri;
+        return $this->getUriToResource($model) . $resourceKey;
     }
 
     /**
@@ -308,104 +307,18 @@ class Extractor implements ExtractorInterface
      */
     private function getUriToResource($model)
     {
-        return $this->getUriToNestedResource(null, $model);
-    }
+        $modelListingUri = $this->getUriRequestBase()
+            . 'rest/'
+            . Utility::getResourceTypeForClassName(get_class($model))
+            . '/';
 
+        if (!method_exists($model, 'getUid')) {
+            assert(false, 'The URI to a resource without an UID is requested. This URI can not be generated');
 
-    /**
-     * Returns the data for the given lazy object storage
-     *
-     * @param LazyObjectStorage            $lazyObjectStorage
-     * @param string                       $propertyKey
-     * @param object|DomainObjectInterface $model
-     * @return array|string
-     */
-    private function extractFromLazyObjectStorage(LazyObjectStorage $lazyObjectStorage, $propertyKey, $model = null)
-    {
-        // Get the first level of nested objects
-        if ($this->currentModelDataDepth < 1) {
-            $this->currentModelDataDepth += 1;
-            $returnData = array();
-
-            // Collect each object of the lazy object storage
-            foreach ($lazyObjectStorage as $subObject) {
-                $returnData[] = $this->extract($subObject);
-            }
-            $this->currentModelDataDepth -= 1;
-
-            return $returnData;
+            return $modelListingUri;
         }
 
-        if (!$model) {
-            return [];
-        }
-
-        return $this->getUriToNestedResource($propertyKey, $model);
-    }
-
-    /**
-     * Returns the data for the given lazy object storage
-     *
-     * @param LazyLoadingProxy $proxy
-     * @param boolean          $forceExtract
-     * @return array
-     */
-    private function extractFromLazyLoadingProxy(LazyLoadingProxy $proxy, $forceExtract)
-    {
-        //Get only the first level of nested objects
-        if ($this->currentModelDataDepth >= 1 && !$forceExtract) {
-            return [];
-        }
-
-        $this->currentModelDataDepth += 1;
-        $returnData = $this->extract($proxy->_loadRealInstance());
-        $this->currentModelDataDepth -= 1;
-
-        return $returnData;
-    }
-
-    /**
-     * Returns the property data from the given model
-     *
-     * @param object|DomainObjectInterface $model
-     * @param string                       $propertyKey
-     * @return mixed
-     */
-    private function getModelProperty($model, $propertyKey)
-    {
-        $propertyValue = $model->_getProperty($propertyKey);
-        if (is_object($propertyValue)) {
-            if ($propertyValue instanceof LazyObjectStorage) {
-                $propertyValue = iterator_to_array($propertyValue);
-
-                // Transform objects recursive
-                foreach ($propertyValue as $childPropertyKey => $childPropertyValue) {
-                    if (is_object($childPropertyValue)) {
-                        $propertyValue[$childPropertyKey] = $this->extract($childPropertyValue);
-                    }
-                }
-                $propertyValue = array_values($propertyValue);
-            } else {
-                $propertyValue = $this->extract($propertyValue);
-            }
-        } elseif (!$propertyValue) {
-            return null;
-        }
-
-        return $propertyValue;
-    }
-
-    /**
-     * Transform traversable
-     *
-     * @param \Traversable|array $traversable
-     * @return array
-     */
-    protected function transformTraversable($traversable)
-    {
-        return array_values(
-            array_map(array($this, 'extract'), is_array($traversable) ? $traversable : iterator_to_array($traversable))
-        );
+        return $modelListingUri . intval($model->getUid()) . '/';
     }
 
     /**
@@ -516,88 +429,60 @@ class Extractor implements ExtractorInterface
     /**
      * Returns the recursion value of the object
      *
-     * @param object $propertyValue
+     * @param object $object
      * @return int Returns 0 if the object has not been processed before
      */
-    private function getObjectRecursionValue($propertyValue)
+    private function getObjectRecursionValue($object)
     {
-        assert(is_object($propertyValue), sprintf('Input must be an object %s given', gettype($propertyValue)));
-        $propertyValueHash = spl_object_hash($propertyValue);
+        assert(is_object($object), sprintf('Input must be an object %s given', gettype($object)));
+        $objectHash = spl_object_hash($object);
 
-        return isset(static::$handledModels[$propertyValueHash])
-            ? static::$handledModels[$propertyValueHash]
+        return isset(static::$handledModels[$objectHash])
+            ? static::$handledModels[$objectHash]
             : 0;
     }
 
     /**
-     * @param mixed  $value
-     * @param string $key
-     * @param object $model
-     * @return array|mixed|string
+     * Increase the recursion value for the given object
+     *
+     * @param object $object
+     * @return int
      */
-    private function transformObjectProperty($value, $key, $model = null)
+    private function increaseObjectRecursionValue($object)
     {
-        assert(is_object($value), sprintf('Value must be an object %s given', gettype($value)));
-        assert(is_scalar($key), sprintf('Property key must either be a string or int, %s given', gettype($key)));
-        assert(
-            is_null($model) || is_object($model),
-            sprintf('Model must either be Null or an object, %s given', gettype($model))
-        );
+        assert(is_object($object), sprintf('Input must be an object %s given', gettype($object)));
+        $objectHash = spl_object_hash($object);
 
-        if ($this->getObjectRecursionValue($value) > 0) { // Recursion detected
-            if (method_exists($value, 'getUid')) {
-                return $this->getUriToNestedResource($key, $value);
-            }
+        $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
+        $value += 1;
+        static::$handledModels[$objectHash] = $value;
 
-            return $value;
-        }
-
-        // No recursion detected
-        if ($value instanceof LazyLoadingProxy) {
-            return $this->extractFromLazyLoadingProxy(
-                $value,
-                $model && ($model instanceof Typo3CoreCategory) // Force extraction of TYPO3 Categories
-            );
-        } elseif ($value instanceof LazyObjectStorage) {
-            return $this->extractFromLazyObjectStorage($value, $key, $model);
-        }
-
-        return $this->extract($value);
+        return $value;
     }
 
-//    /**
-//     * @param mixed  $value
-//     * @param string $key
-//     * @return array|mixed|string
-//     */
-//    private function transformArrayProperty($value, $key)
-//    {
-//        assert(is_object($value), sprintf('Value must be an object %s given', gettype($value)));
-//        assert(is_string($key), sprintf('Property key must be a string %s given', gettype($key)));
-//
-//        if ($this->getObjectRecursionValue($value) > 0) { // Recursion detected
-//            if (method_exists($value, 'getUid')) {
-//                return $this->getUriToNestedResource($key, $value);
-//            }
-//
-//            return $value;
-//        }
-//
-//        if ($value instanceof LazyLoadingProxy) {
-//            return $this->extractFromLazyLoadingProxy($value, false);
-//        } elseif ($value instanceof LazyObjectStorage) {
-//            return $this->extractFromLazyObjectStorage($value, $key);
-//        }
-////        if ($value instanceof LazyLoadingProxy || $value instanceof LazyObjectStorage) {
-////            throw new \InvalidArgumentException(
-////                'Value must not be a Lazy Proxy instance because it\'s owner is not known'
-////            );
-////        }
-//
-//        // No recursion detected
-//        return $this->extract($value);
-//    }
+    /**
+     * Decrease the recursion value for the given object
+     *
+     * @param object $object
+     * @return int
+     */
+    private function decreaseObjectRecursionValue($object)
+    {
+        assert(is_object($object), sprintf('Input must be an object %s given', gettype($object)));
+        $objectHash = spl_object_hash($object);
 
+        $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
+        $value -= 1;
+        static::$handledModels[$objectHash] = $value;
+
+        return $value;
+    }
+
+    /**
+     * Tests if the given input can be transformed
+     *
+     * @param $input
+     */
     private function assertExtractableType($input)
     {
         if (is_resource($input)) {

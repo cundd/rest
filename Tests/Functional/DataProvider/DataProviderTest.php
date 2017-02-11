@@ -249,7 +249,7 @@ class DataProviderTest extends AbstractCase
             'child' => array(
                 'base'    => 'Base',
                 'date'    => $testDate->format(\DateTime::ATOM),
-                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
+                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'     => 2,
                 'pid'     => null,
             ),

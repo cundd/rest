@@ -27,6 +27,7 @@ namespace Cundd\Rest\Tests\Unit\DataProvider;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Extractor;
+use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyModelRepository;
@@ -58,7 +59,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     use ClassBuilderTrait;
 
     /**
-     * @var Extractor
+     * @var ExtractorInterface
      */
     protected $fixture;
 
@@ -228,7 +229,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
             'child' => array(
                 'base'  => 'Base',
                 'date'  => $testDate->format(\DateTime::ATOM),
-                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
+                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
             ),
@@ -299,7 +300,6 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
      */
     public function extractRecursiveWithArrayTest()
     {
-        $this->markTestSkipped();
         $testDate = new \DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);

@@ -31,7 +31,6 @@ use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
@@ -260,26 +259,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getModelProperty($model, $propertyKey)
     {
-        $propertyValue = $model->_getProperty($propertyKey);
-        if (is_object($propertyValue)) {
-            if ($propertyValue instanceof LazyObjectStorage) {
-                $propertyValue = iterator_to_array($propertyValue);
-
-                // Transform objects recursive
-                foreach ($propertyValue as $childPropertyKey => $childPropertyValue) {
-                    if (is_object($childPropertyValue)) {
-                        $propertyValue[$childPropertyKey] = $this->getModelData($childPropertyValue);
-                    }
-                }
-                $propertyValue = array_values($propertyValue);
-            } else {
-                $propertyValue = $this->getModelData($propertyValue);
-            }
-        } elseif (!$propertyValue) {
-            return null;
-        }
-
-        return $propertyValue;
+        return $this->getModelData($model->_getProperty($propertyKey));
     }
 
     /**
