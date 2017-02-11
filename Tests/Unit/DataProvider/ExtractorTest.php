@@ -68,34 +68,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         parent::setUpBeforeClass();
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
-
-        self::buildClassIfNotExists(AbstractDomainObject::class);
-        self::buildClassIfNotExists(Repository::class);
-        self::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
-        self::buildInterfaceIfNotExists(DomainObjectInterface::class);
-//        require_once __DIR__ . '/Bootstrap.php';
-        require_once __DIR__ . '/../../FixtureClasses.php';
-
-        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
-            class_alias(MyModel::class, 'Tx_MyExt_Domain_Model_MyModel');
-        }
-        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
-            class_alias(MyModelRepository::class, 'Tx_MyExt_Domain_Repository_MyModelRepository');
-        }
-
-        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
-            class_alias(MyModel::class, 'MyExt\\Domain\\Model\\MySecondModel');
-        }
-        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
-            class_alias(MyModelRepository::class, 'MyExt\\Domain\\Repository\\MySecondModelRepository');
-        }
-
-        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
-            class_alias(MyModel::class, 'Vendor\\MyExt\\Domain\\Model\\MyModel');
-        }
-        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
-            class_alias(MyModelRepository::class, 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
-        }
+        $GLOBALS['TYPO3_CONF_VARS'] = [];
     }
 
     public function setUp()
@@ -134,7 +107,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
      */
     public function extractSimpleDataProvider()
     {
-        $this->setUpBeforeClass();
+        $this->prepareClasses();
         $exampleData = ['firstName' => 'Daniel', 'lastName' => 'Corn'];
         $exampleDataWithPidAndUid = $exampleData + ['uid' => 1, 'pid' => 2];
 
@@ -422,5 +395,36 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
+    }
+
+    private static function prepareClasses()
+    {
+        self::buildClassIfNotExists(AbstractDomainObject::class);
+        self::buildClassIfNotExists(Repository::class);
+        self::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+        self::buildInterfaceIfNotExists(DomainObjectInterface::class);
+
+        require_once __DIR__ . '/../../FixtureClasses.php';
+
+        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
+            class_alias(MyModel::class, 'Tx_MyExt_Domain_Model_MyModel');
+        }
+        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'Tx_MyExt_Domain_Repository_MyModelRepository');
+        }
+
+        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
+            class_alias(MyModel::class, 'MyExt\\Domain\\Model\\MySecondModel');
+        }
+        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+        }
+
+        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
+            class_alias(MyModel::class, 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+        }
+        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+        }
     }
 }

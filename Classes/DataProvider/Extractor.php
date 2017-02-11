@@ -289,14 +289,14 @@ class Extractor implements ExtractorInterface
      */
     private function getUriRequestBase()
     {
-        if (class_exists(GeneralUtility::class) && false === getenv('CUNDD_TEST')) {
-            return GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+        if (getenv('CUNDD_TEST') || !class_exists(GeneralUtility::class, false)) {
+            $host = filter_var((isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''), FILTER_SANITIZE_URL);
+            $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
+
+            return $protocol . '://' . $host . '/';
         }
 
-        $host = filter_var($_SERVER['HTTP_HOST'], FILTER_SANITIZE_URL);
-        $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
-
-        return $protocol . '://' . $host . '/';
+        return GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
     }
 
     /**

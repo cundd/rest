@@ -23,12 +23,18 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
+
 namespace Cundd\Rest\Tests;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
+
+\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
+\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(Repository::class);
+\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+\Cundd\Rest\Tests\ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
 class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 {
