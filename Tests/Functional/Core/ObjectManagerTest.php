@@ -109,7 +109,7 @@ class ObjectManagerTest extends AbstractCase
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
-            $this->createClass($classToBuild);
+            $this->buildClass($classToBuild);
         }
 
         $dataProvider = $this->fixture->getDataProvider();
@@ -212,7 +212,7 @@ class ObjectManagerTest extends AbstractCase
 //        var_dump(GeneralUtility::getIndpEnv('HTTP_HOST'));
         $_GET['u'] = $url;
         if ($classToBuild) {
-            $this->createClass($classToBuild);
+            $this->buildClass($classToBuild);
         }
 
         $handler = $this->fixture->getHandler();
