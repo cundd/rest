@@ -132,6 +132,10 @@ trait ClassBuilderTrait
         }
         $code[] = '{}';
 
+//        echo PHP_EOL . '------------------------------------------------------------------' . PHP_EOL;
+//        echo(implode(' ', $code));
+//        echo PHP_EOL . '------------------------------------------------------------------' . PHP_EOL;
+
         eval(implode(' ', $code));
     }
 
@@ -173,6 +177,6 @@ trait ClassBuilderTrait
             }
         }
 
-        return [$preparedClassName, trim($preparedNamespace, '\\'), $preparedExtends];
+        return [$preparedClassName, trim($preparedNamespace, '\\'), trim($preparedExtends, '\\')];
     }
 }
