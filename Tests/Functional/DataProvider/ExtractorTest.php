@@ -25,12 +25,28 @@
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
+use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use TYPO3\CMS\Core\Resource\FileReference;
+use Cundd\Rest\Tests\MyModel;
+use Cundd\Rest\Tests\MyModelRepository;
+use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
+use Cundd\Rest\Tests\MyNestedModel;
+use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use Cundd\Rest\Tests\SimpleClass;
+use Cundd\Rest\Tests\SimpleClassJsonSerializable;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\Repository;
+
 
 /**
- * Test case for class file related Data Provider functions
+ * Test case for class new \Cundd\Rest\App
  *
  * @version   $Id$
  * @copyright Copyright belongs to the respective authors
@@ -41,16 +57,32 @@ use TYPO3\CMS\Core\Resource\FileReference;
  */
 class ExtractorTest extends AbstractCase
 {
+    use ClassBuilderTrait;
+
     /**
-     * @var \Cundd\Rest\DataProvider\ExtractorInterface
+     * @var ExtractorInterface
      */
     protected $fixture;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+
+        $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
+    }
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get(ExtractorInterface::class);
+        /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
+        $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
+
+        $this->fixture = new Extractor(
+            $configurationProviderProphecy->reveal(),
+            $this->prophesize(LoggerInterface::class)->reveal()
+
+        );
     }
 
     public function tearDown()
@@ -60,272 +92,339 @@ class ExtractorTest extends AbstractCase
     }
 
     /**
-     * @param array $properties
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
+     * @test
+     * @param mixed $input
+     * @param array $expected
+     * @dataProvider extractSimpleDataProvider
      */
-    protected function createDomainModelFixture(array $properties = array())
+    public function extractSimpleTest($input, $expected)
     {
-        /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
-        $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
-            ->setMockClassName('Mock_Test_Class')
-            ->setMethods(array('_getProperties'))
-            ->getMockForAbstractClass();
-
-        $fixture->method('_getProperties')->willReturn($properties);
-
-        return $fixture;
+        $this->assertEquals($expected, $this->fixture->extract($input));
     }
 
     /**
-     * @param array $fileReferenceProperties
-     * @return \PHPUnit_Framework_MockObject_MockObject|FileReference|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface
+     * @return array
      */
-    protected function createFileReferenceMock(array $fileReferenceProperties = array())
+    public function extractSimpleDataProvider()
     {
-        $fileReferenceProperties = array_merge(
-            [
-                'uid_local'   => '1467702760',
-                'name'        => 'Test name',
-                'title'       => 'Test title',
-                'description' => 'The original files description',
-            ],
-            $fileReferenceProperties
-        );
-        $originalFileMock = $this->createFileMock();
+        $this->prepareClasses();
+        $exampleData = ['firstName' => 'Daniel', 'lastName' => 'Corn'];
+        $exampleDataWithPidAndUid = $exampleData + ['uid' => 1, 'pid' => 2];
 
-        $factoryMock = $this->getMockObjectGenerator()->getMock(
-            '\TYPO3\CMS\Core\Resource\ResourceFactory',
-            array('getFileObject')
-        );
-        $factoryMock->expects($this->any())
-            ->method('getFileObject')->will(
-                $this->returnValue($originalFileMock)
-            );
-
-        return new FileReference($fileReferenceProperties, $factoryMock);
+        return [
+            [$exampleDataWithPidAndUid, $exampleDataWithPidAndUid],
+            [new SimpleClass($exampleData), $exampleData],
+            [new SimpleClassJsonSerializable($exampleDataWithPidAndUid), $exampleDataWithPidAndUid],
+            [new MyModel($exampleDataWithPidAndUid), ['uid' => 1, 'pid' => 2, 'name' => 'Initial value']],
+        ];
     }
 
+    /**
+     * @test
+     * @param mixed $input
+     * @param array $expected
+     * @dataProvider extractCollectionDataProvider
+     */
+    public function extractCollectionTest($input, $expected)
+    {
+        $this->assertEquals($expected, $this->fixture->extract($input));
+    }
 
     /**
-     * @return \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject
+     * @return array
      */
-    protected function createFileMock()
+    public function extractCollectionDataProvider()
     {
-        $originalFileProperties = array(
-            'identifier' => sha1('testFile' . time()),
-            'name'       => 'Original file name',
-            'mimeType'   => 'MimeType',
-        );
-        /** @var  \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject $originalFileMock */
-        $originalFileMock = $this->getMockObjectGenerator()->getMock(
-            '\TYPO3\CMS\Core\Resource\File',
-            array(),
-            array(),
-            'Mock_TYPO3_CMS_Core_Resource_File',
-            false
-        );
-        $originalFileMock->expects($this->any())
-            ->method('getProperties')
-            ->will(
-                $this->returnValue($originalFileProperties)
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getName')
-            ->will(
-                $this->returnValue($originalFileProperties['name'])
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getMimeType')
-            ->will(
-                $this->returnValue($originalFileProperties['mimeType'])
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getPublicUrl')
-            ->will(
-                $this->returnValue('http://url')
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getSize')
-            ->will(
-                $this->returnValue(10)
-            );
+        $this->setUpBeforeClass();
 
-        return $originalFileMock;
+        $testSets = [];
+
+        foreach ($this->extractSimpleDataProvider() as $simpleTestSet) {
+            $input = $simpleTestSet[0];
+            $expected = array($simpleTestSet[1]);
+
+            $testSets[] = [array($input), $expected,];
+
+            $testSets[] = [new \ArrayIterator([$input]), $expected,];
+
+            // Use the Object Storage only if the input is an object
+            if (is_object($input)) {
+                $os = new \SplObjectStorage();
+                $os->attach($input);
+                $testSets[] = [$os, $expected,];
+
+                $os = new ObjectStorage();
+                $os->attach($input);
+                $testSets[] = [$os, $expected,];
+            }
+        }
+
+        return $testSets;
+    }
+
+    /**
+     * @test
+     * @param mixed $input
+     * @param array $expected
+     * @dataProvider extractCollectionDataProvider
+     */
+    public function extractModelWithCollectionPropertyTest($input, $expected)
+    {
+        $model = new MyNestedModel();
+        $model->setChild($input);
+
+        $result = $this->fixture->extract($model);
+        $this->assertArrayHasKey('child', $result);
+
+        $this->assertEquals($expected, $result['child']);
     }
 
     /**
      * @test
      */
-    public function extractForModelWithFileReferenceTest()
+    public function extractRecursiveTest()
     {
-        $testModel = $this->createDomainModelFixture(
-            array(
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(),
-            )
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $childModel->setChild($model);
+        $model->setChild($childModel);
+
+        $expectedOutput = array(
+            'base'  => 'Base',
+            'date'  => $testDate->format(\DateTime::ATOM),
+            'child' => array(
+                'base'  => 'Base',
+                'date'  => $testDate->format(\DateTime::ATOM),
+                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
+                'uid'   => 2,
+                'pid'   => null,
+            ),
+
+            'uid' => 1,
+            'pid' => null,
         );
 
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
+     * @test
+     */
+    public function extractSelfReferencingRecursiveTest()
+    {
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+        $model->setChild($model);
+
+        $expectedOutput = array(
+            'base'  => 'Base',
+            'date'  => $testDate->format(\DateTime::ATOM),
+            'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
+            'uid'   => 1,
+            'pid'   => null,
+        );
+
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
+     * @test
+     */
+    public function extractRecursiveWithObjectStorageTest()
+    {
+        $testDate = new \DateTime();
+        $model = new MyNestedModelWithObjectStorage();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $children = new ObjectStorage();
+        $children->attach($model);
+        $children->attach($childModel);
+        $model->setChildren($children);
+
+        $expectedOutput = $this->getExpectedOutputForRecursion($testDate);
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
+     * @test
+     */
+    public function extractRecursiveWithArrayTest()
+    {
+        $testDate = new \DateTime();
+        $model = new MyNestedModelWithObjectStorage();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $model->setChildren([$model, $childModel]);
+
+        $expectedOutput = $this->getExpectedOutputForRecursion($testDate);
+
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
+     * @test
+     */
+    public function extractRecursiveWithArrayIteratorTest()
+    {
+        $testDate = new \DateTime();
+        $model = new MyNestedModelWithObjectStorage();
+        $model->setDate($testDate);
+        $model->_setProperty('uid', 1);
+
+        $childModel = new MyNestedModel();
+        $childModel->setDate($testDate);
+        $childModel->_setProperty('uid', 2);
+
+        $model->setChildren(new \ArrayIterator([$model, $childModel]));
+
+        $expectedOutput = $this->getExpectedOutputForRecursion($testDate);
+
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
+     * @test
+     */
+    public function getNestedModelDataTest()
+    {
+        $testDate = new \DateTime();
+        $model = new MyNestedModel();
+        $model->setDate($testDate);
+
+        $properties = $this->fixture->extract($model);
         $this->assertEquals(
             array(
-                'title' => 'Test',
-                'file'  => array(
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'Test title',
-                    'description'  => 'The original files description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
+                'base'  => 'Base',
+                'date'  => $testDate->format(\DateTime::ATOM),
+                'uid'   => null,
+                'pid'   => null,
+                'child' => array(
+                    'name' => 'Initial value',
+                    'uid'  => null,
+                    'pid'  => null,
                 ),
             ),
-            $result
+            $properties
         );
     }
 
     /**
      * @test
      */
-    public function extractForModelWithFileReferenceAndDataTest()
+    public function getJsonSerializeNestedModelDataTest()
     {
-        $testModel = $this->createDomainModelFixture(
-            array(
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(
-                    array(
-                        'title'       => 'My title',
-                        'description' => 'File description',
-                        'uid'         => 0,
-                    )
-                ),
-            )
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
+        $model = new MyNestedJsonSerializeModel();
+        $properties = $this->fixture->extract($model);
         $this->assertEquals(
             array(
-                'title' => 'Test',
-                'file'  => array(
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'My title',
-                    'description'  => 'File description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
+                'base'  => 'Base',
+                'child' => array(
+                    'name' => 'Initial value',
+                    'uid'  => null,
+                    'pid'  => null,
                 ),
             ),
-            $result
+            $properties
         );
     }
 
     /**
-     * @test
+     * @param $testDate
+     * @return array
      */
-    public function extractForFileReferenceTest()
+    protected function getExpectedOutputForRecursion(\DateTimeInterface $testDate)
     {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock();
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            array(
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'Test title',
-                'description'  => 'The original files description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
+        return array(
+            'base'  => 'Base',
+            'date'  => $testDate->format(\DateTime::ATOM),
+            'child' => array(
+                'uid'  => null,
+                'pid'  => null,
+                'name' => 'Initial value',
             ),
-            $result
-        );
-    }
 
-    /**
-     * @test
-     */
-    public function extractForFileReferenceWithDataTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock(
-            array(
-                'title'       => 'My title',
-                'description' => 'File description',
-                'uid'         => 0,
-            )
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            array(
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'My title',
-                'description'  => 'File description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
-            ),
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForFileTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileMock();
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            array(
-                'name'     => 'Original file name',
-                'mimeType' => 'MimeType',
-                'url'      => 'http://url',
-                'size'     => 10,
-            ),
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForModelWithFileTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createDomainModelFixture(
-            array(
-                'title' => 'Test',
-                'file'  => $this->createFileMock(),
-            )
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            array(
-                'title' => 'Test',
-                'file'  => array(
-                    'name'     => 'Original file name',
-                    'mimeType' => 'MimeType',
-                    'url'      => 'http://url',
-                    'size'     => 10,
+            'uid'      => 1,
+            'pid'      => null,
+            'children' => array(
+                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                // <- This is $model
+                1 => array( // <- This is $childModel
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(\DateTime::ATOM),
+                    'uid'   => 2,
+                    'pid'   => null,
+                    'child' => array(
+                        'name' => 'Initial value',
+                        'uid'  => null,
+                        'pid'  => null,
+                    ),
                 ),
             ),
-            $result
         );
+    }
+
+    private static function prepareClasses()
+    {
+        self::buildClassIfNotExists(AbstractDomainObject::class);
+        self::buildClassIfNotExists(Repository::class);
+        self::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+        self::buildInterfaceIfNotExists(DomainObjectInterface::class);
+
+        require_once __DIR__ . '/../../FixtureClasses.php';
+
+        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
+            class_alias(MyModel::class, 'Tx_MyExt_Domain_Model_MyModel');
+        }
+        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'Tx_MyExt_Domain_Repository_MyModelRepository');
+        }
+
+        if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
+            class_alias(MyModel::class, 'MyExt\\Domain\\Model\\MySecondModel');
+        }
+        if (!class_exists('MyExt\\Domain\\Repository\\MySecondModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'MyExt\\Domain\\Repository\\MySecondModelRepository');
+        }
+
+        if (!class_exists('Vendor\\MyExt\\Domain\\Model\\MyModel', false)) {
+            class_alias(MyModel::class, 'Vendor\\MyExt\\Domain\\Model\\MyModel');
+        }
+        if (!class_exists('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
+        }
     }
 }
