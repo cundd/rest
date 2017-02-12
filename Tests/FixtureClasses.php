@@ -31,10 +31,10 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
-\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(Repository::class);
-\Cundd\Rest\Tests\ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
-\Cundd\Rest\Tests\ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
+ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
+ClassBuilderTrait::buildClassIfNotExists(Repository::class);
+ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
 class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 {
@@ -52,6 +52,7 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 
     public function __wakeup()
     {
+        // Prevent calling GeneralUtility::logDeprecatedFunction();
     }
 
     /**
