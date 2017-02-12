@@ -260,6 +260,7 @@ class DataProvider implements DataProviderInterface
      * @param string                                                   $propertyKey
      * @param DomainObjectInterface                                    $model
      * @return array<mixed>
+     * @deprecated will be removed in 3.0
      */
     public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model)
     {
@@ -288,6 +289,7 @@ class DataProvider implements DataProviderInterface
      * @param string                                                  $propertyKey
      * @param DomainObjectInterface                                   $model
      * @return array<mixed>
+     * @deprecated will be removed in 3.0
      */
     public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model)
     {
@@ -314,6 +316,7 @@ class DataProvider implements DataProviderInterface
      * @param string                $resourceKey
      * @param DomainObjectInterface $model
      * @return string
+     * @deprecated will be removed in 3.0
      */
     public function getUriToNestedResource($resourceKey, $model)
     {
@@ -335,6 +338,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param DomainObjectInterface $model
      * @return string
+     * @deprecated will be removed in 3.0
      */
     public function getUriToResource($model)
     {
