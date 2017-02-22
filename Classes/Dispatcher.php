@@ -28,6 +28,7 @@ namespace Cundd\Rest;
 use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\ErrorHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
@@ -199,6 +200,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         // If a path is given let the handler build up the routes
         $this->objectManager->getHandler()->configureRoutes($resultConverter, $request);
 
+        ErrorHandler::registerHandler();
         return $resultConverter->dispatch($request);
     }
 
