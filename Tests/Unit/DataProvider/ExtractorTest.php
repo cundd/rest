@@ -23,13 +23,12 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\DataProvider;
+namespace Cundd\Rest\Tests\Unit\DataProvider;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
-use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyModelRepository;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
@@ -55,7 +54,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
  *
  * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class ExtractorTest extends AbstractCase
+class ExtractorTest extends \PHPUnit_Framework_TestCase
 {
     use ClassBuilderTrait;
 
