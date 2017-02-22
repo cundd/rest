@@ -98,6 +98,12 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
                         );
                         break;
 
+                    case 'integer':
+                    case 'double':
+                    case 'boolean':
+                        $body = $data;
+                        break;
+
                     case 'array':
                         $body = $data;
                         break;

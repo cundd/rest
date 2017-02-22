@@ -152,6 +152,86 @@ class RouterTest extends AbstractRequestBasedCase
      * @param string $method
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
+    public function dispatchMatchingRoutesSortedTest($method)
+    {
+        $perfectMatchCallback = \Closure::bind(
+            function () {
+                return 'matched the route path/perfect-match';
+            },
+            new \stdClass()
+        );
+        $perfectMatchCountCallback = \Closure::bind(
+            function () {
+                return 'matched the route path/perfect-match/_count';
+            },
+            new \stdClass()
+        );
+
+        $this->fixture->add(Route::get('path/{slug}', $this->cb));
+        $this->fixture->add(Route::post('path/{slug}', $this->cb));
+        $this->fixture->add(Route::delete('path/{slug}', $this->cb));
+        $this->fixture->add(Route::put('path/{slug}', $this->cb));
+        $this->fixture->add(Route::get('path/perfect-match', $perfectMatchCallback));
+        $this->fixture->add(Route::post('path/perfect-match', $perfectMatchCallback));
+        $this->fixture->add(Route::delete('path/perfect-match', $perfectMatchCallback));
+        $this->fixture->add(Route::put('path/perfect-match', $perfectMatchCallback));
+        $this->fixture->add(Route::get('path/{slug}', $this->cb));
+        $this->fixture->add(Route::post('path/{slug}', $this->cb));
+        $this->fixture->add(Route::delete('path/{slug}', $this->cb));
+        $this->fixture->add(Route::put('path/{slug}', $this->cb));
+
+        $this->fixture->add(Route::get('path/perfect-match/_count', $perfectMatchCountCallback));
+        $this->fixture->add(Route::post('path/perfect-match/_count', $perfectMatchCountCallback));
+        $this->fixture->add(Route::delete('path/perfect-match/_count', $perfectMatchCountCallback));
+        $this->fixture->add(Route::put('path/perfect-match/_count', $perfectMatchCountCallback));
+
+
+        $this->assertSame(
+            'matched the route path/perfect-match',
+            $this->fixture->dispatch($this->buildTestRequest('/path/perfect-match', $method))
+        );
+        $this->assertSame(
+            'matched the route path/perfect-match/_count',
+            $this->fixture->dispatch($this->buildTestRequest('/path/perfect-match/_count', $method))
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchLikeDefaultHandlerTest()
+    {
+        $count = \Closure::bind(
+            function () {
+                return 'returns the number of elements';
+            },
+            new \stdClass()
+        );
+        $resourceType = 'cundd-resource-type';
+        $this->fixture->add(Route::get($resourceType . '/?', $this->cb)); // listAll
+        $this->fixture->add(Route::get($resourceType . '/_count/?', $count)); // countAll
+        $this->fixture->add(Route::post($resourceType . '/?', $this->cb)); // create
+        $this->fixture->add(Route::get($resourceType . '/{slug}/?', $this->cb)); // show
+        $this->fixture->add(Route::put($resourceType . '/{slug}/?', $this->cb)); // replace
+        $this->fixture->add(Route::post($resourceType . '/{slug}/?', $this->cb)); // replace
+        $this->fixture->add(Route::delete($resourceType . '/{slug}/?', $this->cb)); // delete
+        $this->fixture->add(
+            Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', $this->cb)
+        ); // replace
+        $this->fixture->add(Route::get($resourceType . '/{slug}/{slug}/?', $this->cb)); // getProperty
+
+
+        $this->assertSame(
+            'returns the number of elements',
+            $this->fixture->dispatch($this->buildTestRequest("/$resourceType/_count", 'GET'))
+        );
+    }
+
+    /**
+     * @test
+     * @param string $method
+     * @dataProvider getMatchingRoutesMethodDataProvider
+     */
     public function getMatchingRoutesSlugTest($method)
     {
         $this->fixture->add(Route::get('path/{slug}', $this->cb));

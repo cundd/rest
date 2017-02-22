@@ -32,6 +32,7 @@
 
 namespace Cundd\Rest\Handler;
 
+use Countable;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher;
@@ -267,6 +268,26 @@ class Handler implements CrudHandlerInterface
     }
 
     /**
+     * Count all Models
+     *
+     * @param RestRequestInterface $request
+     * @return int Returns the number of models
+     */
+    public function countAll(RestRequestInterface $request)
+    {
+        $allModels = $this->getDataProvider()->getAllModelsForResourceType($request->getResourceType());
+
+        if (is_array($allModels) || $allModels instanceof Countable) {
+            return count($allModels);
+        }
+        if ($allModels instanceof Traversable) {
+            return count(iterator_to_array($allModels));
+        }
+
+        return NAN;
+    }
+
+    /**
      * Let the handler configure the routes
      *
      * @param RouterInterface      $router
@@ -275,6 +296,7 @@ class Handler implements CrudHandlerInterface
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
         $router->add(Route::get($request->getResourceType() . '/?', [$this, 'listAll']));
+        $router->add(Route::get($request->getResourceType() . '/_count/?', [$this, 'countAll']));
         $router->add(Route::post($request->getResourceType() . '/?', [$this, 'create']));
         $router->add(Route::get($request->getResourceType() . '/{slug}/?', [$this, 'show']));
         $router->add(Route::put($request->getResourceType() . '/{slug}/?', [$this, 'replace']));
