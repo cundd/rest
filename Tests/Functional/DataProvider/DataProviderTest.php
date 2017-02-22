@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Tests\Functional\AbstractCase;
@@ -151,7 +151,7 @@ class DataProviderTest extends AbstractCase
         $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('vendor-my_ext-my_model'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', $repository);
 
-        $this->createClass(
+        $this->buildClass(
             'MyModelRepository',
             'Vendor\\MyExt\\Domain\\Repository\\Group',
             '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository'
@@ -245,11 +245,11 @@ class DataProviderTest extends AbstractCase
 
         $expectedOutput = array(
             'base'  => 'Base',
-            'date'  => $testDate,
+            'date'  => $testDate->format(\DateTime::ATOM),
             'child' => array(
                 'base'    => 'Base',
-                'date'    => $testDate,
-                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
+                'date'    => $testDate->format(\DateTime::ATOM),
+                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'     => 2,
                 'pid'     => null,
             ),
@@ -285,7 +285,7 @@ class DataProviderTest extends AbstractCase
 
         $expectedOutput = array(
             'base'  => 'Base',
-            'date'  => $testDate,
+            'date'  => $testDate->format(\DateTime::ATOM),
             'child' => array(
                 'uid'     => null,
                 'pid'     => null,
@@ -298,7 +298,7 @@ class DataProviderTest extends AbstractCase
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
                 1 => array( // <- This is $childModel
                     'base'    => 'Base',
-                    'date'    => $testDate,
+                    'date'    => $testDate->format(\DateTime::ATOM),
                     'uid'     => 2,
                     'pid'     => null,
                     'child'   => array(
@@ -330,7 +330,7 @@ class DataProviderTest extends AbstractCase
         $this->assertEquals(
             array(
                 'base'    => 'Base',
-                'date'    => $testDate,
+                'date'    => $testDate->format(\DateTime::ATOM),
                 'uid'     => null,
                 'pid'     => null,
                 'child'   => array(

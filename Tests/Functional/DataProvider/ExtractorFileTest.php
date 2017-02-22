@@ -23,8 +23,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Functional\Core;
+namespace Cundd\Rest\Tests\Functional\DataProvider;
 
+use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use TYPO3\CMS\Core\Resource\FileReference;
 
@@ -38,10 +39,10 @@ use TYPO3\CMS\Core\Resource\FileReference;
  *
  * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class FileDataProviderTest extends AbstractCase
+class ExtractorFileTest extends AbstractCase
 {
     /**
-     * @var \Cundd\Rest\DataProvider\DataProviderInterface
+     * @var \Cundd\Rest\DataProvider\ExtractorInterface
      */
     protected $fixture;
 
@@ -49,7 +50,7 @@ class FileDataProviderTest extends AbstractCase
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
+        $this->fixture = $this->objectManager->get(ExtractorInterface::class);
     }
 
     public function tearDown()
@@ -155,7 +156,7 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForModelWithFileReferenceTest()
+    public function extractForModelWithFileReferenceTest()
     {
         $testModel = $this->createDomainModelFixture(
             array(
@@ -164,7 +165,7 @@ class FileDataProviderTest extends AbstractCase
             )
         );
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
@@ -187,7 +188,7 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForModelWithFileReferenceAndDataTest()
+    public function extractForModelWithFileReferenceAndDataTest()
     {
         $testModel = $this->createDomainModelFixture(
             array(
@@ -202,7 +203,7 @@ class FileDataProviderTest extends AbstractCase
             )
         );
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
@@ -225,12 +226,12 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForFileReferenceTest()
+    public function extractForFileReferenceTest()
     {
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock();
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
@@ -250,7 +251,7 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForFileReferenceWithDataTest()
+    public function extractForFileReferenceWithDataTest()
     {
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock(
@@ -261,7 +262,7 @@ class FileDataProviderTest extends AbstractCase
             )
         );
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
@@ -281,12 +282,12 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForFileTest()
+    public function extractForFileTest()
     {
         /** @var object $testModel */
         $testModel = $this->createFileMock();
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(
@@ -302,7 +303,7 @@ class FileDataProviderTest extends AbstractCase
     /**
      * @test
      */
-    public function getModelDataForModelWithFileTest()
+    public function extractForModelWithFileTest()
     {
         /** @var object $testModel */
         $testModel = $this->createDomainModelFixture(
@@ -312,7 +313,7 @@ class FileDataProviderTest extends AbstractCase
             )
         );
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
             array(

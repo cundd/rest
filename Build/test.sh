@@ -190,6 +190,7 @@ function main {
     : ${DOCUMENTATION_TESTS="$_documentation_tests"}
 
 	export TYPO3_PATH_WEB="$TYPO3_PATH_WEB";
+	export CUNDD_TEST="yes";
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         print_header "Run Unit Tests (using $(get_phpunit_path_for_unit_tests))";

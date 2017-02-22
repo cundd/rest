@@ -23,12 +23,91 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
+
 namespace Cundd\Rest\Tests;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
-class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
+ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
+ClassBuilderTrait::buildClassIfNotExists(Repository::class);
+ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
+
+class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 {
+    protected $uid;
+    protected $pid;
+
+    public function __construct(array $properties = [])
+    {
+        foreach ($properties as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
+        }
+    }
+
+    public function __wakeup()
+    {
+        // Prevent calling GeneralUtility::logDeprecatedFunction();
+    }
+
+    /**
+     * Reconstitutes a property. Only for internal use.
+     *
+     * @param string $propertyName
+     * @param mixed  $propertyValue
+     * @return bool
+     */
+    public function _setProperty($propertyName, $propertyValue)
+    {
+        if (property_exists($this, $propertyName)) {
+            $this->{$propertyName} = $propertyValue;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * Returns a hash map of property names and property values. Only for internal use.
+     *
+     * @return array The properties
+     */
+    public function _getProperties()
+    {
+        $properties = get_object_vars($this);
+        foreach ($properties as $propertyName => $propertyValue) {
+            if ($propertyName[0] === '_') {
+                unset($properties[$propertyName]);
+            }
+        }
+
+        return $properties;
+    }
+}
+
+class MyModel extends BaseModel
+{
+    /**
+     * @var int The uid of the record. The uid is only unique in the context of the database table.
+     */
+    protected $uid;
+
+    /**
+     * @var int The id of the page the record is "stored".
+     */
+    protected $pid;
+
     /**
      * @var string
      */
@@ -51,11 +130,11 @@ class MyModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
     }
 }
 
-class MyModelRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class MyModelRepository extends Repository
 {
 }
 
-class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
+class MyNestedModel extends BaseModel
 {
     /**
      * @var string
@@ -74,6 +153,7 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
 
     public function __construct()
     {
+        parent::__construct();
         $this->child = new MyModel();
         $this->date = new \DateTime();
     }
@@ -131,12 +211,12 @@ class MyNestedModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject
 class MyNestedModelWithObjectStorage extends MyNestedModel
 {
     /**
-     * @var ObjectStorage
+     * @var ObjectStorage|array|\Traversable
      */
     protected $children;
 
     /**
-     * @return ObjectStorage
+     * @return ObjectStorage|array|\Traversable
      */
     public function getChildren()
     {
@@ -144,7 +224,7 @@ class MyNestedModelWithObjectStorage extends MyNestedModel
     }
 
     /**
-     * @param ObjectStorage $children
+     * @param ObjectStorage|array|\Traversable $children
      */
     public function setChildren($children)
     {
@@ -157,33 +237,38 @@ class MyNestedJsonSerializeModel extends MyNestedModel
     public function jsonSerialize()
     {
         return array(
-            'base' => $this->base,
-            'child' => $this->child
+            'base'  => $this->base,
+            'child' => $this->child,
         );
     }
 }
 
-//class MyHandler implements HandlerInterface
-//{
-//    /**
-//     * @inheritDoc
-//     */
-//    public function setRequest($request)
-//    {
-//    }
-//
-//    /**
-//     * @inheritDoc
-//     */
-//    public function getRequest()
-//    {
-//    }
-//
-//    /**
-//     * @inheritDoc
-//     */
-//    public function configureApiPaths()
-//    {
-//    }
-//}
-//
+class SimpleClass
+{
+    public $firstName;
+    public $lastName;
+    protected $uid;
+    protected $pid;
+
+    public function __construct(array $properties = [])
+    {
+        foreach ($properties as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
+        }
+    }
+}
+
+class SimpleClassJsonSerializable extends SimpleClass implements \JsonSerializable
+{
+    function jsonSerialize()
+    {
+        return [
+            "firstName" => $this->firstName,
+            "lastName"  => $this->lastName,
+            "uid"       => $this->uid,
+            "pid"       => $this->pid,
+        ];
+    }
+}

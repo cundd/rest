@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Tests\Functional;
 
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 
@@ -16,6 +17,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
 {
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
+    use ClassBuilderTrait;
 
     /**
      * @var \TYPO3\CMS\Extbase\Object\ObjectManager
@@ -49,51 +51,6 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
             null,       // $parsedBody
             $format
         );
-    }
-
-    /**
-     * @param string $className
-     * @param string $namespace
-     * @param string $extends
-     * @throws \Exception
-     */
-    protected function createClass($className, $namespace = '', $extends = '')
-    {
-        if (func_num_args() === 1 && is_array($className)) {
-            list($className, $namespace, $extends) = $className;
-        }
-        if (!is_string($className)) {
-            throw new \InvalidArgumentException('$className must be a string');
-        }
-        if (!is_string($namespace)) {
-            throw new \InvalidArgumentException('$namespace must be a string');
-        }
-        if (!is_string($extends)) {
-            throw new \InvalidArgumentException('$extends must be a string');
-        }
-
-        $namespace = trim($namespace, '\\');
-        if (class_exists("$namespace\\$className")) {
-            printf('Class %s already exists' . PHP_EOL, "$namespace\\$className");
-
-            return;
-        }
-
-        $code = array();
-        if ($namespace) {
-            $code[] = "namespace $namespace;";
-        }
-        $code[] = "class $className";
-        if ($extends) {
-            $code[] = "extends $extends";
-        }
-        $code[] = '{}';
-
-        eval(implode(' ', $code));
-
-        if (!class_exists("$namespace\\$className")) {
-            throw new \Exception(sprintf('Could not create class %s', "$namespace\\$className"));
-        }
     }
 
     /**

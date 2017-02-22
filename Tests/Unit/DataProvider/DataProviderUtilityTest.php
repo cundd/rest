@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
 
-namespace Cundd\Rest\Tests\Unit\Core;
+namespace Cundd\Rest\Tests\Unit\DataProvider;
 
 use Cundd\Rest\DataProvider\Utility;
 

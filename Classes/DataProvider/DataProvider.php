@@ -29,16 +29,8 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Core\Resource\FileInterface;
-use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
-use TYPO3\CMS\Extbase\Domain\Model\Category as Typo3CoreCategory;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
-use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
@@ -77,11 +69,10 @@ class DataProvider implements DataProviderInterface
     protected $configurationBuilder;
 
     /**
-     * The current depth when preparing model data for output
-     *
-     * @var int
+     * @var \Cundd\Rest\DataProvider\ExtractorInterface
+     * @inject
      */
-    protected $currentModelDataDepth = 0;
+    protected $extractor;
 
     /**
      * Logger instance
@@ -91,11 +82,15 @@ class DataProvider implements DataProviderInterface
     protected $logger;
 
     /**
-     * Dictionary of handled models to their count
+     * Returns the data from the given model
      *
-     * @var array
+     * @param object|DomainObjectInterface $model
+     * @return array
      */
-    protected static $handledModels = array();
+    public function getModelData($model)
+    {
+        return $this->extractor->extract($model);
+    }
 
     /**
      * Returns the domain model repository class name for the given API resource type
@@ -256,94 +251,6 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * Returns the data for the given lazy object storage
-     *
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage $lazyObjectStorage
-     * @param string                                                   $propertyKey
-     * @param object|DomainObjectInterface                             $model
-     * @return array
-     */
-    public function getModelDataFromLazyObjectStorage($lazyObjectStorage, $propertyKey, $model)
-    {
-        $returnData = null;
-        // Get the first level of nested objects
-        if ($this->currentModelDataDepth < 1) {
-            $this->currentModelDataDepth++;
-            $returnData = array();
-
-            // Collect each object of the lazy object storage
-            foreach ($lazyObjectStorage as $subObject) {
-                $returnData[] = $this->getModelData($subObject);
-            }
-            $this->currentModelDataDepth--;
-        } else {
-            $returnData = $this->getUriToNestedResource($propertyKey, $model);
-        }
-
-        return $returnData;
-    }
-
-    /**
-     * Returns the data for the given lazy object storage
-     *
-     * @param \TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy $proxy
-     * @param string                                                  $propertyKey
-     * @param object|DomainObjectInterface                            $model
-     * @return array
-     */
-    public function getModelDataFromLazyLoadingProxy($proxy, $propertyKey, $model)
-    {
-        $returnData = array();
-
-        /*
-         * Get the first level of nested objects and all built in TYPO3
-         * categories
-         */
-        if ($this->currentModelDataDepth < 1 && $model instanceof Typo3CoreCategory) {
-            $this->currentModelDataDepth++;
-
-            $returnData = $this->getModelData($proxy->_loadRealInstance());
-
-            $this->currentModelDataDepth--;
-        }
-
-        return $returnData;
-    }
-
-    /**
-     * Returns the URI of a nested resource
-     *
-     * @param string                       $resourceKey
-     * @param object|DomainObjectInterface $model
-     * @return string
-     */
-    public function getUriToNestedResource($resourceKey, $model)
-    {
-        $currentUri = '/rest/' . Utility::getResourceTypeForClassName(get_class($model)) . '/' . $model->getUid() . '/';
-
-        if ($resourceKey !== null) {
-            $currentUri .= $resourceKey;
-        }
-
-        $host = filter_var($_SERVER['HTTP_HOST'], FILTER_SANITIZE_URL);
-
-        $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
-
-        return $protocol . '://' . $host . $currentUri;
-    }
-
-    /**
-     * Returns the URI of a resource
-     *
-     * @param object|DomainObjectInterface $model
-     * @return string
-     */
-    public function getUriToResource($model)
-    {
-        return $this->getUriToNestedResource(null, $model);
-    }
-
-    /**
      * Returns the property data from the given model
      *
      * @param object|DomainObjectInterface $model
@@ -352,26 +259,7 @@ class DataProvider implements DataProviderInterface
      */
     public function getModelProperty($model, $propertyKey)
     {
-        $propertyValue = $model->_getProperty($propertyKey);
-        if (is_object($propertyValue)) {
-            if ($propertyValue instanceof LazyObjectStorage) {
-                $propertyValue = iterator_to_array($propertyValue);
-
-                // Transform objects recursive
-                foreach ($propertyValue as $childPropertyKey => $childPropertyValue) {
-                    if (is_object($childPropertyValue)) {
-                        $propertyValue[$childPropertyKey] = $this->getModelData($childPropertyValue);
-                    }
-                }
-                $propertyValue = array_values($propertyValue);
-            } else {
-                $propertyValue = $this->getModelData($propertyValue);
-            }
-        } elseif (!$propertyValue) {
-            return null;
-        }
-
-        return $propertyValue;
+        return $this->getModelData($model->_getProperty($propertyKey));
     }
 
     /**
@@ -552,224 +440,5 @@ class DataProvider implements DataProviderInterface
         }
 
         return $this->logger;
-    }
-
-    /**
-     * Returns the data from the given model
-     *
-     * @param object|DomainObjectInterface|object $model
-     * @return array
-     */
-    public function getModelData($model)
-    {
-        if (!is_object($model)) {
-            return $model;
-        }
-
-        if ($model instanceof ObjectStorage && !method_exists($model, 'jsonSerialize')) {
-            return $this->transformObjectStorage($model);
-        }
-
-
-        $modelHash = spl_object_hash($model);
-        if (isset(static::$handledModels[$modelHash])) {
-            static::$handledModels[$modelHash]++;
-        } else {
-            static::$handledModels[$modelHash] = 1;
-        }
-
-        if (static::$handledModels[$modelHash] < 2) {
-            // Get the data from the model
-            if (method_exists($model, 'jsonSerialize')) {
-                $properties = $model->jsonSerialize();
-            } elseif ($model instanceof FileInterface) {
-                $properties = $this->transformFileReference($model);
-            } elseif ($model instanceof AbstractFileFolder) {
-                $properties = $this->transformFileReference($model->getOriginalResource());
-            } elseif ($model instanceof DomainObjectInterface) {
-                $properties = $model->_getProperties();
-            } else {
-                // Return the model directly
-                $properties = $model;
-            }
-
-            if (is_array($properties)) {
-                $properties = $this->transformProperties($model, $properties);
-
-                $properties = $this->addClassProperty($model, $properties);
-            }
-
-            $result = $properties;
-        } else {
-            $result = $this->getUriToResource($model);
-        }
-        static::$handledModels[$modelHash]--;
-
-        return $result;
-    }
-
-    /**
-     * Transform the properties
-     *
-     * @param DomainObjectInterface|object $model
-     * @param array                        $properties
-     * @return array
-     */
-    protected function transformProperties($model, $properties)
-    {
-        // Transform objects recursive
-        foreach ($properties as $propertyKey => $propertyValue) {
-            if (is_object($propertyValue)) {
-                $propertyValueHash = spl_object_hash($propertyValue);
-                $modelRecursionCount = isset(static::$handledModels[$propertyValueHash])
-                    ? static::$handledModels[$propertyValueHash]
-                    : 0;
-
-                if ($modelRecursionCount < 1) {
-                    if ($propertyValue instanceof LazyLoadingProxy) {
-                        $properties[$propertyKey] = $this->getModelDataFromLazyLoadingProxy(
-                            $propertyValue,
-                            $propertyKey,
-                            $model
-                        );
-                    } elseif ($propertyValue instanceof LazyObjectStorage) {
-                        $properties[$propertyKey] = $this->getModelDataFromLazyObjectStorage(
-                            $propertyValue,
-                            $propertyKey,
-                            $model
-                        );
-                    } else {
-                        $properties[$propertyKey] = $this->getModelData($propertyValue);
-                    }
-                } elseif (method_exists($propertyValue, 'getUid')) {
-                    $properties[$propertyKey] = $this->getUriToNestedResource($propertyKey, $propertyValue);
-                } else {
-                    $properties[$propertyKey] = $propertyValue;
-                }
-            }
-        }
-
-        return $properties;
-    }
-
-    /**
-     * Transform object storage
-     *
-     * @param \Traversable $objectStorage
-     * @return array
-     */
-    protected function transformObjectStorage($objectStorage)
-    {
-        return array_values(array_map(array($this, 'getModelData'), iterator_to_array($objectStorage)));
-    }
-
-    /**
-     * Retrieve data from a file reference
-     *
-     * @param \TYPO3\CMS\Core\Resource\ResourceInterface|Folder|\TYPO3\CMS\Core\Resource\AbstractFile $originalResource
-     * @return array
-     */
-    protected function transformFileReference($originalResource)
-    {
-        static $depth = 0;
-        if ($originalResource instanceof AbstractFileFolder) {
-            if (++$depth > 10) {
-                throw new \RuntimeException('Max nesting level');
-            }
-            $result = $this->transformFileReference($originalResource->getOriginalResource());
-            $depth--;
-
-            return $result;
-        }
-
-        try {
-            if ($originalResource instanceof Folder) {
-                $filesInFolder = array();
-                foreach ($originalResource->getFiles() as $currentFile) {
-                    $filesInFolder[] = $this->transformFileReference($currentFile);
-                }
-
-                return $filesInFolder;
-            }
-
-            if ($originalResource instanceof FileReference) {
-                // This would expose all data
-                // return $originalResource->getProperties();
-
-                list($title, $description) = $this->getTitleAndDescription($originalResource);
-
-                return array(
-                    'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
-                    'referenceUid' => $originalResource->getUid(),
-                    'name'         => $originalResource->getName(),
-                    'mimeType'     => $originalResource->getMimeType(),
-                    'url'          => $originalResource->getPublicUrl(),
-                    'size'         => $originalResource->getSize(),
-                    'title'        => $title,
-                    'description'  => $description,
-                );
-            }
-
-            if ($originalResource instanceof FileInterface) {
-                return array(
-                    'name'     => $originalResource->getName(),
-                    'mimeType' => $originalResource->getMimeType(),
-                    'url'      => $originalResource->getPublicUrl(),
-                    'size'     => $originalResource->getSize(),
-                );
-            }
-
-            return array(
-                'name' => $originalResource->getName(),
-            );
-        } catch (\RuntimeException $exception) {
-            return array();
-        }
-    }
-
-    /**
-     * Get the title and description of a File
-     *
-     * @param FileReference $fileReference
-     * @return array
-     */
-    private function getTitleAndDescription(FileReference $fileReference)
-    {
-        $title = '';
-        $description = '';
-        try {
-            $title = $fileReference->getTitle();
-        } catch (\InvalidArgumentException $exception) {
-            $message = 'An invalid argument for the title has been passed!';
-            $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
-        }
-        try {
-            $description = $fileReference->getDescription();
-        } catch (\InvalidArgumentException $exception) {
-            $message = 'An invalid argument for the description has been passed!';
-            $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
-        }
-
-        return array($title, $description);
-    }
-
-    /**
-     * Adds the __class property to the export data if configured
-     *
-     * @param mixed $model
-     * @param array $properties
-     * @return mixed
-     */
-    protected function addClassProperty($model, array $properties)
-    {
-        if (isset($properties['__class'])) {
-            return $properties;
-        }
-
-        if (true === (bool)$this->objectManager->getConfigurationProvider()->getSetting('addClass', 0)) {
-            $properties['__class'] = is_object($model) ? get_class($model) : gettype($model);
-        }
-
-        return $properties;
     }
 }
