@@ -217,6 +217,73 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param int       $currentDepth
+     * @param int       $maxDepth
+     * @param \DateTime $testDate
+     * @return MyNestedModel
+     */
+    protected function buildNestedModels($currentDepth, $maxDepth, $testDate)
+    {
+        $model = new MyNestedModel();
+        $model->_setProperty('uid', $currentDepth + 1);
+        $model->setDate($testDate);
+
+        if ($currentDepth + 1 < $maxDepth) {
+            $model->setChild($this->buildNestedModels($currentDepth + 1, $maxDepth, $testDate));
+        }
+
+        return $model;
+    }
+
+    /**
+     * @test
+     */
+    public function extractShouldRespectDepthLimitTest()
+    {
+        $maxDepth = 20;
+        $currentDepth = 0;
+        $testDate = new \DateTime();
+
+        $model = $this->buildNestedModels($currentDepth, $maxDepth, $testDate);
+
+        $expectedOutput = array(
+            'base'  => 'Base',
+            'date'  => $testDate->format(\DateTime::ATOM),
+            'child' => array(
+                'base'  => 'Base',
+                'date'  => $testDate->format(\DateTime::ATOM),
+                'child' => array(
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(\DateTime::ATOM),
+                    'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/3/child',
+                    'uid'   => 3,
+                    'pid'   => null,
+                ),
+                'uid'   => 2,
+                'pid'   => null,
+            ),
+
+            'uid' => 1,
+            'pid' => null,
+        );
+
+
+        /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
+        $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
+
+        $this->fixture = new Extractor(
+            $configurationProviderProphecy->reveal(),
+            $this->prophesize(LoggerInterface::class)->reveal(),
+            3
+        );
+
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+
+        // Make sure the same result is returned if extract() is invoked again
+        $this->assertEquals($expectedOutput, $this->fixture->extract($model));
+    }
+
+    /**
      * @test
      */
     public function extractSelfReferencingRecursiveTest()

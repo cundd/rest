@@ -44,7 +44,14 @@ class Extractor implements ExtractorInterface
      *
      * @var int
      */
-    protected $currentModelDataDepth = 0;
+    protected $depthOfObjectTreeTraversal = 0;
+
+    /**
+     * The maximum depth when preparing model data for output
+     *
+     * @var int
+     */
+    protected $maxDepthOfObjectTreeTraversal;
 
     /**
      * Dictionary of handled models to their count
@@ -58,13 +65,16 @@ class Extractor implements ExtractorInterface
      *
      * @param ConfigurationProviderInterface $configurationProvider
      * @param LoggerInterface                $logger
+     * @param int                            $maxDepthOfObjectTreeTraversal
      */
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
-        LoggerInterface $logger = null
+        LoggerInterface $logger = null,
+        $maxDepthOfObjectTreeTraversal = 6
     ) {
         $this->configurationProvider = $configurationProvider;
         $this->logger = $logger;
+        $this->maxDepthOfObjectTreeTraversal = $maxDepthOfObjectTreeTraversal;
     }
 
     /**
@@ -157,8 +167,12 @@ class Extractor implements ExtractorInterface
         $this->increaseObjectRecursionValue($input);
 
         // Check for recursion
-        if ($this->getObjectRecursionValue($input) < 2) {
+        if ($this->getObjectRecursionValue($input) < 2
+            && $this->getDepthOfObjectTreeTraversal() < $this->maxDepthOfObjectTreeTraversal
+        ) {
+            $this->increaseDepthOfObjectTreeTraversal();
             $result = $this->extractObjectData($input, $key, $owner);
+            $this->decreaseDepthOfObjectTreeTraversal();
         } else {
             // Object is processed recursively, so we only return a URI
             if ($key && $owner) {
@@ -476,6 +490,40 @@ class Extractor implements ExtractorInterface
         static::$handledModels[$objectHash] = $value;
 
         return $value;
+    }
+
+    /**
+     * Returns the current depth of object tree traversal
+     *
+     * @return int
+     */
+    private function getDepthOfObjectTreeTraversal()
+    {
+        return $this->depthOfObjectTreeTraversal;
+    }
+
+    /**
+     * Increases the current depth of object tree traversal
+     *
+     * @return int
+     */
+    private function increaseDepthOfObjectTreeTraversal()
+    {
+        $this->depthOfObjectTreeTraversal += 1;
+
+        return $this->depthOfObjectTreeTraversal;
+    }
+
+    /**
+     * Decreases the current depth of object tree traversal
+     *
+     * @return int
+     */
+    private function decreaseDepthOfObjectTreeTraversal()
+    {
+        $this->depthOfObjectTreeTraversal -= 1;
+
+        return $this->depthOfObjectTreeTraversal;
     }
 
     /**
