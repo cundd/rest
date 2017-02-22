@@ -9,6 +9,7 @@
 namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\ErrorHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
@@ -217,8 +218,6 @@ class ResultConverter implements RouterInterface
      */
     private function getShowDebugInformation()
     {
-        $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-
-        return $clientAddress === '127.0.0.1' || $clientAddress === '::1';
+        return ErrorHandler::getShowDebugInformation();
     }
 }

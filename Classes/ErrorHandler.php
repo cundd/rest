@@ -29,8 +29,12 @@ class ErrorHandler
     public static function getShowDebugInformation()
     {
         $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        $devIpMask = static::getDevIpMask();
+        if (in_array('*', $devIpMask)) {
+            return true;
+        }
 
-        return $clientAddress === '127.0.0.1' || $clientAddress === '::1';
+        return in_array($clientAddress, $devIpMask);
     }
 
     /**
@@ -47,6 +51,21 @@ class ErrorHandler
                 static::printError(new \Exception($error['message'], $error['type']));
             }
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function getDevIpMask()
+    {
+        if (isset($GLOBALS['TYPO3_CONF_VARS'])
+            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS'])
+            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])
+        ) {
+            return explode(',', $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
+        }
+
+        return [];
     }
 
     /**
