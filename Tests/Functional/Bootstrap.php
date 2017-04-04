@@ -113,8 +113,6 @@ class Bootstrap
         }
         if ($restTypo3BasePath === false) {
             $restTypo3BasePath = $this->getTYPO3InstallationPath(realpath(getcwd()) ?: getcwd());
-
-            return $restTypo3BasePath;
         }
 
         return $restTypo3BasePath;
