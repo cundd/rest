@@ -6,18 +6,18 @@ plugin.tx_rest.settings {
 			write = deny
 		}
 	}
-	
+
 	aliases {
 		#	content = virtual_object-content
 	}
-	
+
 	virtualObjects {
 		content {
 			mapping {
 				identifier = id
 				tableName = tt_content
 				skipUnknownProperties = true
-				
+
 				properties{
 					id {
 						column = uid
@@ -175,10 +175,10 @@ plugin.tx_rest.settings {
 						column = header_layout
 						type = string
 					}
-					menuType {
-						column = menu_type
-						type = string
-					}
+                    # menuType {
+                    # 	column = menu_type
+                    # 	type = string
+                    # }
 					listType {
 						column = list_type
 						type = string
