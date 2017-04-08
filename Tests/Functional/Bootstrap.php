@@ -5,10 +5,14 @@
 
 namespace Cundd\Rest\Tests\Functional;
 
+/**
+ * Bootstrap for functional tests
+ */
 class Bootstrap
 {
-    const TYPO3_BOOTSTRAP_CLASS_PATH = 'sysext/core/Build/FunctionalTestsBootstrap.php';
-
+    /**
+     * Bootstrap the TYPO3 system
+     */
     public function bootstrapSystem()
     {
         $this->setupComposer();
@@ -16,32 +20,44 @@ class Bootstrap
         $this->setupAbstractCase();
     }
 
-    protected function setupTYPO3()
+    /**
+     * Loads the TYPO3 Functional Tests bootstrap class
+     *
+     * @throws \Exception if the Functional Tests Bootstrap class could not be found
+     */
+    private function setupTYPO3()
     {
+        // If TYPO3 already is loaded
         if (defined('TYPO3_MODE') && defined('ORIGINAL_ROOT')) {
             return;
         }
-        $restTypo3BasePath = $this->detectTypo3BasePath();
 
-        if ($restTypo3BasePath !== false) {
-            $typo3Version8LtsPath = $restTypo3BasePath . '/components/testing_framework/Resources/Core/Build/FunctionalTestsBootstrap.php';
-
-            if (file_exists($restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-                require_once $restTypo3BasePath . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-
-                return;
-            } elseif (file_exists($typo3Version8LtsPath)) {
-                require_once $typo3Version8LtsPath;
-
-                return;
-            }
+        $functionalTestsBootstrapPath = $this->detectFunctionalTestsBootstrapPath();
+        if (false !== $functionalTestsBootstrapPath) {
+            require_once $functionalTestsBootstrapPath;
+        } else {
+            $this->printWarning('no $functionalTestsBootstrapPath');
         }
 
-        if (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap')) {
+        // Alias for typo3/testing-framework
+        if (class_exists('TYPO3\TestingFramework\Core\Functional\FunctionalTestCase', true)) {
+            class_alias(
+                'TYPO3\TestingFramework\Core\Functional\FunctionalTestCase',
+                'TYPO3\CMS\Core\Build\FunctionalTestsBootstrap'
+            );
+        }
+
+        if (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap', true)) {
             throw new \Exception('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found');
+        }
+        if (!defined('ORIGINAL_ROOT')) {
+            $this->printWarning('ORIGINAL_ROOT should be defined by now');
         }
     }
 
+    /**
+     * Setup the Composer autoloading
+     */
     private function setupComposer()
     {
         // Load composer autoloader
@@ -58,55 +74,94 @@ class Bootstrap
         }
     }
 
-    private function setupAbstractCase()
-    {
-        require_once __DIR__ . '/AbstractCase.php';
-    }
-
-    private function getTYPO3InstallationPath($startPath)
-    {
-        $cur = $startPath;
-        while ($cur !== '/') {
-            if (file_exists($cur . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-                return $cur . '/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-            } elseif (file_exists($cur . '/TYPO3.CMS/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH)) {
-                return $cur . '/TYPO3.CMS/typo3/' . self::TYPO3_BOOTSTRAP_CLASS_PATH;
-            }
-
-            $cur = dirname($cur);
-        }
-
-        return '';
-    }
-
     /**
-     * @param string $environmentKey
-     * @return array|bool|false|string
+     * Returns the path to the Functional Tests Bootstrap file
+     *
+     * @return string|bool
      */
-    protected function checkEnvironmentForTypo3BasePath($environmentKey)
+    private function detectFunctionalTestsBootstrapPath()
     {
-        $restTypo3BasePath = getenv((string)$environmentKey);
-        if ($restTypo3BasePath === false) {
+        $typo3BasePath = $this->detectTYPO3BasePath();
+        if ($typo3BasePath === false) {
             return false;
         }
 
-        if (file_exists($restTypo3BasePath)) {
-            return $restTypo3BasePath;
+        $paths = [
+            'v7.x' => $typo3BasePath . '/typo3/sysext/core/Build/FunctionalTestsBootstrap.php',
+            'v8.x' => $typo3BasePath . '/components/testing_framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
+            'v8.6' => $typo3BasePath . '/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
+        ];
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
         }
-
-        $this->printWarning('TYPO3 installation in %s "%s" not found', $environmentKey, $restTypo3BasePath);
 
         return false;
     }
 
     /**
-     * @return array|bool|false|string
+     * Load the abstract test case
      */
-    protected function detectTypo3BasePath()
+    private function setupAbstractCase()
     {
-        $restTypo3BasePath = $this->checkEnvironmentForTypo3BasePath('REST_TYPO3_BASE_PATH');
+        require_once __DIR__ . '/AbstractCase.php';
+    }
+
+    /**
+     * Walk the file system tree up until a TYPO3 installation is found
+     *
+     * @param string $startPath
+     * @return string|bool Returns the path to the TYPO3 installation or FALSE if it could not be found
+     */
+    private function getTYPO3InstallationPath($startPath)
+    {
+        $cur = $startPath;
+        while ($cur !== '/') {
+            if (file_exists($cur . '/typo3/')) {
+                return $cur;
+            } elseif (file_exists($cur . '/TYPO3.CMS/typo3/')) {
+                return $cur;
+            }
+
+            $cur = dirname($cur);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check the environment for a TYPO3 path variable
+     *
+     * @param string $environmentKey
+     * @return bool|string
+     */
+    private function checkEnvironmentForBasePath($environmentKey)
+    {
+        $basePath = getenv((string)$environmentKey);
+        if ($basePath === false) {
+            return false;
+        }
+
+        if (file_exists($basePath)) {
+            return (string)$basePath;
+        }
+
+        $this->printWarning('TYPO3 installation in %s "%s" not found', $environmentKey, $basePath);
+
+        return false;
+    }
+
+    /**
+     * Returns the path to the TYPO3 installation base
+     *
+     * @return bool|string
+     */
+    private function detectTYPO3BasePath()
+    {
+        $restTypo3BasePath = $this->checkEnvironmentForBasePath('REST_TYPO3_BASE_PATH');
         if ($restTypo3BasePath === false) {
-            $restTypo3BasePath = $this->checkEnvironmentForTypo3BasePath('TYPO3_PATH_WEB');
+            $restTypo3BasePath = $this->checkEnvironmentForBasePath('TYPO3_PATH_WEB');
         }
         if ($restTypo3BasePath === false) {
             $restTypo3BasePath = $this->getTYPO3InstallationPath(realpath(__DIR__) ?: __DIR__);
@@ -118,6 +173,12 @@ class Bootstrap
         return $restTypo3BasePath;
     }
 
+    /**
+     * Print a warning to STDERR
+     *
+     * @param string $message
+     * @param array  ...$arguments
+     */
     private function printWarning($message, ...$arguments)
     {
         fwrite(STDERR, vsprintf((string)$message, $arguments) . PHP_EOL);
