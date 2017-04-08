@@ -210,7 +210,7 @@ class NewsTest extends AbstractApiCase
             'keywords'         => '',
             'description'      => '',
             'sorting'          => 0,
-            'pid'              => 2,
+            'pid'              => 1,
         ];
     }
 }
