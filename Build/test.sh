@@ -39,7 +39,6 @@ function get_phpunit_path_for_unit_tests() {
 function check_mysql_credentials {
     php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or exit(1);' || {
         print_error "Could not connect to MySQL ($typo3DatabaseUsername:$typo3DatabasePassword@$typo3DatabaseHost / $typo3DatabaseName)";
-        exit 1;
     }
 }
 
@@ -78,31 +77,39 @@ function init {
 }
 
 function unit_tests {
+    set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
         ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Unit/phpunit.xml "$@";
     else
         ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Unit/phpunit.xml ./Tests/Unit "$@";
     fi
+    set -e;
 }
 
 function manual_tests {
+    set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
         ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Manual/phpunit.xml "$@";
     else
         ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c ./Tests/Manual/phpunit.xml ./Tests/Manual "$@";
     fi
+    set -e;
 }
 
 function functional_tests {
+    set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
         ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c ./Tests/Functional/phpunit.xml "$@";
     else
         ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c ./Tests/Functional/phpunit.xml ./Tests/Functional "$@";
     fi
+    set -e;
 }
 
 function documentation_tests {
+    set +e;
     ${PHP_BINARY} vendor/bin/test-flight "$@";
+    set -e;
 }
 
 function show_help() {
