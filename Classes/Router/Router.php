@@ -124,6 +124,10 @@ class Router implements RouterInterface
     public function getMatchingRoutes(RestRequestInterface $request)
     {
         $method = $request->getMethod();
+        if (!isset($this->registeredRoutes[$method])) {
+            return [];
+        }
+
         $path = $request->getPath();
         $matchingRoutes = [];
         foreach ($this->registeredRoutes[$method] as $pattern => $route) {
