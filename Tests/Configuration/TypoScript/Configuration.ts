@@ -1,4 +1,5 @@
 ### Include this file to configure TYPO3 for the manual tests
+# <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.ts">
 
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Configuration/TypoScript/Content/setup.txt">
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Configuration/TypoScript/Page/setup.txt">
