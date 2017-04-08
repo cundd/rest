@@ -46,7 +46,8 @@ class HttpClient
         if ($response->content === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
                 . substr($response->body, 0, 200) . PHP_EOL
-                . '------------------------------------';
+                . '------------------------------------' . PHP_EOL
+                . $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
             throw new \UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);
         }
 
@@ -64,7 +65,7 @@ class HttpClient
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
         $method = strtoupper($method);
-        $url = $this->hasPrefix($this->getBaseUrl(), $path) ? $path : ($this->getBaseUrl() . ltrim($path, '/'));
+        $url = $this->getUrlForPath($path);
         $curlClient = curl_init($url);
 
         $options = [
@@ -97,9 +98,7 @@ class HttpClient
             'withBody' => null !== $body ? 'yes' : 'no',
         ];
 
-        if (getenv('REST_DEBUG_CURL')) {
-            $this->debugCurl($url, $method, $body, $headers, $basicAuth);
-        }
+        $this->debugCurl($path, $method, $body, $headers, $basicAuth);
 
         return $this->send($curlClient, $request);
     }
@@ -107,29 +106,32 @@ class HttpClient
     /**
      * Set the environment variable REST_DEBUG_CURL to print the curl command
      *
-     * @param string            $url
+     * @param string            $path
      * @param string            $method
      * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
      */
-    private function debugCurl($url, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
+    private function debugCurl($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
-        echo PHP_EOL;
-        echo $this->buildCurlCommand($url, $method, $body, $headers, $basicAuth);
-        echo PHP_EOL;
+        if (getenv('REST_DEBUG_CURL')) {
+            echo PHP_EOL;
+            echo $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
+            echo PHP_EOL;
+        }
     }
 
     /**
-     * @param string            $url
+     * @param string            $path
      * @param string            $method
      * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
      * @return string
      */
-    private function buildCurlCommand($url, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
+    private function buildCurlCommand($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
+        $url = $this->getUrlForPath($path);
         $command = ['curl'];
 
         // Method
@@ -260,5 +262,14 @@ class HttpClient
         }
 
         return $body;
+    }
+
+    /**
+     * @param $path
+     * @return string
+     */
+    private function getUrlForPath($path)
+    {
+        return $this->hasPrefix($this->getBaseUrl(), $path) ? $path : ($this->getBaseUrl() . ltrim($path, '/'));
     }
 }
