@@ -31,6 +31,14 @@ class HttpClient
         return new self($verbose);
     }
 
+    /**
+     * @param string            $path
+     * @param string            $method
+     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string[]          $headers   A dictionary of headers
+     * @param string            $basicAuth String in the format "user:password"
+     * @return object
+     */
     public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
         $response = $this->request($path, $method, $body, $headers, $basicAuth);
@@ -45,13 +53,20 @@ class HttpClient
         return $response;
     }
 
+    /**
+     * @param string            $path
+     * @param string            $method
+     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string[]          $headers   A dictionary of headers
+     * @param string            $basicAuth String in the format "user:password"
+     * @return object
+     */
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
         $method = strtoupper($method);
         $url = $this->hasPrefix($this->getBaseUrl(), $path) ? $path : ($this->getBaseUrl() . ltrim($path, '/'));
         $curlClient = curl_init($url);
 
-//        echo 'Request ' . $url . PHP_EOL;
         $options = [
             CURLOPT_URL            => $url,
             CURLOPT_HEADER         => true,
@@ -70,14 +85,8 @@ class HttpClient
         }
 
         if ($body !== null) {
-            if (!is_string($body)) {
-                $body = json_encode($body);
-            }
-
+            $body = $this->prepareBody($body, $headers);
             $options[CURLOPT_POSTFIELDS] = $body;
-            if (!isset($headers['Content-Length'])) {
-                $headers['Content-Length'] = strlen($body);
-            }
         }
 
         curl_setopt_array($curlClient, $options);
@@ -88,9 +97,73 @@ class HttpClient
             'withBody' => null !== $body ? 'yes' : 'no',
         ];
 
+        if (getenv('REST_DEBUG_CURL')) {
+            $this->debugCurl($url, $method, $body, $headers, $basicAuth);
+        }
+
         return $this->send($curlClient, $request);
     }
 
+    /**
+     * Set the environment variable REST_DEBUG_CURL to print the curl command
+     *
+     * @param string            $url
+     * @param string            $method
+     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string[]          $headers   A dictionary of headers
+     * @param string            $basicAuth String in the format "user:password"
+     */
+    private function debugCurl($url, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
+    {
+        echo PHP_EOL;
+        echo $this->buildCurlCommand($url, $method, $body, $headers, $basicAuth);
+        echo PHP_EOL;
+    }
+
+    /**
+     * @param string            $url
+     * @param string            $method
+     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string[]          $headers   A dictionary of headers
+     * @param string            $basicAuth String in the format "user:password"
+     * @return string
+     */
+    private function buildCurlCommand($url, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
+    {
+        $command = ['curl'];
+
+        // Method
+        $command[] = '-X';
+        $command[] = escapeshellarg($method);
+
+        // Basic auth
+        if (null !== $basicAuth) {
+            $command[] = '-u';
+            $command[] = escapeshellarg($basicAuth);
+        }
+
+        // Body
+        if (null !== $body) {
+            $body = $this->prepareBody($body, $headers);
+            $command[] = '-d';
+            $command[] = escapeshellarg($body);
+        }
+
+        // Headers
+        foreach ($headers as $key => $value) {
+            $command[] = '--header ' . escapeshellarg("$key: $value");
+        }
+
+        // URL
+        $command[] = escapeshellarg($url);
+
+        return implode(' ', $command);
+    }
+
+    /**
+     * @param string $headerString
+     * @return array
+     */
     private function parseResponseHeaders($headerString)
     {
         if (!$headerString) {
@@ -169,5 +242,23 @@ class HttpClient
             'status'      => $responseHeaders['status_code'],
             'requestData' => (object)$requestData,
         ];
+    }
+
+    /**
+     * @param string|mixed $body
+     * @param string[]     $headers Reference to the headers array
+     * @return string
+     */
+    protected function prepareBody($body, array &$headers)
+    {
+        if (!is_string($body)) {
+            $body = json_encode($body);
+        }
+
+        if (!isset($headers['Content-Length'])) {
+            $headers['Content-Length'] = strlen($body);
+        }
+
+        return $body;
     }
 }
