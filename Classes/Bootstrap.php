@@ -26,9 +26,9 @@
 namespace Cundd\Rest;
 
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
-use TYPO3\CMS\Core\Utility\GeneralUtility as GeneralUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Utility\EidUtility as EidUtility;
+use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
  * Class to bootstrap TYPO3 frontend controller
