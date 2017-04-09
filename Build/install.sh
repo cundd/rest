@@ -19,6 +19,8 @@ REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
+: ${TRAVIS_PHP_VERSION="7.0"}
+
 source "$REST_HOME/Build/lib.sh";
 
 function get_mysql_client_path {
@@ -36,7 +38,12 @@ function get_mysql_client_path {
 function install_dependencies {
     print_header "Install dependencies";
     composer self-update;
-    composer install --verbose --ignore-platform-reqs;
+
+    if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
+        composer remove --dev friendsofphp/php-cs-fixer;
+    fi
+
+    composer install --verbose --no-dev --ignore-platform-reqs;
 }
 
 function install_typo3 {
