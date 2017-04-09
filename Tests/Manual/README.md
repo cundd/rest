@@ -16,3 +16,5 @@ Installation
 4. Install [custom_rest extension](https://github.com/cundd/custom_rest)
 
 5. Add a Frontend User with name `daniel` and API-key `api-key`
+
+6. Add at least one news entry
