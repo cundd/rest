@@ -172,11 +172,6 @@ plugin.tx_rest.settings {
                         type = string
                     }
 
-                    menuType {
-                        column = menu_type
-                        type = string
-                    }
-
                     listType {
                         column = list_type
                         type = string
