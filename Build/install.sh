@@ -38,11 +38,6 @@ function get_mysql_client_path {
 function install_dependencies {
     print_header "Install dependencies";
     composer self-update;
-
-    if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        composer remove --dev friendsofphp/php-cs-fixer;
-    fi
-
     composer install --verbose --no-dev --ignore-platform-reqs;
 }
 
@@ -59,6 +54,9 @@ function install_typo3 {
     fi
     export TYPO3_PATH_WEB="`pwd`";
 
+    if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
+        composer remove --dev friendsofphp/php-cs-fixer;
+    fi
     composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
 
