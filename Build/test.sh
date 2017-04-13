@@ -5,7 +5,7 @@ set -o errexit
 
 PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
-: ${TYPO3_PATH_WEB="$PROJECT_HOME/../TYPO3.CMS"}
+: ${TYPO3_PATH_WEB=""}
 : ${PHP_BINARY="php"}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
 
@@ -73,8 +73,11 @@ function init_typo3 {
 function init {
     # Test the environment
     if [ "${TYPO3_PATH_WEB}" == "" ]; then
-        print_error "Please set the TYPO3_PATH_WEB environment variable";
-        exit 1;
+        TYPO3_PATH_WEB=$(get_typo3_base_path);
+        if [ "${TYPO3_PATH_WEB}" == "" ]; then
+            print_error "Please set the TYPO3_PATH_WEB environment variable";
+            exit 1;
+        fi
     elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
         print_error "The defined TYPO3_PATH_WEB '$TYPO3_PATH_WEB' does not seem to be a directory";
         exit 1;

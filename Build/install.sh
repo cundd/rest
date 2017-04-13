@@ -6,12 +6,8 @@ set -o errexit
 PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${TYPO3="master"}
-: ${REPO="rest"}
+: ${REPO="$(basename ${PROJECT_HOME})"}
 
-: ${FUNCTIONAL_TESTS="yes"}
-: ${UNIT_TESTS="yes"}
-
-: ${TYPO3_PATH_WEB=""}
 : ${PHP_BINARY="php"}
 
 : ${typo3DatabaseName="typo3"}
@@ -34,15 +30,21 @@ function install_dependencies {
 # Install the TYPO3
 function install_typo3 {
     print_header "Get TYPO3 source $TYPO3";
-    cd ..;
 
-    if [[ ! -e "TYPO3.CMS" ]]; then
-        git clone --single-branch --branch ${TYPO3} --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
-        cd TYPO3.CMS;
-    else
-        cd TYPO3.CMS;
+    local typo3_base_path=$(get_typo3_base_path);
+    if [[ "$typo3_base_path" != "" ]]; then
+        pushd "$typo3_base_path" > /dev/null;
+        print_info "Update TYPO3 source";
         git pull;
+    else
+        pushd ..;
+        print_info "Install TYPO3 source";
+        if [[ ! -e "TYPO3.CMS" ]]; then
+            git clone --single-branch --branch ${TYPO3} --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
+            cd TYPO3.CMS;
+        fi
     fi
+
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
@@ -55,7 +57,8 @@ function install_typo3 {
     if [[ ! -e "./typo3conf/ext/$REPO" ]]; then
         ln -s ${PROJECT_HOME} "./typo3conf/ext/$REPO";
     fi
-    cd ..;
+
+    popd > /dev/null;
 }
 
 # Prepares the MySQL database

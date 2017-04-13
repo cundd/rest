@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
+
 function lib::_tput {
     : ${TERM="dumb"}
     if [ "$TERM" != "dumb" ] && hash tput &>/dev/null; then
@@ -45,5 +47,14 @@ function get_mysql_client_path {
         echo /Applications/MAMP/Library/bin/mysql;
     else
         return 1;
+    fi
+}
+
+# Detects the path to the TYPO3 base
+function get_typo3_base_path {
+    if [ -d "$PROJECT_HOME/../TYPO3.CMS" ]; then
+        echo "$PROJECT_HOME/../TYPO3.CMS";
+    elif [ -d "$PROJECT_HOME/../../../typo3" ]; then
+        dirname "$PROJECT_HOME/../../../typo3";
     fi
 }
