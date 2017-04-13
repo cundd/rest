@@ -93,8 +93,8 @@ class Bootstrap
 
         $paths = [
             'v7.x' => $typo3BasePath . '/typo3/sysext/core/Build/FunctionalTestsBootstrap.php',
-            'v8.x' => $typo3BasePath . '/components/testing_framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
-            'v8.6' => $typo3BasePath . '/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
+            'v8.6' => $typo3BasePath . '/components/testing_framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
+            'v8.7' => $typo3BasePath . '/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
         ];
         foreach ($paths as $path) {
             if (file_exists($path)) {
@@ -172,7 +172,7 @@ class Bootstrap
             if (file_exists($cur . '/typo3/')) {
                 return $cur;
             } elseif (file_exists($cur . '/TYPO3.CMS/typo3/')) {
-                return $cur;
+                return $cur . '/TYPO3.CMS';
             }
 
             $cur = dirname($cur);
