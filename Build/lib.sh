@@ -1,38 +1,45 @@
 #!/usr/bin/env bash
 
-function _tput {
+function lib::_tput {
     : ${TERM="dumb"}
     if [ "$TERM" != "dumb" ] && hash tput &>/dev/null; then
         tput $*;
     fi
 }
 
+# Print a error message
 function print_error() {
-    >&2 _tput setaf 1;
+    >&2 lib::_tput setaf 1;
     >&2 echo "[ERROR] $@";
-    >&2 _tput sgr0;
+    >&2 lib::_tput sgr0;
 }
 
+# Print a header message
 function print_header() {
-    _tput setaf 2;
+    lib::_tput setaf 2;
     echo "[TASK] $@";
-    _tput sgr0;
+    lib::_tput sgr0;
 }
 
+# Print a info message
 function print_info() {
-    _tput setaf 4;
+    lib::_tput setaf 4;
     echo "[INFO] $@";
-    _tput sgr0;
+    lib::_tput sgr0;
 }
 
+# Print a warning
 function print_warning() {
-    _tput setaf 3;
+    lib::_tput setaf 3;
     echo "[WARNING] $@";
-    _tput sgr0;
+    lib::_tput sgr0;
 }
 
+# Retrieve the path to the MySQL client
 function get_mysql_client_path {
-    if [[ `which mysql > /dev/null` ]]; then
+    if hash mysql 2>/dev/null; then
+        echo mysql;
+    elif [[ `which mysql > /dev/null` ]]; then
         which mysql;
     elif [[ -x /Applications/MAMP/Library/bin/mysql ]]; then
         echo /Applications/MAMP/Library/bin/mysql;

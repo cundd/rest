@@ -3,9 +3,9 @@
 set -o nounset
 set -o errexit
 
-REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
+PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
-: ${TYPO3_PATH_WEB="$REST_HOME/../TYPO3.CMS"}
+: ${TYPO3_PATH_WEB="$PROJECT_HOME/../TYPO3.CMS"}
 : ${PHP_BINARY="php"}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
 
@@ -14,8 +14,9 @@ REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
-source "$REST_HOME/Build/lib.sh";
+source "$PROJECT_HOME/Build/lib.sh";
 
+# Detect the phpunit path to use for Functional Tests
 function get_phpunit_path_for_functional_tests() {
     if [ -e "$TYPO3_PATH_WEB/bin/phpunit" ]; then
         echo "$TYPO3_PATH_WEB/bin/phpunit";
@@ -26,6 +27,8 @@ function get_phpunit_path_for_functional_tests() {
         exit 1;
     fi
 }
+
+# Detect the phpunit path to use for Unit Tests
 function get_phpunit_path_for_unit_tests() {
     if [ -e "`pwd`/bin/phpunit" ]; then
         echo "`pwd`/bin/phpunit";
@@ -36,12 +39,14 @@ function get_phpunit_path_for_unit_tests() {
     fi
 }
 
+# Check the provided MySQL credentials
 function check_mysql_credentials {
     php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or exit(1);' || {
         print_error "Could not connect to MySQL ($typo3DatabaseUsername:$typo3DatabasePassword@$typo3DatabaseHost / $typo3DatabaseName)";
     }
 }
 
+# Prepare the system for database connections
 function init_database {
     # Export database credentials
     export typo3DatabaseName=${typo3DatabaseName};
@@ -54,6 +59,7 @@ function init_database {
     print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
+# Prepare the TYPO3 system
 function init_typo3 {
 	local baseDir=`pwd`;
 	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
@@ -63,6 +69,7 @@ function init_typo3 {
 	fi
 }
 
+# Check the system environment
 function init {
     # Test the environment
     if [ "${TYPO3_PATH_WEB}" == "" ]; then
@@ -76,6 +83,7 @@ function init {
 	init_typo3;
 }
 
+# Run Unit Tests
 function unit_tests {
     set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
@@ -86,6 +94,7 @@ function unit_tests {
     set -e;
 }
 
+# Run Manual Tests
 function manual_tests {
     set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
@@ -96,6 +105,7 @@ function manual_tests {
     set -e;
 }
 
+# Run Functional Tests
 function functional_tests {
     set +e;
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
@@ -106,16 +116,19 @@ function functional_tests {
     set -e;
 }
 
+# Run Documentation Tests (using test-flight)
 function documentation_tests {
     set +e;
     ${PHP_BINARY} vendor/bin/test-flight "$@";
     set -e;
 }
 
+# Print the help
 function show_help() {
     echo "Usage $0 [options] -- [phpunit-options] [<directory>]
 
-Example $0 --no-functional -- Tests/Unit/Router/ResultConverterTest.php
+Example $0 --functional
+Example $0 -- Tests/Unit/
 
   --unit                    Run Unit tests
   --functional              Run Functional tests
@@ -125,6 +138,7 @@ Example $0 --no-functional -- Tests/Unit/Router/ResultConverterTest.php
 ";
 }
 
+# Main entry point
 function main {
     init;
 

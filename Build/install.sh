@@ -3,7 +3,7 @@
 set -o nounset
 set -o errexit
 
-REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
+PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${TYPO3="master"}
 : ${REPO="rest"}
@@ -19,28 +19,19 @@ REST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
+# @internal
 : ${TRAVIS_PHP_VERSION="7.0"}
 
-source "$REST_HOME/Build/lib.sh";
+source "$PROJECT_HOME/Build/lib.sh";
 
-function get_mysql_client_path {
-    if hash mysql 2>/dev/null; then
-        echo mysql;
-    elif [[ `which mysql > /dev/null` ]]; then
-        which mysql;
-    elif [[ -x /Applications/MAMP/Library/bin/mysql ]]; then
-        echo /Applications/MAMP/Library/bin/mysql;
-    else
-        return 1;
-    fi
-}
-
+# Install the project's dependencies
 function install_dependencies {
     print_header "Install dependencies";
     composer self-update;
     composer install --verbose --no-dev --ignore-platform-reqs;
 }
 
+# Install the TYPO3
 function install_typo3 {
     print_header "Get TYPO3 source $TYPO3";
     cd ..;
@@ -62,11 +53,12 @@ function install_typo3 {
 
     mkdir -p ./typo3conf/ext/;
     if [[ ! -e "./typo3conf/ext/$REPO" ]]; then
-        ln -s ${REST_HOME} "./typo3conf/ext/$REPO";
+        ln -s ${PROJECT_HOME} "./typo3conf/ext/$REPO";
     fi
     cd ..;
 }
 
+# Prepares the MySQL database
 function prepare_database {
     if [[ "$(get_mysql_client_path)" != "" ]]; then
         if [[ "$typo3DatabasePassword" != "" ]]; then
@@ -90,8 +82,9 @@ function prepare_database {
     fi
 }
 
+# Main entry point
 function main {
-    cd ${REST_HOME};
+    cd ${PROJECT_HOME};
 
     install_dependencies;
     install_typo3;
