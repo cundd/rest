@@ -52,28 +52,14 @@ class Bootstrap
         }
 
         $functionalTestsBootstrapPath = $this->detectFunctionalTestsBootstrapPath();
-        if (false !== $functionalTestsBootstrapPath) {
-            require_once $functionalTestsBootstrapPath;
+        if (false === $functionalTestsBootstrapPath) {
+            $this->printWarning('Could not detect the path to the Functional Tests Bootstrap file');
         } else {
-            $this->printWarning('no $functionalTestsBootstrapPath');
+            require_once $functionalTestsBootstrapPath;
         }
 
-        // Alias for typo3/testing-framework
-        if (class_exists('TYPO3\TestingFramework\Core\Functional\FunctionalTestCase', true)) {
-            class_alias(
-                'TYPO3\TestingFramework\Core\Functional\FunctionalTestCase',
-                'TYPO3\CMS\Core\Build\FunctionalTestsBootstrap'
-            );
-        }
+        $this->prepareTestBaseClass();
 
-        if (!class_exists('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap', true)) {
-            if (false === $functionalTestsBootstrapPath) {
-                throw new \Exception(
-                    'TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found and Bootstrap file path could not be detected'
-                );
-            }
-            throw new \Exception('TYPO3\CMS\Core\Build\FunctionalTestsBootstrap not found');
-        }
         if (!defined('ORIGINAL_ROOT')) {
             $this->printWarning('ORIGINAL_ROOT should be defined by now');
         }
@@ -88,6 +74,8 @@ class Bootstrap
     {
         $typo3BasePath = $this->detectTYPO3BasePath();
         if ($typo3BasePath === false) {
+            $this->printWarning('Could not detect TYPO3 base path');
+
             return false;
         }
 
@@ -112,18 +100,18 @@ class Bootstrap
      */
     private function detectTYPO3BasePath()
     {
-        $restTypo3BasePath = $this->checkEnvironmentForBasePath('REST_TYPO3_BASE_PATH');
-        if ($restTypo3BasePath === false) {
-            $restTypo3BasePath = $this->checkEnvironmentForBasePath('TYPO3_PATH_WEB');
+        $typo3BasePath = $this->checkEnvironmentForBasePath('REST_TYPO3_BASE_PATH');
+        if ($typo3BasePath === false) {
+            $typo3BasePath = $this->checkEnvironmentForBasePath('TYPO3_PATH_WEB');
         }
-        if ($restTypo3BasePath === false) {
-            $restTypo3BasePath = $this->getTYPO3InstallationPath(realpath(__DIR__) ?: __DIR__);
+        if ($typo3BasePath === false) {
+            $typo3BasePath = $this->getTYPO3InstallationPath(realpath(__DIR__) ?: __DIR__);
         }
-        if ($restTypo3BasePath === false) {
-            $restTypo3BasePath = $this->getTYPO3InstallationPath(realpath(getcwd()) ?: getcwd());
+        if ($typo3BasePath === false) {
+            $typo3BasePath = $this->getTYPO3InstallationPath(realpath(getcwd()) ?: getcwd());
         }
 
-        return $restTypo3BasePath;
+        return $typo3BasePath;
     }
 
     /**
@@ -179,6 +167,21 @@ class Bootstrap
         }
 
         return false;
+    }
+
+    /**
+     * Creates an alias for the Testing Framework if needed
+     */
+    private function prepareTestBaseClass()
+    {
+        if (!class_exists('TYPO3\CMS\Core\Tests\FunctionalTestCase')
+            && class_exists('TYPO3\TestingFramework\Core\Functional\FunctionalTestCase', true)
+        ) {
+            class_alias(
+                'TYPO3\TestingFramework\Core\Functional\FunctionalTestCase',
+                'TYPO3\CMS\Core\Tests\FunctionalTestCase'
+            );
+        }
     }
 
     /**

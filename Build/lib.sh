@@ -50,6 +50,16 @@ function get_mysql_client_path {
     fi
 }
 
+# Silent pushd
+function lib::pushd {
+    pushd $1 > /dev/null;
+}
+
+# Silent popd
+function lib::popd {
+    popd > /dev/null;
+}
+
 # Detects the path to the TYPO3 base
 function get_typo3_base_path {
     if [ -d "$PROJECT_HOME/../TYPO3.CMS" ]; then

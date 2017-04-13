@@ -24,7 +24,7 @@ source "$PROJECT_HOME/Build/lib.sh";
 function install_dependencies {
     print_header "Install dependencies";
     composer self-update;
-    composer install --verbose --dev --ignore-platform-reqs;
+    composer install --verbose --ignore-platform-reqs;
 }
 
 # Install the TYPO3
@@ -33,11 +33,11 @@ function install_typo3 {
 
     local typo3_base_path=$(get_typo3_base_path);
     if [[ "$typo3_base_path" != "" ]]; then
-        pushd "$typo3_base_path" > /dev/null;
+        lib::pushd "$typo3_base_path";
         print_info "Update TYPO3 source";
         git pull;
     else
-        pushd ..;
+        lib::pushd ..;
         print_info "Install TYPO3 source";
         if [[ ! -e "TYPO3.CMS" ]]; then
             git clone --single-branch --branch ${TYPO3} --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
@@ -48,9 +48,9 @@ function install_typo3 {
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
+        composer remove --ignore-platform-reqs friendsofphp/php-cs-fixer;
     fi
-    composer install --ignore-platform-reqs --dev;
+    composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
@@ -58,7 +58,7 @@ function install_typo3 {
         ln -s ${PROJECT_HOME} "./typo3conf/ext/$REPO";
     fi
 
-    popd > /dev/null;
+    lib::popd;
 }
 
 # Prepares the MySQL database
