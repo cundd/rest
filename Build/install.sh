@@ -48,7 +48,7 @@ function install_typo3 {
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        composer remove --ignore-platform-reqs friendsofphp/php-cs-fixer;
+        composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
     composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
