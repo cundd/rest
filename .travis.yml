@@ -4,40 +4,40 @@ php:
   - 7.1
 
 env:
-  - TYPO3=TYPO3_8-0 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-1 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-2 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-3 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-4 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-5 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=TYPO3_8-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
-  - TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql
+  - TYPO3=TYPO3_8-0 DB=mysql
+  - TYPO3=TYPO3_8-1 DB=mysql
+  - TYPO3=TYPO3_8-2 DB=mysql
+  - TYPO3=TYPO3_8-3 DB=mysql
+  - TYPO3=TYPO3_8-4 DB=mysql
+  - TYPO3=TYPO3_8-5 DB=mysql
+  - TYPO3=TYPO3_8-6 DB=mysql
+  - TYPO3=master DB=mysql
 
 matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
     - php: hhvm
-    - env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql
+    - env: TYPO3=master DB=mysql
 
   include:
     # Nightly PHP and HHVM
     - php: nightly
-      env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=master DB=mysql
     - php: hhvm
-      env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=master DB=mysql
 
     # TYPO3 7.6
     - php: 5.6
-      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=TYPO3_7-6 DB=mysql
     - php: 7.0
-      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=TYPO3_7-6 DB=mysql
     - php: 7.1
-      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=TYPO3_7-6 DB=mysql
     - php: nightly
-      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=TYPO3_7-6 DB=mysql
     - php: hhvm
-      env: TYPO3=TYPO3_7-6 REPO="rest" CLI_HOME=`pwd` DB=mysql
+      env: TYPO3=TYPO3_7-6 DB=mysql
 
 sudo: false
 
