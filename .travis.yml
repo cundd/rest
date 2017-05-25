@@ -18,7 +18,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
-    - env: TYPO3=master
+    - env: TYPO3=master REPO="rest" CLI_HOME=`pwd` DB=mysql
 
   include:
     # Nightly PHP and HHVM
