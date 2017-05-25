@@ -18,6 +18,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
+    - env: TYPO3=master
 
   include:
     # Nightly PHP and HHVM
