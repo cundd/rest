@@ -290,7 +290,7 @@ class DataProvider implements DataProviderInterface
          * Get the first level of nested objects and all built in TYPO3
          * categories
          */
-        if ($this->currentModelDataDepth < 1 && $model instanceof \TYPO3\CMS\Extbase\Domain\Model\Category) {
+        if ($this->currentModelDataDepth < 1 || $model instanceof \TYPO3\CMS\Extbase\Domain\Model\Category) {
             $this->currentModelDataDepth++;
 
             $returnData = $this->getModelData($proxy->_loadRealInstance());
