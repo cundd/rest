@@ -59,7 +59,7 @@ We want to provide a service if a GET request to the URL for this Handler is inv
 ```php
 new Route($request->getResourceType(), 'GET', function(RestRequestInterface $request) {
     // Callback will be invoked for
-    # curl -X GET http://localhost:8888/rest/customhandler/
+    # curl -X GET http://localhost:8888/rest/customhandler
 });
 ```
 
@@ -69,14 +69,14 @@ If we want to distinguish between `cundd-custom_rest-custom_handler` and `cundd-
 ```php
 new Route('cundd-custom_rest-custom_handler', 'GET', function(RestRequestInterface $request) {
     // Callback will be invoked for
-    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler
     // and because of the defined alias
-    # curl -X GET http://localhost:8888/rest/customhandler/
+    # curl -X GET http://localhost:8888/rest/customhandler
 });
 
 new Route('cundd-custom_rest-require', 'GET', function(RestRequestInterface $request) {
     // Only will be invoked for
-    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require/
+    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require
 });
 ```
 
@@ -85,44 +85,44 @@ Similarly functions for other HTTP request methods can be added. Furthermore fac
 ### GET
 ```php
 new Route($request->getResourceType(), 'GET', function(RestRequestInterface $request) {
-    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 
 Route::get($request->getResourceType(), function(RestRequestInterface $request) {
-    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X GET http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 ```
 
 ### POST
 ```php
 new Route($request->getResourceType(), 'POST', function(RestRequestInterface $request) {
-    # curl -X POST http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X POST http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 
 Route::post($request->getResourceType(), function(RestRequestInterface $request) {
-    # curl -X POST http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X POST http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 ```
 
 ### PUT
 ```php
 new Route($request->getResourceType(), 'PUT', function(RestRequestInterface $request) {
-    # curl -X PUT http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X PUT http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 
 Route::put($request->getResourceType(), function(RestRequestInterface $request) {
-    # curl -X PUT http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X PUT http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 ```
 
 ### DELETE
 ```php
 new Route($request->getResourceType(), 'DELETE', function(RestRequestInterface $request) {
-    # curl -X DELETE http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X DELETE http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 
 Route::delete($request->getResourceType(), function(RestRequestInterface $request) {
-    # curl -X DELETE http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X DELETE http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 ```
 
@@ -130,7 +130,7 @@ Route::delete($request->getResourceType(), function(RestRequestInterface $reques
 ```php
 $method = 'PATCH';
 new Route($request->getResourceType(), $method, function(RestRequestInterface $request) {
-    # curl -X PATCH http://localhost:8888/rest/cundd-custom_rest-custom_handler/
+    # curl -X PATCH http://localhost:8888/rest/cundd-custom_rest-custom_handler
 });
 ```
 
@@ -224,7 +224,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
-        # curl -X GET http://localhost:8888/rest/customhandler/
+        # curl -X GET http://localhost:8888/rest/customhandler
         $router->add(
             Route::get(
                 $request->getResourceType(),
@@ -237,7 +237,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
                 }
             )
         );
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require/
+        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require
         $router->add(
             Route::get(
                 'cundd-custom_rest-require',
