@@ -30,7 +30,11 @@ class SessionManager implements SingletonInterface
     private function initialize()
     {
         if (!$this->didInitialize) {
-            $this->getFrontendUser()->fetchSessionData();
+            $frontendUserAuthentication = $this->getFrontendUser();
+            if (method_exists($frontendUserAuthentication, 'fetchSessionData')) {
+                $frontendUserAuthentication->fetchSessionData();
+            }
+
             $this->didInitialize = true;
         }
     }
