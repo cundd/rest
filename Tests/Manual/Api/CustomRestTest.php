@@ -138,10 +138,11 @@ class CustomRestTest extends AbstractApiCase
     /**
      * @test
      * @dataProvider getWithParameterFloatDataProvider
+     * @param string $suffix
      */
     public function getWithParameterFloatTest($suffix)
     {
-        $path = 'cundd-custom_rest-route/decimal/12.0'. $suffix;
+        $path = 'cundd-custom_rest-route/decimal/12.0' . $suffix;
         $response = $this->requestJson($path);
 
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
@@ -318,5 +319,44 @@ class CustomRestTest extends AbstractApiCase
     public function getForbiddenTest()
     {
         $this->request('cundd-custom_rest-require');
+    }
+
+    /**
+     * @test
+     * @param string $path
+     * @param int    $expectedStatus
+     * @dataProvider differentTestsDataProvider
+     */
+    public function differentTests($path, $expectedStatus)
+    {
+        $response = $this->requestJson($path);
+        $this->assertSame($expectedStatus, $response->status, $this->getErrorDescription($response));
+    }
+
+    /**
+     * @return array
+     */
+    public function differentTestsDataProvider()
+    {
+        return [
+
+            ['customhandler', 200],
+            ['customhandler/subpath', 200],
+            ['customhandler/parameter/slug', 200],
+            ['customhandler/12', 200],
+            ['customhandler/decimal/10.8', 200],
+            ['customhandler/bool/yes', 200],
+            ['customhandler/bool/no', 200],
+//            ['cundd-custom_rest-require', 200],
+            ['cundd-custom_rest-person', 200],
+            ['cundd-custom_rest-person/show/1', 200],
+            ['cundd-custom_rest-person/firstname/daniel', 200],
+            ['cundd-custom_rest-person/lastname/corn', 200],
+            ['cundd-custom_rest-person/birthday/0000-00-00', 200],
+            ['cundd-custom_rest-person/show', 200],
+            ['cundd-custom_rest-person/lastname', 404],
+            ['cundd-custom_rest-person/firstname', 404],
+
+        ];
     }
 }
