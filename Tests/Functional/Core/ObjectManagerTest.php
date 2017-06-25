@@ -258,6 +258,21 @@ class ObjectManagerTest extends AbstractCase
                 array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
             ),
             array(
+                'Vendor-MySecondExt-WhatEver/1',
+                '\\Vendor\\MySecondExt\\Rest\\Handler',
+                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
+            ),
+            array(
+                'Vendor-MySecondExt-WhatEver/',
+                '\\Vendor\\MySecondExt\\Rest\\Handler',
+                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
+            ),
+            array(
+                'Vendor-MySecondExt-WhatEver',
+                '\\Vendor\\MySecondExt\\Rest\\Handler',
+                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
+            ),
+            array(
                 'Vendor-NotExistingExt-MyModel/1',
                 $defaultHandler,
             ),
