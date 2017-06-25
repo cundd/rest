@@ -90,6 +90,7 @@ Some clients expect a returned data collection to have a root object, others don
     ]
 
 If you require an output like the following you can enable `plugin.tx_rest.settings.addRootObjectForCollection = 1`
+(This setting will **NOT** apply to custom handlers)
 
     {
         "users": [
