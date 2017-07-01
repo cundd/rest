@@ -9,4 +9,4 @@ This branch represents the development of version 3.
 
 Please visit http://rest.cundd.net/ for installation and configuration instructions
 
-[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=develop)](https://travis-ci.org/cundd/rest)
+[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v3)](https://travis-ci.org/cundd/rest)
