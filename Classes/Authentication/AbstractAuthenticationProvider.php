@@ -30,13 +30,6 @@ use Cundd\Rest\Http\RestRequestInterface;
 abstract class AbstractAuthenticationProvider implements AuthenticationProviderInterface
 {
     /**
-     * The current request
-     *
-     * @var RestRequestInterface
-     */
-    protected $request;
-
-    /**
      * Tries to authenticate the current request
      *
      * @param RestRequestInterface $request
@@ -45,22 +38,5 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
     public function authenticate(RestRequestInterface $request)
     {
         return false;
-    }
-
-    /**
-     * @param RestRequestInterface $request
-     * @deprecated
-     */
-    public function setRequest(RestRequestInterface $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * @return RestRequestInterface
-     */
-    public function getRequest()
-    {
-        return $this->request;
     }
 }
