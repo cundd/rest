@@ -1,4 +1,0 @@
-{
-    "path": "Documentation/Tutorial.md",
-    "bootstrap": "Tests/Documentation/Bootstrap.php"
-}
