@@ -1,12 +1,26 @@
-rest v3
-=======
+rest
+====
 
 The REST API for TYPO3 CMS
 
-This branch represents the development of version 3.
 
-2.x releases can be found [here](https://github.com/cundd/rest/tree/v2)
+Version 3.x
+-----------
 
-Please visit http://rest.cundd.net/ for installation and configuration instructions
+3.x releases and development can be found [here](https://github.com/cundd/rest/tree/v3)
 
-[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=develop)](https://travis-ci.org/cundd/rest)
+Documentation can be found under [https://rest.cundd.net/](https://rest.cundd.net/)
+
+[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v3)](https://travis-ci.org/cundd/rest)
+
+
+Version 2.x
+-----------
+
+> Version 2 is not under active development anymore
+
+2.x releases and development can be found [here](https://github.com/cundd/rest/tree/v2)
+
+Documentation can be found under [https://restv2.cundd.net/](https://restv2.cundd.net/)
+
+[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v2)](https://travis-ci.org/cundd/rest)
