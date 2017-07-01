@@ -92,49 +92,10 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns if the given request needs authentication
-     *
-     * @param RestRequestInterface $request
-     * @return bool
-     * @throws Exception\InvalidConfigurationException
-     */
-    public function requestNeedsAuthentication(RestRequestInterface $request)
-    {
-        $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
-
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
-        if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns if the request wants to write data
-     *
-     * @param RestRequestInterface $request
-     * @return bool
-     */
-    protected function isWrite(RestRequestInterface $request)
-    {
-        return $request->isWrite();
-    }
-
-    /**
      * Returns the configuration matching the given resource type
      *
      * @param ResourceType $resourceType
-     * @return string
+     * @return array
      */
     public function getConfigurationForResourceType(ResourceType $resourceType)
     {
@@ -198,5 +159,44 @@ class ConfigurationBasedAccessController extends AbstractAccessController
         }
 
         return isset($settings['paths.']) ? $settings['paths.'] : array();
+    }
+
+    /**
+     * Returns if the request wants to write data
+     *
+     * @param RestRequestInterface $request
+     * @return bool
+     */
+    protected function isWrite(RestRequestInterface $request)
+    {
+        return $request->isWrite();
+    }
+
+    /**
+     * Returns if the given request needs authentication
+     *
+     * @param RestRequestInterface $request
+     * @return bool
+     * @throws Exception\InvalidConfigurationException
+     */
+    public function requestNeedsAuthentication(RestRequestInterface $request)
+    {
+        $configurationKey = self::ACCESS_METHOD_READ;
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
+        if ($this->isWrite($request)) {
+            $configurationKey = self::ACCESS_METHOD_WRITE;
+        }
+
+        // Throw an exception if the configuration is not complete
+        if (!isset($configuration[$configurationKey])) {
+            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+        }
+
+        $access = $configuration[$configurationKey];
+        if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
+            return true;
+        }
+
+        return false;
     }
 }
