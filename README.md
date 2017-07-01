@@ -7,11 +7,11 @@ The REST API for TYPO3 CMS
 Version 3.x
 -----------
 
-3.x releases and development can be found [here](https://github.com/cundd/rest/tree/develop)
+3.x releases and development can be found [here](https://github.com/cundd/rest/tree/v3)
 
 Documentation can be found under [https://rest.cundd.net/](https://rest.cundd.net/)
 
-[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=develop)](https://travis-ci.org/cundd/rest)
+[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v3)](https://travis-ci.org/cundd/rest)
 
 
 Version 2.x
