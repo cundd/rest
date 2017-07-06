@@ -151,12 +151,12 @@ class Cache implements CacheInterface
         $cacheInstance = $this->getCacheInstance();
         $cacheInstance->set(
             $this->getCacheKeyForRequest($request),
-            array(
+            [
                 'content'             => (string)$response->getBody(),
                 'status'              => $response->getStatusCode(),
                 Header::CONTENT_TYPE  => $response->getHeader(Header::CONTENT_TYPE),
                 Header::LAST_MODIFIED => $this->getHttpDate(time()),
-            ),
+            ],
             $this->getTags($request),
             $cacheLifeTime
         );
@@ -286,10 +286,17 @@ class Cache implements CacheInterface
         $currentPath = $request->getPath();
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($currentPath);
 
-        return array(
-            $vendor . '_' . $extension . '_' . $model,
-            $extension . '_' . $model,
-            $currentPath,
+        return array_filter(
+            array_map(
+                function ($tag) {
+                    return preg_replace('/[^a-zA-Z0-9_%\\-&]/', '', $tag);
+                },
+                [
+                    $vendor . '_' . $extension . '_' . $model,
+                    $extension . '_' . $model,
+                    $currentPath,
+                ]
+            )
         );
     }
 }
