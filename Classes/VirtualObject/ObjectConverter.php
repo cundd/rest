@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\VirtualObject;
 
@@ -50,7 +27,7 @@ class ObjectConverter
      * Converts the given Virtual Object's data into it's source representation
      *
      * @param array $virtualObjectData Raw data in the schema defined by the current mapping
-     * @param bool $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
+     * @param bool  $replace           If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
      * @throws InvalidPropertyException if a property is not defined in the mapping
      * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return array
@@ -58,7 +35,7 @@ class ObjectConverter
     public function prepareDataFromVirtualObjectData($virtualObjectData, $replace = true)
     {
         $configuration = $this->getConfiguration();
-        $convertedData = array();
+        $convertedData = [];
         if ($replace) {
             $convertedData = array_fill_keys($configuration->getAllSourceKeys(), null);
         }
@@ -82,6 +59,7 @@ class ObjectConverter
                 throw new InvalidPropertyException('Property "' . $propertyKey . '" is not defined', 1395670264);
             }
         }
+
         return $convertedData;
     }
 
@@ -101,6 +79,7 @@ class ObjectConverter
         } elseif ($virtualObject instanceof VirtualObject) {
             $virtualObjectData = $virtualObject->getData();
         }
+
         return $this->prepareDataFromVirtualObjectData($virtualObjectData);
     }
 
@@ -108,7 +87,7 @@ class ObjectConverter
      * Converts the given source array into the configured Virtual Object data
      *
      * @param array $source
-     * @param bool $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
+     * @param bool  $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
      * @throws InvalidPropertyException if a property is not defined in the mapping
      * @throws MissingConfigurationException if the configuration is not set
      * @return array
@@ -116,7 +95,7 @@ class ObjectConverter
     public function prepareForVirtualObjectData($source, $replace = true)
     {
         $configuration = $this->getConfiguration();
-        $convertedData = array();
+        $convertedData = [];
         if ($replace) {
             $convertedData = array_fill_keys($configuration->getAllProperties(), null);
         }
@@ -136,6 +115,7 @@ class ObjectConverter
                 throw new InvalidPropertyException('Property "' . $sourceKey . '" is not defined', 1395670264);
             }
         }
+
         return $convertedData;
     }
 
@@ -155,7 +135,7 @@ class ObjectConverter
     /**
      * Convert the given value to the specified type
      *
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $type
      * @throws Exception\InvalidConverterTypeException if the given type is not valid
      * @return mixed Returns the converted value
@@ -205,6 +185,7 @@ class ObjectConverter
             default:
                 throw new InvalidConverterTypeException('Can not convert to type ' . $type, 1395661844);
         }
+
         return $result;
     }
 
@@ -217,6 +198,7 @@ class ObjectConverter
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
+
         return $this;
     }
 
@@ -231,6 +213,7 @@ class ObjectConverter
         if (!$this->configuration) {
             throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);
         }
+
         return $this->configuration;
     }
 }

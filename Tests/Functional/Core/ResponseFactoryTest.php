@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 05.08.15
- * Time: 22:03
- */
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
@@ -45,7 +39,11 @@ class ResponseFactoryTest extends AbstractCase
         $this->assertEquals('{"error":"Everything ok"}', (string)$response->getBody());
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
-        $response = $this->fixture->createErrorResponse('HTML format is currently not supported', 200, $this->requestFactory->getRequest());
+        $response = $this->fixture->createErrorResponse(
+            'HTML format is currently not supported',
+            200,
+            $this->requestFactory->getRequest()
+        );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             'Unsupported format: html. Please set the Accept header to application/json',
@@ -111,7 +109,11 @@ class ResponseFactoryTest extends AbstractCase
         $this->assertEquals('{"message":"Everything ok"}', (string)$response->getBody());
 
         $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
-        $response = $this->fixture->createSuccessResponse('HTML format is currently not supported', 200, $this->requestFactory->getRequest());
+        $response = $this->fixture->createSuccessResponse(
+            'HTML format is currently not supported',
+            200,
+            $this->requestFactory->getRequest()
+        );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             'Unsupported format: html. Please set the Accept header to application/json',

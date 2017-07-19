@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 30.12.16
- * Time: 11:05
- */
 
 namespace Cundd\Rest\Domain\Model;
 
@@ -48,7 +42,7 @@ class FormatTest extends \PHPUnit_Framework_TestCase
             ['',],
             [null],
             [new \stdClass()],
-            [array()],
+            [[]],
         ];
     }
 }

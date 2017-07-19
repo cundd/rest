@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 15/01/2017
- * Time: 13:02
- */
 
 namespace Cundd\Rest\Tests\Documentation;
 
@@ -31,7 +25,7 @@ class Bootstrap
                 $prophet->prophesize(RestRequestInterface::class);
                 $event->getContext()->addVariables(
                     [
-                        'router'          => new Router(),
+                        'router'  => new Router(),
                         'request' => RequestBuilderTrait::buildTestRequest('some/path'),
                     ]
                 );

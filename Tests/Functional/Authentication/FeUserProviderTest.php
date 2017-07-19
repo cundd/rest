@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 11.08.15
- * Time: 15:03
- */
 
 namespace Cundd\Rest\Tests\Functional\Authentication;
 
 use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-
 
 
 /**

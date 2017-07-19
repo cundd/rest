@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.03.14
- * Time: 12:26
- */
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -253,7 +224,7 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
         $this->assertSame(false, $this->fixture->convertToType(0, 'boolean'));
         $this->assertSame(true, $this->fixture->convertToType('yes', 'boolean'));
         $this->assertSame(false, $this->fixture->convertToType('', 'boolean'));
-        $this->assertSame(false, $this->fixture->convertToType(array(), 'boolean'));
+        $this->assertSame(false, $this->fixture->convertToType([], 'boolean'));
         $this->assertSame(false, $this->fixture->convertToType(null, 'boolean'));
 
         $this->assertSame(1.09, $this->fixture->convertToType(1.09, 'float'));
@@ -306,37 +277,127 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
         $this->assertSame('www.my-domain.com/home/', $this->fixture->convertToType('www.my-domain.com/home/', 'url'));
         $this->assertSame('sub.my-domain.com/home/', $this->fixture->convertToType('sub.my-domain.com/home/', 'url'));
         $this->assertSame('my-domain.com/home/', $this->fixture->convertToType('my-domain.com/home/', 'url'));
-        $this->assertSame('www.my-domain.com/home?id=whatever', $this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('sub.my-domain.com/home?id=whatever', $this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever', $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('www.my-domain.com/home?id=whatever', $this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('sub.my-domain.com/home?id=whatever', $this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever', $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever', $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url'));
-        $this->assertSame('www.my-domain.com/index.php?id=whatever', $this->fixture->convertToType('www.my-domain.com/index.php?id=whatever', 'url'));
-        $this->assertSame('sub.my-domain.com/index.php?id=whatever', $this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever', 'url'));
-        $this->assertSame('my-domain.com/index.php?id=whatever', $this->fixture->convertToType('my-domain.com/index.php?id=whatever', 'url'));
-        $this->assertSame('www.my-domain.com/?id=whatever', $this->fixture->convertToType('www.my-domain.com/?id=whatever', 'url'));
-        $this->assertSame('sub.my-domain.com/?id=whatever', $this->fixture->convertToType('sub.my-domain.com/?id=whatever', 'url'));
-        $this->assertSame('my-domain.com/?id=whatever', $this->fixture->convertToType('my-domain.com/?id=whatever', 'url'));
-        $this->assertSame('www.my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('sub.my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('www.my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('sub.my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/home?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('www.my-domain.com/index.php?id=whatever&one=more-parameter', $this->fixture->convertToType('www.my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('sub.my-domain.com/index.php?id=whatever&one=more-parameter', $this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/index.php?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/index.php?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('www.my-domain.com/?id=whatever&one=more-parameter', $this->fixture->convertToType('www.my-domain.com/?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('sub.my-domain.com/?id=whatever&one=more-parameter', $this->fixture->convertToType('sub.my-domain.com/?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/?id=whatever&one=more-parameter', 'url'));
+        $this->assertSame(
+            'www.my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('www.my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('sub.my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/index.php?id=whatever',
+            $this->fixture->convertToType('www.my-domain.com/index.php?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/index.php?id=whatever',
+            $this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/index.php?id=whatever',
+            $this->fixture->convertToType('my-domain.com/index.php?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/?id=whatever',
+            $this->fixture->convertToType('www.my-domain.com/?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/?id=whatever',
+            $this->fixture->convertToType('sub.my-domain.com/?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/?id=whatever',
+            $this->fixture->convertToType('my-domain.com/?id=whatever', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('www.my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('sub.my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/home?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/home?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/index.php?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('www.my-domain.com/index.php?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/index.php?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('sub.my-domain.com/index.php?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/index.php?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/index.php?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'www.my-domain.com/?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('www.my-domain.com/?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'sub.my-domain.com/?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('sub.my-domain.com/?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/?id=whatever&one=more-parameter', 'url')
+        );
 
-        $this->assertSame('my-domain.com/?id=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/  ?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('my-domain.com/?i<scriptd=whatever&one=more-parameter', $this->fixture->convertToType('my-domain.com/  ?i<scriptd=whatever&one=more-parameter', 'url'));
-        $this->assertSame('/?id=whatever&one=more-parameter', $this->fixture->convertToType('/?id=whatever&one=more-parameter', 'url'));
-        $this->assertSame('id=whatever&one=more-parameter', $this->fixture->convertToType('id=whatever&one=more-parameter', 'url'));
+        $this->assertSame(
+            'my-domain.com/?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/  ?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'my-domain.com/?i<scriptd=whatever&one=more-parameter',
+            $this->fixture->convertToType('my-domain.com/  ?i<scriptd=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            '/?id=whatever&one=more-parameter',
+            $this->fixture->convertToType('/?id=whatever&one=more-parameter', 'url')
+        );
+        $this->assertSame(
+            'id=whatever&one=more-parameter',
+            $this->fixture->convertToType('id=whatever&one=more-parameter', 'url')
+        );
         $this->assertSame('i', $this->fixture->convertToType('i', 'url'));
         $this->assertSame('', $this->fixture->convertToType('£', 'url'));
         $this->assertSame('', $this->fixture->convertToType('ö', 'url'));
@@ -349,7 +410,10 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
         $this->assertSame('someone@example.com', $this->fixture->convertToType("\0\0someone@example.com\t", 'trim'));
         $this->assertSame('someone@example.com', $this->fixture->convertToType("  \0\0someone@example.com\t ", 'trim'));
-        $this->assertSame('someone@example.com', $this->fixture->convertToType("\x0B \0\0\0someone@example.com\t ", 'trim'));
+        $this->assertSame(
+            'someone@example.com',
+            $this->fixture->convertToType("\x0B \0\0\0someone@example.com\t ", 'trim')
+        );
     }
 
     /**
@@ -363,25 +427,25 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
         $converter->convertFromVirtualObject($virtualObject);
     }
 
-    protected $testRawData = array(
-        'property_one' => 'Property 1 value',
-        'property_two' => 0.98,
+    protected $testRawData = [
+        'property_one'   => 'Property 1 value',
+        'property_two'   => 0.98,
         'property_three' => 10,
-        'property_four' => PHP_INT_MAX,
-        'property_five' => true,
-        'property_six' => false,
+        'property_four'  => PHP_INT_MAX,
+        'property_five'  => true,
+        'property_six'   => false,
         'property_seven' => false,
         'property_eight' => 8,
-    );
+    ];
 
-    protected $testObjectData = array(
-        'property1' => 'Property 1 value',
-        'property2' => 0.98,
-        'property3' => 10,
-        'property4' => PHP_INT_MAX,
-        'property5' => true,
-        'property6' => false,
+    protected $testObjectData = [
+        'property1'      => 'Property 1 value',
+        'property2'      => 0.98,
+        'property3'      => 10,
+        'property4'      => PHP_INT_MAX,
+        'property5'      => true,
+        'property6'      => false,
         'property_seven' => false,
         'property_eight' => 8,
-    );
+    ];
 }

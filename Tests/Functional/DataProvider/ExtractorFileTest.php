@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
@@ -63,12 +40,12 @@ class ExtractorFileTest extends AbstractCase
      * @param array $properties
      * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
      */
-    protected function createDomainModelFixture(array $properties = array())
+    protected function createDomainModelFixture(array $properties = [])
     {
         /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
         $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
             ->setMockClassName('Mock_Test_Class')
-            ->setMethods(array('_getProperties'))
+            ->setMethods(['_getProperties'])
             ->getMockForAbstractClass();
 
         $fixture->method('_getProperties')->willReturn($properties);
@@ -80,7 +57,7 @@ class ExtractorFileTest extends AbstractCase
      * @param array $fileReferenceProperties
      * @return \PHPUnit_Framework_MockObject_MockObject|FileReference|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface
      */
-    protected function createFileReferenceMock(array $fileReferenceProperties = array())
+    protected function createFileReferenceMock(array $fileReferenceProperties = [])
     {
         $fileReferenceProperties = array_merge(
             [
@@ -95,7 +72,7 @@ class ExtractorFileTest extends AbstractCase
 
         $factoryMock = $this->getMockObjectGenerator()->getMock(
             '\TYPO3\CMS\Core\Resource\ResourceFactory',
-            array('getFileObject')
+            ['getFileObject']
         );
         $factoryMock->expects($this->any())
             ->method('getFileObject')->will(
@@ -111,16 +88,16 @@ class ExtractorFileTest extends AbstractCase
      */
     protected function createFileMock()
     {
-        $originalFileProperties = array(
+        $originalFileProperties = [
             'identifier' => sha1('testFile' . time()),
             'name'       => 'Original file name',
             'mimeType'   => 'MimeType',
-        );
+        ];
         /** @var  \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject $originalFileMock */
         $originalFileMock = $this->getMockObjectGenerator()->getMock(
             '\TYPO3\CMS\Core\Resource\File',
-            array(),
-            array(),
+            [],
+            [],
             'Mock_TYPO3_CMS_Core_Resource_File',
             false
         );
@@ -159,18 +136,18 @@ class ExtractorFileTest extends AbstractCase
     public function extractForModelWithFileReferenceTest()
     {
         $testModel = $this->createDomainModelFixture(
-            array(
+            [
                 'title' => 'Test',
                 'file'  => $this->createFileReferenceMock(),
-            )
+            ]
         );
 
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'title' => 'Test',
-                'file'  => array(
+                'file'  => [
                     'name'         => 'Original file name',
                     'mimeType'     => 'MimeType',
                     'url'          => 'http://url',
@@ -179,8 +156,8 @@ class ExtractorFileTest extends AbstractCase
                     'description'  => 'The original files description',
                     'uid'          => 1467702760,
                     'referenceUid' => 0,
-                ),
-            ),
+                ],
+            ],
             $result
         );
     }
@@ -191,24 +168,24 @@ class ExtractorFileTest extends AbstractCase
     public function extractForModelWithFileReferenceAndDataTest()
     {
         $testModel = $this->createDomainModelFixture(
-            array(
+            [
                 'title' => 'Test',
                 'file'  => $this->createFileReferenceMock(
-                    array(
+                    [
                         'title'       => 'My title',
                         'description' => 'File description',
                         'uid'         => 0,
-                    )
+                    ]
                 ),
-            )
+            ]
         );
 
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'title' => 'Test',
-                'file'  => array(
+                'file'  => [
                     'name'         => 'Original file name',
                     'mimeType'     => 'MimeType',
                     'url'          => 'http://url',
@@ -217,8 +194,8 @@ class ExtractorFileTest extends AbstractCase
                     'description'  => 'File description',
                     'uid'          => 1467702760,
                     'referenceUid' => 0,
-                ),
-            ),
+                ],
+            ],
             $result
         );
     }
@@ -234,7 +211,7 @@ class ExtractorFileTest extends AbstractCase
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'name'         => 'Original file name',
                 'mimeType'     => 'MimeType',
                 'url'          => 'http://url',
@@ -243,7 +220,7 @@ class ExtractorFileTest extends AbstractCase
                 'description'  => 'The original files description',
                 'uid'          => 1467702760,
                 'referenceUid' => 0,
-            ),
+            ],
             $result
         );
     }
@@ -255,17 +232,17 @@ class ExtractorFileTest extends AbstractCase
     {
         /** @var object $testModel */
         $testModel = $this->createFileReferenceMock(
-            array(
+            [
                 'title'       => 'My title',
                 'description' => 'File description',
                 'uid'         => 0,
-            )
+            ]
         );
 
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'name'         => 'Original file name',
                 'mimeType'     => 'MimeType',
                 'url'          => 'http://url',
@@ -274,7 +251,7 @@ class ExtractorFileTest extends AbstractCase
                 'description'  => 'File description',
                 'uid'          => 1467702760,
                 'referenceUid' => 0,
-            ),
+            ],
             $result
         );
     }
@@ -290,12 +267,12 @@ class ExtractorFileTest extends AbstractCase
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'name'     => 'Original file name',
                 'mimeType' => 'MimeType',
                 'url'      => 'http://url',
                 'size'     => 10,
-            ),
+            ],
             $result
         );
     }
@@ -307,24 +284,24 @@ class ExtractorFileTest extends AbstractCase
     {
         /** @var object $testModel */
         $testModel = $this->createDomainModelFixture(
-            array(
+            [
                 'title' => 'Test',
                 'file'  => $this->createFileMock(),
-            )
+            ]
         );
 
         $result = $this->fixture->extract($testModel);
         $this->assertNotEmpty($result);
         $this->assertEquals(
-            array(
+            [
                 'title' => 'Test',
-                'file'  => array(
+                'file'  => [
                     'name'     => 'Original file name',
                     'mimeType' => 'MimeType',
                     'url'      => 'http://url',
                     'size'     => 10,
-                ),
-            ),
+                ],
+            ],
             $result
         );
     }

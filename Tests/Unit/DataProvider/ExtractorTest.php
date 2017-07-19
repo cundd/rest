@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\Tests\Unit\DataProvider;
 
@@ -140,9 +117,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         foreach ($this->extractSimpleDataProvider() as $simpleTestSet) {
             $input = $simpleTestSet[0];
-            $expected = array($simpleTestSet[1]);
+            $expected = [$simpleTestSet[1]];
 
-            $testSets[] = [array($input), $expected,];
+            $testSets[] = [[$input], $expected,];
 
             $testSets[] = [new \ArrayIterator([$input]), $expected,];
 
@@ -195,20 +172,20 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $childModel->setChild($model);
         $model->setChild($childModel);
 
-        $expectedOutput = array(
+        $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
-            'child' => array(
+            'child' => [
                 'base'  => 'Base',
                 'date'  => $testDate->format(\DateTime::ATOM),
                 'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
-            ),
+            ],
 
             'uid' => 1,
             'pid' => null,
-        );
+        ];
 
         $this->assertEquals($expectedOutput, $this->fixture->extract($model));
 
@@ -246,26 +223,26 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         $model = $this->buildNestedModels($currentDepth, $maxDepth, $testDate);
 
-        $expectedOutput = array(
+        $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
-            'child' => array(
+            'child' => [
                 'base'  => 'Base',
                 'date'  => $testDate->format(\DateTime::ATOM),
-                'child' => array(
+                'child' => [
                     'base'  => 'Base',
                     'date'  => $testDate->format(\DateTime::ATOM),
                     'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/3/child',
                     'uid'   => 3,
                     'pid'   => null,
-                ),
+                ],
                 'uid'   => 2,
                 'pid'   => null,
-            ),
+            ],
 
             'uid' => 1,
             'pid' => null,
-        );
+        ];
 
 
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
@@ -294,13 +271,13 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $model->_setProperty('uid', 1);
         $model->setChild($model);
 
-        $expectedOutput = array(
+        $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
             'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
             'uid'   => 1,
             'pid'   => null,
-        );
+        ];
 
         $this->assertEquals($expectedOutput, $this->fixture->extract($model));
 
@@ -393,17 +370,17 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         $properties = $this->fixture->extract($model);
         $this->assertEquals(
-            array(
+            [
                 'base'  => 'Base',
                 'date'  => $testDate->format(\DateTime::ATOM),
                 'uid'   => null,
                 'pid'   => null,
-                'child' => array(
+                'child' => [
                     'name' => 'Initial value',
                     'uid'  => null,
                     'pid'  => null,
-                ),
-            ),
+                ],
+            ],
             $properties
         );
     }
@@ -416,14 +393,14 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $model = new MyNestedJsonSerializeModel();
         $properties = $this->fixture->extract($model);
         $this->assertEquals(
-            array(
+            [
                 'base'  => 'Base',
-                'child' => array(
+                'child' => [
                     'name' => 'Initial value',
                     'uid'  => null,
                     'pid'  => null,
-                ),
-            ),
+                ],
+            ],
             $properties
         );
     }
@@ -434,33 +411,33 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getExpectedOutputForRecursion(\DateTimeInterface $testDate)
     {
-        return array(
+        return [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
-            'child' => array(
+            'child' => [
                 'uid'  => null,
                 'pid'  => null,
                 'name' => 'Initial value',
-            ),
+            ],
 
             'uid'      => 1,
             'pid'      => null,
-            'children' => array(
+            'children' => [
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
-                1 => array( // <- This is $childModel
+                1 => [ // <- This is $childModel
                     'base'  => 'Base',
                     'date'  => $testDate->format(\DateTime::ATOM),
                     'uid'   => 2,
                     'pid'   => null,
-                    'child' => array(
+                    'child' => [
                         'name' => 'Initial value',
                         'uid'  => null,
                         'pid'  => null,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     private static function prepareClasses()

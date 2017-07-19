@@ -1,19 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 29.12.16
- * Time: 12:38
- */
 
 namespace Cundd\Rest\Tests;
 
 
-use Cundd\Rest\Domain\Model\Format;
-use Cundd\Rest\Request;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Uri;
 
 trait ResponseBuilderTrait
 {
@@ -23,7 +13,7 @@ trait ResponseBuilderTrait
      * @param mixed $rawBody
      * @return Response
      */
-    public static function buildTestResponse($status, array $headers = array(), $rawBody = null)
+    public static function buildTestResponse($status, array $headers = [], $rawBody = null)
     {
         if ($rawBody) {
             $stream = fopen('php://temp', 'a+');

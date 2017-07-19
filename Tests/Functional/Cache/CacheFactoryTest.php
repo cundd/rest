@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 30.12.16
- * Time: 11:59
- */
 
 namespace Cundd\Rest\Tests\Functional\Cache;
 
 
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Cache\CacheFactory;
-use Cundd\Rest\Configuration\ConfigurationProvider;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ResponseFactoryInterface;
@@ -48,10 +41,10 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @dataProvider buildCacheDataProvider
-     * @param int $cacheLifeTime
+     * @param int      $cacheLifeTime
      * @param int|null $expiresHeaderLifeTime
-     * @param int $expectedCacheLifeTime
-     * @param int $expectedExpiresHeaderLifeTime
+     * @param int      $expectedCacheLifeTime
+     * @param int      $expectedExpiresHeaderLifeTime
      */
     public function buildCacheTest(
         $cacheLifeTime,

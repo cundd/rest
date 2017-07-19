@@ -12,7 +12,7 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         verbose="false"
-        >
+>
     <testsuites>
         <testsuite name="Unit tests">
             <directory>./*</directory>

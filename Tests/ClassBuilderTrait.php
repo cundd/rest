@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 11/02/2017
- * Time: 11:47
- */
 
 namespace Cundd\Rest\Tests;
 
@@ -122,7 +116,7 @@ trait ClassBuilderTrait
      */
     protected static function buildCode($type, $preparedClassName, $preparedNamespace, $preparedExtends)
     {
-        $code = array();
+        $code = [];
         if ($preparedNamespace) {
             $code[] = "namespace $preparedNamespace;";
         }

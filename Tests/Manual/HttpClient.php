@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 07.01.17
- * Time: 11:46
- */
 
 namespace Cundd\Rest\Tests\Manual;
 
@@ -173,7 +167,7 @@ class HttpClient
         }
 
         $headerLines = explode("\r\n", trim($headerString));
-        $headers = array();
+        $headers = [];
 
         foreach ($headerLines as $i => $line) {
             if ($i === 0) {

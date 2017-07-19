@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 04.01.17
- * Time: 11:24
- */
 
 namespace Cundd\Rest\Router;
 

@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
@@ -32,7 +9,6 @@ use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
 use Cundd\Rest\Tests\MyNestedModel;
 use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-
 
 
 /**
@@ -98,10 +74,10 @@ class DataProviderTest extends AbstractCase
      */
     public function convertTest()
     {
-        $data = array('some' => 'Data');
+        $data = ['some' => 'Data'];
 
         $propertyMapperMock = $this->getMockBuilder('\\TYPO3\\CMS\\Extbase\\Property\\PropertyMapper')
-            ->setMethods(array('convert'))
+            ->setMethods(['convert'])
             ->getMock();
         $propertyMapperMock
             ->expects($this->once())
@@ -165,10 +141,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getModelForPathTest()
     {
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('MyExt-MyModel'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('MyExt-MyModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('my_ext-my_model'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('my_ext-my_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
@@ -177,10 +153,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedModelForPathTest()
     {
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('MyExt-MySecondModel'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('MyExt-MySecondModel'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('my_ext-my_second_model'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('my_ext-my_second_model'));
         $this->assertInstanceOf('\\Cundd\\Rest\\Tests\\MyModel', $model);
     }
 
@@ -189,10 +165,10 @@ class DataProviderTest extends AbstractCase
      */
     public function getNamespacedModelForPathWithVendorTest()
     {
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('Vendor-MyExt-MyModel'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('Vendor-MyExt-MyModel'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 
-        $model = $this->fixture->getModelWithDataForResourceType(array(), new ResourceType('vendor-my_ext-my_model'));
+        $model = $this->fixture->getModelWithDataForResourceType([], new ResourceType('vendor-my_ext-my_model'));
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
     }
 
@@ -201,7 +177,7 @@ class DataProviderTest extends AbstractCase
      */
     public function getModelWithEmptyDataTest()
     {
-        $data = array();
+        $data = [];
         $resourceType = 'MyExt-MyModel';
 
         /** @var \Cundd\Rest\Tests\MyModel $model */
@@ -217,11 +193,11 @@ class DataProviderTest extends AbstractCase
         $model = new MyModel();
         $properties = $this->fixture->getModelData($model);
         $this->assertEquals(
-            array(
-                'name'    => 'Initial value',
-                'uid'     => null,
-                'pid'     => null,
-            ),
+            [
+                'name' => 'Initial value',
+                'uid'  => null,
+                'pid'  => null,
+            ],
             $properties
         );
     }
@@ -243,20 +219,20 @@ class DataProviderTest extends AbstractCase
         $childModel->setChild($model);
         $model->setChild($childModel);
 
-        $expectedOutput = array(
+        $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
-            'child' => array(
-                'base'    => 'Base',
-                'date'    => $testDate->format(\DateTime::ATOM),
-                'child'   => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
-                'uid'     => 2,
-                'pid'     => null,
-            ),
+            'child' => [
+                'base'  => 'Base',
+                'date'  => $testDate->format(\DateTime::ATOM),
+                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
+                'uid'   => 2,
+                'pid'   => null,
+            ],
 
-            'uid'     => 1,
-            'pid'     => null,
-        );
+            'uid' => 1,
+            'pid' => null,
+        ];
 
         $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
 
@@ -283,33 +259,34 @@ class DataProviderTest extends AbstractCase
         $children->attach($childModel);
         $model->setChildren($children);
 
-        $expectedOutput = array(
+        $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(\DateTime::ATOM),
-            'child' => array(
-                'uid'     => null,
-                'pid'     => null,
-                'name'    => 'Initial value',
-            ),
+            'child' => [
+                'uid'  => null,
+                'pid'  => null,
+                'name' => 'Initial value',
+            ],
 
             'uid'      => 1,
             'pid'      => null,
-            'children' => array(
-                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/', // <- This is $model
-                1 => array( // <- This is $childModel
-                    'base'    => 'Base',
-                    'date'    => $testDate->format(\DateTime::ATOM),
-                    'uid'     => 2,
-                    'pid'     => null,
-                    'child'   => array(
-                        'name'    => 'Initial value',
-                        'uid'     => null,
-                        'pid'     => null,
+            'children' => [
+                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                // <- This is $model
+                1 => [ // <- This is $childModel
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(\DateTime::ATOM),
+                    'uid'   => 2,
+                    'pid'   => null,
+                    'child' => [
+                        'name' => 'Initial value',
+                        'uid'  => null,
+                        'pid'  => null,
 
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $this->assertEquals($expectedOutput, $this->fixture->getModelData($model));
 
@@ -328,17 +305,17 @@ class DataProviderTest extends AbstractCase
 
         $properties = $this->fixture->getModelData($model);
         $this->assertEquals(
-            array(
-                'base'    => 'Base',
-                'date'    => $testDate->format(\DateTime::ATOM),
-                'uid'     => null,
-                'pid'     => null,
-                'child'   => array(
-                    'name'    => 'Initial value',
-                    'uid'     => null,
-                    'pid'     => null,
-                ),
-            ),
+            [
+                'base'  => 'Base',
+                'date'  => $testDate->format(\DateTime::ATOM),
+                'uid'   => null,
+                'pid'   => null,
+                'child' => [
+                    'name' => 'Initial value',
+                    'uid'  => null,
+                    'pid'  => null,
+                ],
+            ],
             $properties
         );
     }
@@ -351,14 +328,14 @@ class DataProviderTest extends AbstractCase
         $model = new MyNestedJsonSerializeModel();
         $properties = $this->fixture->getModelData($model);
         $this->assertEquals(
-            array(
-                'base'    => 'Base',
-                'child'   => array(
-                    'name'    => 'Initial value',
-                    'uid'     => null,
-                    'pid'     => null,
-                ),
-            ),
+            [
+                'base'  => 'Base',
+                'child' => [
+                    'name' => 'Initial value',
+                    'uid'  => null,
+                    'pid'  => null,
+                ],
+            ],
             $properties
         );
     }

@@ -1,34 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
-
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27.03.14
- * Time: 17:16
- */
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
@@ -85,6 +55,7 @@ class PersistenceManager implements PersistenceManagerInterface
         } else {
             $this->add($object);
         }
+
         return $object;
     }
 
@@ -167,12 +138,13 @@ class PersistenceManager implements PersistenceManagerInterface
     public function getObjectDataByQuery($query)
     {
         $objectConverter = $this->getObjectConverter();
-        $objectCollection = array();
+        $objectCollection = [];
 
         $rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
         foreach ($rawObjectCollection as $rawObjectData) {
             $objectCollection[] = $objectConverter->convertToVirtualObject($rawObjectData);
         }
+
         return $objectCollection;
     }
 
@@ -191,14 +163,15 @@ class PersistenceManager implements PersistenceManagerInterface
 
 
         $objectConverter = $this->getObjectConverter();
-        $query = array(
-            $identifierKey => $identifier
-        );
+        $query = [
+            $identifierKey => $identifier,
+        ];
 
         $rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
         foreach ($rawObjectCollection as $rawObjectData) {
             return $objectConverter->convertToVirtualObject($rawObjectData);
         }
+
         return null;
     }
 
@@ -212,7 +185,8 @@ class PersistenceManager implements PersistenceManagerInterface
     {
         $objectData = $object->getData();
         $identifier = $this->getConfiguration()->getIdentifier();
-        return isset($objectData[$identifier]) ? array($identifier => $objectData[$identifier]) : array();
+
+        return isset($objectData[$identifier]) ? [$identifier => $objectData[$identifier]] : [];
     }
 
     /**
@@ -227,7 +201,8 @@ class PersistenceManager implements PersistenceManagerInterface
         $objectData = $object->getData();
         $identifier = $configuration->getIdentifier();
         $identifierColumn = $configuration->getSourceKeyForProperty($identifier);
-        return isset($objectData[$identifier]) ? array($identifierColumn => $objectData[$identifier]) : array();
+
+        return isset($objectData[$identifier]) ? [$identifierColumn => $objectData[$identifier]] : [];
     }
 
 
@@ -251,6 +226,7 @@ class PersistenceManager implements PersistenceManagerInterface
     {
         $this->configuration = $configuration;
         $this->objectConverter = null;
+
         return $this;
     }
 
@@ -265,6 +241,7 @@ class PersistenceManager implements PersistenceManagerInterface
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);
         }
+
         return $this->configuration;
     }
 
@@ -278,6 +255,7 @@ class PersistenceManager implements PersistenceManagerInterface
         if (!$this->objectConverter) {
             $this->objectConverter = new ObjectConverter($this->getConfiguration());
         }
+
         return $this->objectConverter;
     }
 }

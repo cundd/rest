@@ -1,34 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
-
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 01.04.14
- * Time: 21:55
- */
 
 namespace Cundd\Rest\Handler;
 
@@ -94,9 +64,9 @@ class AuthHandler implements HandlerInterface
             $loginStatus = self::STATUS_LOGGED_OUT;
         }
 
-        return array(
+        return [
             'status' => $loginStatus,
-        );
+        ];
     }
 
     /**
@@ -122,9 +92,9 @@ class AuthHandler implements HandlerInterface
             $this->sessionManager->setValueForKey('loginStatus', $loginStatus);
         }
 
-        return array(
+        return [
             'status' => $loginStatus,
-        );
+        ];
     }
 
     /**
@@ -136,9 +106,9 @@ class AuthHandler implements HandlerInterface
     {
         $this->sessionManager->setValueForKey('loginStatus', self::STATUS_LOGGED_OUT);
 
-        return array(
+        return [
             'status' => self::STATUS_LOGGED_OUT,
-        );
+        ];
     }
 
     /**

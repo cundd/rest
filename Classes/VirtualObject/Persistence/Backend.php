@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
@@ -186,7 +163,7 @@ class Backend implements BackendInterface
         }
 
         $adapter = $this->getAdapter();
-        $constraints = array();
+        $constraints = [];
         foreach ($query as $property => $value) {
             if ($configuration && !$configuration->hasProperty($property)) {
                 throw new InvalidColumnNameException('The given property is not defined', 1396092229);
@@ -312,7 +289,7 @@ class Backend implements BackendInterface
                         $parameter
                     ) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable
                 ) {
-                    $items = array();
+                    $items = [];
                     foreach ($parameter as $item) {
                         $items[] = $adapter->fullQuoteStr($item, $tableName);
                     }

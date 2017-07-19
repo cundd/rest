@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.03.14
- * Time: 16:11
- */
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -79,12 +50,12 @@ class RepositoryTest extends AbstractDatabaseCase
      */
     public function addTest()
     {
-        $newObjectData = array(
-            'uid' => 900,
-            'title' => 'My new title',
-            'content' => 'A new test entry',
-            'contentTime' => time()
-        );
+        $newObjectData = [
+            'uid'         => 900,
+            'title'       => 'My new title',
+            'content'     => 'A new test entry',
+            'contentTime' => time(),
+        ];
         $object = new VirtualObject($newObjectData);
 
         $this->fixture->add($object);
@@ -107,12 +78,12 @@ class RepositoryTest extends AbstractDatabaseCase
      */
     public function removeTest()
     {
-        $objectData = array(
-            'uid' => 100, // <= this is relevant
-            'title' => 'My new title',
-            'content' => 'A new test entry',
-            'contentTime' => time()
-        );
+        $objectData = [
+            'uid'         => 100, // <= this is relevant
+            'title'       => 'My new title',
+            'content'     => 'A new test entry',
+            'contentTime' => time(),
+        ];
 
         $object = new VirtualObject($objectData);
         $this->fixture->remove($object);
@@ -120,9 +91,9 @@ class RepositoryTest extends AbstractDatabaseCase
         $this->assertEquals(1, $this->fixture->countAll());
 
 
-        $objectData = array(
+        $objectData = [
             'uid' => 200, // <= this is relevant
-        );
+        ];
 
         $object = new VirtualObject($objectData);
         $this->fixture->remove($object);
@@ -135,12 +106,12 @@ class RepositoryTest extends AbstractDatabaseCase
      */
     public function updateTest()
     {
-        $objectData = array(
-            'uid' => 100, // <= this is relevant
-            'title' => 'My new title',
-            'content' => 'A new test entry',
-            'contentTime' => time()
-        );
+        $objectData = [
+            'uid'         => 100, // <= this is relevant
+            'title'       => 'My new title',
+            'content'     => 'A new test entry',
+            'contentTime' => time(),
+        ];
 
         $object = new VirtualObject($objectData);
         $this->fixture->update($object);
@@ -186,10 +157,11 @@ class RepositoryTest extends AbstractDatabaseCase
      */
     protected function getTestDataFromObjectCollection($collection)
     {
-        $newCollection = array();
+        $newCollection = [];
         foreach ($collection as $item) {
             $newCollection[] = $this->getTestDataFromObject($item);
         }
+
         return $newCollection;
     }
 
@@ -202,6 +174,7 @@ class RepositoryTest extends AbstractDatabaseCase
         $virtualObjectData = $virtualObject->getData();
         $virtualObjectData['content_time'] = $virtualObjectData['contentTime'];
         unset($virtualObjectData['contentTime']);
+
         return $virtualObjectData;
     }
 }

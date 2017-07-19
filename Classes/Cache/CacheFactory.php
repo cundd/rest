@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 30.12.16
- * Time: 11:48
- */
 
 namespace Cundd\Rest\Cache;
-
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\ObjectManager;

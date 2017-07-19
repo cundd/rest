@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27.12.16
- * Time: 16:38
- */
 
 namespace Cundd\Rest;
 
@@ -14,5 +8,7 @@ if (interface_exists(\TYPO3\CMS\Core\SingletonInterface::class)) {
     {
     }
 } else {
-    interface SingletonInterface {}
+    interface SingletonInterface
+    {
+    }
 }

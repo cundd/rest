@@ -1,34 +1,10 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest;
 
 use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\ErrorHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
@@ -140,7 +116,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         $this->logResponse(
             'response: ' . $newResponse->getStatusCode(),
-            array('response' => (string)$newResponse->getBody())
+            ['response' => (string)$newResponse->getBody()]
         );
 
         return $newResponse;
@@ -201,6 +177,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $this->objectManager->getHandler()->configureRoutes($resultConverter, $request);
 
         ErrorHandler::registerHandler();
+
         return $resultConverter->dispatch($request);
     }
 
@@ -224,7 +201,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         $this->logResponse(
             'response: ' . $response->getStatusCode(),
-            array('response' => (string)$response->getBody())
+            ['response' => (string)$response->getBody()]
         );
 
         return $response;
@@ -291,7 +268,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     public function logException($exception)
     {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-        $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+        $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
     }
 
     /**

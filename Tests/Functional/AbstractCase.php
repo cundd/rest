@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.12.14
- * Time: 12:45
- */
 
 namespace Cundd\Rest\Tests\Functional;
 
@@ -45,8 +39,8 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
         return \Cundd\Rest\Tests\RequestBuilderTrait::buildTestRequest(
             $uri,
             null,       // $method
-            array(),    // $params
-            array(),    // $headers
+            [],    // $params
+            [],    // $headers
             null,       // $rawBody
             null,       // $parsedBody
             $format
@@ -78,11 +72,11 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
         $database = $this->getDatabaseConnection();
 
         $xml = simplexml_load_file($path);
-        $foreignKeys = array();
+        $foreignKeys = [];
 
         /** @var $table \SimpleXMLElement */
         foreach ($xml->children() as $table) {
-            $insertArray = array();
+            $insertArray = [];
 
             /** @var $column \SimpleXMLElement */
             foreach ($table->children() as $column) {

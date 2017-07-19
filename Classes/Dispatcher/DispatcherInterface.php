@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 12.08.15
- * Time: 13:22
- */
+
 namespace Cundd\Rest\Dispatcher;
 
 use Cundd\Rest\Http\RestRequestInterface;

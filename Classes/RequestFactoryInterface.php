@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 10.08.15
- * Time: 10:29
- */
+
 namespace Cundd\Rest;
 
 use Cundd\Rest\Http\RestRequestInterface;

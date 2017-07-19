@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27.03.14
- * Time: 15:00
- */
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
@@ -213,11 +207,11 @@ interface QueryInterface
      * Sets the statement of this query programmatically. If you use this, you will lose the abstraction from a concrete
      * storage backend (database)
      *
-     * @param string $statement The statement
-     * @param array $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
+     * @param string $statement  The statement
+     * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
      * @return QueryInterface
      */
-    public function statement($statement, array $parameters = array());
+    public function statement($statement, array $parameters = []);
 
     /**
      * Returns the statement of this query.

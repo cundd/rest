@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 09/02/2017
- * Time: 19:35
- */
 
 namespace Cundd\Rest\DataProvider;
 
@@ -58,7 +52,7 @@ class Extractor implements ExtractorInterface
      *
      * @var array
      */
-    protected static $handledModels = array();
+    protected static $handledModels = [];
 
     /**
      * Extractor constructor
@@ -357,7 +351,7 @@ class Extractor implements ExtractorInterface
 
         try {
             if ($originalResource instanceof Folder) {
-                $filesInFolder = array();
+                $filesInFolder = [];
                 foreach ($originalResource->getFiles() as $currentFile) {
                     $filesInFolder[] = $this->transformFileReference($currentFile);
                 }
@@ -371,7 +365,7 @@ class Extractor implements ExtractorInterface
 
                 list($title, $description) = $this->getTitleAndDescription($originalResource);
 
-                return array(
+                return [
                     'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
                     'referenceUid' => $originalResource->getUid(),
                     'name'         => $originalResource->getName(),
@@ -380,23 +374,23 @@ class Extractor implements ExtractorInterface
                     'size'         => $originalResource->getSize(),
                     'title'        => $title,
                     'description'  => $description,
-                );
+                ];
             }
 
             if ($originalResource instanceof FileInterface) {
-                return array(
+                return [
                     'name'     => $originalResource->getName(),
                     'mimeType' => $originalResource->getMimeType(),
                     'url'      => $originalResource->getPublicUrl(),
                     'size'     => $originalResource->getSize(),
-                );
+                ];
             }
 
-            return array(
+            return [
                 'name' => $originalResource->getName(),
-            );
+            ];
         } catch (\RuntimeException $exception) {
-            return array();
+            return [];
         }
     }
 
@@ -414,16 +408,16 @@ class Extractor implements ExtractorInterface
             $title = $fileReference->getTitle();
         } catch (\InvalidArgumentException $exception) {
             $message = 'An invalid argument for the title has been passed!';
-            $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+            $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
         }
         try {
             $description = $fileReference->getDescription();
         } catch (\InvalidArgumentException $exception) {
             $message = 'An invalid argument for the description has been passed!';
-            $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+            $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
         }
 
-        return array($title, $description);
+        return [$title, $description];
     }
 
     /**

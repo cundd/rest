@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: cod
- * Date: 22.2.17
- * Time: 16:16
- */
 
 namespace Cundd\Rest;
 

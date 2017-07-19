@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 25.03.14
- * Time: 14:38
- */
 
 namespace Cundd\Rest\Handler;
 
@@ -141,7 +112,7 @@ class Handler implements CrudHandlerInterface
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
-        Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('update request', ['body' => $data]);
 
         $oldModel = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$oldModel) {
@@ -173,7 +144,7 @@ class Handler implements CrudHandlerInterface
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
-        Dispatcher::getSharedDispatcher()->logRequest('update request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('update request', ['body' => $data]);
 
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
 
@@ -223,7 +194,7 @@ class Handler implements CrudHandlerInterface
         $dataProvider = $this->getDataProvider();
 
         $data = $request->getSentData();
-        Dispatcher::getSharedDispatcher()->logRequest('create request', array('body' => $data));
+        Dispatcher::getSharedDispatcher()->logRequest('create request', ['body' => $data]);
 
         /**
          * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
@@ -257,11 +228,11 @@ class Handler implements CrudHandlerInterface
             $allModels = iterator_to_array($allModels);
         }
 
-        $result = array_map(array($dataProvider, 'getModelData'), $allModels);
+        $result = array_map([$dataProvider, 'getModelData'], $allModels);
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
+            return [
                 $request->getRootObjectKey() => $result,
-            );
+            ];
         }
 
         return $result;
@@ -328,9 +299,9 @@ class Handler implements CrudHandlerInterface
     protected function prepareResult(RestRequestInterface $request, $result)
     {
         if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
-            return array(
+            return [
                 Utility::singularize($request->getRootObjectKey()) => $result,
-            );
+            ];
         }
 
         return $result;

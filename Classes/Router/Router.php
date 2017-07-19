@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 17/06/16
- * Time: 19:08
- */
 
 namespace Cundd\Rest\Router;
 
@@ -19,11 +13,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router implements RouterInterface
 {
-    private $registeredRoutes = array(
-        'GET'  => array(),
-        'POST' => array(),
-        'PUT'  => array(),
-    );
+    private $registeredRoutes = [
+        'GET'  => [],
+        'POST' => [],
+        'PUT'  => [],
+    ];
 
     /**
      * Dispatch the request
@@ -53,7 +47,7 @@ class Router implements RouterInterface
     {
         $method = $route->getMethod();
         if (!isset($this->registeredRoutes[$method])) {
-            $this->registeredRoutes[$method] = array();
+            $this->registeredRoutes[$method] = [];
         }
 
         $this->registeredRoutes[$method][$route->getPattern()] = $route;

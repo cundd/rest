@@ -11,6 +11,7 @@ plugin.tx_rest.settings {
             read = allow
             write = allow
         }
+
         virtual_object-page {
             path = virtual_object-page
             read = allow
@@ -22,6 +23,7 @@ plugin.tx_rest.settings {
             read = allow
             write = allow
         }
+
         cundd-custom_rest-require {
             path = cundd-custom_rest-require
             read = require

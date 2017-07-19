@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 03.01.17
- * Time: 22:48
- */
+
 namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;

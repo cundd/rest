@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 07.01.17
- * Time: 11:50
- */
 
 namespace Cundd\Rest\Tests\Manual\Api;
 

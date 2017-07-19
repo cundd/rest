@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 /*
  * rest
@@ -57,10 +34,10 @@ class FeUserProvider implements UserProviderInterface
         $databaseAdapter = $this->getDatabaseAdapter();
 
         $whereClause = $this->buildWhereStatement(
-            array(
+            [
                 'username' => $username,
                 'password' => $password,
-            )
+            ]
         );
         $result = $databaseAdapter->exec_SELECTquery('COUNT(*)', 'fe_users', $whereClause);
         $row = $databaseAdapter->sql_fetch_row($result);
@@ -76,7 +53,7 @@ class FeUserProvider implements UserProviderInterface
      */
     protected function buildWhereStatement($properties)
     {
-        $whereParts = array();
+        $whereParts = [];
         $databaseAdapter = $this->getDatabaseAdapter();
         foreach ($properties as $key => $value) {
             if ($key === 'password') {
@@ -105,7 +82,7 @@ class FeUserProvider implements UserProviderInterface
      */
     protected function preparePassword($password)
     {
-        return array($password, self::PASSWORD_COLUMN_NAME);
+        return [$password, self::PASSWORD_COLUMN_NAME];
     }
 
     /**

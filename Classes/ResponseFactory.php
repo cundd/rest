@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.04.14
- * Time: 21:08
- */
 
 namespace Cundd\Rest;
 
@@ -20,8 +14,8 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
     /**
      * Returns a response with the given content and status code
      *
-     * @param string|array $data       Data to send
-     * @param int          $status     Status code of the response
+     * @param string|array $data   Data to send
+     * @param int          $status Status code of the response
      * @return ResponseInterface
      */
     public function createResponse($data, $status)
@@ -93,9 +87,9 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 
                 switch (gettype($data)) {
                     case 'string':
-                        $body = array(
+                        $body = [
                             $messageKey => $data,
-                        );
+                        ];
                         break;
 
                     case 'integer':
@@ -109,9 +103,9 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
                         break;
 
                     case 'NULL':
-                        $body = array(
+                        $body = [
                             $messageKey => $response->getReasonPhrase(),
-                        );
+                        ];
                         break;
 
                     default:

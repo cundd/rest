@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 /**
  * Created by JetBrains PhpStorm.
@@ -105,7 +82,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array  $classToBuild
      * @throws \Exception
      */
-    public function getDataProviderTest($url, $expectedClass, $classToBuild = array())
+    public function getDataProviderTest($url, $expectedClass, $classToBuild = [])
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
@@ -122,78 +99,78 @@ class ObjectManagerTest extends AbstractCase
     {
         $defaultDataProvider = '\\Cundd\\Rest\\DataProvider\\DataProvider';
 
-        return array(
+        return [
             //     url,                expected,                     classToBuild
-            array(
+            [
                 '',
                 'Cundd\\Rest\\DataProvider\\DataProvider',
-                array(),
-            ),
-            array(
+                [],
+            ],
+            [
                 'my_ext-my_model/1',
                 'Tx_MyExt_Rest_DataProvider',
-                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
-            ),
-            array(
+                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
+            ],
+            [
                 'my_ext-my_model/1.json',
                 'Tx_MyExt_Rest_DataProvider',
-                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
-            ),
-            array(
+                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
+            ],
+            [
                 'MyExt-MyModel/1',
                 'Tx_MyExt_Rest_DataProvider',
-                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
-            ),
-            array(
+                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
+            ],
+            [
                 'MyExt-MyModel/1.json',
                 'Tx_MyExt_Rest_DataProvider',
-                array('Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider),
-            ),
-            array(
+                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
+            ],
+            [
                 'vendor-my_second_ext-my_model/1',
                 '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
-            ),
-            array(
+                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
+            ],
+            [
                 'Vendor-MySecondExt-MyModel/1',
                 '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                array('DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
-            ),
-            array(
+                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
+            ],
+            [
                 'Vendor-NotExistingExt-MyModel/1',
                 $defaultDataProvider,
-            ),
-            array(
+            ],
+            [
                 'Vendor-NotExistingExt-MyModel/1.json',
                 $defaultDataProvider,
-            ),
-            array(
+            ],
+            [
                 'MyThirdExt-MyModel/1.json',
                 'Tx_MyThirdExt_Rest_MyModelDataProvider',
-                array('Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider),
-            ),
-            array(
+                ['Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider],
+            ],
+            [
                 'Vendor-MySecondExt-MyModel/1.json',
                 '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider',
-                array('MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider),
-            ),
-            array(
+                ['MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
+            ],
+            [
                 'virtual_object-page',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
-            ),
-            array(
+            ],
+            [
                 'virtual_object-page.json',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
-            ),
-            array(
+            ],
+            [
                 'virtual_object-page/1',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
-            ),
-            array(
+            ],
+            [
                 'virtual_object-page/1.json',
                 'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -205,7 +182,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array  $classToBuild
      * @throws \Exception
      */
-    public function getHandlerTest($url, $expectedClass, $classToBuild = array())
+    public function getHandlerTest($url, $expectedClass, $classToBuild = [])
     {
 //        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
 //        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'));
@@ -225,61 +202,61 @@ class ObjectManagerTest extends AbstractCase
     {
         $defaultHandler = '\\Cundd\\Rest\\Handler\\Handler';
 
-        return array(
+        return [
             //     url,                expected,                     classToBuild
-            array(
+            [
                 'my_ext-my_model/1',
                 'Tx_MyExt_Rest_Handler',
-                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
-            ),
-            array(
+                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
+            ],
+            [
                 'my_ext-my_model/1.json',
                 'Tx_MyExt_Rest_Handler',
-                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
-            ),
-            array(
+                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
+            ],
+            [
                 'MyExt-MyModel/1',
                 'Tx_MyExt_Rest_Handler',
-                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
-            ),
-            array(
+                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
+            ],
+            [
                 'MyExt-MyModel/1.json',
                 'Tx_MyExt_Rest_Handler',
-                array('Tx_MyExt_Rest_Handler', '', $defaultHandler),
-            ),
-            array(
+                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
+            ],
+            [
                 'vendor-my_second_ext-my_model/1',
                 '\\Vendor\\MySecondExt\\Rest\\Handler',
-                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
-            ),
-            array(
+                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
+            ],
+            [
                 'Vendor-MySecondExt-MyModel/1',
                 '\\Vendor\\MySecondExt\\Rest\\Handler',
-                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
-            ),
-            array(
+                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
+            ],
+            [
                 'Vendor-MySecondExt-WhatEver/1',
                 '\\Vendor\\MySecondExt\\Rest\\Handler',
-                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
-            ),
-            array(
+                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
+            ],
+            [
                 'Vendor-MySecondExt-WhatEver/',
                 '\\Vendor\\MySecondExt\\Rest\\Handler',
-                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
-            ),
-            array(
+                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
+            ],
+            [
                 'Vendor-MySecondExt-WhatEver',
                 '\\Vendor\\MySecondExt\\Rest\\Handler',
-                array('Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler),
-            ),
-            array(
+                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
+            ],
+            [
                 'Vendor-NotExistingExt-MyModel/1',
                 $defaultHandler,
-            ),
-            array(
+            ],
+            [
                 'Vendor-NotExistingExt-MyModel/1.json',
                 $defaultHandler,
-            ),
-        );
+            ],
+        ];
     }
 }

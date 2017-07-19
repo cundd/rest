@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 /**
  * @author COD
@@ -33,11 +10,8 @@ namespace Cundd\Rest\Tests\Functional\Cache;
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Request;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\ResponseBuilderTrait;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
 
 /**
  * Tests for the Caching interface
@@ -108,7 +82,7 @@ class CacheTest extends AbstractCase
     public function getCacheKeyForGetRequestWithParameterTest()
     {
         $uri = 'MyExt-MyModel/1';
-        $request = $this->buildRequestWithUri($uri)->withQueryParams(array('q' => 'queryTestParameter'));
+        $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
         /** @var RestRequestInterface $request */
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('8f0f35de918d2e1494849827b2b453792c54d030', $cacheKey, 'Failed for URI ' . $uri);
@@ -121,9 +95,9 @@ class CacheTest extends AbstractCase
     {
         $uri = 'MyExt-MyModel/1';
         /** @var RestRequestInterface $request */
-        $request = $this->buildRequestWithUri($uri)->withQueryParams(array('q' => 'queryTestParameter'));
+        $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
         /** @var RestRequestInterface $request2 */
-        $request2 = $this->buildRequestWithUri($uri)->withQueryParams(array('q' => 'queryTestParameter2'));
+        $request2 = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter2']);
         /** @var RestRequestInterface $requestWithoutParameters */
         $requestWithoutParameters = $this->buildRequestWithUri($uri);
 
@@ -163,12 +137,12 @@ class CacheTest extends AbstractCase
     public function getCachedValueForRequestTest()
     {
         $uri = 'MyAliasedModel' . time();
-        $responseArray = array(
+        $responseArray = [
             'content'             => 'the content',
             'status'              => 200,
             Header::CONTENT_TYPE  => 'application/json',
             Header::LAST_MODIFIED => gmdate('D, d M Y H:i:s \G\M\T'),
-        );
+        ];
 
         $request = $this->buildRequestWithUri($uri);
 
@@ -204,8 +178,8 @@ class CacheTest extends AbstractCase
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
         return $this->getMockObjectGenerator()->getMock(
             'TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend',
-            array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'),
-            array(),
+            ['getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'],
+            [],
             '',
             false
         );

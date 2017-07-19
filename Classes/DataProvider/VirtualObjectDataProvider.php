@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 26.03.14
- * Time: 20:34
- */
 
 namespace Cundd\Rest\DataProvider;
 
@@ -51,7 +22,7 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * @var array<\Cundd\Rest\VirtualObject\ObjectConverter>
      */
-    protected $objectConverterMap = array();
+    protected $objectConverterMap = [];
 
     /**
      * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
@@ -160,7 +131,7 @@ class VirtualObjectDataProvider extends DataProvider
             $model = null;
 
             $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-            $this->getLogger()->log(LogLevel::ERROR, $message, array('exception' => $exception));
+            $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
         }
 
         return $model;
@@ -187,7 +158,7 @@ class VirtualObjectDataProvider extends DataProvider
     {
         $properties = parent::getModelData($model);
         if ($properties === $model) {
-            return array();
+            return [];
         }
 
         return $properties;

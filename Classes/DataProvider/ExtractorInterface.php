@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 11/02/2017
- * Time: 15:14
- */
+
 namespace Cundd\Rest\DataProvider;
 
 /**

@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 10.08.15
- * Time: 12:01
- */
+
 namespace Cundd\Rest;
 
 use Cundd\Rest\Http\RestRequestInterface;
@@ -18,8 +13,8 @@ interface ResponseFactoryInterface
     /**
      * Returns a response with the given content and status code
      *
-     * @param string|array $data       Data to send
-     * @param int          $status     Status code of the response
+     * @param string|array $data   Data to send
+     * @param int          $status Status code of the response
      * @return ResponseInterface
      */
     public function createResponse($data, $status);

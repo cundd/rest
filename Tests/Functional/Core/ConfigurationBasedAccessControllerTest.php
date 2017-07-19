@@ -1,27 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
@@ -48,26 +25,26 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         );
         $settings = [
             'paths' => [
-                'all'             => [
+                'all'                         => [
                     'path'  => 'all',
                     'read'  => 'allow',
                     'write' => 'deny',
                 ],
-                'my_ext-my_model' => [
+                'my_ext-my_model'             => [
                     'path'  => 'my_ext-my_model',
                     'read'  => 'allow',
                     'write' => 'allow',
                 ],
-                'my_secondext-*'  => [
+                'my_secondext-*'              => [
                     'path'  => 'my_secondext-*',
                     'read'  => 'deny',
                     'write' => 'allow',
                 ],
-                'vendor-my_third_ext-model'  => [
+                'vendor-my_third_ext-model'   => [
                     'read'  => 'deny',
                     'write' => 'allow',
                 ],
-                'vendor-my_fourth_ext-model.'  => [
+                'vendor-my_fourth_ext-model.' => [
                     'read'  => 'deny',
                     'write' => 'allow',
                 ],
@@ -87,11 +64,11 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = array(
+        $testConfiguration = [
             'path'  => 'all',
             'read'  => 'allow',
             'write' => 'deny',
-        );
+        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         $this->assertEquals($testConfiguration, $configuration);
     }
@@ -103,11 +80,11 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = array(
+        $testConfiguration = [
             'path'  => 'my_ext-my_model',
             'read'  => 'allow',
             'write' => 'allow',
-        );
+        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         $this->assertEquals($testConfiguration, $configuration);
     }
@@ -119,11 +96,11 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'vendor-my_third_ext-model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = array(
+        $testConfiguration = [
             'path'  => 'vendor-my_third_ext-model',
             'read'  => 'deny',
             'write' => 'allow',
-        );
+        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         $this->assertEquals($testConfiguration, $configuration);
     }
@@ -135,11 +112,11 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'vendor-my_fourth_ext-model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = array(
+        $testConfiguration = [
             'path'  => 'vendor-my_fourth_ext-model',
             'read'  => 'deny',
             'write' => 'allow',
-        );
+        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         $this->assertEquals($testConfiguration, $configuration);
     }
@@ -149,11 +126,11 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
      */
     public function getConfigurationForPathWithWildcardTest()
     {
-        $testConfiguration = array(
+        $testConfiguration = [
             'path'  => 'my_secondext-*',
             'read'  => 'deny',
             'write' => 'allow',
-        );
+        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_secondext-my_model'));
         $this->assertEquals($testConfiguration, $configuration);
     }

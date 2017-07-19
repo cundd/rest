@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 26.12.16
- * Time: 17:47
- */
 
 namespace Cundd\Rest\Tests\Unit;
 

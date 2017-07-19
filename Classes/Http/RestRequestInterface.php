@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 30.12.16
- * Time: 14:14
- */
+
 namespace Cundd\Rest\Http;
 
 use Cundd\Rest\Domain\Model\Format;

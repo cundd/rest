@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 27.03.14
- * Time: 15:06
- */
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
@@ -32,12 +26,12 @@ class Query implements QueryInterface
      *
      * @var array
      */
-    protected $constraint = array();
+    protected $constraint = [];
 
     /**
      * @var array
      */
-    protected $orderings = array();
+    protected $orderings = [];
 
     /**
      * @var int
@@ -236,7 +230,7 @@ class Query implements QueryInterface
      * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
      * @return QueryInterface
      */
-    public function statement($statement, array $parameters = array())
+    public function statement($statement, array $parameters = [])
     {
         $this->statement = new Statement($statement, $parameters);
 

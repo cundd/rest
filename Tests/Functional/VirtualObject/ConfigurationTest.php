@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.03.14
- * Time: 11:09
- */
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -50,7 +21,9 @@ class ConfigurationTest extends AbstractVirtualObjectCase
 
         $testConfiguration = $this->getTestConfigurationData();
         $this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping($testConfiguration['resource_type']['mapping'])
+            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping(
+                $testConfiguration['resource_type']['mapping']
+            )
         );
     }
 
@@ -65,16 +38,19 @@ class ConfigurationTest extends AbstractVirtualObjectCase
      */
     public function getAllPropertiesTest()
     {
-        $this->assertEquals(array(
-            'property1',
-            'property2',
-            'property3',
-            'property4',
-            'property5',
-            'property6',
-            'property_seven',
-            'property_eight',
-        ), $this->fixture->getAllProperties());
+        $this->assertEquals(
+            [
+                'property1',
+                'property2',
+                'property3',
+                'property4',
+                'property5',
+                'property6',
+                'property_seven',
+                'property_eight',
+            ],
+            $this->fixture->getAllProperties()
+        );
     }
 
     /**
@@ -82,16 +58,19 @@ class ConfigurationTest extends AbstractVirtualObjectCase
      */
     public function getAllSourceKeysTest()
     {
-        $this->assertEquals(array(
-            'property_one',
-            'property_two',
-            'property_three',
-            'property_four',
-            'property_five',
-            'property_six',
-            'property_seven',
-            'property_eight',
-        ), $this->fixture->getAllSourceKeys());
+        $this->assertEquals(
+            [
+                'property_one',
+                'property_two',
+                'property_three',
+                'property_four',
+                'property_five',
+                'property_six',
+                'property_seven',
+                'property_eight',
+            ],
+            $this->fixture->getAllSourceKeys()
+        );
     }
 
     /**
@@ -131,10 +110,10 @@ class ConfigurationTest extends AbstractVirtualObjectCase
      */
     public function getConfigurationForPropertyTest()
     {
-        $testPropertyConfiguration = array(
+        $testPropertyConfiguration = [
             'type' => 'string',
             'column' => 'property_one',
-        );
+        ];
         $propertyConfiguration = $this->fixture->getConfigurationForProperty('property1');
         $this->assertEquals($testPropertyConfiguration, $propertyConfiguration);
         $this->assertEmpty($this->fixture->getConfigurationForProperty('propertyNotExists'));

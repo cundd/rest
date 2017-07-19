@@ -1,34 +1,4 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Andreas Thurnheer-Meier <tma@iresults.li>, iresults
- *  Daniel Corn <cod@iresults.li>, iresults
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
-
-/**
- * @author COD
- * Created 16.07.14 17:26
- */
-
 
 namespace Cundd\Rest\Utility;
 
@@ -51,14 +21,14 @@ class Profiler
      *
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * Data of the last run
      *
      * @var array
      */
-    protected $profilingData = array();
+    protected $profilingData = [];
 
     /**
      * @var resource|object
@@ -79,14 +49,15 @@ class Profiler
      * @param array|string $options Additional options to pass to the profiler. If a string is given it will be used as name
      * @return $this
      */
-    public function start($options = array())
+    public function start($options = [])
     {
         if (is_string($options)) {
-            $options = array('name' => $options);
+            $options = ['name' => $options];
         }
         $this->options = $options;
-        $this->profilingData = array();
+        $this->profilingData = [];
         $this->startTime = microtime(true);
+
         return $this;
     }
 
@@ -102,24 +73,25 @@ class Profiler
         $lastRunData = end($this->profilingData);
         $runStartTime = $lastRunData ? $lastRunData['collectTime'] : $this->startTime;
 
-        $currentRunData = array(
+        $currentRunData = [
             'runId' => $runId,
-            'name' => isset($this->options['name']) ? $this->options['name'] : 'unnamed',
+            'name'  => isset($this->options['name']) ? $this->options['name'] : 'unnamed',
 
             'startTime' => $this->startTime,
-            'duration' => $runEndTime - $this->startTime,
+            'duration'  => $runEndTime - $this->startTime,
 
             'runStartTime' => $runStartTime,
-            'runEndTime' => $runEndTime,
-            'runDuration' => $runEndTime - $runStartTime,
-            'memory' => memory_get_usage(true),
-            'memoryPeak' => memory_get_peak_usage(true),
-        );
+            'runEndTime'   => $runEndTime,
+            'runDuration'  => $runEndTime - $runStartTime,
+            'memory'       => memory_get_usage(true),
+            'memoryPeak'   => memory_get_peak_usage(true),
+        ];
 
         if (isset($this->options['collectCaller']) && $this->options['collectCaller']) {
             $currentRunData['caller'] = $this->getCaller();
         }
         $this->profilingData[$runId] = $currentRunData;
+
         return $currentRunData;
     }
 
@@ -130,7 +102,7 @@ class Profiler
      */
     public function output()
     {
-        $messageParts = array();
+        $messageParts = [];
 
         foreach ($this->profilingData as $currentRunData) {
             $currentMessagePart = sprintf(
@@ -146,8 +118,7 @@ class Profiler
                     ' @ %s:%s',
                     $caller['file'],
                     $caller['line']
-                );
-                ;
+                );;
             }
             $messageParts[] = $currentMessagePart;
         }
@@ -163,6 +134,7 @@ class Profiler
                 $this->outputHandler->log(LogLevel::DEBUG, $message);
                 break;
         }
+
         return $message;
     }
 
@@ -171,7 +143,7 @@ class Profiler
      */
     public function clear()
     {
-        $this->profilingData = array();
+        $this->profilingData = [];
     }
 
     /**
@@ -183,6 +155,7 @@ class Profiler
     {
         $currentRunData = $this->collect();
         $this->output();
+
         return $currentRunData;
     }
 
@@ -196,6 +169,7 @@ class Profiler
         $currentRunData = $this->collect();
         $this->output();
         $this->clear();
+
         return $currentRunData;
     }
 
@@ -241,7 +215,8 @@ class Profiler
      */
     protected function formatMemory($size)
     {
-        $unit = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+        $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
         return @round($size / pow(1024, ($i = intval(floor(log($size, 1024))))), 2) . ' ' . $unit[$i];
     }
 
@@ -266,6 +241,7 @@ class Profiler
         while (isset($backtraceEntry['class']) && $backtraceEntry['class'] === __CLASS__) {
             $backtraceEntry = next($backtrace);
         }
+
         return prev($backtrace);
     }
 
@@ -280,6 +256,7 @@ class Profiler
         /** @var Profiler $instance */
         $instance = new static($outputHandler);
         $instance->start();
+
         return $instance;
     }
 
@@ -297,6 +274,7 @@ class Profiler
             $instance = new static($outputHandler);
             $instance->start();
         }
+
         return $instance;
     }
 }

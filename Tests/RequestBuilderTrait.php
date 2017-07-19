@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 29.12.16
- * Time: 12:38
- */
 
 namespace Cundd\Rest\Tests;
 
@@ -31,8 +25,8 @@ trait RequestBuilderTrait
     public static function buildTestRequest(
         $url,
         $method = null,
-        array $params = array(),
-        array $headers = array(),
+        array $params = [],
+        array $headers = [],
         $rawBody = null,
         $parsedBody = null,
         $format = null

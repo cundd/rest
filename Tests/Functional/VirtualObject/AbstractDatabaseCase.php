@@ -1,34 +1,5 @@
 <?php
-/*
- *  Copyright notice
- *
- *  (c) 2014 Daniel Corn <info@cundd.net>, cundd
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- */
 
-/**
- * Created by PhpStorm.
- * User: daniel
- * Date: 24.03.14
- * Time: 12:27
- */
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -54,25 +25,25 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
      *
      * @var array
      */
-    protected static $testData = array(
-        array(
-            'uid' => 100,
-            'title' => 'Test entry',
-            'content' => 'This is my text',
-            'content_time' => 1395678480
-        ),
-        array(
-            'uid' => 200,
-            'title' => 'Test entry',
-            'content' => 'This is my second text',
-            'content_time' => 1395678480
-        )
-    );
+    protected static $testData = [
+        [
+            'uid'          => 100,
+            'title'        => 'Test entry',
+            'content'      => 'This is my text',
+            'content_time' => 1395678480,
+        ],
+        [
+            'uid'          => 200,
+            'title'        => 'Test entry',
+            'content'      => 'This is my second text',
+            'content_time' => 1395678480,
+        ],
+    ];
 
     /**
      * @var array
      */
-    protected $testConfiguration = array();
+    protected $testConfiguration = [];
 
     /**
      * Returns the test configuration object
@@ -82,6 +53,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
     protected function getTestConfiguration()
     {
         $testConfiguration = $this->getTestConfigurationData();
+
         return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceType']['mapping']);
     }
 
@@ -129,6 +101,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
 CONFIGURATION;
 
         $this->testConfiguration = json_decode($testConfigurationJson, true);
+
         return $this->testConfiguration;
     }
 
