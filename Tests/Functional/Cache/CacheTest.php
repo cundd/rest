@@ -28,7 +28,7 @@ class CacheTest extends AbstractCase
         parent::setUp();
 
         /** @var Cache $fixture */
-        $fixture = $this->objectManager->get('Cundd\\Rest\\Cache\\Cache');
+        $fixture = $this->objectManager->get(Cache::class);
         $fixture->setCacheLifeTime(10);
         $fixture->setExpiresHeaderLifeTime(5);
         $this->fixture = $fixture;
@@ -168,6 +168,59 @@ class CacheTest extends AbstractCase
         $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
         $this->fixture->setCacheInstance($cacheInstance);
         $this->fixture->setCachedValueForRequest($request, $response);
+    }
+
+    /**
+     * @test
+     * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
+     * @param array $header
+     */
+    public function setCachedValueForRequestWillNotCacheTest(array $header)
+    {
+        $request = $this->buildRequestWithUri('MyAliasedModel');
+        $response = $this->buildTestResponse(200, $header, 'Test content');
+        $cacheInstance = $this->getFrontendCacheMock();
+        $cacheInstance->expects($this->never())->method('set')->will($this->returnValue(''));
+
+        $this->fixture->setCacheInstance($cacheInstance);
+        $this->fixture->setCachedValueForRequest($request, $response);
+    }
+
+    /**
+     * @test
+     * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
+     * @param array $header
+     * @param bool  $expected
+     */
+    public function canBeCachedTest(array $header, $expected)
+    {
+        $request = $this->buildRequestWithUri('MyAliasedModel');
+        $response = $this->buildTestResponse(200, $header, 'Test content');
+
+        $this->assertSame($expected, $this->fixture->canBeCached($request, $response));
+    }
+
+    /**
+     * @test
+     */
+    public function postRequestCanNotBeCachedTest()
+    {
+        $request = \Cundd\Rest\Tests\RequestBuilderTrait::buildTestRequest('MyAliasedModel', 'POST');
+        $response = $this->buildTestResponse(200, [], 'Test content');
+
+        $this->assertFalse($this->fixture->canBeCached($request, $response));
+    }
+
+    public function setCachedValueForRequestWillNotCacheDataProvider()
+    {
+        return [
+            [[Header::CUNDD_REST_NO_CACHE => 'true'], false],
+            [[Header::CACHE_CONTROL => 'private'], false],
+            [[Header::CACHE_CONTROL => 'no-cache'], false],
+            [[Header::CACHE_CONTROL => 'no-store'], false],
+            [[Header::CACHE_CONTROL => 'must-revalidate'], false],
+            [[Header::CACHE_CONTROL => 'no-cache, no-store, must-revalidate'], false],
+        ];
     }
 
     /**

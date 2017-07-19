@@ -106,11 +106,7 @@ class Cache implements CacheInterface
      */
     public function setCachedValueForRequest(RestRequestInterface $request, ResponseInterface $response)
     {
-        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
-        $cacheInstance = null;
-
-        // Don't cache write requests
-        if ($request->isWrite()) {
+        if (false === $this->canBeCached($request, $response)) {
             return;
         }
 
@@ -125,6 +121,7 @@ class Cache implements CacheInterface
             return;
         }
 
+        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
         $cacheInstance = $this->getCacheInstance();
         $cacheInstance->set(
             $this->getCacheKeyForRequest($request),
@@ -275,5 +272,52 @@ class Cache implements CacheInterface
                 ]
             )
         );
+    }
+
+    /**
+     * Return if the given Request-Response combination can be cached
+     *
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
+     * @return bool
+     */
+    public function canBeCached(RestRequestInterface $request, ResponseInterface $response)
+    {
+        // Don't cache write requests
+        if ($request->isWrite()) {
+            return false;
+        }
+
+        if ($this->cacheControlPreventsCaching($response)) {
+            return false;
+        }
+
+        if ($response->getHeader(Header::CUNDD_REST_NO_CACHE)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return bool
+     */
+    protected function cacheControlPreventsCaching(ResponseInterface $response)
+    {
+        $cacheControlHeaders = $response->getHeader(Header::CACHE_CONTROL);
+        $noCacheValues = [
+            'private',
+            'no-cache',
+            'no-store',
+            'must-revalidate',
+        ];
+        foreach ($cacheControlHeaders as $cacheControlHeader) {
+            if (0 < count(array_intersect(explode(',', (string)$cacheControlHeader), $noCacheValues))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

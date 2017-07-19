@@ -17,4 +17,7 @@ abstract class Header
 
     // This header will be sent if the response has been cached by the REST extension
     const CUNDD_REST_CACHED = 'Cundd-Rest-Cached';
+
+    // This header can be set to prevent the REST extension from caching a response
+    const CUNDD_REST_NO_CACHE = 'Cundd-Rest-No-Cache';
 }
