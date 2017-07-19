@@ -15,5 +15,6 @@ abstract class Header
     const CONTENT_TYPE = 'Content-Type';
     const CONTENT_LENGTH = 'Content-Length';
 
-    const CUNDD_REST_CACHED = 'cundd-rest-cached';
+    // This header will be sent if the response has been cached by the REST extension
+    const CUNDD_REST_CACHED = 'Cundd-Rest-Cached';
 }
