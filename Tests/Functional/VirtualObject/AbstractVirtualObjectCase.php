@@ -5,6 +5,7 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\VirtualObject\Configuration;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
 
 
 /**
@@ -26,8 +27,8 @@ class AbstractVirtualObjectCase extends AbstractCase
     {
         $testConfiguration = $this->getTestConfigurationData();
 
-        return new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping(
+        return new Configuration(
+            ConfigurationFactory::preparePropertyMapping(
                 $testConfiguration['resource_type']['mapping']
             )
         );

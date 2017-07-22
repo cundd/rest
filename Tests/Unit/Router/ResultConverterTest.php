@@ -3,7 +3,6 @@
 namespace Cundd\Rest\Tests\Unit\Router;
 
 
-use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
@@ -41,7 +40,7 @@ class ResultConverterTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->responseFactory = new ResponseFactory($this->prophesize(RequestFactoryInterface::class)->reveal());
+        $this->responseFactory = new ResponseFactory();
         $this->exceptionHandler = function () {
         };
     }

@@ -10,12 +10,13 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
 class ObjectManagerTest extends AbstractCase
 {
     /**
-     * @var \Cundd\Rest\ObjectManager
+     * @var ObjectManager
      */
     protected $fixture;
 
@@ -23,7 +24,7 @@ class ObjectManagerTest extends AbstractCase
     {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
-        $this->fixture = new \Cundd\Rest\ObjectManager();
+        $this->fixture = new ObjectManager();
     }
 
     public function tearDown()

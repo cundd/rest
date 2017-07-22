@@ -6,15 +6,17 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
+use TYPO3\CMS\Core\Tests\FunctionalTestCase;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
+class AbstractCase extends FunctionalTestCase
 {
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -24,7 +26,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
-        $this->objectManager = new \TYPO3\CMS\Extbase\Object\ObjectManager();
+        $this->objectManager = new ObjectManager();
     }
 
     /**
@@ -36,7 +38,7 @@ class AbstractCase extends \TYPO3\CMS\Core\Tests\FunctionalTestCase
      */
     public function buildRequestWithUri($uri, $format = null)
     {
-        return \Cundd\Rest\Tests\RequestBuilderTrait::buildTestRequest(
+        return RequestBuilderTrait::buildTestRequest(
             $uri,
             null,       // $method
             [],    // $params

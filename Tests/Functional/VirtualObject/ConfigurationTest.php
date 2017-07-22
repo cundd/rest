@@ -3,6 +3,9 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Configuration;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
+
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 /**
@@ -11,7 +14,7 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 class ConfigurationTest extends AbstractVirtualObjectCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Configuration
+     * @var Configuration
      */
     protected $fixture;
 
@@ -20,8 +23,8 @@ class ConfigurationTest extends AbstractVirtualObjectCase
         parent::setUp();
 
         $testConfiguration = $this->getTestConfigurationData();
-        $this->fixture = new \Cundd\Rest\VirtualObject\Configuration(
-            \Cundd\Rest\VirtualObject\ConfigurationFactory::preparePropertyMapping(
+        $this->fixture = new Configuration(
+            ConfigurationFactory::preparePropertyMapping(
                 $testConfiguration['resource_type']['mapping']
             )
         );
@@ -111,7 +114,7 @@ class ConfigurationTest extends AbstractVirtualObjectCase
     public function getConfigurationForPropertyTest()
     {
         $testPropertyConfiguration = [
-            'type' => 'string',
+            'type'   => 'string',
             'column' => 'property_one',
         ];
         $propertyConfiguration = $this->fixture->getConfigurationForProperty('property1');

@@ -8,6 +8,7 @@ use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
@@ -97,9 +98,9 @@ class DataProvider implements DataProviderInterface
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
-        $repository->setDefaultQuerySettings(
-            $this->objectManager->get(RestQuerySettings::class)
-        );
+        /** @var QuerySettingsInterface $defaultQuerySettings */
+        $defaultQuerySettings = $this->objectManager->get(RestQuerySettings::class);
+        $repository->setDefaultQuerySettings($defaultQuerySettings);
 
         return $repository;
     }

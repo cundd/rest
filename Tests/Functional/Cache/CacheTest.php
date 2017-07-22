@@ -11,6 +11,7 @@ use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -205,7 +206,7 @@ class CacheTest extends AbstractCase
      */
     public function postRequestCanNotBeCachedTest()
     {
-        $request = \Cundd\Rest\Tests\RequestBuilderTrait::buildTestRequest('MyAliasedModel', 'POST');
+        $request = RequestBuilderTrait::buildTestRequest('MyAliasedModel', 'POST');
         $response = $this->buildTestResponse(200, [], 'Test content');
 
         $this->assertFalse($this->fixture->canBeCached($request, $response));

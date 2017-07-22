@@ -36,7 +36,7 @@ class Profiler
     protected $outputHandler;
 
     /**
-     * @param resource|object $outputHandler Output handler to use
+     * @param resource|object|bool $outputHandler Output handler to use
      */
     public function __construct($outputHandler = STDOUT)
     {

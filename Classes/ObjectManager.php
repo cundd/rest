@@ -165,13 +165,21 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
                 $this->authenticationProvider = $this->get($authenticationProviderClass);
             } else {
                 // Use the default Authentication Provider
-                $this->authenticationProvider = $this->get(
+                $this->authenticationProvider = call_user_func(
+                    [$this, 'get'],
                     AuthenticationProviderCollection::class,
                     [
                         $this->get(BasicAuthenticationProvider::class),
                         $this->get(CredentialsAuthenticationProvider::class),
                     ]
                 );
+//                $this->authenticationProvider = $this->get(
+//                    AuthenticationProviderCollection::class,
+//                    [
+//                        $this->get(BasicAuthenticationProvider::class),
+//                        $this->get(CredentialsAuthenticationProvider::class),
+//                    ]
+//                );
             }
         }
 

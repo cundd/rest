@@ -54,7 +54,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
     {
         $testConfiguration = $this->getTestConfigurationData();
 
-        return new \Cundd\Rest\VirtualObject\Configuration($testConfiguration['ResourceType']['mapping']);
+        return new Configuration($testConfiguration['ResourceType']['mapping']);
     }
 
     /**

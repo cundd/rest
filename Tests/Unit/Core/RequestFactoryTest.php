@@ -10,6 +10,7 @@ use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Zend\Diactoros\ServerRequestFactory;
 
 
 /**
@@ -369,6 +370,10 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @dataProvider createRequestTestDataProvider
+     * @param $input
+     * @param $resourceType
+     * @param $path
+     * @param $format
      */
     public function createRequestTest($input, $resourceType, $path, $format)
     {
@@ -415,10 +420,6 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
                 if (isset($args[0])) {
                     $key = $args[0];
 
-//                    echo __LINE__.' ';var_dump($key);
-//                    echo __LINE__.' ';var_dump($configurationProviderSetting);
-//                    echo __LINE__.' ';var_dump(isset($configurationProviderSetting[$key]));
-
                     return isset($configurationProviderSetting[$key]) ? $configurationProviderSetting[$key] : null;
                 }
 
@@ -428,6 +429,6 @@ class RequestFactoryTest extends \PHPUnit_Framework_TestCase
 
         $_SERVER['SERVER_NAME'] = 'rest.cundd.net';
 
-        return new RequestFactory($configurationProviderMock->reveal(), \Zend\Diactoros\ServerRequestFactory::class);
+        return new RequestFactory($configurationProviderMock->reveal(), ServerRequestFactory::class);
     }
 }
