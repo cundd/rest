@@ -279,6 +279,7 @@ class CustomRestTest extends AbstractApiCase
         $this->assertSame(200, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
         $this->assertSame('{"success":1}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('application/json', $response->headers['Content-Type']);
     }
 
     /**
