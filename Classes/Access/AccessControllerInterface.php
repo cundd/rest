@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Created by JetBrains PhpStorm.
- * User: daniel
- * Date: 12.09.13
- * Time: 22:15
- * To change this template use File | Settings | File Templates.
- */
-
 namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Http\RestRequestInterface;

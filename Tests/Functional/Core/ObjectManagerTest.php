@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Created by JetBrains PhpStorm.
- * User: daniel
- * Date: 12.09.13
- * Time: 21:13
- * To change this template use File | Settings | File Templates.
- */
-
 namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\ObjectManager;
