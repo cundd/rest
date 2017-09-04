@@ -3,9 +3,9 @@
 namespace Cundd\Rest;
 
 use Cundd\Rest\Access\AccessControllerInterface;
-use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -37,7 +37,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     protected $responseFactory;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -51,19 +51,21 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * Initialize
      *
-     * @param ObjectManager $objectManager
-     * @param bool          $performBootstrap
+     * @param ObjectManagerInterface   $objectManager
+     * @param RequestFactoryInterface  $requestFactory
+     * @param ResponseFactoryInterface $responseFactory
+     * @param LoggerInterface          $logger
      */
-    public function __construct(ObjectManager $objectManager = null, $performBootstrap = true)
-    {
-        if ($performBootstrap) {
-            (new Bootstrap())->init();
-        }
-
-        $this->objectManager = $objectManager ?: GeneralUtility::makeInstance('Cundd\\Rest\\ObjectManager');
-        $this->requestFactory = $this->objectManager->getRequestFactory();
-        $this->responseFactory = $this->objectManager->getResponseFactory();
-        $this->registerSingularToPlural();
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        RequestFactoryInterface $requestFactory,
+        ResponseFactoryInterface $responseFactory,
+        LoggerInterface $logger
+    ) {
+        $this->objectManager = $objectManager;
+        $this->requestFactory = $requestFactory;
+        $this->responseFactory = $responseFactory;
+        $this->logger = $logger;
 
         self::$sharedDispatcher = $this;
     }
@@ -114,7 +116,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         $newResponse = $this->addAdditionalHeaders($this->getCachedResponseOrCallHandler($request, $response));
 
-        $this->logResponse(
+        $this->logger->logResponse(
             'response: ' . $newResponse->getStatusCode(),
             ['response' => (string)$newResponse->getBody()]
         );
@@ -171,7 +173,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         /** @var RouterInterface $resultConverter */
         $resultConverter = $this->getResultConverter();
-        $this->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->getMethod()));
+        $this->logger->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->getMethod()));
 
         // If a path is given let the handler build up the routes
         $this->objectManager->getHandler()->configureRoutes($resultConverter, $request);
@@ -199,7 +201,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         $response = $this->responseFactory->createSuccessResponse($greeting, 200, $request);
 
-        $this->logResponse(
+        $this->logger->logResponse(
             'response: ' . $response->getStatusCode(),
             ['response' => (string)$response->getBody()]
         );
@@ -213,7 +215,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Better use the RequestFactory::getRequest() instead
      *
      * @return RestRequestInterface
-     * @deprecated
+     * @deprecated will be removed in 4.0.0
      */
     public function getRequest()
     {
@@ -223,14 +225,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * Returns the logger
      *
-     * @return \Psr\Log\LoggerInterface
+     * @return LoggerInterface
+     * @deprecated will be removed in 4.0.0
      */
     public function getLogger()
     {
-        if (!$this->logger) {
-            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
-        }
-
         return $this->logger;
     }
 
@@ -239,12 +238,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param string $message
      * @param array  $data
+     * @deprecated will be removed in 4.0.0
      */
     public function logRequest($message, $data = null)
     {
-        if ($this->getExtensionConfiguration('logRequests')) {
-            $this->log($message, $data);
-        }
+        $this->getLogger()->logRequest($message, $data);
     }
 
     /**
@@ -252,23 +250,22 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param string $message
      * @param array  $data
+     * @deprecated will be removed in 4.0.0
      */
     public function logResponse($message, $data = null)
     {
-        if ($this->getExtensionConfiguration('logResponse')) {
-            $this->log($message, $data);
-        }
+        $this->getLogger()->logResponse($message, $data);
     }
 
     /**
      * Logs the given exception
      *
      * @param \Exception $exception
+     * @deprecated will be removed in 4.0.0
      */
     public function logException($exception)
     {
-        $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-        $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
+        $this->getLogger()->logException($exception);
     }
 
     /**
@@ -276,6 +273,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param string $message
      * @param array  $data
+     * @deprecated will be removed in 4.0.0
      */
     public function log($message, $data = null)
     {
@@ -291,6 +289,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param $key
      * @return mixed
+     * @deprecated will be removed in 4.0.0
      */
     protected function getExtensionConfiguration($key)
     {
@@ -310,19 +309,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     }
 
     /**
-     * Register singulars to the plural
-     */
-    protected function registerSingularToPlural()
-    {
-        $singularToPlural = $this->objectManager->getConfigurationProvider()->getSetting('singularToPlural');
-        if ($singularToPlural) {
-            foreach ($singularToPlural as $singular => $plural) {
-                Utility::registerSingularForPlural($singular, $plural);
-            }
-        }
-    }
-
-    /**
      * Returns the shared dispatcher instance
      *
      * @return \Cundd\Rest\Dispatcher
@@ -330,7 +316,13 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     public static function getSharedDispatcher()
     {
         if (!self::$sharedDispatcher) {
-            new static();
+            /** @var ObjectManagerInterface $objectManager */
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            $requestFactory = $objectManager->getRequestFactory();
+            $responseFactory = $objectManager->getResponseFactory();
+            /** @var LoggerInterface $logger */
+            $logger = $objectManager->get(LoggerInterface::class);
+            new static($objectManager, $requestFactory, $responseFactory, $logger);
         }
 
         return self::$sharedDispatcher;
@@ -347,19 +339,22 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $additionalResponseHeaders = $this->objectManager
             ->getConfigurationProvider()
             ->getSetting('responseHeaders', null);
-        if (is_array($additionalResponseHeaders)) {
-            foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
-                if (is_string($value)) {
-                    $response = $response->withAddedHeader(
-                        $responseHeaderType,
-                        $value
-                    );
-                } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
-                    $response = $response->withAddedHeader(
-                        rtrim($responseHeaderType, '.'),
-                        GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
-                    );
-                }
+
+        if (!is_array($additionalResponseHeaders)) {
+            return $response;
+        }
+
+        foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
+            if (is_string($value)) {
+                $response = $response->withAddedHeader(
+                    $responseHeaderType,
+                    $value
+                );
+            } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
+                $response = $response->withAddedHeader(
+                    rtrim($responseHeaderType, '.'),
+                    GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
+                );
             }
         }
 
