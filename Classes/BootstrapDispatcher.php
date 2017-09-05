@@ -38,7 +38,11 @@ class BootstrapDispatcher
     {
         (new Bootstrap())->init();
 
-        $this->objectManager = $objectManager ?: GeneralUtility::makeInstance(ObjectManager::class);
+        if ($objectManager === null) {
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        }
+
+        $this->objectManager = $objectManager;
         $this->initializeConfiguration($configuration);
         $this->configureObjectManager();
         $this->registerSingularToPlural($objectManager);
