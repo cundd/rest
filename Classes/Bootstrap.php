@@ -45,7 +45,7 @@ class Bootstrap
         if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
             /** @var $GLOBALS['LANG'] \TYPO3\CMS\Lang\LanguageService */
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-            $GLOBALS['LANG']->init($GLOBALS['BE_USER']->uc['lang']);
+            $GLOBALS['LANG']->init($this->getRequestedLanguageCode());
         }
     }
 
