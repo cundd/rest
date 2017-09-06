@@ -6,6 +6,7 @@ use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class to bootstrap TYPO3 frontend controller
@@ -21,6 +22,8 @@ class Bootstrap
     public function init(TypoScriptFrontendController $frontendController = null)
     {
         $this->initializeTimeTracker();
+        $this->initializeLanguageObject();
+
         $frontendController = $frontendController ?: $this->buildFrontendController($this->getPageUid());
 
         if ($this->getFrontendControllerIsInitialized()) {
@@ -32,6 +35,18 @@ class Bootstrap
         $this->configureFrontendController($frontendController);
 
         return $frontendController;
+    }
+
+    /**
+     * Initialize language object
+     */
+    public function initializeLanguageObject()
+    {
+        if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
+            /** @var $GLOBALS['LANG'] \TYPO3\CMS\Lang\LanguageService */
+            $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
+            $GLOBALS['LANG']->init($this->getRequestedLanguageCode());
+        }
     }
 
     /**
