@@ -18,6 +18,7 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
+    - php: 5.6
     - env: TYPO3=master DB=mysql
 
   include:
@@ -65,7 +66,7 @@ before_script:
     export CHECK_MYSQL_CREDENTIALS="no";
     bash Build/install.sh;
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
-  - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
+  - composer remove phpunit/phpunit --dev && composer update
 
 script:
   - >
