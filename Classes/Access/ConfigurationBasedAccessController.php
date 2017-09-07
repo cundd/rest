@@ -56,7 +56,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
         $configurationKey = self::ACCESS_METHOD_READ;
         $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
+        if ($request->isWrite()) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
@@ -144,17 +144,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns if the request wants to write data
-     *
-     * @param RestRequestInterface $request
-     * @return bool
-     */
-    protected function isWrite(RestRequestInterface $request)
-    {
-        return $request->isWrite();
-    }
-
-    /**
      * Returns if the given request needs authentication
      *
      * @param RestRequestInterface $request
@@ -165,7 +154,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     {
         $configurationKey = self::ACCESS_METHOD_READ;
         $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
+        if ($request->isWrite()) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
