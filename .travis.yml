@@ -11,6 +11,7 @@ env:
   - TYPO3=TYPO3_8-4 DB=mysql
   - TYPO3=TYPO3_8-5 DB=mysql
   - TYPO3=TYPO3_8-6 DB=mysql
+  - TYPO3=TYPO3_8-7 DB=mysql
   - TYPO3=master DB=mysql
 
 matrix:
