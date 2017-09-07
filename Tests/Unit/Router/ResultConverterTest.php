@@ -14,7 +14,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 
 
-class ResultConverterTest extends \PHPUnit_Framework_TestCase
+class ResultConverterTest extends \PHPUnit\Framework\TestCase
 {
     use RequestBuilderTrait;
 

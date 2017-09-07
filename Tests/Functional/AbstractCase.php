@@ -4,6 +4,8 @@ namespace Cundd\Rest\Tests\Functional;
 
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
+use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
+use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
@@ -25,6 +27,8 @@ class AbstractCase extends FunctionalTestCase
         parent::setUp();
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
+
+        $GLOBALS['TYPO3_DB'] = $this->getDatabaseConnection();
 
         $this->objectManager = new ObjectManager();
     }
@@ -117,16 +121,11 @@ class AbstractCase extends FunctionalTestCase
     }
 
     /**
-     * Get DatabaseConnection instance - $GLOBALS['TYPO3_DB']
-     *
-     * This method should be used instead of direct access to
-     * $GLOBALS['TYPO3_DB'] for easy IDE auto completion.
-     *
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return DatabaseConnectionInterface
      */
     protected function getDatabaseConnection()
     {
-        return $GLOBALS['TYPO3_DB'];
+        return Factory::getConnection();
     }
 
     /**

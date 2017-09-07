@@ -1,11 +1,5 @@
 <?php
 
-
-/**
- * @author COD
- * Created 14.09.15 15:49
- */
-
 namespace Cundd\Rest\Tests\Functional\Configuration;
 
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
@@ -21,7 +15,7 @@ class TypoScriptConfigurationProviderTest extends AbstractCase
     public function setUp()
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider');
+        $this->fixture = $this->objectManager->get(TypoScriptConfigurationProvider::class);
     }
 
     public function tearDown()
@@ -47,7 +41,9 @@ class TypoScriptConfigurationProviderTest extends AbstractCase
      */
     public function getSettingTest()
     {
-        if (count($this->fixture->getSettings()) > 0) {
+        $settings = $this->fixture->getSettings();
+        $this->assertInternalType('array', $settings);
+        if (count($settings) > 0) {
             $this->assertInternalType('array', $this->fixture->getSetting('paths'));
             $this->assertInternalType('array', $this->fixture->getSetting('paths.1'));
             $this->assertEquals('all', $this->fixture->getSetting('paths.1.path'));

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @author COD
- * Created 06.12.13 12:34
- */
-
 namespace Cundd\Rest\Cache;
 
 use Cundd\Rest\DataProvider\Utility;

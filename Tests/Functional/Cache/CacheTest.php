@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @author COD
- * Created 10.12.13 09:21
- */
 
 namespace Cundd\Rest\Tests\Functional\Cache;
 
@@ -230,12 +226,14 @@ class CacheTest extends AbstractCase
     private function getFrontendCacheMock()
     {
         /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
-        return $this->getMockObjectGenerator()->getMock(
+        return $this->getMockForAbstractClass(
             'TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend',
-            ['getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'],
             [],
             '',
-            false
+            false,
+            false,
+            false,
+            ['getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag']
         );
     }
 }

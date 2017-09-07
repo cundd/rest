@@ -2,24 +2,23 @@
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
+use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
 use Cundd\Rest\Tests\MyNestedModel;
 use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
+use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Property\PropertyMapper;
+use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 
 
 /**
  * Test case for class new \Cundd\Rest\App
- *
- * @version   $Id$
- * @copyright Copyright belongs to the respective authors
- * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- *
- * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class DataProviderTest extends AbstractCase
 {
@@ -60,7 +59,7 @@ class DataProviderTest extends AbstractCase
             );
         }
 
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\DataProvider\\DataProvider');
+        $this->fixture = $this->objectManager->get(DataProvider::class);
     }
 
     public function tearDown()
@@ -76,19 +75,19 @@ class DataProviderTest extends AbstractCase
     {
         $data = ['some' => 'Data'];
 
-        $propertyMapperMock = $this->getMockBuilder('\\TYPO3\\CMS\\Extbase\\Property\\PropertyMapper')
-            ->setMethods(['convert'])
-            ->getMock();
-        $propertyMapperMock
-            ->expects($this->once())
-            ->method('convert')
-            ->with(
-                $this->equalTo($data),
-                $this->equalTo('AVendor\\AnotherExt\\Domain\\Model\\MyModel'),
-                $this->isInstanceOf('\\TYPO3\\CMS\\Extbase\\Property\\PropertyMappingConfigurationInterface')
-            );
+        /** @var ObjectProphecy|PropertyMapper $propertyMapperMock */
+        $propertyMapperMock = $this->prophesize(PropertyMapper::class);
 
-        $this->injectPropertyIntoObject($propertyMapperMock, 'propertyMapper', $this->fixture);
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $propertyMapperMock->convert(
+            Argument::exact($data),
+            Argument::exact('AVendor\\AnotherExt\\Domain\\Model\\MyModel'),
+            Argument::type(PropertyMappingConfigurationInterface::class)
+        );
+
+        $methodProphecy->shouldBeCalled();
+
+        $this->injectPropertyIntoObject($propertyMapperMock->reveal(), 'propertyMapper', $this->fixture);
         $this->fixture->getModelWithDataForResourceType($data, new ResourceType('a_vendor-another_ext-my_model'));
     }
 

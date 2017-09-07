@@ -8,7 +8,7 @@ use Cundd\Rest\VirtualObject\VirtualObject;
 /**
  * Virtual Object tests
  */
-class VirtualObjectTest extends \PHPUnit_Framework_TestCase
+class VirtualObjectTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Cundd\Rest\VirtualObject\VirtualObject

@@ -5,19 +5,14 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 /**
  * Test case for class file related Data Provider functions
- *
- * @version   $Id$
- * @copyright Copyright belongs to the respective authors
- * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- *
- * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
 class ExtractorFileTest extends AbstractCase
 {
+    use FileBuilderTrait;
     /**
      * @var \Cundd\Rest\DataProvider\ExtractorInterface
      */
@@ -70,64 +65,19 @@ class ExtractorFileTest extends AbstractCase
         );
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMockObjectGenerator()->getMock(
-            '\TYPO3\CMS\Core\Resource\ResourceFactory',
-            ['getFileObject']
-        );
+        $factoryMock = $this->getMockBuilder(ResourceFactory::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->setMethods(['getFileObject'])
+            ->getMock();
         $factoryMock->expects($this->any())
             ->method('getFileObject')->will(
                 $this->returnValue($originalFileMock)
             );
 
         return new FileReference($fileReferenceProperties, $factoryMock);
-    }
-
-
-    /**
-     * @return \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createFileMock()
-    {
-        $originalFileProperties = [
-            'identifier' => sha1('testFile' . time()),
-            'name'       => 'Original file name',
-            'mimeType'   => 'MimeType',
-        ];
-        /** @var  \TYPO3\CMS\Core\Resource\File|\PHPUnit_Framework_MockObject_MockObject $originalFileMock */
-        $originalFileMock = $this->getMockObjectGenerator()->getMock(
-            '\TYPO3\CMS\Core\Resource\File',
-            [],
-            [],
-            'Mock_TYPO3_CMS_Core_Resource_File',
-            false
-        );
-        $originalFileMock->expects($this->any())
-            ->method('getProperties')
-            ->will(
-                $this->returnValue($originalFileProperties)
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getName')
-            ->will(
-                $this->returnValue($originalFileProperties['name'])
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getMimeType')
-            ->will(
-                $this->returnValue($originalFileProperties['mimeType'])
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getPublicUrl')
-            ->will(
-                $this->returnValue('http://url')
-            );
-        $originalFileMock->expects($this->any())
-            ->method('getSize')
-            ->will(
-                $this->returnValue(10)
-            );
-
-        return $originalFileMock;
     }
 
     /**

@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
-
-require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 /**
  * Class ConfigurationTest
@@ -62,12 +60,15 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
     public function setUp()
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\ConfigurationFactory');
+        $this->fixture = $this->objectManager->get(ConfigurationFactory::class);
 
         /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $typeScriptConfigurationStub */
-        $typeScriptConfigurationStub = $this->getMockObjectGenerator()->getMock(
-            'Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider'
-        );
+        $typeScriptConfigurationStub = $this->getMockBuilder(TypoScriptConfigurationProvider::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->getMock();
         $typeScriptConfigurationStub->expects($this->any())
             ->method('getSetting')
             ->will($this->returnValue($this->typoScriptDummyArray));
@@ -86,7 +87,7 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function createTest()
     {
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $this->fixture->create());
+        $this->assertInstanceOf(ConfigurationInterface::class, $this->fixture->create());
     }
 
     /**
@@ -142,7 +143,7 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function validateConfiguration($configuration)
     {
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\ConfigurationInterface', $configuration);
+        $this->assertInstanceOf(ConfigurationInterface::class, $configuration);
 
         $this->assertTrue($configuration->hasProperty('property1'), "Should have property 'property1'");
 
