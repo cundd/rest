@@ -149,7 +149,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     public function isWrite()
     {
-        return !$this->isRead();
+        return !$this->isRead() && $this->getMethod() != 'OPTIONS';
     }
 
     /**

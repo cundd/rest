@@ -49,6 +49,11 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
+        // OPTIONS method is neither read or write
+        if (!$request->isRead() && !$request->isWrite()) {
+            return AccessControllerInterface::ACCESS_ALLOW;
+        }
+
         $configurationKey = self::ACCESS_METHOD_READ;
         $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         if ($this->isWrite($request)) {
