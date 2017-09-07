@@ -11,6 +11,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${typo3DatabaseName="typo3"}
 : ${typo3DatabaseHost="127.0.0.1"}
+: ${typo3DatabasePort="3306"}
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
@@ -41,8 +42,8 @@ function get_phpunit_path_for_unit_tests() {
 
 # Check the provided MySQL credentials
 function check_mysql_credentials {
-    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'") or exit(1);' || {
-        print_error "Could not connect to MySQL ($typo3DatabaseUsername:$typo3DatabasePassword@$typo3DatabaseHost / $typo3DatabaseName)";
+    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'", "'${typo3DatabasePort}'") or exit(1);' || {
+        print_error "Could not connect to MySQL ($typo3DatabaseUsername:$typo3DatabasePassword@$typo3DatabaseHost:$typo3DatabasePort / $typo3DatabaseName)";
     }
 }
 
@@ -51,12 +52,13 @@ function init_database {
     # Export database credentials
     export typo3DatabaseName=${typo3DatabaseName};
     export typo3DatabaseHost=${typo3DatabaseHost};
+    export typo3DatabasePort=${typo3DatabasePort};
     export typo3DatabaseUsername=${typo3DatabaseUsername};
     export typo3DatabasePassword=${typo3DatabasePassword};
     if [[ "$CHECK_MYSQL_CREDENTIALS" == "yes" ]]; then
         check_mysql_credentials;
     fi
-    print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
+    print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost:$typo3DatabasePort' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
 }
 
 # Prepare the TYPO3 system
