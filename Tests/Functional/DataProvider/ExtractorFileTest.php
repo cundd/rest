@@ -69,7 +69,6 @@ class ExtractorFileTest extends AbstractCase
             ->disableOriginalConstructor()
             ->disableOriginalClone()
             ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
             ->setMethods(['getFileObject'])
             ->getMock();
         $factoryMock->expects($this->any())

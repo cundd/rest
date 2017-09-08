@@ -67,7 +67,6 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
             ->disableOriginalConstructor()
             ->disableOriginalClone()
             ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
             ->getMock();
         $typeScriptConfigurationStub->expects($this->any())
             ->method('getSetting')

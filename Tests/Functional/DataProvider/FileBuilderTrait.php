@@ -55,7 +55,6 @@ trait FileBuilderTrait
             ->disableOriginalConstructor()
             ->disableOriginalClone()
             ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
             ->setMockClassName('Mock_TYPO3_CMS_Core_Resource_File')
             ->getMock();
         $originalFileMock->expects($this->any())
