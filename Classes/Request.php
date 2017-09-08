@@ -143,13 +143,23 @@ class Request implements ServerRequestInterface, RestRequestInterface
     }
 
     /**
+     * Returns if the request is a preflight request
+     *
+     * @return bool
+     */
+    public function isPreflight()
+    {
+        return strtoupper($this->getMethod()) === 'OPTIONS';
+    }
+
+    /**
      * Returns if the request wants to write data
      *
      * @return bool
      */
     public function isWrite()
     {
-        return !$this->isRead() && $this->getMethod() != 'OPTIONS';
+        return !$this->isRead() && !$this->isPreflight();
     }
 
     /**

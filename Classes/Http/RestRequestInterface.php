@@ -50,6 +50,13 @@ interface RestRequestInterface extends ServerRequestInterface
     public function getFormat();
 
     /**
+     * Returns if the request is a preflight request
+     *
+     * @return bool
+     */
+    public function isPreflight();
+
+    /**
      * Returns if the request wants to write data
      *
      * @return bool
