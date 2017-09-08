@@ -185,6 +185,9 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
+        if (!isset($response->content['uid'])) {
+            throw new \Exception('Content does not contain key "uid"');
+        }
         return $response->content['uid'];
     }
 
