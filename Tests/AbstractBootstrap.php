@@ -4,6 +4,8 @@
 namespace Cundd\Rest\Tests;
 
 
+use PHPUnit\Framework\TestCase;
+
 abstract class AbstractBootstrap
 {
     public function run()
@@ -36,16 +38,8 @@ abstract class AbstractBootstrap
 
     private function setupPHPUnitFallback()
     {
-        spl_autoload_register(
-            function ($className) {
-                $trimmedClassName = trim($className, '\\');
-                if ($trimmedClassName === 'PHPUnit\\Framework\\TestCase') {
-                    class_alias('PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase');
-                }
-                if ($trimmedClassName === 'PHPUnit_Framework_TestCase') {
-                    class_alias('PHPUnit_Framework_TestCase', 'PHPUnit\\Framework\\TestCase');
-                }
-            }
-        );
+        if (!class_exists(TestCase::class, true)) {
+            class_alias('PHPUnit_Framework_TestCase', TestCase::class);
+        }
     }
 }
