@@ -49,17 +49,16 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
-        // OPTIONS method is neither read or write
         if (!$request->isRead() && !$request->isWrite()) {
             return AccessControllerInterface::ACCESS_ALLOW;
         }
 
         $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         if ($request->isWrite()) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
             throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
@@ -152,18 +151,8 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function requestNeedsAuthentication(RestRequestInterface $request)
     {
-        $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($request->isWrite()) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
+        $access = $this->getAccess($request);
 
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return true;
         }
