@@ -2,6 +2,10 @@
 
 namespace Cundd\Rest\Tests\Functional;
 
+use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
+use Cundd\Rest\Authentication\UserProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
@@ -9,6 +13,8 @@ use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class AbstractCase extends FunctionalTestCase
@@ -30,7 +36,7 @@ class AbstractCase extends FunctionalTestCase
 
         $GLOBALS['TYPO3_DB'] = $this->getDatabaseConnection();
 
-        $this->objectManager = new ObjectManager();
+        $this->objectManager = $this->buildConfiguredObjectManager();
     }
 
     /**
@@ -141,5 +147,25 @@ class AbstractCase extends FunctionalTestCase
         $reflectionMethod->setValue($object, $propertyValue);
 
         return $object;
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    private function buildConfiguredObjectManager()
+    {
+        /** @var Container $objectContainer */
+        $objectContainer = GeneralUtility::makeInstance(Container::class);
+
+        $objectContainer->registerImplementation(
+            ConfigurationProviderInterface::class,
+            TypoScriptConfigurationProvider::class
+        );
+        $objectContainer->registerImplementation(
+            UserProviderInterface::class,
+            FeUserProvider::class
+        );
+
+        return new ObjectManager();
     }
 }
