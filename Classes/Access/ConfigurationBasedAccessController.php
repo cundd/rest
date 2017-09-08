@@ -54,22 +54,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
-        if (!$this->requiresAuthorization($request)) {
-            return AccessControllerInterface::ACCESS_ALLOW;
-        }
-
-        $configurationKey = self::ACCESS_METHOD_READ;
-        if ($request->isWrite()) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
-
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
+        $access = $this->getAccessConfiguration($request);
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return $this->checkAuthentication($request);
         }
@@ -156,9 +141,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function requestNeedsAuthentication(RestRequestInterface $request)
     {
-        $access = $this->getAccess($request);
-
-        if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
+        if ($this->getAccessConfiguration($request) === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return true;
         }
 
@@ -171,7 +154,32 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @param RestRequestInterface $request
      * @return bool
      */
-    protected function requiresAuthorization($request) {
+    protected function requiresAuthorization($request)
+    {
         return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @return string
+     */
+    protected function getAccessConfiguration(RestRequestInterface $request)
+    {
+        if (!$this->requiresAuthorization($request)) {
+            return AccessControllerInterface::ACCESS_ALLOW;
+        }
+
+        $configurationKey = $request->isWrite()
+            ? self::ACCESS_METHOD_WRITE
+            : self::ACCESS_METHOD_READ;
+
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
+
+        // Throw an exception if the configuration is not complete
+        if (!isset($configuration[$configurationKey])) {
+            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+        }
+
+        return (string)$configuration[$configurationKey];
     }
 }
