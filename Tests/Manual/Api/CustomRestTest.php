@@ -313,7 +313,8 @@ class CustomRestTest extends AbstractApiCase
      */
     public function getForbiddenTest()
     {
-        $this->request('cundd-custom_rest-require');
+        $response = $this->request('cundd-custom_rest-require');
+        $this->assertSame(401, $response->status);
     }
 
     /**
