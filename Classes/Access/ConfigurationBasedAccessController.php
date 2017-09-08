@@ -25,6 +25,11 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     const ACCESS_METHOD_WRITE = 'write';
 
     /**
+     * Access identifier to specify which methods DO NOT require authorization
+     */
+    const ACCESS_NOT_REQUIRED = ['OPTIONS'];
+
+    /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
@@ -49,7 +54,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
-        if (!$request->isRead() && !$request->isWrite()) {
+        if (!$this->requiresAuthorization($request)) {
             return AccessControllerInterface::ACCESS_ALLOW;
         }
 
@@ -158,5 +163,15 @@ class ConfigurationBasedAccessController extends AbstractAccessController
         }
 
         return false;
+    }
+
+    /**
+     * Returns if the given request requires authorization
+     *
+     * @param RestRequestInterface $request
+     * @return bool
+     */
+    protected function requiresAuthorization($request) {
+        return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
     }
 }
