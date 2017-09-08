@@ -12,6 +12,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${typo3DatabaseName="typo3"}
 : ${typo3DatabaseHost="127.0.0.1"}
+: ${typo3DatabasePort="3306"}
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
@@ -20,11 +21,19 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 source "$PROJECT_HOME/Build/lib.sh";
 
+function run_composer {
+    if hash composer.phar 2>/dev/null; then
+        composer.phar "$@";
+    elif hash composer 2>/dev/null; then
+        composer "$@";
+    fi
+}
+
 # Install the project's dependencies
 function install_dependencies {
     print_header "Install dependencies";
-    composer self-update;
-    composer install --verbose --ignore-platform-reqs;
+    run_composer self-update;
+    run_composer install --verbose --ignore-platform-reqs;
 }
 
 # Install the TYPO3
@@ -48,9 +57,9 @@ function install_typo3 {
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
+        run_composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
-    composer install --ignore-platform-reqs;
+    run_composer install --ignore-platform-reqs;
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
@@ -89,9 +98,20 @@ function prepare_database {
 function main {
     cd ${PROJECT_HOME};
 
-    install_dependencies;
-    install_typo3;
-    prepare_database;
+    if [ "$#" -eq "0" ];then
+        install_dependencies;
+        install_typo3;
+        prepare_database;
+        return;
+    fi
+
+    local sub_command="$1";
+    shift;
+    if hash "$sub_command" 2>/dev/null; then
+        ${sub_command} "$@";
+    else
+        print_error "Subcommand '$sub_command' does not exist";
+    fi
 }
 
-main;
+main "$@";
