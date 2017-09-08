@@ -25,6 +25,11 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     const ACCESS_METHOD_WRITE = 'write';
 
     /**
+     * Access identifier to specify which methods DO NOT require authorization
+     */
+    const ACCESS_NOT_REQUIRED = ['OPTIONS'];
+
+    /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
@@ -49,12 +54,16 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
+        if (!$this->requiresAuthorization($request)) {
+            return AccessControllerInterface::ACCESS_ALLOW;
+        }
+
         $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
+        if ($request->isWrite()) {
             $configurationKey = self::ACCESS_METHOD_WRITE;
         }
 
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
             throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
@@ -139,17 +148,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns if the request wants to write data
-     *
-     * @param RestRequestInterface $request
-     * @return bool
-     */
-    protected function isWrite(RestRequestInterface $request)
-    {
-        return $request->isWrite();
-    }
-
-    /**
      * Returns if the given request needs authentication
      *
      * @param RestRequestInterface $request
@@ -158,22 +156,22 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function requestNeedsAuthentication(RestRequestInterface $request)
     {
-        $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
+        $access = $this->getAccess($request);
 
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Returns if the given request requires authorization
+     *
+     * @param RestRequestInterface $request
+     * @return bool
+     */
+    protected function requiresAuthorization($request) {
+        return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
     }
 }
