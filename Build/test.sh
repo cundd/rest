@@ -67,7 +67,7 @@ function init_typo3 {
 	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
 		if [[ -f "$TYPO3_PATH_WEB/composer.json" ]]; then
 		    cd ${TYPO3_PATH_WEB};
-            composer install;
+            lib::composer install;
             cd ${baseDir};
 		fi
 	fi

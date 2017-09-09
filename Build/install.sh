@@ -21,19 +21,12 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 source "$PROJECT_HOME/Build/lib.sh";
 
-function run_composer {
-    if hash composer.phar 2>/dev/null; then
-        composer.phar "$@";
-    elif hash composer 2>/dev/null; then
-        composer "$@";
-    fi
-}
 
 # Install the project's dependencies
 function install_dependencies {
     print_header "Install dependencies";
-    run_composer self-update;
-    run_composer install --verbose --ignore-platform-reqs;
+    lib::composer self-update;
+    lib::composer install --verbose --ignore-platform-reqs;
 }
 
 # Install the TYPO3
@@ -57,9 +50,10 @@ function install_typo3 {
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        run_composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
+        lib::composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
-    run_composer install --ignore-platform-reqs;
+    lib::composer install --ignore-platform-reqs;
+
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
