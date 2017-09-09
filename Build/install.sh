@@ -42,7 +42,7 @@ function install_typo3 {
         lib::pushd ..;
         print_info "Install TYPO3 source";
         if [[ ! -e "TYPO3.CMS" ]]; then
-            git clone --single-branch --branch ${TYPO3} --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
+            git clone --single-branch --branch "$TYPO3" --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
             cd TYPO3.CMS;
         fi
     fi
@@ -52,7 +52,7 @@ function install_typo3 {
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
         lib::composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
-    lib::composer install --ignore-platform-reqs;
+    lib::composer install --ignore-platform-reqs --prefer-dist;
 
     rm -rf typo3/sysext/compatibility6;
 
