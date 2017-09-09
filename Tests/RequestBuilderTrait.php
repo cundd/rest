@@ -31,9 +31,8 @@ trait RequestBuilderTrait
         $parsedBody = null,
         $format = null
     ) {
-        $path = $url;
-//        $path = strtok($url, '/');
-        $resourceType = new ResourceType((string)strtok($url, '/'));
+        $path = self::getPathFromUri($url);
+        $resourceType = new ResourceType((string)strtok($path, '/'));
 
         if (null === $format) {
             $format = Format::DEFAULT_FORMAT;
@@ -60,5 +59,20 @@ trait RequestBuilderTrait
         );
 
         return new Request($originalRequest, $uri->withPath($path), $path, $resourceType, new Format($format));
+    }
+
+    /**
+     * @param $url
+     * @return bool|string
+     */
+    private static function getPathFromUri($url)
+    {
+        if ('http://' === substr($url, 0, 7) || 'https://' === substr($url, 0, 8)) {
+            $path = substr(strstr(substr($url, 8), '/'), 0);
+        } else {
+            $path = $url;
+        }
+
+        return $path;
     }
 }
