@@ -2,7 +2,18 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\Authentication\AuthenticationProviderInterface;
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\DataProvider\DataProvider;
+use Cundd\Rest\DataProvider\DataProviderInterface;
+use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
+use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\RequestFactory;
+use Cundd\Rest\RequestFactoryInterface;
+use Cundd\Rest\ResponseFactory;
+use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
 class ObjectManagerTest extends AbstractCase
@@ -35,8 +46,8 @@ class ObjectManagerTest extends AbstractCase
     public function getRequestFactoryTest()
     {
         $object = $this->fixture->getRequestFactory();
-        $this->assertInstanceOf('Cundd\\Rest\\RequestFactoryInterface', $object);
-        $this->assertInstanceOf('Cundd\\Rest\\RequestFactory', $object);
+        $this->assertInstanceOf(RequestFactoryInterface::class, $object);
+        $this->assertInstanceOf(RequestFactory::class, $object);
     }
 
     /**
@@ -45,8 +56,8 @@ class ObjectManagerTest extends AbstractCase
     public function getResponseFactoryTest()
     {
         $object = $this->fixture->getResponseFactory();
-        $this->assertInstanceOf('Cundd\\Rest\\ResponseFactoryInterface', $object);
-        $this->assertInstanceOf('Cundd\\Rest\\ResponseFactory', $object);
+        $this->assertInstanceOf(ResponseFactoryInterface::class, $object);
+        $this->assertInstanceOf(ResponseFactory::class, $object);
     }
 
     /**
@@ -55,7 +66,7 @@ class ObjectManagerTest extends AbstractCase
     public function getConfigurationProviderTest()
     {
         $object = $this->fixture->getConfigurationProvider();
-        $this->assertInstanceOf('Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider', $object);
+        $this->assertInstanceOf(TypoScriptConfigurationProvider::class, $object);
     }
 
     /**
@@ -64,7 +75,7 @@ class ObjectManagerTest extends AbstractCase
     public function getAuthenticationProviderTest()
     {
         $object = $this->fixture->getAuthenticationProvider();
-        $this->assertInstanceOf('Cundd\\Rest\\Authentication\\AuthenticationProviderInterface', $object);
+        $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
     }
 
     /**
@@ -84,19 +95,19 @@ class ObjectManagerTest extends AbstractCase
 
         $dataProvider = $this->fixture->getDataProvider();
         $this->assertInstanceOf($expectedClass, $dataProvider);
-        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProviderInterface', $dataProvider);
-        $this->assertInstanceOf('Cundd\\Rest\\DataProvider\\DataProvider', $dataProvider);
+        $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
+        $this->assertInstanceOf(DataProvider::class, $dataProvider);
     }
 
     public function dataProviderTestGenerator()
     {
-        $defaultDataProvider = '\\Cundd\\Rest\\DataProvider\\DataProvider';
+        $defaultDataProvider = DataProvider::class;
 
         return [
             //     url,                expected,                     classToBuild
             [
                 '',
-                'Cundd\\Rest\\DataProvider\\DataProvider',
+                DataProvider::class,
                 [],
             ],
             [
@@ -149,19 +160,19 @@ class ObjectManagerTest extends AbstractCase
             ],
             [
                 'virtual_object-page',
-                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+                VirtualObjectDataProvider::class,
             ],
             [
                 'virtual_object-page.json',
-                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+                VirtualObjectDataProvider::class,
             ],
             [
                 'virtual_object-page/1',
-                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+                VirtualObjectDataProvider::class,
             ],
             [
                 'virtual_object-page/1.json',
-                'Cundd\Rest\DataProvider\VirtualObjectDataProvider',
+                VirtualObjectDataProvider::class,
             ],
         ];
     }
@@ -177,9 +188,6 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getHandlerTest($url, $expectedClass, $classToBuild = [])
     {
-//        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-//        var_dump(GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'));
-//        var_dump(GeneralUtility::getIndpEnv('HTTP_HOST'));
         $_GET['u'] = $url;
         if ($classToBuild) {
             $this->buildClass($classToBuild);
@@ -187,16 +195,18 @@ class ObjectManagerTest extends AbstractCase
 
         $handler = $this->fixture->getHandler();
         $this->assertInstanceOf($expectedClass, $handler);
-        $this->assertInstanceOf('Cundd\\Rest\\Handler\\HandlerInterface', $handler);
-        $this->assertInstanceOf('Cundd\\Rest\\Handler\\Handler', $handler);
+        $this->assertInstanceOf(HandlerInterface::class, $handler);
+        $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
     public function handlerTestGenerator()
     {
-        $defaultHandler = '\\Cundd\\Rest\\Handler\\Handler';
+        $defaultHandler = CrudHandler::class;
 
         return [
-            //     url,                expected,                     classToBuild
+            // URL,
+            // Expected result class,
+            // Class to Build
             [
                 'my_ext-my_model/1',
                 'Tx_MyExt_Rest_Handler',

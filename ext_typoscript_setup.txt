@@ -55,5 +55,9 @@ config.tx_extbase {
         Cundd\Rest\Configuration\ConfigurationProviderInterface {
             className = Cundd\Rest\Configuration\TypoScriptConfigurationProvider
         }
+
+        Cundd\Rest\Handler\HandlerInterface {
+            className = Cundd\Rest\Handler\CrudHandler
+        }
     }
 }

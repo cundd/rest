@@ -8,7 +8,7 @@ trait ClassBuilderTrait
     /**
      * Dynamically creates a class
      *
-     * @param string $className
+     * @param string|array $className
      * @param string $namespace
      * @param string $extends
      * @throws \Exception

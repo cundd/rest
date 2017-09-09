@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cundd\Rest\Handler;
 
 use Countable;
@@ -16,9 +15,9 @@ use Psr\Http\Message\ResponseInterface;
 use Traversable;
 
 /**
- * Handler for requests
+ * Handler for default CRUD requests
  */
-class Handler implements CrudHandlerInterface
+class CrudHandler implements CrudHandlerInterface
 {
     /**
      * Current request
