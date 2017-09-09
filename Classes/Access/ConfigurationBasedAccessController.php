@@ -177,7 +177,13 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
         // Throw an exception if the configuration is not complete
         if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
+            throw new InvalidConfigurationException(
+                sprintf(
+                    'Configuration "%s" not set for Resource Type "%s"',
+                    $configurationKey,
+                    $request->getResourceType()
+                ), 1376826223
+            );
         }
 
         return (string)$configuration[$configurationKey];
