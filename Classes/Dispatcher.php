@@ -97,7 +97,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     public function dispatch(RestRequestInterface $request, ResponseInterface $response)
     {
         $requestPath = $request->getPath();
-        if (!$requestPath) {
+        if (!$requestPath || $requestPath === '/') {
             return $this->greet($request);
         }
 
