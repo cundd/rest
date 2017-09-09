@@ -140,9 +140,11 @@ class DoctrineConnection implements DatabaseConnectionInterface
 
     public function sql_fetch_row($res)
     {
-        $res->execute();
+        if (!$res) {
+            return false;
+        }
 
-//        var_dump(array_values($res->fetch()));
+        $res->execute();
 
         return array_values($res->fetch());
     }
