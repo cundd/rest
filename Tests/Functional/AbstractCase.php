@@ -6,6 +6,8 @@ use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Dispatcher;
+use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
@@ -164,6 +166,10 @@ class AbstractCase extends FunctionalTestCase
         $objectContainer->registerImplementation(
             UserProviderInterface::class,
             FeUserProvider::class
+        );
+        $objectContainer->registerImplementation(
+            DispatcherInterface::class,
+            Dispatcher::class
         );
 
         return new ObjectManager();
