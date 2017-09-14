@@ -5,6 +5,7 @@ set -o errexit
 
 PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
+# The branch of TYPO3 to checkout (e.g. 'TYPO3_8-7', 'TYPO3_7-6')
 : ${TYPO3="master"}
 : ${REPO="$(basename ${PROJECT_HOME})"}
 
@@ -40,7 +41,7 @@ function install_typo3 {
         git pull;
     else
         lib::pushd ..;
-        print_info "Install TYPO3 source";
+        print_info "Install TYPO3 source $TYPO3";
         if [[ ! -e "TYPO3.CMS" ]]; then
             git clone --single-branch --branch "$TYPO3" --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
             cd TYPO3.CMS;
