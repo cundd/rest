@@ -68,3 +68,12 @@ function get_typo3_base_path {
         dirname "$PROJECT_HOME/../../../typo3";
     fi
 }
+
+# Run a composer command
+function lib::composer {
+    if hash composer.phar 2>/dev/null; then
+        composer.phar "$@";
+    elif hash composer 2>/dev/null; then
+        composer "$@";
+    fi
+}

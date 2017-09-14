@@ -5,6 +5,7 @@ set -o errexit
 
 PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
+# The branch of TYPO3 to checkout (e.g. 'TYPO3_8-7', 'TYPO3_7-6')
 : ${TYPO3="master"}
 : ${REPO="$(basename ${PROJECT_HOME})"}
 
@@ -21,19 +22,12 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 source "$PROJECT_HOME/Build/lib.sh";
 
-function run_composer {
-    if hash composer.phar 2>/dev/null; then
-        composer.phar "$@";
-    elif hash composer 2>/dev/null; then
-        composer "$@";
-    fi
-}
 
 # Install the project's dependencies
 function install_dependencies {
     print_header "Install dependencies";
-    run_composer self-update;
-    run_composer install --verbose --ignore-platform-reqs;
+    lib::composer self-update;
+    lib::composer install --verbose --ignore-platform-reqs;
 }
 
 # Install the TYPO3
@@ -47,9 +41,9 @@ function install_typo3 {
         git pull;
     else
         lib::pushd ..;
-        print_info "Install TYPO3 source";
+        print_info "Install TYPO3 source $TYPO3";
         if [[ ! -e "TYPO3.CMS" ]]; then
-            git clone --single-branch --branch ${TYPO3} --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
+            git clone --single-branch --branch "$TYPO3" --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
             cd TYPO3.CMS;
         fi
     fi
@@ -57,9 +51,10 @@ function install_typo3 {
     export TYPO3_PATH_WEB="`pwd`";
 
     if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
-        run_composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
+        lib::composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
-    run_composer install --ignore-platform-reqs;
+    lib::composer install --ignore-platform-reqs --prefer-dist;
+
     rm -rf typo3/sysext/compatibility6;
 
     mkdir -p ./typo3conf/ext/;
