@@ -1,8 +1,12 @@
 ##
 # Docker file for cundd/rest testing
 #
-# Run:
-# docker run -d -p 1338:1338 -v $project_dir/var:/usr/src/stairtower/var cundd/stairtower
+# Build:
+# > docker build -t cundd/rest .
+#
+# Build for TYPO3 7.6:
+# > docker build -t cundd/rest --build-arg TYPO3=TYPO3_7-6 .
+#
 FROM php:7.1-cli
 
 # -----------------------------------------------------------------
@@ -23,9 +27,9 @@ RUN bash /app/Resources/Private/Scripts/composer-install.sh
 # INSTALL TYPO3
 
 # Install TYPO3 master branch
-ENV TYPO3 master
+ARG TYPO3=master
 # MariaDB is linked as host "db" (see docker-composer.yml)
-ENV typo3DatabaseHost db
+ARG typo3DatabaseHost=db
 
 COPY ./Build /app/Build
 RUN bash /app/Build/install.sh install_typo3 && bash /app/Build/install.sh prepare_database
