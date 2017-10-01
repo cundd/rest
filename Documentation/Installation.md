@@ -1,8 +1,8 @@
 Installation
 ============
 
-TER
----
+TYPO3 Extension Repository
+--------------------------
 
 The extension can be installed from within the Extension Manager and can be found 
 [here](https://extensions.typo3.org/extension/rest/) in the TYPO3 extension repository.
