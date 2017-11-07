@@ -127,21 +127,21 @@ class Request implements ServerRequestInterface, RestRequestInterface
             return $this->sentData;
         }
         $contentTypes = $this->getHeader('content-type');
-        $needle = 'application/json';
-        $isJson = array_reduce($contentTypes,
-            function ($isJson, $contentType) {
-                if ($isJson) {
+        $isFormEncoded = array_reduce($contentTypes,
+            function ($isFormEncoded, $contentType) {
+                if ($isFormEncoded) {
                     return true;
                 }
-                return strpos($contentType, 'application/json') !== false;
+                return strpos($contentType, 'application/x-www-form-urlencoded') !== false
+                    || strpos($contentType, 'multipart/form-data') !== false;
             },
-        false
+            false
         );
-        if ($isJson) {
-            $this->sentData = json_decode((string)$this->getBody(), true);
+        if ($isFormEncoded) {
+            $this->sentData = $this->getParsedBody();
         }
         else {
-            $this->sentData = $this->getParsedBody();
+            $this->sentData = json_decode((string)$this->getBody(), true);
         }
 
         return $this->sentData;
