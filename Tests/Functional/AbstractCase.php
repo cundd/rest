@@ -2,11 +2,21 @@
 
 namespace Cundd\Rest\Tests\Functional;
 
+use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
+use Cundd\Rest\Authentication\UserProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Dispatcher;
+use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
+use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
+use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class AbstractCase extends FunctionalTestCase
@@ -26,7 +36,9 @@ class AbstractCase extends FunctionalTestCase
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
-        $this->objectManager = new ObjectManager();
+        $GLOBALS['TYPO3_DB'] = $this->getDatabaseConnection();
+
+        $this->objectManager = $this->buildConfiguredObjectManager();
     }
 
     /**
@@ -117,16 +129,11 @@ class AbstractCase extends FunctionalTestCase
     }
 
     /**
-     * Get DatabaseConnection instance - $GLOBALS['TYPO3_DB']
-     *
-     * This method should be used instead of direct access to
-     * $GLOBALS['TYPO3_DB'] for easy IDE auto completion.
-     *
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return DatabaseConnectionInterface
      */
     protected function getDatabaseConnection()
     {
-        return $GLOBALS['TYPO3_DB'];
+        return Factory::getConnection();
     }
 
     /**
@@ -142,5 +149,29 @@ class AbstractCase extends FunctionalTestCase
         $reflectionMethod->setValue($object, $propertyValue);
 
         return $object;
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    private function buildConfiguredObjectManager()
+    {
+        /** @var Container $objectContainer */
+        $objectContainer = GeneralUtility::makeInstance(Container::class);
+
+        $objectContainer->registerImplementation(
+            ConfigurationProviderInterface::class,
+            TypoScriptConfigurationProvider::class
+        );
+        $objectContainer->registerImplementation(
+            UserProviderInterface::class,
+            FeUserProvider::class
+        );
+        $objectContainer->registerImplementation(
+            DispatcherInterface::class,
+            Dispatcher::class
+        );
+
+        return new ObjectManager();
     }
 }

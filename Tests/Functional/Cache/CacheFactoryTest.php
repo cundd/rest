@@ -7,11 +7,12 @@ use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class CacheFactoryTest extends \PHPUnit_Framework_TestCase
+class CacheFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CacheFactory
@@ -70,6 +71,9 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @return ObjectManagerInterface
+     */
     private function getObjectManager()
     {
         /** @var ObjectManager|ObjectProphecy $responseFactory */
@@ -82,6 +86,11 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase
         return $objectManager->reveal();
     }
 
+    /**
+     * @param $cacheLifeTime
+     * @param $expiresHeaderLifeTime
+     * @return ConfigurationProviderInterface
+     */
     private function getConfigurationProvider($cacheLifeTime, $expiresHeaderLifeTime)
     {
         /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProvider */

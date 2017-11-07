@@ -5,7 +5,7 @@ namespace Cundd\Rest\Tests\Manual\Api;
 
 use Cundd\Rest\Tests\Manual\HttpClient;
 
-abstract class AbstractApiCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
 {
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {

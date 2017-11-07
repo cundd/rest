@@ -6,15 +6,8 @@ use Cundd\Rest\DataProvider\Utility;
 
 /**
  * Test case for class new \Cundd\Rest\App
- *
- * @version   $Id$
- * @copyright Copyright belongs to the respective authors
- * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- *
- * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class DataProviderUtilityTest extends \PHPUnit_Framework_TestCase
+class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

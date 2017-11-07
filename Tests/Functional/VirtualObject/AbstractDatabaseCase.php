@@ -137,7 +137,6 @@ CREATE TABLE $testDatabaseTable (
 ) AUTO_INCREMENT=1;
 SQL;
 
-        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
         $databaseConnection = $this->getDatabaseConnection();
         $databaseConnection->sql_query($createTableSQL);
     }
@@ -148,7 +147,6 @@ SQL;
         $dropTableSQL = <<<SQL
 		DROP TABLE IF EXISTS $testDatabaseTable;
 SQL;
-        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
         $databaseConnection = $this->getDatabaseConnection();
         $databaseConnection->sql_query($dropTableSQL);
     }

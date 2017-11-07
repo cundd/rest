@@ -15,15 +15,8 @@ use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Test case for class new \Cundd\Rest\RequestFactory
- *
- * @version   $Id$
- * @copyright Copyright belongs to the respective authors
- * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- *
- * @author    Daniel Corn <cod@(c) 2014 Daniel Corn <info@cundd.net>, cundd.li>
  */
-class RequestFactoryTest extends \PHPUnit_Framework_TestCase
+class RequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RequestFactoryInterface

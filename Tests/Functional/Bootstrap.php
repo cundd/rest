@@ -1,42 +1,29 @@
 <?php
-/**
- * Functional Test bootstrapping
- */
 
 namespace Cundd\Rest\Tests\Functional;
+
+use Cundd\Rest\Tests\AbstractBootstrap;
+
+require_once __DIR__ . '/../AbstractBootstrap.php';
 
 /**
  * Bootstrap for functional tests
  */
-class Bootstrap
+class Bootstrap extends AbstractBootstrap
 {
     /**
      * Bootstrap the TYPO3 system
      */
-    public function bootstrapSystem()
+    protected function bootstrapSystem()
     {
-        $this->setupComposer();
+//        class_exists(\PHPUnit\TextUI\Command::class);
+//        class_exists(\PHPUnit\Framework\TestCase::class);
+//        class_exists(\PHPUnit\Framework\TestSuite::class);
+//        class_exists(\PHPUnit\TextUI\TestRunner::class);
+//        class_exists(\PHPUnit\Framework\Test::class);
+
         $this->setupTYPO3();
         $this->setupAbstractCase();
-    }
-
-    /**
-     * Setup the Composer autoloading
-     */
-    private function setupComposer()
-    {
-        // Load composer autoloader
-        if (file_exists(__DIR__ . '/../../vendor/')) {
-            require_once __DIR__ . '/../../vendor/autoload.php';
-        } else {
-            if (!class_exists('Cundd\\CunddComposer\\Autoloader')) {
-                require_once __DIR__ . '/../../../cundd_composer/Classes/Autoloader.php';
-            }
-            if (!class_exists('Cundd\\CunddComposer\\Utility\\GeneralUtility')) {
-                require_once __DIR__ . '/../../../cundd_composer/Classes/Utility/GeneralUtility.php';
-            }
-            \Cundd\CunddComposer\Autoloader::register();
-        }
     }
 
     /**
@@ -197,5 +184,5 @@ if (PHP_SAPI !== 'cli') {
     die('This script supports command line usage only. Please check your command.');
 }
 $bootstrap = new Bootstrap();
-$bootstrap->bootstrapSystem();
+$bootstrap->run();
 unset($bootstrap);

@@ -8,7 +8,7 @@ use Cundd\Rest\Router\ParameterTypeInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 
-class RouteTest extends \PHPUnit_Framework_TestCase
+class RouteTest extends \PHPUnit\Framework\TestCase
 {
     use RequestBuilderTrait;
 

@@ -25,6 +25,11 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     const ACCESS_METHOD_WRITE = 'write';
 
     /**
+     * Access identifier to specify which methods DO NOT require authorization
+     */
+    const ACCESS_NOT_REQUIRED = ['OPTIONS'];
+
+    /**
      * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
@@ -49,18 +54,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getAccess(RestRequestInterface $request)
     {
-        $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
-
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
+        $access = $this->getAccessConfiguration($request);
         if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return $this->checkAuthentication($request);
         }
@@ -139,17 +133,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns if the request wants to write data
-     *
-     * @param RestRequestInterface $request
-     * @return bool
-     */
-    protected function isWrite(RestRequestInterface $request)
-    {
-        return $request->isWrite();
-    }
-
-    /**
      * Returns if the given request needs authentication
      *
      * @param RestRequestInterface $request
@@ -158,22 +141,51 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function requestNeedsAuthentication(RestRequestInterface $request)
     {
-        $configurationKey = self::ACCESS_METHOD_READ;
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($this->isWrite($request)) {
-            $configurationKey = self::ACCESS_METHOD_WRITE;
-        }
-
-        // Throw an exception if the configuration is not complete
-        if (!isset($configuration[$configurationKey])) {
-            throw new InvalidConfigurationException($configurationKey . ' configuration not set', 1376826223);
-        }
-
-        $access = $configuration[$configurationKey];
-        if ($access === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
+        if ($this->getAccessConfiguration($request) === AccessControllerInterface::ACCESS_REQUIRE_LOGIN) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Returns if the given request requires authorization
+     *
+     * @param RestRequestInterface $request
+     * @return bool
+     */
+    protected function requiresAuthorization($request)
+    {
+        return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @return string
+     */
+    protected function getAccessConfiguration(RestRequestInterface $request)
+    {
+        if (!$this->requiresAuthorization($request)) {
+            return AccessControllerInterface::ACCESS_ALLOW;
+        }
+
+        $configurationKey = $request->isWrite()
+            ? self::ACCESS_METHOD_WRITE
+            : self::ACCESS_METHOD_READ;
+
+        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
+
+        // Throw an exception if the configuration is not complete
+        if (!isset($configuration[$configurationKey])) {
+            throw new InvalidConfigurationException(
+                sprintf(
+                    'Configuration "%s" not set for Resource Type "%s"',
+                    $configurationKey,
+                    $request->getResourceType()
+                ), 1376826223
+            );
+        }
+
+        return (string)$configuration[$configurationKey];
     }
 }
