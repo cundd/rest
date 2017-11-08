@@ -9,7 +9,7 @@ class RequestTest extends AbstractRequestBasedCase
     /**
      * @test
      */
-    public function getSentDataTest()
+    public function getSentDataFormUrlEncodedTest()
     {
         $testData = [
             'myData' => [
@@ -18,7 +18,33 @@ class RequestTest extends AbstractRequestBasedCase
             ],
         ];
         $_POST['myData'] = $testData['myData'];
-        $request = $this->buildTestRequest('MyAliasedModel' . time(), null);
+        $request = $this->buildTestRequest(
+            'MyAliasedModel' . time(),
+            null,
+            [],
+            ['Content-Type' => 'application/x-www-form-urlencoded']
+        );
+        $this->assertSame($testData, $request->getSentData());
+    }
+
+    /**
+     * @test
+     */
+    public function getSentDataMultipartFormDataTest()
+    {
+        $testData = [
+            'myData' => [
+                'name' => 'Blur',
+                'time' => time(),
+            ],
+        ];
+        $_POST['myData'] = $testData['myData'];
+        $request = $this->buildTestRequest(
+            'MyAliasedModel' . time(),
+            null,
+            [],
+            ['Content-Type' => 'multipart/form-data']
+        );
         $this->assertSame($testData, $request->getSentData());
     }
 
