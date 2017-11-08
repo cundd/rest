@@ -127,11 +127,13 @@ class Request implements ServerRequestInterface, RestRequestInterface
             return $this->sentData;
         }
         $contentTypes = $this->getHeader('content-type');
-        $isFormEncoded = array_reduce($contentTypes,
+        $isFormEncoded = array_reduce(
+            $contentTypes,
             function ($isFormEncoded, $contentType) {
                 if ($isFormEncoded) {
                     return true;
                 }
+
                 return strpos($contentType, 'application/x-www-form-urlencoded') !== false
                     || strpos($contentType, 'multipart/form-data') !== false;
             },
@@ -139,8 +141,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
         );
         if ($isFormEncoded) {
             $this->sentData = $this->getParsedBody();
-        }
-        else {
+        } else {
             $this->sentData = json_decode((string)$this->getBody(), true);
         }
 
