@@ -79,7 +79,7 @@ class AuthTest extends AbstractIntegrationCase
             'auth/login',
             'POST',
             ['username' => $this->getApiUser(), 'apikey' => $this->getApiKey()],
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'multipart/form-data']
         );
         $this->assertSame(
             200,
