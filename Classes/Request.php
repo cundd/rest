@@ -43,6 +43,11 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     private $originalPath;
 
+    /**
+     * @var
+     */
+    private $sentData;
+
 
     /**
      * Constructor for a new request with the given Server Request, resource type and format
@@ -118,18 +123,29 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     public function getSentData()
     {
-        $data = $this->getParsedBody();
+        if ($this->sentData) {
+            return $this->sentData;
+        }
+        $contentTypes = $this->getHeader('content-type');
+        $isFormEncoded = array_reduce(
+            $contentTypes,
+            function ($isFormEncoded, $contentType) {
+                if ($isFormEncoded) {
+                    return true;
+                }
 
-        /*
-         * If no form url-encoded body is sent check if a JSON
-         * payload is sent with the singularized root object key as
-         * the payload's root object key
-         */
-        if (!$data) {
-            return json_decode((string)$this->getBody(), true);
+                return strpos($contentType, 'application/x-www-form-urlencoded') !== false
+                    || strpos($contentType, 'multipart/form-data') !== false;
+            },
+            false
+        );
+        if ($isFormEncoded) {
+            $this->sentData = $this->getParsedBody();
+        } else {
+            $this->sentData = json_decode((string)$this->getBody(), true);
         }
 
-        return $data;
+        return $this->sentData;
     }
 
     /**
