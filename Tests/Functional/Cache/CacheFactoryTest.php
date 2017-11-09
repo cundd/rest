@@ -9,10 +9,11 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class CacheFactoryTest extends \PHPUnit\Framework\TestCase
+class CacheFactoryTest extends TestCase
 {
     /**
      * @var CacheFactory
@@ -72,7 +73,7 @@ class CacheFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return ObjectManagerInterface
+     * @return ObjectManagerInterface|ObjectManager
      */
     private function getObjectManager()
     {
