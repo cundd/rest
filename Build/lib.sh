@@ -2,6 +2,8 @@
 
 PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
+: ${DEBUG=""}
+
 function lib::_tput {
     : ${TERM="dumb"}
     if [ "$TERM" != "dumb" ] && hash tput &>/dev/null; then
@@ -28,6 +30,13 @@ function print_info() {
     lib::_tput setaf 4;
     echo "[INFO] $@";
     lib::_tput sgr0;
+}
+
+# Print a debug message
+function print_debug() {
+    if [ "$DEBUG" == "yes" ] || [ "$DEBUG" == "true" ]; then
+        >&2 echo "[DEBUG] $@";
+    fi
 }
 
 # Print a warning
