@@ -299,9 +299,11 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
         );
     }
 }
+```
 
+The lines below show how the Dispatcher will invoke your `configureRoutes()` method: 
 
-// This is how the Dispatcher will invoke your configureRoutes() method
+```php
 $handler = new CustomHandler(); // Actually get the Handler instance from the Object Manager
 $handler->configureRoutes($router, $request);
 ```
