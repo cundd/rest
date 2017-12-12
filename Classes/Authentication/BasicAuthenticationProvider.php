@@ -51,25 +51,29 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
         $username = null;
         $password = null;
 
-        // mod_php
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $username = $_SERVER['PHP_AUTH_USER'];
             $password = $_SERVER['PHP_AUTH_PW'];
-
-            // most other servers
-        } elseif (isset($_SERVER['HTTP_AUTHENTICATION'])) {
-            if (strpos(strtolower($_SERVER['HTTP_AUTHENTICATION']), 'basic') === 0) {
-                list($username, $password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHENTICATION'], 6)));
-            }
-        } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            if (strpos(strtolower($_SERVER['REDIRECT_HTTP_AUTHORIZATION']), 'basic') === 0) {
-                list($username, $password) = explode(
-                    ':',
-                    base64_decode(substr($_SERVER['REDIRECT_HTTP_AUTHORIZATION'], 6))
-                );
-            }
+        } elseif ($tuple = $this->checkServerData('HTTP_AUTHENTICATION')) {
+            list($username, $password) = $tuple;
+        } elseif ($tuple = $this->checkServerData('HTTP_AUTHORIZATION')) {
+            list($username, $password) = $tuple;
+        } elseif ($tuple = $this->checkServerData('REDIRECT_HTTP_AUTHORIZATION')) {
+            list($username, $password) = $tuple;
         }
 
         return $this->userProvider->checkCredentials($username, $password);
+    }
+
+    private function checkServerData($key)
+    {
+        if (isset($_SERVER[$key])) {
+            $value = $_SERVER[$key];
+            if (strpos(strtolower($value), 'basic') === 0) {
+                return explode(':', base64_decode(substr($value, 6)));
+            }
+        }
+
+        return [];
     }
 }
