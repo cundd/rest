@@ -28,7 +28,7 @@
       "email": "info@cundd.net"
     }
   ],
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "autoload": {
     "psr-4": {
       "Cundd\\Rest\\": "Classes/"
