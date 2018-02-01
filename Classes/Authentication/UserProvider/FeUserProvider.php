@@ -1,13 +1,5 @@
 <?php
 
-/*
- * rest
- * @author daniel
- * Date: 14.09.13
- * Time: 18:58
- */
-
-
 namespace Cundd\Rest\Authentication\UserProvider;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
