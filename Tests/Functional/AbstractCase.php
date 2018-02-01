@@ -32,7 +32,11 @@ class AbstractCase extends FunctionalTestCase
 
     public function setUp()
     {
-        parent::setUp();
+        try {
+            parent::setUp();
+        } catch (\TYPO3\CMS\Core\Exception $exception) {
+            //
+        }
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
