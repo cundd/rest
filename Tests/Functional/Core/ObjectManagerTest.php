@@ -9,12 +9,17 @@ use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
+use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Container\Container;
 
 class ObjectManagerTest extends AbstractCase
 {
@@ -27,6 +32,8 @@ class ObjectManagerTest extends AbstractCase
     {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
+        $this->registerLoggerImplementation();
+
         $this->fixture = new ObjectManager();
     }
 
@@ -261,5 +268,13 @@ class ObjectManagerTest extends AbstractCase
                 $defaultHandler,
             ],
         ];
+    }
+
+    private function registerLoggerImplementation()
+    {
+        /** @var Container $container */
+        $container = GeneralUtility::makeInstance(Container::class);
+        $container->registerImplementation(PsrLoggerInterface::class, StreamLogger::class);
+        $container->registerImplementation(CunddLoggerInterface::class, StreamLogger::class);
     }
 }

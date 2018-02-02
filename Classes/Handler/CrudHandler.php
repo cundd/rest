@@ -5,8 +5,8 @@ namespace Cundd\Rest\Handler;
 use Countable;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
-use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
@@ -46,15 +46,25 @@ class CrudHandler implements CrudHandlerInterface
     protected $responseFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Handler constructor
      *
      * @param ObjectManager            $objectManager
      * @param ResponseFactoryInterface $responseFactory
+     * @param LoggerInterface          $logger
      */
-    public function __construct(ObjectManager $objectManager, ResponseFactoryInterface $responseFactory)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        ResponseFactoryInterface $responseFactory,
+        LoggerInterface $logger
+    ) {
         $this->objectManager = $objectManager;
         $this->responseFactory = $responseFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -111,7 +121,7 @@ class CrudHandler implements CrudHandlerInterface
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
-        Dispatcher::getSharedDispatcher()->logRequest('update request', ['body' => $data]);
+        $this->logger->logRequest('update request', ['body' => $data]);
 
         $oldModel = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$oldModel) {
@@ -143,7 +153,7 @@ class CrudHandler implements CrudHandlerInterface
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
-        Dispatcher::getSharedDispatcher()->logRequest('update request', ['body' => $data]);
+        $this->logger->logRequest('update request', ['body' => $data]);
 
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
 
@@ -193,7 +203,7 @@ class CrudHandler implements CrudHandlerInterface
         $dataProvider = $this->getDataProvider();
 
         $data = $request->getSentData();
-        Dispatcher::getSharedDispatcher()->logRequest('create request', ['body' => $data]);
+        $this->logger->logRequest('create request', ['body' => $data]);
 
         /**
          * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
