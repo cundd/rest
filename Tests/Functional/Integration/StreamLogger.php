@@ -3,8 +3,7 @@
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-
-use Psr\Log\AbstractLogger;
+use Cundd\Rest\Log\AbstractLogger;
 
 class StreamLogger extends AbstractLogger
 {
