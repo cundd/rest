@@ -2,7 +2,6 @@
 
 namespace Cundd\Rest;
 
-use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
@@ -102,14 +101,16 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         // Checks if the request needs authentication
-        switch ($this->objectManager->getAccessController()->getAccess($request)) {
-            case AccessControllerInterface::ACCESS_ALLOW:
+        $access = $this->objectManager->getAccessController()->getAccess($request);
+        switch (true) {
+            case $access->isAllowed():
+            case $access->isAuthorized():
                 break;
 
-            case AccessControllerInterface::ACCESS_UNAUTHORIZED:
+            case $access->isUnauthorized():
                 return $this->responseFactory->createErrorResponse('Unauthorized', 401, $request);
 
-            case AccessControllerInterface::ACCESS_DENY:
+            case $access->isDenied():
             default:
                 return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
         }

@@ -20,9 +20,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         parent::setUp();
         /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $this->objectManager->get(
-            'Cundd\\Rest\\Configuration\\TypoScriptConfigurationProvider'
-        );
+        $configurationProvider = $this->objectManager->get(TypoScriptConfigurationProvider::class);
         $settings = [
             'paths' => [
                 'all'                         => [
@@ -64,13 +62,10 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = [
-            'path'  => 'all',
-            'read'  => 'allow',
-            'write' => 'deny',
-        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        $this->assertEquals($testConfiguration, $configuration);
+        $this->assertSame('all', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isAllowed());
+        $this->assertTrue($configuration->getWrite()->isDenied());
     }
 
     /**
@@ -80,13 +75,10 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = [
-            'path'  => 'my_ext-my_model',
-            'read'  => 'allow',
-            'write' => 'allow',
-        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        $this->assertEquals($testConfiguration, $configuration);
+        $this->assertSame('my_ext-my_model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isAllowed());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
     }
 
     /**
@@ -96,13 +88,10 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'vendor-my_third_ext-model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = [
-            'path'  => 'vendor-my_third_ext-model',
-            'read'  => 'deny',
-            'write' => 'allow',
-        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        $this->assertEquals($testConfiguration, $configuration);
+        $this->assertSame('vendor-my_third_ext-model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
     }
 
     /**
@@ -112,13 +101,10 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         $uri = 'vendor-my_fourth_ext-model/3/';
         $request = $this->buildRequestWithUri($uri);
-        $testConfiguration = [
-            'path'  => 'vendor-my_fourth_ext-model',
-            'read'  => 'deny',
-            'write' => 'allow',
-        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        $this->assertEquals($testConfiguration, $configuration);
+        $this->assertSame('vendor-my_fourth_ext-model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
     }
 
     /**
@@ -126,12 +112,9 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
      */
     public function getConfigurationForPathWithWildcardTest()
     {
-        $testConfiguration = [
-            'path'  => 'my_secondext-*',
-            'read'  => 'deny',
-            'write' => 'allow',
-        ];
         $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_secondext-my_model'));
-        $this->assertEquals($testConfiguration, $configuration);
+        $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
     }
 }

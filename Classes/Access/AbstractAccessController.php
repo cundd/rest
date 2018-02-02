@@ -2,8 +2,9 @@
 
 namespace Cundd\Rest\Access;
 
-use Cundd\Rest\Dispatcher;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManager;
 
 abstract class AbstractAccessController implements AccessControllerInterface
@@ -27,7 +28,7 @@ abstract class AbstractAccessController implements AccessControllerInterface
      * Checks if a valid user is logged in
      *
      * @param RestRequestInterface $request
-     * @return string
+     * @return Access
      * @throws \Exception
      */
     protected function checkAuthentication(RestRequestInterface $request)
@@ -35,13 +36,10 @@ abstract class AbstractAccessController implements AccessControllerInterface
         try {
             $isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate($request);
         } catch (\Exception $exception) {
-            Dispatcher::getSharedDispatcher()->logException($exception);
+            $this->objectManager->get(LoggerInterface::class)->logException($exception);
             throw $exception;
         }
-        if ($isAuthenticated === false) {
-            return self::ACCESS_UNAUTHORIZED;
-        }
 
-        return self::ACCESS_ALLOW;
+        return $isAuthenticated === false ? Access::unauthorized() : Access::authorized();
     }
 }

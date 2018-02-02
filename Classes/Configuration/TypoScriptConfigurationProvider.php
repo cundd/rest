@@ -2,6 +2,8 @@
 
 namespace Cundd\Rest\Configuration;
 
+use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
@@ -88,5 +90,49 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
     public function setSettings($settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Returns the paths configured in the settings
+     *
+     * @return ResourceConfiguration[]
+     */
+    public function getConfiguredResourceTypes()
+    {
+        $configurationCollection = [];
+        foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
+            // If no explicit path is configured use the current key
+            $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
+            $normalizeResourceType = Utility::normalizeResourceType($resourceType);
+            $configuration['path'] = $normalizeResourceType;
+
+            $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
+                ? new Access($configuration[self::ACCESS_METHOD_READ])
+                : Access::denied();
+            $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
+                ? new Access($configuration[self::ACCESS_METHOD_WRITE])
+                : Access::denied();
+            $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
+                new ResourceType($normalizeResourceType),
+                $readAccess,
+                $writeAccess,
+                isset($configuration['cacheLifeTime']) ? intval($configuration['cacheLifeTime']) : -1
+            );
+        }
+
+        return $configurationCollection;
+    }
+
+    /**
+     * @return array
+     */
+    private function getRawConfiguredResourceTypes()
+    {
+        $settings = $this->getSettings();
+        if (isset($settings['paths']) && is_array($settings['paths'])) {
+            return $settings['paths'];
+        }
+
+        return isset($settings['paths.']) ? $settings['paths.'] : [];
     }
 }

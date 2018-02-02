@@ -8,6 +8,15 @@ namespace Cundd\Rest\Configuration;
 interface ConfigurationProviderInterface
 {
     /**
+     * The request want's to write data
+     */
+    const ACCESS_METHOD_WRITE = 'write';
+    /**
+     * The request want's to read data
+     */
+    const ACCESS_METHOD_READ = 'read';
+
+    /**
      * Returns the setting with the given key
      *
      * @param string $keyPath
@@ -22,4 +31,11 @@ interface ConfigurationProviderInterface
      * @return array
      */
     public function getSettings();
+
+    /**
+     * Returns the paths configured in the settings
+     *
+     * @return array
+     */
+    public function getConfiguredResourceTypes();
 }
