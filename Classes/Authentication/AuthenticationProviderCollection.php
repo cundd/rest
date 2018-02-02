@@ -19,7 +19,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Create a new Authentication Provider collection with the given providers
      *
-     * @param array <AuthenticationProviderInterface>|\SplObjectStorage<AuthenticationProviderInterface> $providers
+     * @param AuthenticationProviderInterface[]|\SplObjectStorage<AuthenticationProviderInterface> $providers
      */
     public function __construct($providers)
     {
@@ -49,18 +49,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
         }
 
         return false;
-    }
-
-    /**
-     * @param \Bullet\Request|RestRequestInterface $request
-     * @return mixed|void
-     */
-    public function setRequest(RestRequestInterface $request)
-    {
-//        /** @var AuthenticationProviderInterface $authenticationProvider */
-//        foreach ($this->providers as $authenticationProvider) {
-//            $authenticationProvider->setRequest($request);
-//        }
     }
 
     /**

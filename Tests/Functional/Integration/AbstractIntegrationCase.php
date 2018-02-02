@@ -2,7 +2,6 @@
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
@@ -17,8 +16,6 @@ use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\Container\Container;
 
 class AbstractIntegrationCase extends AbstractCase
 {
@@ -129,10 +126,5 @@ class AbstractIntegrationCase extends AbstractCase
                 ],
             ]
         );
-    }
-
-    private function configureDatabaseAdapter()
-    {
-        $GLOBALS['TYPO3_DB'] = Factory::getConnection();
     }
 }

@@ -14,6 +14,7 @@ use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
 use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
+use Doctrine\DBAL\DBALException;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
@@ -35,7 +36,7 @@ class AbstractCase extends FunctionalTestCase
         try {
             parent::setUp();
         } catch (\TYPO3\CMS\Core\Exception $exception) {
-            //
+        } catch (DBALException $e) {
         }
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
