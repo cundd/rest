@@ -197,7 +197,7 @@ class Cache implements CacheInterface
     /**
      * Returns a date in the format for a HTTP header
      *
-     * @param $date
+     * @param int $date
      * @return string
      */
     private function getHttpDate($date)
@@ -214,7 +214,7 @@ class Cache implements CacheInterface
     {
         if (!$this->cacheInstance) {
             /** @var CacheManager $cacheManager */
-            $cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
+            $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
             $this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
         }
 

@@ -248,7 +248,7 @@ class Profiler
     /**
      * Starts and returns a new profiler instance
      *
-     * @param resource|object $outputHandler
+     * @param resource|object|bool $outputHandler
      * @return Profiler
      */
     public static function create($outputHandler = STDIN)
@@ -263,7 +263,7 @@ class Profiler
     /**
      * Returns a shared profiler instance
      *
-     * @param resource|object $outputHandler
+     * @param resource|object|bool $outputHandler
      * @return Profiler
      */
     public static function sharedInstance($outputHandler = STDIN)
