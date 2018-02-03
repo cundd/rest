@@ -4,6 +4,7 @@ namespace Cundd\Rest\Tests\Unit\Configuration;
 
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Domain\Model\ResourceType;
 
 class TypoScriptConfigurationProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +16,36 @@ class TypoScriptConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $settings = [
+            'paths' => [
+                'all'                         => [
+                    'path'  => 'all',
+                    'read'  => 'allow',
+                    'write' => 'deny',
+                ],
+                'my_ext-my_model'             => [
+                    'path'  => 'my_ext-my_model',
+                    'read'  => 'allow',
+                    'write' => 'allow',
+                ],
+                'my_secondext-*'              => [
+                    'path'  => 'my_secondext-*',
+                    'read'  => 'deny',
+                    'write' => 'allow',
+                ],
+                'vendor-my_third_ext-model'   => [
+                    'read'  => 'deny',
+                    'write' => 'allow',
+                ],
+                'vendor-my_fourth_ext-model.' => [
+                    'read'  => 'deny',
+                    'write' => 'allow',
+                ],
+            ],
+        ];
         $this->fixture = new TypoScriptConfigurationProvider();
+        $this->fixture->setSettings($settings);
     }
 
     public function tearDown()
@@ -95,5 +125,60 @@ class TypoScriptConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]);
         $this->fixture->getConfiguredResourceTypes();
+    }
+
+    /**
+     * @test
+     */
+    public function getDefaultConfigurationForPathTest()
+    {
+        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_ext-my_default_model'));
+        $this->assertSame('all', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isAllowed());
+        $this->assertTrue($configuration->getWrite()->isDenied());
+    }
+
+    /**
+     * @test
+     */
+    public function getConfigurationForPathWithoutWildcardTest()
+    {
+        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_ext-my_model'));
+        $this->assertSame('my_ext-my_model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isAllowed());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
+    }
+
+    /**
+     * @test
+     */
+    public function getConfigurationForPathWithoutExplicitPathConfigurationTest()
+    {
+        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('vendor-my_third_ext-model'));
+        $this->assertSame('vendor-my_third_ext-model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
+    }
+
+    /**
+     * @test
+     */
+    public function getConfigurationForPathWithoutExplicitPathConfigurationWithDotTest()
+    {
+        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('vendor-my_fourth_ext-model'));
+        $this->assertSame('vendor-my_fourth_ext-model', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
+    }
+
+    /**
+     * @test
+     */
+    public function getConfigurationForPathWithWildcardTest()
+    {
+        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_secondext-my_model'));
+        $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
+        $this->assertTrue($configuration->getRead()->isDenied());
+        $this->assertTrue($configuration->getWrite()->isAllowed());
     }
 }

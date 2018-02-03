@@ -93,6 +93,43 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
     }
 
     /**
+     * Returns the configuration matching the given resource type
+     *
+     * @param ResourceType $resourceType
+     * @return ResourceConfiguration|null
+     */
+    public function getConfigurationForResourceType(ResourceType $resourceType)
+    {
+        $configuredPaths = $this->getConfiguredResourceTypes();
+        $matchingConfiguration = null;
+        $resourceTypeString = Utility::normalizeResourceType($resourceType);
+
+        if (!$resourceTypeString) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Invalid normalized Resource Type "%s"',
+                    is_null($resourceTypeString) ? 'null' : $resourceTypeString
+                )
+            );
+        }
+
+        foreach ($configuredPaths as $configuration) {
+            $currentPath = (string)$configuration->getResourceType();
+
+            $currentPathPattern = str_replace('*', '\w*', str_replace('?', '\w', $currentPath));
+            $currentPathPattern = "!^$currentPathPattern$!";
+            if ($currentPath === 'all' && !$matchingConfiguration) {
+                $matchingConfiguration = $configuration;
+            } elseif (preg_match($currentPathPattern, $resourceTypeString)) {
+                $matchingConfiguration = $configuration;
+            }
+        }
+
+        return $matchingConfiguration;
+    }
+
+
+    /**
      * Returns the paths configured in the settings
      *
      * @return ResourceConfiguration[]

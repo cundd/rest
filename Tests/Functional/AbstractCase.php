@@ -51,17 +51,18 @@ class AbstractCase extends FunctionalTestCase
      *
      * @param string $uri
      * @param string $format
+     * @param string $method
      * @return RestRequestInterface
      */
-    public function buildRequestWithUri($uri, $format = null)
+    public function buildRequestWithUri($uri, $format = null, $method = null)
     {
         return RequestBuilderTrait::buildTestRequest(
             $uri,
-            null,       // $method
-            [],    // $params
-            [],    // $headers
-            null,       // $rawBody
-            null,       // $parsedBody
+            $method,   // $method
+            [],     // $params
+            [],     // $headers
+            null,   // $rawBody
+            null,   // $parsedBody
             $format
         );
     }

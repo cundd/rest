@@ -2,6 +2,8 @@
 
 namespace Cundd\Rest\Configuration;
 
+use Cundd\Rest\Domain\Model\ResourceType;
+
 /**
  * Interface for configuration providers
  */
@@ -38,4 +40,12 @@ interface ConfigurationProviderInterface
      * @return array
      */
     public function getConfiguredResourceTypes();
+
+    /**
+     * Returns the configuration matching the given resource type
+     *
+     * @param ResourceType $resourceType
+     * @return ResourceConfiguration|null
+     */
+    public function getConfigurationForResourceType(ResourceType $resourceType);
 }
