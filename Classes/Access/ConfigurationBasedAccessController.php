@@ -5,7 +5,6 @@ namespace Cundd\Rest\Access;
 use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
-use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManager;
@@ -96,11 +95,20 @@ class ConfigurationBasedAccessController extends AbstractAccessController
             return Access::allowed();
         }
 
-        $configuration = $this->getConfigurationForResourceType(new ResourceType($request->getResourceType()));
-        if ($request->isWrite()) {
-            return $configuration->getWrite();
-        }
+        $configuration = $this->getConfigurationForResourceType($request->getResourceType());
+        switch (true) {
+            case $request->isWrite():
+                return $configuration->getWrite();
 
-        return $configuration->getRead();
+            case $request->isPreflight():
+                // Should be already covered by `if (!$this->requiresAuthorization())`
+                return Access::allowed();
+
+            case $request->isRead():
+                return $configuration->getRead();
+
+            default:
+                throw new \OutOfBoundsException('Request is neither write, read, nor a preflight request');
+        }
     }
 }
