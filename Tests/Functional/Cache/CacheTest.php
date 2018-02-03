@@ -4,6 +4,8 @@
 namespace Cundd\Rest\Tests\Functional\Cache;
 
 use Cundd\Rest\Cache\Cache;
+use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
@@ -164,7 +166,24 @@ class CacheTest extends AbstractCase
         $cacheInstance = $this->getFrontendCacheMock();
         $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
         $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest($request, $response);
+        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
+    }
+
+    /**
+     * @test
+     */
+    public function setCachedValueForRequestWithResourceConfigurationTest()
+    {
+        $response = $this->buildTestResponse(200, [], 'Test content');
+        $uri = 'MyAliasedModel';
+        $request = $this->buildRequestWithUri($uri);
+
+        $cacheInstance = $this->getFrontendCacheMock();
+        $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
+
+        $this->fixture->setCacheLifeTime(-1);
+        $this->fixture->setCacheInstance($cacheInstance);
+        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request, 10));
     }
 
     /**
@@ -180,7 +199,7 @@ class CacheTest extends AbstractCase
         $cacheInstance->expects($this->never())->method('set')->will($this->returnValue(''));
 
         $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest($request, $response);
+        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
     }
 
     /**
@@ -234,6 +253,21 @@ class CacheTest extends AbstractCase
             false,
             false,
             ['getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag']
+        );
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @param int                  $cacheLifeTime
+     * @return ResourceConfiguration
+     */
+    private function buildResourceConfiguration(RestRequestInterface $request, $cacheLifeTime = -1)
+    {
+        return new ResourceConfiguration(
+            $request->getResourceType(),
+            Access::allowed(),
+            Access::allowed(),
+            $cacheLifeTime
         );
     }
 }

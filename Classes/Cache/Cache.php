@@ -2,6 +2,7 @@
 
 namespace Cundd\Rest\Cache;
 
+use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -52,12 +53,6 @@ class Cache implements CacheInterface
         $this->responseFactory = $responseFactory;
     }
 
-    /**
-     * Returns the cached value for the given request or NULL if it is not defined
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface|null
-     */
     public function getCachedValueForRequest(RestRequestInterface $request)
     {
         $cacheLifeTime = $this->getCacheLifeTime();
@@ -93,19 +88,19 @@ class Cache implements CacheInterface
             ->withHeader(Header::CUNDD_REST_CACHED, 'true');
     }
 
-    /**
-     * Sets the cache value for the given request
-     *
-     * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
-     */
-    public function setCachedValueForRequest(RestRequestInterface $request, ResponseInterface $response)
-    {
+    public function setCachedValueForRequest(
+        RestRequestInterface $request,
+        ResponseInterface $response,
+        ResourceConfiguration $resourceConfiguration
+    ) {
         if (false === $this->canBeCached($request, $response)) {
             return;
         }
 
-        $cacheLifeTime = $this->getCacheLifeTime();
+        $cacheLifeTime = $resourceConfiguration->getCacheLiveTime();
+        if ($cacheLifeTime < 0) {
+            $cacheLifeTime = $this->getCacheLifeTime();
+        }
 
         /*
          * Use caching if the cache life time configuration is not -1, an API

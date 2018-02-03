@@ -2,6 +2,7 @@
 
 namespace Cundd\Rest\Cache;
 
+use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -22,10 +23,16 @@ interface CacheInterface
     /**
      * Sets the cache value for the given request
      *
-     * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
+     * @param RestRequestInterface  $request
+     * @param ResponseInterface     $response
+     * @param ResourceConfiguration $resourceConfiguration
+     * @return void
      */
-    public function setCachedValueForRequest(RestRequestInterface $request, ResponseInterface $response);
+    public function setCachedValueForRequest(
+        RestRequestInterface $request,
+        ResponseInterface $response,
+        ResourceConfiguration $resourceConfiguration
+    );
 
     /**
      * Returns the cache key for the given request

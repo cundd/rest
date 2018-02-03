@@ -115,7 +115,8 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                 return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
         }
 
-        $newResponse = $this->addAdditionalHeaders($this->getCachedResponseOrCallHandler($request, $response));
+        $newResponse = $this->getCachedResponseOrCallHandler($request, $response);
+        $newResponse = $this->addAdditionalHeaders($newResponse);
 
         $this->logger->logResponse(
             'response: ' . $newResponse->getStatusCode(),
@@ -146,7 +147,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $newResponse = $this->callHandler($request);
 
         // Cache the response
-        $cache->setCachedValueForRequest($request, $newResponse);
+        $resourceConfiguration = $this->objectManager->getConfigurationProvider()
+            ->getConfigurationForResourceType($request->getResourceType());
+        $cache->setCachedValueForRequest($request, $newResponse, $resourceConfiguration);
 
         return $newResponse;
     }
