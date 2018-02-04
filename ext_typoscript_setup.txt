@@ -47,6 +47,16 @@ plugin.tx_rest.settings {
         press = press
         sms = sms
     }
+
+    handler {
+        all {
+            path = *
+            className = \Cundd\Rest\Handler\CrudHandler
+        }
+        auth {
+            className = \Cundd\Rest\Handler\AuthHandler
+        }
+    }
 }
 
 config.tx_extbase {

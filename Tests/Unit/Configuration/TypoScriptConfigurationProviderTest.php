@@ -2,6 +2,7 @@
 
 namespace Cundd\Rest\Tests\Unit\Configuration;
 
+use Cundd\Rest\Configuration\HandlerConfiguration;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
@@ -165,7 +166,9 @@ class TypoScriptConfigurationProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function getConfigurationForPathWithoutExplicitPathConfigurationWithDotTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('vendor-my_fourth_ext-model'));
+        $configuration = $this->fixture->getConfigurationForResourceType(
+            new ResourceType('vendor-my_fourth_ext-model')
+        );
         $this->assertSame('vendor-my_fourth_ext-model', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isAllowed());
@@ -180,5 +183,52 @@ class TypoScriptConfigurationProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isAllowed());
+    }
+
+
+    /**
+     * @test
+     */
+    public function getConfiguredHandlersTest()
+    {
+        $this->fixture->setSettings(
+            [
+                'handler' => [
+                    'my_protectedext'              => [
+                        'path'      => 'my_protectedext-*',
+                        'className' => 'SomeClass1',
+                    ],
+                    'vendor-my_ext-my_model'       => [
+                        'className' => 'SomeClass2',
+                    ],
+                    'vendor-my_other_ext-my_model' => [
+                        'path'      => 'vendor-my_other_ext-my_model',
+                        'className' => 'SomeClass3',
+                    ],
+                ],
+            ]
+        );
+
+        $handlerConfigurations = $this->fixture->getConfiguredHandlers();
+        $this->assertInternalType('array', $handlerConfigurations);
+        $this->assertCount(3, $handlerConfigurations);
+        array_map(
+            function ($c) {
+                $this->assertInstanceOf(HandlerConfiguration::class, $c);
+            },
+            $handlerConfigurations
+        );
+
+        $handlerConfiguration1 = $handlerConfigurations['my_protectedext-*'];
+        $this->assertSame('my_protectedext-*', (string)$handlerConfiguration1->getResourceType());
+        $this->assertSame('SomeClass1', $handlerConfiguration1->getClassName());
+
+        $handlerConfiguration2 = $handlerConfigurations['vendor-my_ext-my_model'];
+        $this->assertSame('vendor-my_ext-my_model', (string)$handlerConfiguration2->getResourceType());
+        $this->assertSame('SomeClass2', $handlerConfiguration2->getClassName());
+
+        $handlerConfiguration3 = $handlerConfigurations['vendor-my_other_ext-my_model'];
+        $this->assertSame('vendor-my_other_ext-my_model', (string)$handlerConfiguration3->getResourceType());
+        $this->assertSame('SomeClass3', $handlerConfiguration3->getClassName());
     }
 }

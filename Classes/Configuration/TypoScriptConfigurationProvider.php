@@ -4,6 +4,7 @@ namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
@@ -128,7 +129,6 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
         return $matchingConfiguration;
     }
 
-
     /**
      * Returns the paths configured in the settings
      *
@@ -138,10 +138,7 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
     {
         $configurationCollection = [];
         foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
-            // If no explicit path is configured use the current key
-            $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
-            $normalizeResourceType = Utility::normalizeResourceType($resourceType);
-            $configuration['path'] = $normalizeResourceType;
+            list($configuration, $normalizeResourceType) = $this->preparePath($configuration, $path);
 
             $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
                 ? new Access($configuration[self::ACCESS_METHOD_READ])
@@ -171,5 +168,58 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
         }
 
         return isset($settings['paths.']) ? $settings['paths.'] : [];
+    }
+
+    /**
+     * Returns the Handlers configured in the settings
+     *
+     * @return HandlerConfiguration[]
+     */
+    public function getConfiguredHandlers()
+    {
+        $configurationCollection = [];
+        foreach ($this->getRawConfiguredHandlers() as $path => $configuration) {
+            list($configuration, $normalizeResourceType) = $this->preparePath($configuration, $path);
+
+            if (!isset($configuration['className'])) {
+                throw new InvalidConfigurationException(sprintf('No class name provided for handler path "%s"', $path));
+            }
+
+            $configurationCollection[$normalizeResourceType] = new HandlerConfiguration(
+                new ResourceType($normalizeResourceType),
+                $configuration['className']
+            );
+        }
+
+        return $configurationCollection;
+    }
+
+    /**
+     * @return array
+     */
+    private function getRawConfiguredHandlers()
+    {
+        $settings = $this->getSettings();
+        if (isset($settings['handler']) && is_array($settings['handler'])) {
+            return $settings['handler'];
+        }
+
+        return isset($settings['handler.']) ? $settings['handler.'] : [];
+    }
+
+    /**
+     * If no explicit path is configured use the current key
+     *
+     * @param array  $configuration
+     * @param string $path
+     * @return array
+     */
+    private function preparePath(array $configuration, $path)
+    {
+        $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
+        $normalizeResourceType = Utility::normalizeResourceType($resourceType);
+        $configuration['path'] = $normalizeResourceType;
+
+        return [$configuration, $normalizeResourceType];
     }
 }

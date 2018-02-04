@@ -37,7 +37,7 @@ interface ConfigurationProviderInterface
     /**
      * Returns the paths configured in the settings
      *
-     * @return array
+     * @return ResourceConfiguration[]
      */
     public function getConfiguredResourceTypes();
 
@@ -48,4 +48,11 @@ interface ConfigurationProviderInterface
      * @return ResourceConfiguration|null
      */
     public function getConfigurationForResourceType(ResourceType $resourceType);
+
+    /**
+     * Returns the Handlers configured in the settings
+     *
+     * @return HandlerConfiguration[]
+     */
+    public function getConfiguredHandlers();
 }
