@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class Dispatcher implements SingletonInterface, DispatcherInterface
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -81,7 +81,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->requestFactory->registerCurrentRequest($request);
-        $this->objectManager->reassignRequest();
+        if (method_exists($this->objectManager, 'reassignRequest')) {
+            $this->objectManager->reassignRequest();
+        }
 
         return $this->dispatch($this->requestFactory->getRequest(), $response);
     }
