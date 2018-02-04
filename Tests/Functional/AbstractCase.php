@@ -9,12 +9,15 @@ use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
 use Cundd\Rest\Tests\Functional\Database\Factory;
+use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use Doctrine\DBAL\DBALException;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
@@ -180,4 +183,13 @@ class AbstractCase extends FunctionalTestCase
 
         return new ObjectManager();
     }
+
+    protected function registerLoggerImplementation()
+    {
+        /** @var Container $container */
+        $container = GeneralUtility::makeInstance(Container::class);
+        $container->registerImplementation(PsrLoggerInterface::class, StreamLogger::class);
+        $container->registerImplementation(CunddLoggerInterface::class, StreamLogger::class);
+    }
+
 }

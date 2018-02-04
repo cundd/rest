@@ -19,18 +19,17 @@ class HandlerDescriptorTest extends AbstractCase
     {
         parent::setUp();
 
+        $this->registerLoggerImplementation();
+
         $configurationProvider = new TypoScriptConfigurationProvider();
         $configurationProvider->setSettings(
             [
-                'handler' =>
-                    [
-                        'all' =>
-                            [
-                                'path'      => 'all',
-                                'className' => \Cundd\Rest\Handler\CrudHandler::class,
-                            ],
+                'handler' => [
+                    'all' => [
+                        'path'      => 'all',
+                        'className' => CrudHandler::class,
                     ],
-
+                ],
             ]
         );
 
@@ -53,7 +52,6 @@ class HandlerDescriptorTest extends AbstractCase
         $allHandler = $result['all'];
         $this->assertInstanceOf(CrudHandler::class, $allHandler['handler']);
         $this->assertCount(5, $allHandler['routes']);
-        var_dump(array_keys($allHandler['routes']));
 
         $this->assertArrayHasKey('GET', $allHandler['routes']);
         $this->assertArrayHasKey('POST', $allHandler['routes']);
@@ -61,9 +59,7 @@ class HandlerDescriptorTest extends AbstractCase
         $this->assertArrayHasKey('DELETE', $allHandler['routes']);
         $this->assertArrayHasKey('PATCH', $allHandler['routes']);
 
-        $this->assertCount(4,$allHandler['routes']['GET']);
-        var_dump($allHandler['routes']['GET']);
-
+        $this->assertCount(4, $allHandler['routes']['GET']);
     }
 
     protected function tearDown()

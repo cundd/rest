@@ -8,6 +8,7 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\HandlerConfiguration;
 use Cundd\Rest\Documentation\Handler\DescriptiveRouter;
 use Cundd\Rest\Documentation\Handler\DummyRequest;
+use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Router\RouteInterface;
@@ -63,7 +64,7 @@ class HandlerDescriptor
     {
         $className = $handlerConfiguration->getClassName();
         if (!class_exists($className)) {
-            return $this->buildError('Handler class "%s" does not seem to exist', $className);
+            return $this->buildError($this->buildException('Handler class "%s" does not seem to exist', $className));
         }
         if ($className[0] === '\\') {
             $className = substr($className, 1);
@@ -72,13 +73,15 @@ class HandlerDescriptor
         try {
             $handler = $this->objectManager->get($className);
         } catch (\Exception $exception) {
-            return $this->buildError($exception->getMessage());
+            return $this->buildError($exception);
         }
         if (!($handler instanceof HandlerInterface)) {
             return $this->buildError(
-                'Registered handler class "%s" does not implement "%s"',
-                $className,
-                HandlerInterface::class
+                $this->buildException(
+                    'Registered handler class "%s" does not implement "%s"',
+                    $className,
+                    HandlerInterface::class
+                )
             );
         }
 
@@ -87,7 +90,7 @@ class HandlerDescriptor
         try {
             $handler->configureRoutes($router, $request);
         } catch (\Exception $exception) {
-            return $this->buildError($exception->getMessage());
+            return $this->buildError($exception);
         }
 
         return [
@@ -96,11 +99,18 @@ class HandlerDescriptor
         ];
     }
 
-    private function buildError($message, ...$arguments)
+    private function buildError(\Exception $exception)
     {
         return [
-            'error' => vsprintf($message, $arguments),
+            'errorMessage' => $exception->getMessage(),
+            'error'        => $exception,
+            'trace'        => $exception->getTraceAsString(),
         ];
+    }
+
+    private function buildException($message, ...$arguments)
+    {
+        return new InvalidConfigurationException(vsprintf($message, $arguments));
     }
 
     /**
