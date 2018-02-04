@@ -4,18 +4,21 @@ plugin.tx_rest.settings {
             path = all
             read = deny
             write = deny
+            cacheLifeTime = -1
         }
 
         document {
             path = Document
             read = deny
             write = deny
+            cacheLifeTime = -1
         }
 
         auth {
             path = auth
             read = allow
             write = allow
+            cacheLifeTime = -1
         }
     }
 
