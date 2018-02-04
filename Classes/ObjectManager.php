@@ -10,6 +10,7 @@ use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
@@ -221,14 +222,34 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      */
     public function getHandler()
     {
-        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($this->getRequest()->getResourceType());
+        $resourceType = $this->getRequest()->getResourceType();
+        $resourceConfiguration = $this->getConfigurationProvider()->getConfigurationForResourceType($resourceType);
+        if (!$resourceConfiguration) {
+            // This case should not occur in reality, since at least the `all` Resource should have been configured
+            throw new InvalidConfigurationException(
+                sprintf('Resource "%s" is not configured', (string)$resourceType)
+            );
+        }
+        $handlerClass = $resourceConfiguration->getHandlerClass();
+        if ($handlerClass) {
+            if (!class_exists($handlerClass)) {
+                throw new InvalidConfigurationException(
+                    sprintf('Configured Handler "%s" does not exist', $handlerClass)
+                );
+            }
+
+            return $this->get($handlerClass);
+        }
+
+        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
 
         $classes = [
             // Check if an extension provides a Data Provider
             'Tx_' . $extension . '_Rest_Handler',
             ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler',
 
-            // Check for a specific builtin Data Provider
+            // Check for a specific builtin Handler
+            // @deprecated register a `handlerClass` instead
             'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
         ];
 

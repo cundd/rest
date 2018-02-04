@@ -3,10 +3,13 @@
 namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManager;
@@ -15,6 +18,8 @@ use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
 class ObjectManagerTest extends AbstractCase
 {
@@ -30,6 +35,7 @@ class ObjectManagerTest extends AbstractCase
         $this->registerLoggerImplementation();
 
         $this->fixture = new ObjectManager();
+        $this->injectConfigurationProviderUsingHandlerClass('');
     }
 
     public function tearDown()
@@ -67,6 +73,7 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getConfigurationProviderTest()
     {
+        $this->fixture = new ObjectManager();
         $object = $this->fixture->getConfigurationProvider();
         $this->assertInstanceOf(TypoScriptConfigurationProvider::class, $object);
     }
@@ -106,7 +113,9 @@ class ObjectManagerTest extends AbstractCase
         $defaultDataProvider = DataProvider::class;
 
         return [
-            //     url,                expected,                     classToBuild
+            // URL,
+            // Expected result class,
+            // Class to Build
             [
                 '',
                 DataProvider::class,
@@ -263,5 +272,50 @@ class ObjectManagerTest extends AbstractCase
                 $defaultHandler,
             ],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function getHandlerFromResourceTest()
+    {
+        $expectedHandler = 'Tx_MyExt_Rest_Handler' . time();
+        $this->buildClass([$expectedHandler, '', CrudHandler::class]);
+
+        $resourceType = new ResourceType('my_secondext-my_model');
+        $resourceTypeString = (string)$resourceType;
+        $configurationProvider = new TypoScriptConfigurationProvider();
+        $configurationProvider->setSettings(
+            [
+                'paths' => [
+                    $resourceTypeString => [
+                        'handlerClass' => $expectedHandler,
+                    ],
+                ],
+            ]
+        );
+        $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
+
+        $_GET['u'] = $resourceTypeString;
+
+        $handler = $this->fixture->getHandler();
+        $this->assertInstanceOf($expectedHandler, $handler);
+        $this->assertInstanceOf(HandlerInterface::class, $handler);
+        $this->assertInstanceOf(CrudHandler::class, $handler);
+    }
+
+    /**
+     * @param string $handler
+     */
+    private function injectConfigurationProviderUsingHandlerClass($handler)
+    {
+        /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
+        $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
+        $resourceConfiguration->getHandlerClass()->willReturn($handler);
+        /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProvider */
+        $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
+        $configurationProvider->getConfigurationForResourceType(Argument::any())
+            ->willReturn($resourceConfiguration->reveal());
+        $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 }
