@@ -8,6 +8,8 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Handler\AuthHandler;
+use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
@@ -46,7 +48,9 @@ class AbstractCase extends FunctionalTestCase
 
         $GLOBALS['TYPO3_DB'] = $this->getDatabaseConnection();
 
+        $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
+        $this->configureConfigurationProvider();
     }
 
     /**
@@ -184,6 +188,52 @@ class AbstractCase extends FunctionalTestCase
         return new ObjectManager();
     }
 
+    protected function configureConfigurationProvider()
+    {
+        /** @var TypoScriptConfigurationProvider $configurationProvider */
+        $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
+        $configurationProvider->setSettings(
+            [
+                "paths"            => [
+                    "all" => [
+                        "path"         => "all",
+                        "read"         => "deny",
+                        "write"        => "deny",
+                        "handlerClass" => CrudHandler::class,
+                    ],
+
+                    "document" => [
+                        "path"  => "Document",
+                        "read"  => "deny",
+                        "write" => "deny",
+                    ],
+
+                    "auth" => [
+                        "path"         => "auth",
+                        "read"         => "allow",
+                        "write"        => "allow",
+                        "handlerClass" => AuthHandler::class,
+                    ],
+                ],
+
+                # Define words that should not be converted to singular
+                "singularToPlural" => [
+                    "news"        => "news",
+                    "equipment"   => "equipment",
+                    "information" => "information",
+                    "rice"        => "rice",
+                    "money"       => "money",
+                    "species"     => "species",
+                    "series"      => "series",
+                    "fish"        => "fish",
+                    "sheep"       => "sheep",
+                    "press"       => "press",
+                    "sms"         => "sms",
+                ],
+            ]
+        );
+    }
+
     protected function registerLoggerImplementation()
     {
         /** @var Container $container */
@@ -191,5 +241,4 @@ class AbstractCase extends FunctionalTestCase
         $container->registerImplementation(PsrLoggerInterface::class, StreamLogger::class);
         $container->registerImplementation(CunddLoggerInterface::class, StreamLogger::class);
     }
-
 }

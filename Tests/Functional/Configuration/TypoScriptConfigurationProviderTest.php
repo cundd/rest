@@ -32,7 +32,7 @@ class TypoScriptConfigurationProviderTest extends AbstractCase
         $this->assertInternalType('array', $settings);
 
         if (count($this->fixture->getSettings()) !== 0) {
-            $this->assertArrayHasKey('paths.', $settings);
+            $this->assertTrue(isset($settings['paths']) || isset($settings['paths.']));
         }
     }
 
@@ -45,8 +45,8 @@ class TypoScriptConfigurationProviderTest extends AbstractCase
         $this->assertInternalType('array', $settings);
         if (count($settings) > 0) {
             $this->assertInternalType('array', $this->fixture->getSetting('paths'));
-            $this->assertInternalType('array', $this->fixture->getSetting('paths.1'));
-            $this->assertEquals('all', $this->fixture->getSetting('paths.1.path'));
+            $this->assertInternalType('array', $this->fixture->getSetting('paths.all'));
+            $this->assertEquals('all', $this->fixture->getSetting('paths.all.path'));
         }
     }
 

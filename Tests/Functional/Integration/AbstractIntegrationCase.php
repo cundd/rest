@@ -6,6 +6,8 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Handler\AuthHandler;
+use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\Logger;
 use Cundd\Rest\ObjectManagerInterface;
@@ -29,9 +31,6 @@ class AbstractIntegrationCase extends AbstractCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->configureConfigurationProvider();
-//        $this->configureDatabaseAdapter();
 
         $this->dispatcher = new Dispatcher(
             $this->objectManager->get(ObjectManagerInterface::class),
@@ -81,50 +80,6 @@ class AbstractIntegrationCase extends AbstractCase
         return sprintf(
             'Error with response content: %s',
             $bodyPart
-        );
-    }
-
-    private function configureConfigurationProvider()
-    {
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
-        $configurationProvider->setSettings(
-            [
-                "paths"            => [
-                    "all" => [
-                        "path"  => "all",
-                        "read"  => "deny",
-                        "write" => "deny",
-                    ],
-
-                    "document" => [
-                        "path"  => "Document",
-                        "read"  => "deny",
-                        "write" => "deny",
-                    ],
-
-                    "auth" => [
-                        "path"  => "auth",
-                        "read"  => "allow",
-                        "write" => "allow",
-                    ],
-                ],
-
-                # Define words that should not be converted to singular
-                "singularToPlural" => [
-                    "news"        => "news",
-                    "equipment"   => "equipment",
-                    "information" => "information",
-                    "rice"        => "rice",
-                    "money"       => "money",
-                    "species"     => "species",
-                    "series"      => "series",
-                    "fish"        => "fish",
-                    "sheep"       => "sheep",
-                    "press"       => "press",
-                    "sms"         => "sms",
-                ],
-            ]
         );
     }
 }
