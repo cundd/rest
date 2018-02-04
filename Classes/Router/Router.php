@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router implements RouterInterface
 {
-    private $registeredRoutes = [
+    protected $registeredRoutes = [
         'GET'  => [],
         'POST' => [],
         'PUT'  => [],
