@@ -47,7 +47,7 @@ class HandlerDescriptor
      */
     public function getInformation()
     {
-        $handlerConfigurations = $this->configurationProvider->getConfiguredResourceTypes();
+        $handlerConfigurations = $this->configurationProvider->getConfiguredResources();
 
         $information = [];
         foreach ($handlerConfigurations as $path => $handlerConfiguration) {

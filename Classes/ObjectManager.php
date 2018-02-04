@@ -223,7 +223,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getHandler()
     {
         $resourceType = $this->getRequest()->getResourceType();
-        $resourceConfiguration = $this->getConfigurationProvider()->getConfigurationForResourceType($resourceType);
+        $resourceConfiguration = $this->getConfigurationProvider()->getResourceConfiguration($resourceType);
         if (!$resourceConfiguration) {
             // This case should not occur in reality, since at least the `all` Resource should have been configured
             throw new InvalidConfigurationException(

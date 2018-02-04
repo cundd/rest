@@ -39,7 +39,7 @@ interface ConfigurationProviderInterface
      *
      * @return ResourceConfiguration[]
      */
-    public function getConfiguredResourceTypes();
+    public function getConfiguredResources();
 
     /**
      * Returns the configuration matching the given resource type
@@ -47,5 +47,5 @@ interface ConfigurationProviderInterface
      * @param ResourceType $resourceType
      * @return ResourceConfiguration|null
      */
-    public function getConfigurationForResourceType(ResourceType $resourceType);
+    public function getResourceConfiguration(ResourceType $resourceType);
 }

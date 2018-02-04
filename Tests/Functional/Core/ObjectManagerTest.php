@@ -19,6 +19,7 @@ use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class ObjectManagerTest extends AbstractCase
@@ -311,10 +312,16 @@ class ObjectManagerTest extends AbstractCase
     {
         /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
         $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
-        $resourceConfiguration->getHandlerClass()->willReturn($handler);
+        /** @var MethodProphecy|string $handlerClass */
+        $handlerClass = $resourceConfiguration->getHandlerClass();
+        $handlerClass->willReturn($handler);
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProvider */
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
-        $configurationProvider->getConfigurationForResourceType(Argument::any())
+        /** @var ResourceType $resourceType */
+        $resourceType = Argument::any();
+        /** @var MethodProphecy|ResourceConfiguration $methodProphecy */
+        $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
+        $methodProphecy
             ->willReturn($resourceConfiguration->reveal());
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }

@@ -150,7 +150,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
         // Cache the response
         $resourceConfiguration = $this->objectManager->getConfigurationProvider()
-            ->getConfigurationForResourceType($request->getResourceType());
+            ->getResourceConfiguration($request->getResourceType());
         $cache->setCachedValueForRequest($request, $newResponse, $resourceConfiguration);
 
         return $newResponse;

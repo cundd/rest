@@ -83,7 +83,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
             ]
         );
 
-        $resourceTypeConfigurations = $this->fixture->getConfiguredResourceTypes();
+        $resourceTypeConfigurations = $this->fixture->getConfiguredResources();
         $this->assertInternalType('array', $resourceTypeConfigurations);
         $this->assertCount(3, $resourceTypeConfigurations);
         array_map(
@@ -119,7 +119,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
     public function getConfiguredResourceTypesInvalidReadTest()
     {
         $this->fixture->setSettings(['paths' => ['my_protectedext' => ['read' => 'invalid']]]);
-        $this->fixture->getConfiguredResourceTypes();
+        $this->fixture->getConfiguredResources();
     }
 
     /**
@@ -129,7 +129,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
     public function getConfiguredResourceTypesInvalidWriteTest()
     {
         $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]);
-        $this->fixture->getConfiguredResourceTypes();
+        $this->fixture->getConfiguredResources();
     }
 
     /**
@@ -137,7 +137,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getDefaultConfigurationForPathTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_ext-my_default_model'));
+        $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_ext-my_default_model'));
         $this->assertSame('all', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isAllowed());
         $this->assertTrue($configuration->getWrite()->isDenied());
@@ -148,7 +148,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getConfigurationForPathWithoutWildcardTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_ext-my_model'));
+        $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_ext-my_model'));
         $this->assertSame('my_ext-my_model', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isAllowed());
         $this->assertTrue($configuration->getWrite()->isAllowed());
@@ -159,7 +159,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getConfigurationForPathWithoutExplicitPathConfigurationTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('vendor-my_third_ext-model'));
+        $configuration = $this->fixture->getResourceConfiguration(new ResourceType('vendor-my_third_ext-model'));
         $this->assertSame('vendor-my_third_ext-model', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isAllowed());
@@ -170,7 +170,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getConfigurationForPathWithoutExplicitPathConfigurationWithDotTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(
+        $configuration = $this->fixture->getResourceConfiguration(
             new ResourceType('vendor-my_fourth_ext-model')
         );
         $this->assertSame('vendor-my_fourth_ext-model', (string)$configuration->getResourceType());
@@ -183,7 +183,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getConfigurationForPathWithWildcardTest()
     {
-        $configuration = $this->fixture->getConfigurationForResourceType(new ResourceType('my_secondext-my_model'));
+        $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_secondext-my_model'));
         $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isAllowed());
@@ -194,7 +194,7 @@ class TypoScriptConfigurationProviderTest extends TestCase
      */
     public function getConfiguredHandlersTest()
     {
-        $handlerConfigurations = $this->fixture->getConfiguredResourceTypes();
+        $handlerConfigurations = $this->fixture->getConfiguredResources();
         $this->assertInternalType('array', $handlerConfigurations);
         $this->assertCount(5, $handlerConfigurations);
         array_map(

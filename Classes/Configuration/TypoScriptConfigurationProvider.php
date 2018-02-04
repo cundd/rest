@@ -4,7 +4,6 @@ namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
@@ -97,11 +96,11 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
      * Returns the configuration matching the given resource type
      *
      * @param ResourceType $resourceType
-     * @return ResourceConfiguration|null
+     * @return ResourceConfiguration
      */
-    public function getConfigurationForResourceType(ResourceType $resourceType)
+    public function getResourceConfiguration(ResourceType $resourceType)
     {
-        $configuredPaths = $this->getConfiguredResourceTypes();
+        $configuredPaths = $this->getConfiguredResources();
         $matchingConfiguration = null;
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
 
@@ -134,7 +133,7 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
      *
      * @return ResourceConfiguration[]
      */
-    public function getConfiguredResourceTypes()
+    public function getConfiguredResources()
     {
         $configurationCollection = [];
         foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
