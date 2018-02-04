@@ -59,7 +59,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function getConfigurationForResourceType(ResourceType $resourceType)
     {
-        return $this->configurationProvider->getConfigurationForResourceType($resourceType);
+        return $this->configurationProvider->getResourceConfiguration($resourceType);
     }
 
     /**

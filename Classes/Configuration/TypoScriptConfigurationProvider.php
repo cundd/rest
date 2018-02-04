@@ -2,6 +2,7 @@
 
 namespace Cundd\Rest\Configuration;
 
+use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\SingletonInterface;
@@ -123,6 +124,12 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
             } elseif (preg_match($currentPathPattern, $resourceTypeString)) {
                 $matchingConfiguration = $configuration;
             }
+        }
+
+        if (null === $matchingConfiguration) {
+            throw new InvalidConfigurationException(
+                'No matching Resource Configuration found and "all" is not configured'
+            );
         }
 
         return $matchingConfiguration;
