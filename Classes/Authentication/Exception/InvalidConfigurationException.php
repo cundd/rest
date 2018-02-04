@@ -2,6 +2,6 @@
 
 namespace Cundd\Rest\Authentication\Exception;
 
-class InvalidConfigurationException extends \LogicException
+class InvalidConfigurationException extends \Cundd\Rest\Exception\InvalidConfigurationException
 {
 }
