@@ -48,11 +48,4 @@ interface ConfigurationProviderInterface
      * @return ResourceConfiguration|null
      */
     public function getConfigurationForResourceType(ResourceType $resourceType);
-
-    /**
-     * Returns the Handlers configured in the settings
-     *
-     * @return HandlerConfiguration[]
-     */
-    public function getConfiguredHandlers();
 }

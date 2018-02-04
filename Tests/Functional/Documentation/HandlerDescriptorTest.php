@@ -24,10 +24,10 @@ class HandlerDescriptorTest extends AbstractCase
         $configurationProvider = new TypoScriptConfigurationProvider();
         $configurationProvider->setSettings(
             [
-                'handler' => [
+                'paths' => [
                     'all' => [
                         'path'      => 'all',
-                        'className' => CrudHandler::class,
+                        'handlerClass' => CrudHandler::class,
                     ],
                 ],
             ]

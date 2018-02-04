@@ -267,7 +267,8 @@ class CacheTest extends AbstractCase
             $request->getResourceType(),
             Access::allowed(),
             Access::allowed(),
-            $cacheLifeTime
+            $cacheLifeTime,
+            ''
         );
     }
 }

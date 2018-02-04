@@ -5,6 +5,7 @@ plugin.tx_rest.settings {
             read = deny
             write = deny
             cacheLifeTime = -1
+            className = \Cundd\Rest\Handler\CrudHandler
         }
 
         document {
@@ -19,6 +20,7 @@ plugin.tx_rest.settings {
             read = allow
             write = allow
             cacheLifeTime = -1
+            className = \Cundd\Rest\Handler\AuthHandler
         }
     }
 
@@ -46,16 +48,6 @@ plugin.tx_rest.settings {
         sheep = sheep
         press = press
         sms = sms
-    }
-
-    handler {
-        all {
-            path = *
-            className = \Cundd\Rest\Handler\CrudHandler
-        }
-        auth {
-            className = \Cundd\Rest\Handler\AuthHandler
-        }
     }
 }
 

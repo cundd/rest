@@ -29,19 +29,26 @@ class ResourceConfiguration
     private $cacheLiveTime = 0;
 
     /**
+     * @var string
+     */
+    private $handlerClass;
+
+    /**
      * ResourceConfiguration constructor
      *
      * @param ResourceType $resourceType
      * @param Access       $read
      * @param Access       $write
      * @param int          $cacheLiveTime
+     * @param string       $handlerClass
      */
-    public function __construct(ResourceType $resourceType, Access $read, Access $write, $cacheLiveTime)
+    public function __construct(ResourceType $resourceType, Access $read, Access $write, $cacheLiveTime, $handlerClass)
     {
         $this->resourceType = $resourceType;
         $this->read = $read;
         $this->write = $write;
         $this->cacheLiveTime = (int)$cacheLiveTime;
+        $this->handlerClass = (string)$handlerClass;
     }
 
     /**
@@ -74,5 +81,13 @@ class ResourceConfiguration
     public function getCacheLiveTime()
     {
         return $this->cacheLiveTime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHandlerClass()
+    {
+        return $this->handlerClass;
     }
 }

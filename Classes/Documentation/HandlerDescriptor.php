@@ -5,10 +5,11 @@ namespace Cundd\Rest\Documentation;
 
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Configuration\HandlerConfiguration;
+use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Documentation\Handler\DescriptiveRouter;
 use Cundd\Rest\Documentation\Handler\DummyRequest;
 use Cundd\Rest\Exception\InvalidConfigurationException;
+use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Router\RouteInterface;
@@ -46,7 +47,7 @@ class HandlerDescriptor
      */
     public function getInformation()
     {
-        $handlerConfigurations = $this->configurationProvider->getConfiguredHandlers();
+        $handlerConfigurations = $this->configurationProvider->getConfiguredResourceTypes();
 
         $information = [];
         foreach ($handlerConfigurations as $path => $handlerConfiguration) {
@@ -57,12 +58,15 @@ class HandlerDescriptor
     }
 
     /**
-     * @param HandlerConfiguration $handlerConfiguration
+     * @param ResourceConfiguration $configuration
      * @return array
      */
-    private function fetchInformationForHandler(HandlerConfiguration $handlerConfiguration)
+    private function fetchInformationForHandler(ResourceConfiguration $configuration)
     {
-        $className = $handlerConfiguration->getClassName();
+        $className = $configuration->getHandlerClass();
+        if (!$className) {
+            $className = CrudHandler::class;
+        }
         if (!class_exists($className)) {
             return $this->buildError($this->buildException('Handler class "%s" does not seem to exist', $className));
         }
@@ -86,7 +90,7 @@ class HandlerDescriptor
         }
 
         $router = new DescriptiveRouter();
-        $request = new DummyRequest($handlerConfiguration->getResourceType());
+        $request = new DummyRequest($configuration->getResourceType());
         try {
             $handler->configureRoutes($router, $request);
         } catch (\Exception $exception) {

@@ -150,7 +150,8 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
                 new ResourceType($normalizeResourceType),
                 $readAccess,
                 $writeAccess,
-                isset($configuration['cacheLifeTime']) ? intval($configuration['cacheLifeTime']) : -1
+                isset($configuration['cacheLifeTime']) ? intval($configuration['cacheLifeTime']) : -1,
+                isset($configuration['handlerClass']) ? $configuration['handlerClass'] : ''
             );
         }
 
@@ -168,43 +169,6 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
         }
 
         return isset($settings['paths.']) ? $settings['paths.'] : [];
-    }
-
-    /**
-     * Returns the Handlers configured in the settings
-     *
-     * @return HandlerConfiguration[]
-     */
-    public function getConfiguredHandlers()
-    {
-        $configurationCollection = [];
-        foreach ($this->getRawConfiguredHandlers() as $path => $configuration) {
-            list($configuration, $normalizeResourceType) = $this->preparePath($configuration, $path);
-
-            if (!isset($configuration['className'])) {
-                throw new InvalidConfigurationException(sprintf('No class name provided for handler path "%s"', $path));
-            }
-
-            $configurationCollection[$normalizeResourceType] = new HandlerConfiguration(
-                new ResourceType($normalizeResourceType),
-                $configuration['className']
-            );
-        }
-
-        return $configurationCollection;
-    }
-
-    /**
-     * @return array
-     */
-    private function getRawConfiguredHandlers()
-    {
-        $settings = $this->getSettings();
-        if (isset($settings['handler']) && is_array($settings['handler'])) {
-            return $settings['handler'];
-        }
-
-        return isset($settings['handler.']) ? $settings['handler.'] : [];
     }
 
     /**
