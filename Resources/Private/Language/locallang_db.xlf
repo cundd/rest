@@ -6,6 +6,12 @@
             <trans-unit id="tx_rest_domain_model_document">
                 <source>Document</source>
             </trans-unit>
+            <trans-unit id="reports.handler.title">
+                <source>REST Handlers</source>
+            </trans-unit>
+            <trans-unit id="reports.handler.description">
+                <source>An overview of registered Handlers</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

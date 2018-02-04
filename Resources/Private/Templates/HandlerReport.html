@@ -1,0 +1,30 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+{namespace r=Cundd\Rest\VirtualObject}
+
+<f:render section="style" arguments="{_all}"/>
+<f:render section="main" arguments="{_all}"/>
+
+<f:section name="main">
+    <f:for each="{information}" as="handlerRoutes" key="path">
+        <h2>{handlerRoutes.handler -> r:getClass()}</h2>
+
+        <f:for each="{handlerRoutes.routes}" as="routes" key="method">
+            <pre>
+<strong>{method}</strong>
+<f:for each="{routes}" as="route" key="path"><code>{path}</code>
+</f:for></pre>
+
+        </f:for>
+    </f:for>
+</f:section>
+
+<f:section name="style">
+    <style>
+        pre {
+            margin-bottom: 10px;
+        }
+    </style>
+</f:section>
+
+</html>
