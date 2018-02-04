@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Cundd\Rest\VirtualObject;
+namespace Cundd\Rest\ViewHelpers;
 
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
