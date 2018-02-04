@@ -33,17 +33,31 @@ class Format
         // adobe
         'pdf'   => 'application/pdf',
     ];
+
+    /**
+     * @var string
+     */
     private $format;
 
     /**
      * Format constructor
      *
-     * @param $format
+     * @param string $format
      */
     public function __construct($format)
     {
         $this->assertValidFormat($format);
         $this->format = $format;
+    }
+
+    /**
+     * Returns an instance of the default format
+     *
+     * @return Format
+     */
+    public static function defaultFormat()
+    {
+        return new static(static::DEFAULT_FORMAT);
     }
 
     /**
