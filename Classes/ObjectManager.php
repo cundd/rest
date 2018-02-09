@@ -10,6 +10,7 @@ use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -223,22 +224,9 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     public function getHandler()
     {
         $resourceType = $this->getRequest()->getResourceType();
-        $resourceConfiguration = $this->getConfigurationProvider()->getResourceConfiguration($resourceType);
-        if (!$resourceConfiguration) {
-            // This case should not occur in reality, since at least the `all` Resource should have been configured
-            throw new InvalidConfigurationException(
-                sprintf('Resource "%s" is not configured', (string)$resourceType)
-            );
-        }
-        $handlerClass = $resourceConfiguration->getHandlerClass();
-        if ($handlerClass) {
-            if (!class_exists($handlerClass)) {
-                throw new InvalidConfigurationException(
-                    sprintf('Configured Handler "%s" does not exist', $handlerClass)
-                );
-            }
-
-            return $this->get($handlerClass);
+        $handler = $this->getHandlerFromResourceConfiguration($resourceType);
+        if ($handler) {
+            return $handler;
         }
 
         list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
@@ -292,5 +280,36 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
         $this->authenticationProvider = null;
         $this->configurationProvider = null;
         $this->accessController = null;
+    }
+
+    /**
+     * @param ResourceType $resourceType
+     * @return HandlerInterface|null
+     */
+    private function getHandlerFromResourceConfiguration(ResourceType $resourceType)
+    {
+        $resourceConfiguration = $this->getConfigurationProvider()->getResourceConfiguration($resourceType);
+        if (!$resourceConfiguration) {
+            // This case should not occur in reality, since at least the `all` Resource should have been configured
+            throw new InvalidConfigurationException(
+                sprintf('Resource "%s" is not configured', (string)$resourceType)
+            );
+        }
+        $handlerClass = $resourceConfiguration->getHandlerClass();
+        if (!$handlerClass) {
+            return null;
+        }
+
+        if (!class_exists($handlerClass)) {
+            throw new InvalidConfigurationException(
+                sprintf('Configured Handler "%s" does not exist', $handlerClass)
+            );
+        }
+
+        if ($handlerClass[0] === '\\') {
+            $handlerClass = substr($handlerClass, 1);
+        }
+
+        return $this->get($handlerClass);
     }
 }

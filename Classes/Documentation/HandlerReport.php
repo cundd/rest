@@ -53,7 +53,9 @@ class HandlerReport implements ReportInterface
         $this->view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('rest') . 'Resources/Private/Templates/HandlerReport.html'
         );
-        $this->view->assign('information', $this->handlerDescriptor->getInformation());
+        $information = $this->handlerDescriptor->getInformation();
+        ksort($information);
+        $this->view->assign('information', $information);
 
         return $this->view->render();
     }

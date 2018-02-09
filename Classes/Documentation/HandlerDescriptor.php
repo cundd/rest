@@ -98,8 +98,9 @@ class HandlerDescriptor
         }
 
         return [
-            'handler' => $handler,
-            'routes'  => $this->filterEmptyMethods($router),
+            'handler'       => $handler,
+            'configuration' => $configuration,
+            'routes'        => $this->filterEmptyMethods($router),
         ];
     }
 

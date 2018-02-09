@@ -7,22 +7,123 @@
 
 <f:section name="main">
     <f:for each="{information}" as="handlerRoutes" key="path">
-        <h2>{handlerRoutes.handler -> r:getClass()}</h2>
+        <div class="resources">
+            <h2 title="{handlerRoutes.handler.description -> f:format.stripTags()}">
+                Path <code>{handlerRoutes.configuration.resourceType}</code>
+                <small>(Handler: {handlerRoutes.handler -> r:getClass()})</small>
+            </h2>
 
-        <f:for each="{handlerRoutes.routes}" as="routes" key="method">
-            <pre>
-<strong>{method}</strong>
-<f:for each="{routes}" as="route" key="path"><code>{path}</code>
-</f:for></pre>
+            <table class="routes table table-striped table-hover">
+                <f:for each="{handlerRoutes.routes}" as="routes" key="method">
+                    <f:for each="{routes}" as="route" key="path">
+                        <tr>
+                            <th class="minimize"><code>{method}</code></th>
+                            <td>
+                                <f:if condition="{method} == 'GET'">
+                                    <f:then>
+                                        <a href="/rest{path}"
+                                           target="rest-doc"
+                                           title="Open the resource in a new tab"><code>{path}</code></a>
+                                    </f:then>
+                                    <f:else><code>{path}</code></f:else>
+                                </f:if>
+                            </td>
+                            <td class="minimize"><code>
+                                <f:switch expression="{method}">
+                                    <f:case value="GET">{handlerRoutes.configuration.read}</f:case>
+                                    <f:case value="HEAD">{handlerRoutes.configuration.read}</f:case>
+                                    <f:case value="OPTIONS">preflight</f:case>
+                                    <f:case default="true">{handlerRoutes.configuration.write}</f:case>
+                                </f:switch>
+                            </code></td>
+                            <td class="minimize">
+                                <f:if condition="{method} == 'GET' && {handlerRoutes.configuration.read} == 'allow'">
+                                    <a href="/rest{path}"
+                                       target="rest-doc"
+                                       title="Open the resource in a new tab">
+                                        <i class="fa fa-play" aria-hidden="true"></i>
+                                    </a>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </f:for>
+            </table>
 
-        </f:for>
+
+            <f:if condition="{handlerRoutes.configuration.aliases}">
+                <div class="aliases-container">
+                    <h3>Aliases:</h3>
+                    <ul class="aliases ">
+                        <f:for each="{handlerRoutes.configuration.aliases}" as="alias">
+                            <li><code>{alias}</code></li>
+                        </f:for>
+                    </ul>
+                </div>
+            </f:if>
+        </div>
     </f:for>
 </f:section>
 
 <f:section name="style">
     <style>
-        pre {
+        .resources pre {
             margin-bottom: 10px;
+        }
+
+        .resources .fa {
+            font-size: 0.8em;
+        }
+
+        .resources .meta th,
+        .resources .meta td {
+            padding: 0 3px 0 0;
+        }
+
+        .resources table .minimize {
+            width: 10px;
+        }
+
+        .resources table code {
+            background: transparent;
+            color: #5a5a5a;
+        }
+
+        .resources table a {
+            color: #8b8b8b;
+        }
+
+        .resources table a:hover {
+            color: #5a5a5a;
+        }
+
+        .resources .aliases-container::before,
+        .resources .aliases-container::after {
+            content: '';
+            clear: both;
+        }
+
+        .resources .aliases-container h3 {
+            color: #5a5a5a;
+            display: inline-block;
+            line-height: 1em;
+            font-size: 1em;
+            margin: 0;
+        }
+
+        .resources .aliases {
+            list-style: none;
+            padding: 0;
+            display: inline-block;
+        }
+
+        .resources .aliases li {
+            display: inline-block;
+        }
+
+        .resources .aliases code {
+            background: #f7f7f7;
+            color: #5a5a5a;
         }
     </style>
 </f:section>
