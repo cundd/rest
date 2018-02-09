@@ -2,9 +2,10 @@
 
 namespace Cundd\Rest\Configuration;
 
-use Cundd\Rest\Access\Exception\InvalidConfigurationException;
+use Cundd\Rest\Access\Exception\InvalidConfigurationException as InvalidAccessConfigurationException;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\SingletonInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
@@ -115,19 +116,16 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
         }
 
         foreach ($configuredPaths as $configuration) {
-            $currentPath = (string)$configuration->getResourceType();
-
-            $currentPathPattern = str_replace('*', '\w*', str_replace('?', '\w', $currentPath));
-            $currentPathPattern = "!^$currentPathPattern$!";
-            if ($currentPath === 'all' && !$matchingConfiguration) {
+            $currentResourceTypeString = (string)$configuration->getResourceType();
+            if ('all' === $currentResourceTypeString && !$matchingConfiguration) {
                 $matchingConfiguration = $configuration;
-            } elseif (preg_match($currentPathPattern, $resourceTypeString)) {
+            } elseif ($this->checkIfPatternMatchesResourceType($currentResourceTypeString, $resourceTypeString)) {
                 $matchingConfiguration = $configuration;
             }
         }
 
         if (null === $matchingConfiguration) {
-            throw new InvalidConfigurationException(
+            throw new InvalidAccessConfigurationException(
                 'No matching Resource Configuration found and "all" is not configured'
             );
         }
@@ -152,16 +150,63 @@ class TypoScriptConfigurationProvider implements SingletonInterface, Configurati
             $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
                 ? new Access($configuration[self::ACCESS_METHOD_WRITE])
                 : Access::denied();
+
+            if (isset($configuration['className'])) {
+                throw new InvalidConfigurationException('Unsupported configuration key "className"');
+            }
+
+            $resourceType = new ResourceType($normalizeResourceType);
             $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
-                new ResourceType($normalizeResourceType),
+                $resourceType,
                 $readAccess,
                 $writeAccess,
                 isset($configuration['cacheLifeTime']) ? intval($configuration['cacheLifeTime']) : -1,
-                isset($configuration['handlerClass']) ? $configuration['handlerClass'] : ''
+                isset($configuration['handlerClass']) ? $configuration['handlerClass'] : '',
+                $this->getAliasesForResourceType($resourceType)
             );
         }
 
         return $configurationCollection;
+    }
+
+
+    /**
+     * Check if the given pattern matches the resource type
+     *
+     * @param string $pattern
+     * @param string $resourceTypeString
+     * @return bool
+     */
+    private function checkIfPatternMatchesResourceType($pattern, $resourceTypeString)
+    {
+        $currentPathPattern = str_replace(
+            '*',
+            '\w*',
+            str_replace('?', '\w', (string)$pattern)
+        );
+
+        return preg_match("!^$currentPathPattern$!", (string)$resourceTypeString);
+    }
+
+    /**
+     * Fetch aliases for the given Resource Type
+     *
+     * @param ResourceType $resourceType
+     * @return string[]
+     */
+    private function getAliasesForResourceType(ResourceType $resourceType)
+    {
+        $resourceTypeString = (string)$resourceType;
+
+        return array_keys(
+            array_filter(
+                $this->getSetting('aliases', []),
+                function ($alias) use ($resourceTypeString) {
+                    // Return if the given Resource Type would handle this alias
+                    return $this->checkIfPatternMatchesResourceType($resourceTypeString, $alias);
+                }
+            )
+        );
     }
 
     /**

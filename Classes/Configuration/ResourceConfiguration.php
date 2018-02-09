@@ -5,6 +5,7 @@ namespace Cundd\Rest\Configuration;
 
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\InvalidArgumentException;
 
 class ResourceConfiguration
 {
@@ -34,6 +35,11 @@ class ResourceConfiguration
     private $handlerClass;
 
     /**
+     * @var string[]
+     */
+    private $aliases;
+
+    /**
      * ResourceConfiguration constructor
      *
      * @param ResourceType $resourceType
@@ -41,14 +47,23 @@ class ResourceConfiguration
      * @param Access       $write
      * @param int          $cacheLiveTime
      * @param string       $handlerClass
+     * @param string[]     $aliases
      */
-    public function __construct(ResourceType $resourceType, Access $read, Access $write, $cacheLiveTime, $handlerClass)
-    {
+    public function __construct(
+        ResourceType $resourceType,
+        Access $read,
+        Access $write,
+        $cacheLiveTime,
+        $handlerClass,
+        array $aliases
+    ) {
         $this->resourceType = $resourceType;
         $this->read = $read;
         $this->write = $write;
         $this->cacheLiveTime = (int)$cacheLiveTime;
         $this->handlerClass = (string)$handlerClass;
+        $this->assertStringArray($aliases);
+        $this->aliases = $aliases;
     }
 
     /**
@@ -89,5 +104,22 @@ class ResourceConfiguration
     public function getHandlerClass()
     {
         return $this->handlerClass;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    private function assertStringArray(array $aliases)
+    {
+        foreach ($aliases as $alias) {
+            if (!is_string($alias)) {
+                throw new InvalidArgumentException('Only strings are allowed as aliases');
+            }
+        }
     }
 }

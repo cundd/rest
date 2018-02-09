@@ -268,7 +268,8 @@ class CacheTest extends AbstractCase
             Access::allowed(),
             Access::allowed(),
             $cacheLifeTime,
-            ''
+            '',
+            []
         );
     }
 }
