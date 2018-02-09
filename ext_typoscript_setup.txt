@@ -5,14 +5,7 @@ plugin.tx_rest.settings {
             read = deny
             write = deny
             cacheLifeTime = -1
-            className = \Cundd\Rest\Handler\CrudHandler
-        }
-
-        document {
-            path = Document
-            read = deny
-            write = deny
-            cacheLifeTime = -1
+            handlerClass = \Cundd\Rest\Handler\CrudHandler
         }
 
         auth {
@@ -20,7 +13,7 @@ plugin.tx_rest.settings {
             read = allow
             write = allow
             cacheLifeTime = -1
-            className = \Cundd\Rest\Handler\AuthHandler
+            handlerClass = \Cundd\Rest\Handler\AuthHandler
         }
     }
 
