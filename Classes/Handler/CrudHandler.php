@@ -17,7 +17,7 @@ use Traversable;
 /**
  * Handler for default CRUD requests
  */
-class CrudHandler implements CrudHandlerInterface
+class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 {
     /**
      * Current request
@@ -65,6 +65,16 @@ class CrudHandler implements CrudHandlerInterface
         $this->objectManager = $objectManager;
         $this->responseFactory = $responseFactory;
         $this->logger = $logger;
+    }
+
+    /**
+     * Return the description of the handler
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return 'Default Handler for CRUD requests';
     }
 
     /**

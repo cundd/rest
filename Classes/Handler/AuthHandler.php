@@ -8,7 +8,7 @@ use Cundd\Rest\Router\RouterInterface;
 /**
  * Handler for the credentials authorization
  */
-class AuthHandler implements HandlerInterface
+class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 {
     /**
      * Status logged in
@@ -51,6 +51,17 @@ class AuthHandler implements HandlerInterface
      * @inject
      */
     protected $requestFactory;
+
+    /**
+     * Return the description of the handler
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return 'Handler for separate authorization requests';
+    }
+
 
     /**
      * Returns the current status
