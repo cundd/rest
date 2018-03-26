@@ -15,17 +15,17 @@
 
             <table class="routes table table-striped table-hover">
                 <f:for each="{handlerRoutes.routes}" as="routes" key="method">
-                    <f:for each="{routes}" as="route" key="path">
+                    <f:for each="{routes}" as="route" key="routePath">
                         <tr>
                             <th class="minimize"><code>{method}</code></th>
                             <td>
                                 <f:if condition="{method} == 'GET'">
                                     <f:then>
-                                        <a href="/rest{path}"
+                                        <a href="/rest{routePath}"
                                            target="rest-doc"
-                                           title="Open the resource in a new tab"><code>{path}</code></a>
+                                           title="Open the resource in a new tab"><code>{routePath}</code></a>
                                     </f:then>
-                                    <f:else><code>{path}</code></f:else>
+                                    <f:else><code>{routePath}</code></f:else>
                                 </f:if>
                             </td>
                             <td class="minimize"><code>
@@ -37,12 +37,14 @@
                                 </f:switch>
                             </code></td>
                             <td class="minimize">
-                                <f:if condition="{method} == 'GET' && {handlerRoutes.configuration.read} == 'allow'">
-                                    <a href="/rest{path}"
-                                       target="rest-doc"
-                                       title="Open the resource in a new tab">
-                                        <i class="fa fa-play" aria-hidden="true"></i>
-                                    </a>
+                                <f:if condition="{method} == 'GET'">
+                                    <f:if condition="{handlerRoutes.configuration.read} == 'allow'">
+                                        <a href="/rest{routePath}"
+                                           target="rest-doc"
+                                           title="Open the resource in a new tab">
+                                            <i class="fa fa-play" aria-hidden="true"></i>
+                                        </a>
+                                    </f:if>
                                 </f:if>
                             </td>
                         </tr>
