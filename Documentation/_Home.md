@@ -24,3 +24,5 @@ Get in touch!
 Do you need help, have feedback or good ideas? Feel free to send an email to [support@cundd.net](mailto:support@cundd.net) or write a message at [gitter.im/cundd/rest](https://gitter.im/cundd/rest).
 
 If you found a bug please create an issue at [GitHub](https://github.com/cundd/rest/issues).
+
+🥂 If you like the extension and want to support its development you can checkout [paypal.me/cundd](paypal.me/cundd).
