@@ -11,6 +11,8 @@ Privacy Policy to learn more.
 1 – Purpose of the processing
 -----------------------------
 
+### 1.1 - Matomo (formerly known as Piwik)
+
 Matomo is used to analyse the behaviour of the website visitors to identify potential 
 pitfalls; not found pages, search engine indexing issues, which contents are the most 
 appreciated… Once the data is processed (number of visitors reaching a not found pages, 
@@ -40,6 +42,15 @@ And also:
 - User Agent of the browser
 
 The processing of personal data with Matomo is based on legitimate interests.
+
+
+### 1.2 - Webfonts (fonts.com)
+
+Some of the fonts used on our websites are provided by fonts.com. As your browser 
+displays those fonts, it will download the font-files from fonts.com servers. 
+
+Please see [Monotype Privacy Policy Statement](https://www.monotype.com/legal/privacy-policy) 
+for more information on how your data is handled by fonts.com.
 
 
 2 – The legitimate interests
@@ -78,6 +89,8 @@ We are keeping the personal data captured within Matomo for a period of 150 days
 6 – The existence of each of the data subject’s rights
 ------------------------------------------------------
 
+### 6.1 - Matomo
+
 As Matomo is processing personal data on legitimate interests, you can exercise the 
 following rights:
 
@@ -87,7 +100,7 @@ following rights:
 - Right to object: you can object to the tracking of your personal data by using the 
     following opt-out feature:
 
-<iframe style="border: 0; height: 200px; width: 600px;" src="https://piwik.cundd.net/index.php?module=CoreAdminHome&action=optOut&language=de&backgroundColor=&fontColor=666666&fontSize=14px&fontFamily=%22Lucida%20Sans%22%2C%20%22Lucida%20Grande%22%2C%20Verdana%2C%20Arial%2C%20sans-serif"></iframe>
+<iframe style="border: 0; height: 200px; width: 600px;" src="https://piwik.cundd.net/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=&fontColor=666666&fontSize=14px&fontFamily=%22Lucida%20Sans%22%2C%20%22Lucida%20Grande%22%2C%20Verdana%2C%20Arial%2C%20sans-serif"></iframe>
 
 If you wish us to not process any personal data with Matomo, you can opt-out from it at 
 any time. There will be no consequences at all regarding the use of our website.
