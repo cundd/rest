@@ -69,7 +69,7 @@ Advanced configuration
 Often the full path for a model doesn't fit the clients expectations. To make the paths looking better, path aliases can be defined:
 
     plugin.tx_rest.settings.aliases {
-        my_model = my_ext-my_model
+        the_alias = my_ext-my_model
     }
 
 
