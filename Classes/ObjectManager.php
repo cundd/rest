@@ -2,12 +2,16 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Authentication\AuthenticationProviderCollection;
+use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
 use Cundd\Rest\Cache\CacheFactory;
+use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
@@ -32,19 +36,19 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     protected $dataProvider;
 
     /**
-     * @var \Cundd\Rest\Authentication\AuthenticationProviderInterface
+     * @var AuthenticationProviderInterface
      */
     protected $authenticationProvider;
 
     /**
      * Configuration provider
      *
-     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     * @var TypoScriptConfigurationProvider
      */
     protected $configurationProvider;
 
     /**
-     * @var \Cundd\Rest\Access\AccessControllerInterface
+     * @var AccessControllerInterface
      */
     protected $accessController;
 
@@ -82,15 +86,15 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
             $classes = [
                 // Check if an extension provides a Data Provider for the domain model
-                'Tx_' . $extension . '_Rest_' . $model . 'DataProvider',
-                ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\' . $model . 'DataProvider',
+                sprintf('Tx_%s_Rest_%sDataProvider', $extension, $model),
+                sprintf('%s%s\\Rest\\%sDataProvider', ($vendor ? $vendor . '\\' : ''), $extension, $model),
 
                 // Check if an extension provides a Data Provider
-                'Tx_' . $extension . '_Rest_DataProvider',
-                ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\DataProvider',
+                sprintf('Tx_%s_Rest_DataProvider', $extension),
+                sprintf('%s%s\\Rest\\DataProvider', ($vendor ? $vendor . '\\' : ''), $extension),
 
                 // Check for a specific builtin Data Provider
-                'Cundd\\Rest\\DataProvider\\' . $extension . 'DataProvider',
+                sprintf('Cundd\\Rest\\DataProvider\\%sDataProvider', $extension),
             ];
 
             $this->dataProvider = $this->get(
@@ -147,7 +151,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the Authentication Provider
      *
-     * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
+     * @return AuthenticationProviderInterface
      */
     public function getAuthenticationProvider()
     {
@@ -191,7 +195,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the Access Controller
      *
-     * @return \Cundd\Rest\Access\AccessControllerInterface
+     * @return AccessControllerInterface
      */
     public function getAccessController()
     {
@@ -233,8 +237,8 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
 
         $classes = [
             // Check if an extension provides a Data Provider
-            'Tx_' . $extension . '_Rest_Handler',
-            ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\Handler',
+            sprintf('Tx_' . $extension . '_Rest_Handler'),
+            sprintf('%s%s\\Rest\\Handler', ($vendor ? $vendor . '\\' : ''), $extension),
 
             // Check for a specific builtin Handler
             // @deprecated register a `handlerClass` instead
@@ -247,7 +251,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     /**
      * Returns the Cache instance
      *
-     * @return \Cundd\Rest\Cache\CacheInterface
+     * @return CacheInterface
      */
     public function getCache()
     {
