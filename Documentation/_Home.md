@@ -25,4 +25,4 @@ Do you need help, have feedback or good ideas? Feel free to send an email to [su
 
 If you found a bug please create an issue at [GitHub](https://github.com/cundd/rest/issues).
 
-🥂 If you like the extension and want to support its development you can checkout [paypal.me/cundd](paypal.me/cundd).
+🥂 If you like the extension and want to support its development you can checkout [paypal.me/cundd](https://paypal.me/cundd).
