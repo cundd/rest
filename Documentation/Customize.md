@@ -1,7 +1,12 @@
-Use the REST extension as boilerplate
-=====================================
+Sometimes the builtin resources do not cover all requirements of a project. But REST also allows the creation of custom 
+`Handler`s, which enables the developer to take full control. 
 
-This tutorial will show how the extension can be used as a starting point for custom web services. The core of the web service is the Handler. The Handler implements `\Cundd\Rest\Handler\HandlerInterface` which provides the method `configureRoutes(RouterInterface $router, RestRequestInterface $request)`.
+Building custom Handlers
+========================
+
+This tutorial will show how the extension can be used as a starting point for custom web services. The core of the web 
+service is the Handler. The Handler implements `\Cundd\Rest\Handler\HandlerInterface` which provides the method 
+`configureRoutes(RouterInterface $router, RestRequestInterface $request)`.
 
 You can find the tutorial extension under [https://github.com/cundd/custom_rest](https://github.com/cundd/custom_rest).
 
@@ -9,7 +14,9 @@ You can find the tutorial extension under [https://github.com/cundd/custom_rest]
 Configure the access
 --------------------
 
-The following lines configure read and write access to all paths matching `cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`, `your-domain.com/rest/cundd-custom_rest-path`, `your-domain.com/rest/cundd-custom_rest-whatever`, etc.
+The following lines configure read and write access to all paths matching 
+`cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`, 
+`your-domain.com/rest/cundd-custom_rest-path`, `your-domain.com/rest/cundd-custom_rest-whatever`, etc.
 
 	plugin.tx_rest.settings.paths {
 		cundd-custom_rest {
@@ -17,6 +24,8 @@ The following lines configure read and write access to all paths matching `cundd
 
 			read = allow
 			write = allow
+			
+			handlerClass = \Cundd\CustomRest\Rest\Handler
 		}
 	}
 
@@ -26,7 +35,8 @@ File: [ext_typoscript_setup.txt](https://github.com/cundd/custom_rest/blob/maste
 Configure an alias
 ------------------
 
-The paths shown above are not esthetic, but enable the extensions flexibility. To still provide pretty URLs aliases can be registered.
+The paths shown above are not esthetic, but enable the extensions flexibility. To still provide pretty URLs aliases can 
+be registered.
 
 	plugin.tx_rest.settings.aliases {
 		customhandler = cundd-custom_rest-custom_handler
@@ -34,27 +44,35 @@ The paths shown above are not esthetic, but enable the extensions flexibility. T
 
 File: [ext_typoscript_setup.txt](https://github.com/cundd/custom_rest/blob/master/ext_typoscript_setup.txt)
 
-This allows us to call `your-domain.com/rest/customhandler` instead of `your-domain.com/rest/cundd-custom_rest-custom_handler`.
+This allows us to call `your-domain.com/rest/customhandler` instead of 
+`your-domain.com/rest/cundd-custom_rest-custom_handler`.
 
 
 Creating the Handler
 --------------------
 
-Now lets have a look at the core of the custom extension: the Handler. To ship a Handler with your extension create a class in the format `\YourVendor\YourExtensionName\Rest\Handler` and make it implement `\Cundd\Rest\Handler\HandlerInterface`. REST's Object Manager will then automatically use this class for any request to the [resource types](/FAQ/) matching `cundd-custom_rest-*`.
+Now lets have a look at the core of the custom extension: the Handler. To ship a Handler with your extension create a 
+class in the format `\YourVendor\YourExtensionName\Rest\Handler` and make it implement 
+`\Cundd\Rest\Handler\HandlerInterface`. REST's Object Manager will then automatically use this class for any request to 
+the [resource types](/FAQ/) matching `cundd-custom_rest-*`.
 
-The more interesting method is `configureRoutes(RouterInterface $router, RestRequestInterface $request)`. REST provides a custom routing implementation since version 3.0 and this is the place where the actual routing is configured.
+The more interesting method is `configureRoutes(RouterInterface $router, RestRequestInterface $request)`. REST provides 
+a custom routing implementation since version 3.0 and this is the place where the actual routing is configured.
 
 
 Building a route
 ----------------
 
-A route is an instance of `\Cundd\Rest\Router\Route`. It encapsulates the necessary information to be compared to the current request and a callback that will be invoked if the route matches. One required information is the pattern that will be compared against the request URI. The second important part is the request method a route belongs to.  
+A route is an instance of `\Cundd\Rest\Router\Route`. It encapsulates the necessary information to be compared to the 
+current request and a callback that will be invoked if the route matches. One required information is the pattern that will be compared against the request URI. The second important part is the request method a route belongs to.  
 
-> Important thing about the route: The extension suffix will be removed from the sent URL. E.g. `http://localhost:8888/rest/customhandler.json` will be treated as `http://localhost:8888/rest/customhandler`.
+> Important thing about the route: The extension suffix will be removed from the sent URL. E.g. 
+`http://localhost:8888/rest/customhandler.json` will be treated as `http://localhost:8888/rest/customhandler`.
 
 Lets create a route:
 
-We want to provide a service if a GET request to the URL for this Handler is invoked. So we create a route that will match if the requested Resource Type matches the Handlers Resource Type:
+We want to provide a service if a GET request to the URL for this Handler is invoked. So we create a route that will 
+match if the requested Resource Type matches the Handlers Resource Type:
 
 ```php
 new Route($request->getResourceType(), 'GET', function(RestRequestInterface $request) {
@@ -63,8 +81,9 @@ new Route($request->getResourceType(), 'GET', function(RestRequestInterface $req
 });
 ```
 
-In this case `$request->getResourceType()` is used as the route's pattern. This is a shortcut to dispatch requests to our Handler.
-If we want to distinguish between `cundd-custom_rest-custom_handler` and `cundd-custom_rest-require` we could have added separate routes for each path:
+In this case `$request->getResourceType()` is used as the route's pattern. This is a shortcut to dispatch requests to 
+our Handler. If we want to distinguish between `cundd-custom_rest-custom_handler` and `cundd-custom_rest-require` we 
+could have added separate routes for each path:
 
 ```php
 new Route('cundd-custom_rest-custom_handler', 'GET', function(RestRequestInterface $request) {
@@ -80,7 +99,8 @@ new Route('cundd-custom_rest-require', 'GET', function(RestRequestInterface $req
 });
 ```
 
-Similarly functions for other HTTP request methods can be added. Furthermore factory methods for the most popular HTTP methods exist.
+Similarly functions for other HTTP request methods can be added. Furthermore factory methods for the most popular HTTP 
+methods exist.
 
 ### GET
 ```php
@@ -149,7 +169,8 @@ $router->add($myRoute);
 Parameters
 ----------
 
-A routing system would be incomplete without the ability to pass variable parts to the callback. The REST router allows you to use a set of parameter expressions inside the route's pattern.
+A routing system would be incomplete without the ability to pass variable parts to the callback. The REST router allows 
+you to use a set of parameter expressions inside the route's pattern.
 
 **A parameter expression must be a complete URI segment**
 
@@ -195,7 +216,8 @@ Route::get($request->getResourceType() . '/{float}', function(RestRequestInterfa
 
 ### Matching `boolean`s
 
-Extracts the value from segments matching the regular expression `(1|true|on|yes|0|false|off|no)` and converts it into a boolean
+Extracts the value from segments matching the regular expression `(1|true|on|yes|0|false|off|no)` and converts it into a 
+boolean
 
 ```php
 Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInterface $request, $theParameter) {
@@ -209,15 +231,18 @@ Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInter
 Response
 --------
 
-The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation fitting the format from the request's `getFormat()` method.
+The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation 
+fitting the format from the request's `getFormat()` method.
 
-If a specific response should be sent to the client, without additional formatting, the handler callback can return an instance of `\Psr\Http\Message\ResponseInterface` (e.g. built using `\Cundd\Rest\ResponseFactory::createResponse($data, int $status)`).
+If a specific response should be sent to the client, without additional formatting, the handler callback can return an 
+instance of `\Psr\Http\Message\ResponseInterface` (e.g. built using `\Cundd\Rest\ResponseFactory::createResponse($data, int $status)`).
 
 
 Putting it together
 -------------------
 
 ```php
+namespace \Cundd\CustomRest\Rest;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Http\RestRequestInterface;
