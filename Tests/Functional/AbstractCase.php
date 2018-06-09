@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use Webmozart\Assert\Assert;
 
 class AbstractCase extends FunctionalTestCase
 {
@@ -195,25 +196,25 @@ class AbstractCase extends FunctionalTestCase
         $configurationProvider->setSettings(
             [
                 "paths"            => [
-                    "all" => [
-                        "path"         => "all",
-                        "read"         => "deny",
-                        "write"        => "deny",
-                        "handlerClass" => CrudHandler::class,
-                    ],
-
-                    "document" => [
-                        "path"  => "Document",
-                        "read"  => "deny",
-                        "write" => "deny",
-                    ],
-
-                    "auth" => [
-                        "path"         => "auth",
-                        "read"         => "allow",
-                        "write"        => "allow",
-                        "handlerClass" => AuthHandler::class,
-                    ],
+//                    "all" => [
+//                        "path"         => "all",
+//                        "read"         => "deny",
+//                        "write"        => "deny",
+//                        "handlerClass" => CrudHandler::class,
+//                    ],
+//
+//                    "document" => [
+//                        "path"  => "Document",
+//                        "read"  => "deny",
+//                        "write" => "deny",
+//                    ],
+//
+//                    "auth" => [
+//                        "path"         => "auth",
+//                        "read"         => "allow",
+//                        "write"        => "allow",
+//                        "handlerClass" => AuthHandler::class,
+//                    ],
                 ],
 
                 # Define words that should not be converted to singular
@@ -232,6 +233,43 @@ class AbstractCase extends FunctionalTestCase
                 ],
             ]
         );
+
+        $this->configurePath(
+            "all",
+            [
+                "path"         => "all",
+                "read"         => "deny",
+                "write"        => "deny",
+                "handlerClass" => CrudHandler::class,
+            ]
+        );
+        $this->configurePath(
+            "document",
+            [
+                "path"  => "Document",
+                "read"  => "deny",
+                "write" => "deny",
+            ]
+        );
+        $this->configurePath(
+            "auth",
+            [
+                "path"         => "auth",
+                "read"         => "allow",
+                "write"        => "allow",
+                "handlerClass" => AuthHandler::class,
+            ]
+        );
+    }
+
+    protected function configurePath($path, array $pathConfiguration)
+    {
+        Assert::string($path);
+        /** @var TypoScriptConfigurationProvider $configurationProvider */
+        $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
+        $configuration = $configurationProvider->getSettings();
+        $configuration['paths'][$path] = $pathConfiguration;
+        $configurationProvider->setSettings($configuration);
     }
 
     protected function registerLoggerImplementation()
