@@ -242,7 +242,7 @@ Putting it together
 -------------------
 
 ```php
-namespace \Cundd\CustomRest\Rest;
+namespace Cundd\CustomRest\Rest;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -329,7 +329,7 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
 The lines below show how the Dispatcher will invoke your `configureRoutes()` method: 
 
 ```php
-$handler = new CustomHandler(); // Actually get the Handler instance from the Object Manager
+$handler = new \Cundd\CustomRest\Rest\CustomHandler(); // Actually get the Handler instance from the Object Manager
 $handler->configureRoutes($router, $request);
 ```
 
