@@ -4,6 +4,8 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 
@@ -50,7 +52,7 @@ class ExtractorFileTest extends AbstractCase
 
     /**
      * @param array $fileReferenceProperties
-     * @return \PHPUnit_Framework_MockObject_MockObject|FileReference|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface
+     * @return FileReference
      */
     protected function createFileReferenceMock(array $fileReferenceProperties = [])
     {
@@ -65,18 +67,13 @@ class ExtractorFileTest extends AbstractCase
         );
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMockBuilder(ResourceFactory::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->setMethods(['getFileObject'])
-            ->getMock();
-        $factoryMock->expects($this->any())
-            ->method('getFileObject')->will(
-                $this->returnValue($originalFileMock)
-            );
+        /** @var ResourceFactory|ObjectProphecy $factoryProphecy */
+        $factoryProphecy = $this->prophesize(ResourceFactory::class);
+        /** @var string|Argument $stringArg */
+        $stringArg = Argument::type('string');
+        $factoryProphecy->getFileObject($stringArg, Argument::cetera())->willReturn($originalFileMock);
 
-        return new FileReference($fileReferenceProperties, $factoryMock);
+        return new FileReference($fileReferenceProperties, $factoryProphecy->reveal());
     }
 
     /**

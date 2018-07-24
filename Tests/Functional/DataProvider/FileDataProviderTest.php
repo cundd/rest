@@ -4,6 +4,8 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 
@@ -66,18 +68,13 @@ class FileDataProviderTest extends AbstractCase
         );
         $originalFileMock = $this->createFileMock();
 
-        $factoryMock = $this->getMockBuilder(ResourceFactory::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->setMethods(['getFileObject'])
-            ->getMock();
-        $factoryMock->expects($this->any())
-            ->method('getFileObject')->will(
-                $this->returnValue($originalFileMock)
-            );
+        /** @var ResourceFactory|ObjectProphecy $factoryProphecy */
+        $factoryProphecy = $this->prophesize(ResourceFactory::class);
+        /** @var string|Argument $stringArg */
+        $stringArg = Argument::type('string');
+        $factoryProphecy->getFileObject($stringArg, Argument::cetera())->willReturn($originalFileMock);
 
-        return new FileReference($fileReferenceProperties, $factoryMock);
+        return new FileReference($fileReferenceProperties, $factoryProphecy->reveal());
     }
 
     /**
