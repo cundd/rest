@@ -389,6 +389,8 @@ class Extractor implements ExtractorInterface
             return [
                 'name' => $originalResource->getName(),
             ];
+        } catch (\Prophecy\Exception\Call\UnexpectedCallException $exception) {
+            throw $exception;
         } catch (\RuntimeException $exception) {
             return [];
         }
