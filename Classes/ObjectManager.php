@@ -6,8 +6,6 @@ use Cundd\Rest\Access\AccessControllerInterface;
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
-use Cundd\Rest\Authentication\BasicAuthenticationProvider;
-use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
 use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
@@ -170,22 +168,21 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
             if (class_exists($authenticationProviderClass)) {
                 $this->authenticationProvider = $this->get($authenticationProviderClass);
             } else {
-                // Use the default Authentication Provider
+                // Use the Authentication Providers defined in TypoScript
+                $providerInstances = [];
+                $configuredProviders = $this->getConfigurationProvider()->getSetting('authenticationProvider');
+                ksort($configuredProviders);
+                foreach ($configuredProviders as $providerClass) {
+                    if (class_exists($providerClass)) {
+                        $providerInstances[] = $this->get(ltrim($providerClass, '\\'));
+                    }
+                }
+
                 $this->authenticationProvider = call_user_func(
                     [$this, 'get'],
                     AuthenticationProviderCollection::class,
-                    [
-                        $this->get(BasicAuthenticationProvider::class),
-                        $this->get(CredentialsAuthenticationProvider::class),
-                    ]
+                    $providerInstances
                 );
-//                $this->authenticationProvider = $this->get(
-//                    AuthenticationProviderCollection::class,
-//                    [
-//                        $this->get(BasicAuthenticationProvider::class),
-//                        $this->get(CredentialsAuthenticationProvider::class),
-//                    ]
-//                );
             }
         }
 

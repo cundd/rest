@@ -42,6 +42,12 @@ plugin.tx_rest.settings {
         press = press
         sms = sms
     }
+
+    authenticationProvider {
+        10 = Cundd\Rest\Authentication\BasicAuthenticationProvider
+        20 = Cundd\Rest\Authentication\CredentialsAuthenticationProvider
+        30 = Cundd\Rest\Authentication\RequestAuthenticationProvider
+    }
 }
 
 config.tx_extbase {

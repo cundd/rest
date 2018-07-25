@@ -2,7 +2,11 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
+use Cundd\Rest\Authentication\BasicAuthenticationProvider;
+use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
+use Cundd\Rest\Authentication\RequestAuthenticationProvider;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
@@ -84,8 +88,34 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getAuthenticationProviderTest()
     {
+        $this->injectConfigurationProviderUsingHandlerClass('', ['authenticationProvider' => []]);
         $object = $this->fixture->getAuthenticationProvider();
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
+    }
+
+    /**
+     * @test
+     */
+    public function getAuthenticationProviderFromConfigurationTest()
+    {
+        $this->injectConfigurationProviderUsingHandlerClass(
+            '',
+            [
+                'authenticationProvider' => [
+                    30 => RequestAuthenticationProvider::class,
+                    50 => CredentialsAuthenticationProvider::class,
+                    10 => BasicAuthenticationProvider::class,
+                ],
+            ]
+        );
+        /** @var AuthenticationProviderCollection $object */
+        $object = $this->fixture->getAuthenticationProvider();
+        $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
+        $this->assertCount(3, $object->getProviders());
+        $providers = array_values(iterator_to_array($object->getProviders()));
+        $this->assertInstanceOf(BasicAuthenticationProvider::class, $providers[0]);
+        $this->assertInstanceOf(RequestAuthenticationProvider::class, $providers[1]);
+        $this->assertInstanceOf(CredentialsAuthenticationProvider::class, $providers[2]);
     }
 
     /**
@@ -308,7 +338,7 @@ class ObjectManagerTest extends AbstractCase
     /**
      * @param string $handler
      */
-    private function injectConfigurationProviderUsingHandlerClass($handler)
+    private function injectConfigurationProviderUsingHandlerClass($handler, array $settings = [])
     {
         /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
         $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
@@ -323,6 +353,14 @@ class ObjectManagerTest extends AbstractCase
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
         $methodProphecy
             ->willReturn($resourceConfiguration->reveal());
+
+        /** @var MethodProphecy $getSettingsProphecy */
+        $getSettingsProphecy = $configurationProvider->getSetting(Argument::type('string'));
+        $getSettingsProphecy->will(
+            function ($args) use ($settings) {
+                return isset($settings[$args[0]]) ? $settings[$args[0]] : null;
+            }
+        );
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 }
