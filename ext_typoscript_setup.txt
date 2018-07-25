@@ -46,7 +46,7 @@ plugin.tx_rest.settings {
     authenticationProvider {
         10 = Cundd\Rest\Authentication\BasicAuthenticationProvider
         20 = Cundd\Rest\Authentication\CredentialsAuthenticationProvider
-        30 = Cundd\Rest\Authentication\RequestAuthenticationProvider
+        # 30 = Cundd\Rest\Authentication\RequestAuthenticationProvider
     }
 }
 
