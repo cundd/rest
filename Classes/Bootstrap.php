@@ -43,7 +43,7 @@ class Bootstrap
     public function initializeLanguageObject()
     {
         if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
-            /** @var $GLOBALS['LANG'] \TYPO3\CMS\Lang\LanguageService */
+            /** @var \TYPO3\CMS\Lang\LanguageService $GLOBALS['LANG'] */
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
             $GLOBALS['LANG']->init($this->getRequestedLanguageCode());
         }
@@ -70,7 +70,17 @@ class Bootstrap
     {
         $cHash = GeneralUtility::_GP('cHash') ?: 'cunddRestFakeHash';
 
-        return GeneralUtility::makeInstance(TypoScriptFrontendController::class,$GLOBALS['TYPO3_CONF_VARS'],$pageUid,0,0,$cHash,null,'','');
+        return GeneralUtility::makeInstance(
+            TypoScriptFrontendController::class,
+            $GLOBALS['TYPO3_CONF_VARS'],
+            $pageUid,
+            0,
+            0,
+            $cHash,
+            null,
+            '',
+            ''
+        );
     }
 
     /**
