@@ -70,16 +70,7 @@ class Bootstrap
     {
         $cHash = GeneralUtility::_GP('cHash') ?: 'cunddRestFakeHash';
 
-        return new TypoScriptFrontendController(
-            $GLOBALS['TYPO3_CONF_VARS'], // can be removed in TYPO3 v8
-            $pageUid,
-            0,  // Type
-            0,  // no_cache
-            $cHash, // cHash
-            null, // previously jumpurl
-            '', // MP,
-            ''  // RDCT
-        );
+        return GeneralUtility::makeInstance(TypoScriptFrontendController::class,$GLOBALS['TYPO3_CONF_VARS'],$pageUid,0,0,$cHash,null,'','');
     }
 
     /**
