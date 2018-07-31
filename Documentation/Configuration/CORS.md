@@ -8,11 +8,17 @@ By controlling the access in your TYPO3 installation, client-side workarounds (l
 Example
 -------
 
-An example which will allow the site *example.com* to make `GET` requests.
+An example which will allow the local development site on port `3000` to make `GET`, `POST` and preflight requests.
 
 	plugin.tx_rest.settings {
 		responseHeaders {
-			Access-Control-Allow-Origin = example.com
-			Access-Control-Allow-Methods = GET
+			Access-Control-Allow-Origin = http://localhost:3000
+			Access-Control-Allow-Methods = POST, GET, OPTIONS
+			
+			# Inform the client that credentials may be used
+			Access-Control-Allow-Credentials = true
+			
+			# Allow the client to send a `Content-Type` header for POST requests 
+            Access-Control-Allow-Headers = Content-Type
 		}
 	}
