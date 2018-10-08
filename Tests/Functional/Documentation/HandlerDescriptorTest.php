@@ -61,7 +61,7 @@ class HandlerDescriptorTest extends AbstractCase
         $this->assertArrayHasKey('all', $result);
         $allHandler = $result['all'];
         $this->assertInstanceOf(CrudHandler::class, $allHandler['handler']);
-        $this->assertCount(5, $allHandler['routes']);
+        $this->assertCount(6, $allHandler['routes']);
 
         $this->assertArrayHasKey('GET', $allHandler['routes']);
         $this->assertArrayHasKey('POST', $allHandler['routes']);
