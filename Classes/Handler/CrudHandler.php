@@ -278,6 +278,16 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     }
 
     /**
+     *
+     * @return bool
+     */
+    public function options()
+    {
+        // TODO: Respond with the correct preflight headers
+        return true;
+    }
+
+    /**
      * Let the handler configure the routes
      *
      * @param RouterInterface      $router
@@ -285,17 +295,17 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      */
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
-        $router->add(Route::get($request->getResourceType() . '/?', [$this, 'listAll']));
-        $router->add(Route::get($request->getResourceType() . '/_count/?', [$this, 'countAll']));
-        $router->add(Route::post($request->getResourceType() . '/?', [$this, 'create']));
-        $router->add(Route::get($request->getResourceType() . '/{slug}/?', [$this, 'show']));
-        $router->add(Route::put($request->getResourceType() . '/{slug}/?', [$this, 'replace']));
-        $router->add(Route::post($request->getResourceType() . '/{slug}/?', [$this, 'replace']));
-        $router->add(Route::delete($request->getResourceType() . '/{slug}/?', [$this, 'delete']));
-        $router->add(
-            Route::routeWithPatternAndMethod($request->getResourceType() . '/{slug}/?', 'PATCH', [$this, 'replace'])
-        );
-        $router->add(Route::get($request->getResourceType() . '/{slug}/{slug}/?', [$this, 'getProperty']));
+        $resourceType = $request->getResourceType();
+        $router->add(Route::get($resourceType . '/?', [$this, 'listAll']));
+        $router->add(Route::get($resourceType . '/_count/?', [$this, 'countAll']));
+        $router->add(Route::post($resourceType . '/?', [$this, 'create']));
+        $router->add(Route::get($resourceType . '/{slug}/?', [$this, 'show']));
+        $router->add(Route::put($resourceType . '/{slug}/?', [$this, 'replace']));
+        $router->add(Route::post($resourceType . '/{slug}/?', [$this, 'replace']));
+        $router->add(Route::delete($resourceType . '/{slug}/?', [$this, 'delete']));
+        $router->add(Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', [$this, 'replace']));
+        $router->add(Route::get($resourceType . '/{slug}/{slug}/?', [$this, 'getProperty']));
+        $router->add(Route::routeWithPatternAndMethod($resourceType . '/?', 'OPTIONS', [$this, 'options']));
     }
 
     /**
