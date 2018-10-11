@@ -2,7 +2,6 @@ language: php
 php:
   - 7.0
   - 7.1
-  - 7.2
 
 env:
   - TYPO3=TYPO3_8-0 DB=mysql
@@ -13,7 +12,7 @@ env:
   - TYPO3=TYPO3_8-5 DB=mysql
   - TYPO3=TYPO3_8-6 DB=mysql
   - TYPO3=TYPO3_8-7 DB=mysql
-  - TYPO3=master DB=mysql
+  # - TYPO3=master DB=mysql # Re-enable when there is a branch for TYPO3 9 LTS
 
 matrix:
   fast_finish: true
@@ -21,13 +20,17 @@ matrix:
     - php: nightly
     - php: hhvm
     - php: 5.6
-    - env: TYPO3=master DB=mysql
+    # - env: TYPO3=master DB=mysql # Re-enable when there is a branch for TYPO3 9 LTS
 
   include:
     # Nightly PHP and HHVM
     - php: nightly
       env: TYPO3=master DB=mysql
     - php: hhvm
+      env: TYPO3=master DB=mysql
+
+    # TYPO3 9 LTS
+    - php: 7.2
       env: TYPO3=master DB=mysql
 
     # TYPO3 7.6
