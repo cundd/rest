@@ -16,12 +16,6 @@ class Bootstrap extends AbstractBootstrap
      */
     protected function bootstrapSystem()
     {
-//        class_exists(\PHPUnit\TextUI\Command::class);
-//        class_exists(\PHPUnit\Framework\TestCase::class);
-//        class_exists(\PHPUnit\Framework\TestSuite::class);
-//        class_exists(\PHPUnit\TextUI\TestRunner::class);
-//        class_exists(\PHPUnit\Framework\Test::class);
-
         $this->setupTYPO3();
         $this->setupAbstractCase();
     }
