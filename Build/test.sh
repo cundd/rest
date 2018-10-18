@@ -7,6 +7,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 : ${TYPO3_PATH_WEB=""}
 : ${PHP_BINARY="php"}
+: ${PHPUNIT_BINARY=""}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
 : ${DEBUG=""}
 
@@ -46,6 +47,12 @@ function check_phpunit_path_for_functional_tests() {
 
 # Detect the phpunit path to use for Unit Tests
 function get_phpunit_path_for_unit_tests() {
+    print_debug "Check if \$PHPUNIT_BINARY is set";
+    if [ "$PHPUNIT_BINARY" != "" ]; then
+        echo "$PHPUNIT_BINARY";
+        return;
+    fi
+
     print_debug "Check phpunit at `pwd`/bin/phpunit";
     if [ -e "`pwd`/bin/phpunit" ]; then
         echo "`pwd`/bin/phpunit";
