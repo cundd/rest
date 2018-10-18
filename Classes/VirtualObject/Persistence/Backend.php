@@ -23,13 +23,13 @@ class Backend implements BackendInterface
     {
         if ($concreteBackend) {
             $this->concreteBackend = $concreteBackend;
-        } elseif (false === isset($GLOBALS['TYPO3_DB']) || false === is_object($GLOBALS['TYPO3_DB'])) {
+        } elseif (isset($GLOBALS['TYPO3_DB']) && is_object($GLOBALS['TYPO3_DB'])) {
+            $this->concreteBackend = new V7Backend($GLOBALS['TYPO3_DB']);
+        } else {
             /** @var ConnectionPool $connection */
             $connection = GeneralUtility::makeInstance(ConnectionPool::class);
 
             $this->concreteBackend = new DoctrineBackend($connection);
-        } else {
-            $this->concreteBackend = new V7Backend($GLOBALS['TYPO3_DB']);
         }
     }
 

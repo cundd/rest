@@ -3,12 +3,13 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 class BackendTest extends AbstractDatabaseCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
+     * @var BackendInterface
      */
     protected $fixture;
 
@@ -16,8 +17,7 @@ class BackendTest extends AbstractDatabaseCase
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\BackendInterface');
-//		$this->fixture->setConfiguration($this->getTestConfiguration());
+        $this->fixture = $this->objectManager->get(BackendInterface::class);
     }
 
     public function tearDown()

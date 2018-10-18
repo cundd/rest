@@ -2,10 +2,12 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException;
@@ -13,27 +15,20 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException;
 class V7Backend extends AbstractBackend
 {
     /**
-     * @var \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @var DatabaseConnection
      */
     private $connection;
 
     /**
      * V7Backend constructor.
      *
-     * @param \TYPO3\CMS\Core\Database\DatabaseConnection $connection
+     * @param DatabaseConnection|DatabaseConnectionInterface $connection
      */
-    public function __construct(\TYPO3\CMS\Core\Database\DatabaseConnection $connection)
+    public function __construct($connection)
     {
         $this->connection = $connection;
     }
 
-    /**
-     * Adds a row to the storage
-     *
-     * @param string $tableName The database table name
-     * @param array  $row       The row to insert
-     * @return integer the UID of the inserted row
-     */
     public function addRow($tableName, array $row)
     {
         $this->checkTableArgument($tableName);
@@ -48,7 +43,7 @@ class V7Backend extends AbstractBackend
     /**
      * Returns the database adapter
      *
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return DatabaseConnection
      */
     protected function getConnection()
     {
@@ -70,14 +65,6 @@ class V7Backend extends AbstractBackend
         }
     }
 
-    /**
-     * Updates a row in the storage
-     *
-     * @param string $tableName The database table name
-     * @param array  $query
-     * @param array  $row       The row to update
-     * @return mixed
-     */
     public function updateRow($tableName, $query, array $row)
     {
         $this->checkTableArgument($tableName);
@@ -97,10 +84,11 @@ class V7Backend extends AbstractBackend
      *
      * @param QueryInterface|array $query
      * @param string               $tableName
-     * @throws InvalidColumnNameException if one of the column names is invalid
-     * @throws InvalidTableNameException if the table name is invalid
-     * @throws \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
      * @return string
+     * @throws InvalidColumnNameException if one of the column names is invalid
+     * @throws InvalidOperatorException
+     * @throws InvalidTableNameException if the table name is invalid
+     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      */
     protected function createWhereStatementFromQuery($query, $tableName)
     {
@@ -158,7 +146,7 @@ class V7Backend extends AbstractBackend
                     $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
                 }
                 $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
-//			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
+                //			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
             } else {
                 throw new InvalidOperatorException('Operator could not be detected', 1404821478);
             }
@@ -230,12 +218,12 @@ class V7Backend extends AbstractBackend
     protected function resolveOperator($operator)
     {
         switch ($operator) {
-//			case self::OPERATOR_EQUAL_TO_NULL:
-//				$operator = 'IS';
-//				break;
-//			case self::OPERATOR_NOT_EQUAL_TO_NULL:
-//				$operator = 'IS NOT';
-//				break;
+            //			case self::OPERATOR_EQUAL_TO_NULL:
+            //				$operator = 'IS';
+            //				break;
+            //			case self::OPERATOR_NOT_EQUAL_TO_NULL:
+            //				$operator = 'IS NOT';
+            //				break;
             case QueryInterface::OPERATOR_IN:
                 $operator = 'IN';
                 break;
@@ -267,13 +255,6 @@ class V7Backend extends AbstractBackend
         return $operator;
     }
 
-    /**
-     * Deletes a row in the storage
-     *
-     * @param string $tableName  The database table name
-     * @param array  $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
-     * @return mixed
-     */
     public function removeRow($tableName, array $identifier)
     {
         $this->checkTableArgument($tableName);
@@ -287,14 +268,6 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    /**
-     * Returns the number of items matching the query
-     *
-     * @param string               $tableName The database table name
-     * @param QueryInterface|array $query
-     * @return integer
-     * @api
-     */
     public function getObjectCountByQuery($tableName, $query)
     {
         $this->checkTableArgument($tableName);
@@ -309,14 +282,6 @@ class V7Backend extends AbstractBackend
         return intval($row['count']);
     }
 
-    /**
-     * Returns the object data matching the $query
-     *
-     * @param string               $tableName The database table name
-     * @param QueryInterface|array $query
-     * @return array
-     * @api
-     */
     public function getObjectDataByQuery($tableName, $query)
     {
         $this->checkTableArgument($tableName);
