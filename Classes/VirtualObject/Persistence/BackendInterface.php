@@ -25,9 +25,9 @@ interface BackendInterface
     /**
      * Updates a row in the storage
      *
-     * @param string $tableName The database table name
-     * @param array  $query
-     * @param array  $row       The row to update
+     * @param string               $tableName The database table name
+     * @param array|QueryInterface $query
+     * @param array                $row       The row to update
      * @return mixed|void
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
@@ -50,8 +50,8 @@ interface BackendInterface
     /**
      * Returns the number of items matching the query
      *
-     * @param string $tableName The database table name
-     * @param array  $query
+     * @param string               $tableName The database table name
+     * @param array|QueryInterface $query
      * @return integer
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
@@ -63,8 +63,8 @@ interface BackendInterface
     /**
      * Returns the object data matching the $query
      *
-     * @param string $tableName The database table name
-     * @param array  $query
+     * @param string               $tableName The database table name
+     * @param array|QueryInterface $query
      * @return array
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built

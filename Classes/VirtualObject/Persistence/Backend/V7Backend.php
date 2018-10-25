@@ -40,31 +40,6 @@ class V7Backend extends AbstractBackend
         return (integer)$uid;
     }
 
-    /**
-     * Returns the database adapter
-     *
-     * @return DatabaseConnection
-     */
-    protected function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Checks if there are SQL errors in the last query, and if yes, throw an exception.
-     *
-     * @return void
-     * @throws SqlErrorException
-     */
-    protected function checkSqlErrors()
-    {
-        $error = $this->getConnection()->sql_error();
-        if ($error !== '') {
-            $error = '#' . $this->getConnection()->sql_errno() . ': ' . $error;
-            throw new SqlErrorException($error, 1247602160);
-        }
-    }
-
     public function updateRow($tableName, $query, array $row)
     {
         $this->checkTableArgument($tableName);
@@ -73,6 +48,50 @@ class V7Backend extends AbstractBackend
             $tableName,
             $this->createWhereStatementFromQuery($query, $tableName),
             $row
+        );
+        $this->checkSqlErrors();
+
+        return $result;
+    }
+
+    public function removeRow($tableName, array $identifier)
+    {
+        $this->checkTableArgument($tableName);
+
+        $result = $this->getConnection()->exec_DELETEquery(
+            $tableName,
+            $this->createWhereStatementFromQuery($identifier, $tableName)
+        );
+        $this->checkSqlErrors();
+
+        return $result;
+    }
+
+    public function getObjectCountByQuery($tableName, $query)
+    {
+        $this->checkTableArgument($tableName);
+
+        list($row) = $this->getConnection()->exec_SELECTgetRows(
+            'COUNT(*) AS count',
+            $tableName,
+            $this->createWhereStatementFromQuery($query, $tableName)
+        );
+        $this->checkSqlErrors();
+
+        return intval($row['count']);
+    }
+
+    public function getObjectDataByQuery($tableName, $query)
+    {
+        $this->checkTableArgument($tableName);
+
+        $result = $this->getConnection()->exec_SELECTgetRows(
+            '*',
+            $tableName,
+            $this->createWhereStatementFromQuery($query, $tableName),
+            '',
+            $this->createOrderingStatementFromQuery($query),
+            $this->createLimitStatementFromQuery($query)
         );
         $this->checkSqlErrors();
 
@@ -255,50 +274,6 @@ class V7Backend extends AbstractBackend
         return $operator;
     }
 
-    public function removeRow($tableName, array $identifier)
-    {
-        $this->checkTableArgument($tableName);
-
-        $result = $this->getConnection()->exec_DELETEquery(
-            $tableName,
-            $this->createWhereStatementFromQuery($identifier, $tableName)
-        );
-        $this->checkSqlErrors();
-
-        return $result;
-    }
-
-    public function getObjectCountByQuery($tableName, $query)
-    {
-        $this->checkTableArgument($tableName);
-
-        list($row) = $this->getConnection()->exec_SELECTgetRows(
-            'COUNT(*) AS count',
-            $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName)
-        );
-        $this->checkSqlErrors();
-
-        return intval($row['count']);
-    }
-
-    public function getObjectDataByQuery($tableName, $query)
-    {
-        $this->checkTableArgument($tableName);
-
-        $result = $this->getConnection()->exec_SELECTgetRows(
-            '*',
-            $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName),
-            '',
-            $this->createOrderingStatementFromQuery($query),
-            $this->createLimitStatementFromQuery($query)
-        );
-        $this->checkSqlErrors();
-
-        return $result;
-    }
-
     /**
      * Returns the order by statement for the given query
      *
@@ -341,5 +316,30 @@ class V7Backend extends AbstractBackend
         }
 
         return '';
+    }
+
+    /**
+     * Returns the database adapter
+     *
+     * @return DatabaseConnection
+     */
+    protected function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Checks if there are SQL errors in the last query, and if yes, throw an exception.
+     *
+     * @return void
+     * @throws SqlErrorException
+     */
+    protected function checkSqlErrors()
+    {
+        $error = $this->getConnection()->sql_error();
+        if ($error !== '') {
+            $error = '#' . $this->getConnection()->sql_errno() . ': ' . $error;
+            throw new SqlErrorException($error, 1247602160);
+        }
     }
 }
