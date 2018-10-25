@@ -204,9 +204,9 @@ class V7Backend extends AbstractBackend
             if ($markPosition !== false) {
                 if ($parameter === null) {
                     $parameter = 'NULL';
-                } elseif (is_array(
-                        $parameter
-                    ) || $parameter instanceof \ArrayAccess || $parameter instanceof \Traversable
+                } elseif (is_array($parameter)
+                    || $parameter instanceof \ArrayAccess
+                    || $parameter instanceof \Traversable
                 ) {
                     $items = [];
                     foreach ($parameter as $item) {
@@ -216,10 +216,9 @@ class V7Backend extends AbstractBackend
                 } else {
                     $parameter = $adapter->fullQuoteStr($parameter, $tableName);
                 }
-                $sqlString = substr($sqlString, 0, $markPosition) . $parameter . substr(
-                        $sqlString,
-                        ($markPosition + 1)
-                    );
+                $sqlString = substr($sqlString, 0, $markPosition)
+                    . $parameter
+                    . substr($sqlString, ($markPosition + 1));
             }
             $offset = $markPosition + strlen($parameter);
         }
