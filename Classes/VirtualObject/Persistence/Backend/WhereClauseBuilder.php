@@ -5,7 +5,6 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
-use Cundd\Rest\VirtualObject\Persistence\Backend\Doctrine\WhereClause;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
