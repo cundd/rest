@@ -28,13 +28,6 @@ class DoctrineBackend extends AbstractBackend
         $this->connectionPool = $connectionPool;
     }
 
-    /**
-     * Adds a row to the storage
-     *
-     * @param string $tableName The database table name
-     * @param array  $row       The row to insert
-     * @return integer the UID of the inserted row
-     */
     public function addRow($tableName, array $row)
     {
         $this->checkTableArgument($tableName);
@@ -71,14 +64,6 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    /**
-     * Updates a row in the storage
-     *
-     * @param string $tableName The database table name
-     * @param array  $query
-     * @param array  $row       The row to update
-     * @return mixed
-     */
     public function updateRow($tableName, $query, array $row)
     {
         $this->checkTableArgument($tableName);
@@ -95,74 +80,51 @@ class DoctrineBackend extends AbstractBackend
         throw new \Exception('Not implemented');
     }
 
-    /**
-     * Deletes a row in the storage
-     *
-     * @param string $tableName  The database table name
-     * @param array  $identifier An array of identifier array('fieldname' => value). This array will be transformed to a WHERE clause
-     * @return mixed
-     */
-    public function removeRow($tableName, array $identifier)
+    public function removeRow($tableName, array $query)
     {
-//        $this->checkTableArgument($tableName);
-//
-//        $result = $this->getAdapter()->exec_DELETEquery(
-//            $tableName,
-//            $this->createWhereStatementFromQuery($identifier, $tableName)
-//        );
-//        $this->checkSqlErrors($tableName);
-//
-//        return $result;
+        //        $this->checkTableArgument($tableName);
+        //
+        //        $result = $this->getAdapter()->exec_DELETEquery(
+        //            $tableName,
+        //            $this->createWhereStatementFromQuery($identifier, $tableName)
+        //        );
+        //        $this->checkSqlErrors($tableName);
+        //
+        //        return $result;
 
         throw new \Exception('Not implemented');
     }
 
-    /**
-     * Returns the number of items matching the query
-     *
-     * @param string               $tableName The database table name
-     * @param QueryInterface|array $query
-     * @return integer
-     * @api
-     */
     public function getObjectCountByQuery($tableName, $query)
     {
-//        $this->checkTableArgument($tableName);
-//
-//        list($row) = $this->getAdapter()->exec_SELECTgetRows(
-//            'COUNT(*) AS count',
-//            $tableName,
-//            $this->createWhereStatementFromQuery($query, $tableName)
-//        );
-//        $this->checkSqlErrors();
-//
-//        return intval($row['count']);
+        //        $this->checkTableArgument($tableName);
+        //
+        //        list($row) = $this->getAdapter()->exec_SELECTgetRows(
+        //            'COUNT(*) AS count',
+        //            $tableName,
+        //            $this->createWhereStatementFromQuery($query, $tableName)
+        //        );
+        //        $this->checkSqlErrors();
+        //
+        //        return intval($row['count']);
         throw new \Exception('Not implemented');
     }
 
-    /**
-     * Returns the object data matching the $query
-     *
-     * @param string               $tableName The database table name
-     * @param QueryInterface|array $query
-     * @return array
-     * @api
-     */
     public function getObjectDataByQuery($tableName, $query)
     {
-//        $this->checkTableArgument($tableName);
-//
-//        $result = $this->getAdapter()->exec_SELECTgetRows(
-//            '*',
-//            $tableName,
-//            $this->createWhereStatementFromQuery($query, $tableName),
-//            '',
-//            $this->createOrderingStatementFromQuery($query),
-//            $this->createLimitStatementFromQuery($query)
-//        );
-//        $this->checkSqlErrors();
-//
-//        return $result;
+        //        $this->checkTableArgument($tableName);
+        //
+        //        $result = $this->getAdapter()->exec_SELECTgetRows(
+        //            '*',
+        //            $tableName,
+        //            $this->createWhereStatementFromQuery($query, $tableName),
+        //            '',
+        //            $this->createOrderingStatementFromQuery($query),
+        //            $this->createLimitStatementFromQuery($query)
+        //        );
+        //        $this->checkSqlErrors();
+        //
+        //        return $result;
         throw new \Exception('Not implemented');
     }
 
@@ -171,10 +133,10 @@ class DoctrineBackend extends AbstractBackend
      *
      * @param QueryInterface|array $query
      * @param string               $tableName
-     * @throws InvalidColumnNameException if one of the column names is invalid
-     * @throws InvalidTableNameException if the table name is invalid
-     * @throws \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
      * @return string
+     * @throws Exception
+     * @throws InvalidColumnNameException if one of the column names is invalid
+     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      */
     protected function createWhereStatementFromQuery($query, $tableName)
     {
@@ -232,7 +194,7 @@ class DoctrineBackend extends AbstractBackend
                     $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
                 }
                 $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
-//			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
+                //			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
             } else {
                 throw new InvalidOperatorException('Operator could not be detected', 1404821478);
             }
@@ -316,42 +278,7 @@ class DoctrineBackend extends AbstractBackend
      */
     protected function resolveOperator($operator)
     {
-        switch ($operator) {
-//			case self::OPERATOR_EQUAL_TO_NULL:
-//				$operator = 'IS';
-//				break;
-//			case self::OPERATOR_NOT_EQUAL_TO_NULL:
-//				$operator = 'IS NOT';
-//				break;
-            case QueryInterface::OPERATOR_IN:
-                $operator = 'IN';
-                break;
-            case QueryInterface::OPERATOR_EQUAL_TO:
-                $operator = '=';
-                break;
-            case QueryInterface::OPERATOR_NOT_EQUAL_TO:
-                $operator = '!=';
-                break;
-            case QueryInterface::OPERATOR_LESS_THAN:
-                $operator = '<';
-                break;
-            case QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
-                $operator = '<=';
-                break;
-            case QueryInterface::OPERATOR_GREATER_THAN:
-                $operator = '>';
-                break;
-            case QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
-                $operator = '>=';
-                break;
-            case QueryInterface::OPERATOR_LIKE:
-                $operator = 'LIKE';
-                break;
-            default:
-                throw new InvalidOperatorException('Unsupported operator encountered.', 1242816073);
-        }
-
-        return $operator;
+        return WhereClauseBuilder::resolveOperator($operator);
     }
 
     /**

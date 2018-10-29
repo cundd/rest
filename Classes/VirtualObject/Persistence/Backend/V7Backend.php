@@ -20,7 +20,7 @@ class V7Backend extends AbstractBackend
     private $connection;
 
     /**
-     * V7Backend constructor.
+     * V7Backend constructor
      *
      * @param DatabaseConnection|DatabaseConnectionInterface $connection
      */
@@ -54,13 +54,13 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    public function removeRow($tableName, array $identifier)
+    public function removeRow($tableName, array $query)
     {
         $this->checkTableArgument($tableName);
 
         $result = $this->getConnection()->exec_DELETEquery(
             $tableName,
-            $this->createWhereStatementFromQuery($identifier, $tableName)
+            $this->createWhereStatementFromQuery($query, $tableName)
         );
         $this->checkSqlErrors();
 
@@ -108,6 +108,7 @@ class V7Backend extends AbstractBackend
      * @throws InvalidOperatorException
      * @throws InvalidTableNameException if the table name is invalid
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
+     * @throws Exception
      */
     protected function createWhereStatementFromQuery($query, $tableName)
     {
@@ -235,42 +236,7 @@ class V7Backend extends AbstractBackend
      */
     protected function resolveOperator($operator)
     {
-        switch ($operator) {
-            //			case self::OPERATOR_EQUAL_TO_NULL:
-            //				$operator = 'IS';
-            //				break;
-            //			case self::OPERATOR_NOT_EQUAL_TO_NULL:
-            //				$operator = 'IS NOT';
-            //				break;
-            case QueryInterface::OPERATOR_IN:
-                $operator = 'IN';
-                break;
-            case QueryInterface::OPERATOR_EQUAL_TO:
-                $operator = '=';
-                break;
-            case QueryInterface::OPERATOR_NOT_EQUAL_TO:
-                $operator = '!=';
-                break;
-            case QueryInterface::OPERATOR_LESS_THAN:
-                $operator = '<';
-                break;
-            case QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
-                $operator = '<=';
-                break;
-            case QueryInterface::OPERATOR_GREATER_THAN:
-                $operator = '>';
-                break;
-            case QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
-                $operator = '>=';
-                break;
-            case QueryInterface::OPERATOR_LIKE:
-                $operator = 'LIKE';
-                break;
-            default:
-                throw new InvalidOperatorException('Unsupported operator encountered.', 1242816073);
-        }
-
-        return $operator;
+        return WhereClauseBuilder::resolveOperator($operator);
     }
 
     /**

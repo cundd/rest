@@ -43,9 +43,9 @@ class Backend implements BackendInterface
         return $this->concreteBackend->updateRow($tableName, $query, $row);
     }
 
-    public function removeRow($tableName, array $identifier)
+    public function removeRow($tableName, array $query)
     {
-        return $this->concreteBackend->removeRow($tableName, $identifier);
+        return $this->concreteBackend->removeRow($tableName, $query);
     }
 
     public function getObjectCountByQuery($tableName, $query)
