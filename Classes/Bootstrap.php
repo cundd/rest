@@ -4,6 +4,7 @@ namespace Cundd\Rest;
 
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -43,7 +44,7 @@ class Bootstrap
     public function initializeLanguageObject()
     {
         if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
-            /** @var \TYPO3\CMS\Lang\LanguageService $GLOBALS['LANG'] */
+            /** @var \TYPO3\CMS\Lang\LanguageService $GLOBALS ['LANG'] */
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
             $GLOBALS['LANG']->init($this->getRequestedLanguageCode());
         }
@@ -70,9 +71,10 @@ class Bootstrap
     {
         $cHash = GeneralUtility::_GP('cHash') ?: 'cunddRestFakeHash';
 
-        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-        return $objectManager->get(\TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
+        return $objectManager->get(
+            TypoScriptFrontendController::class,
             $GLOBALS['TYPO3_CONF_VARS'], // can be removed in TYPO3 v8
             $pageUid,
             0,  // Type
@@ -220,6 +222,7 @@ class Bootstrap
     private function getRequestedLanguageCode()
     {
         if (class_exists('Locale') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            /** @noinspection PhpComposerExtensionStubsInspection */
             return \Locale::getPrimaryLanguage(\Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']));
         }
 
