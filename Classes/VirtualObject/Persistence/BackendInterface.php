@@ -14,8 +14,8 @@ interface BackendInterface
     /**
      * Adds a row to the storage
      *
-     * @param string $tableName The database table name
-     * @param array  $row       The row to insert
+     * @param string $tableName Database table name
+     * @param array  $row       Data to insert
      * @return integer the UID of the inserted row
      * @throws InvalidTableNameException if the table name is not valid
      * @throws SqlErrorException on SQL errors
@@ -25,51 +25,46 @@ interface BackendInterface
     /**
      * Updates a row in the storage
      *
-     * @param string               $tableName The database table name
-     * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
-     * @param array                $row       The row to update
-     * @return mixed|void
-     * @throws InvalidTableNameException if the table name is not valid
-     * @throws InvalidOperatorException if the where clause could not be built
-     * @throws SqlErrorException on SQL errors
+     * @param string $tableName  Database table name
+     * @param array  $identifier A map of key value pairs to identify the record to update
+     * @param array  $row        Data to update the row
+     * @return int the number of affected rows
      */
-    public function updateRow($tableName, $query, array $row);
+    public function updateRow($tableName, array $identifier, array $row);
 
     /**
      * Deletes a row in the storage
      *
-     * @param string $tableName The database table name
-     * @param array  $query     A map of key value pairs to construct the WHERE clause
-     * @return mixed|void
+     * @param string $tableName  Database table name
+     * @param array  $identifier A map of key value pairs to identify the record to update
+     * @return int the number of affected rows
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function removeRow($tableName, array $query);
+    public function removeRow($tableName, array $identifier);
 
     /**
      * Returns the number of items matching the query
      *
-     * @param string               $tableName The database table name
+     * @param string               $tableName Database table name
      * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
      * @return integer
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
-     * @api
      */
     public function getObjectCountByQuery($tableName, $query);
 
     /**
      * Returns the object data matching the $query
      *
-     * @param string               $tableName The database table name
+     * @param string               $tableName Database table name
      * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
      * @return array
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
-     * @api
      */
     public function getObjectDataByQuery($tableName, $query);
 }
