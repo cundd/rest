@@ -22,6 +22,9 @@ class ErrorHandler
      */
     public static function getShowDebugInformation()
     {
+        if (php_sapi_name() === 'cli') {
+            return true;
+        }
         $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
         $devIpMask = static::getDevIpMask();
         if (in_array('*', $devIpMask)) {
