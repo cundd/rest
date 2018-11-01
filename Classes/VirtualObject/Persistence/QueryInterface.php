@@ -85,6 +85,16 @@ interface QueryInterface
     const OPERATOR_IS_EMPTY = 11;
 
     /**
+     * Logical AND
+     */
+    const COMBINATOR_AND = 'AND';
+
+    /**
+     * Logical OR
+     */
+    const COMBINATOR_OR = 'OR';
+
+    /**
      * Executes the query and returns the result
      *
      * @return array Returns the result

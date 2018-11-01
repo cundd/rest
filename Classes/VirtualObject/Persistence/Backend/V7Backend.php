@@ -6,6 +6,7 @@ use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
+use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception;
@@ -31,7 +32,7 @@ class V7Backend extends AbstractBackend
 
     public function addRow($tableName, array $row)
     {
-        $this->checkTableArgument($tableName);
+        $this->assertValidTableName($tableName);
 
         $this->getConnection()->exec_INSERTquery($tableName, $row);
         $uid = $this->getConnection()->sql_insert_id();
@@ -40,13 +41,13 @@ class V7Backend extends AbstractBackend
         return (integer)$uid;
     }
 
-    public function updateRow($tableName, $query, array $row)
+    public function updateRow($tableName, array $identifier, array $row)
     {
-        $this->checkTableArgument($tableName);
+        $this->assertValidTableName($tableName);
 
         $result = $this->getConnection()->exec_UPDATEquery(
             $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName),
+            $this->createWhereStatementFromQuery($identifier, $tableName),
             $row
         );
         $this->checkSqlErrors();
@@ -54,13 +55,13 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    public function removeRow($tableName, array $query)
+    public function removeRow($tableName, array $identifier)
     {
-        $this->checkTableArgument($tableName);
+        $this->assertValidTableName($tableName);
 
         $result = $this->getConnection()->exec_DELETEquery(
             $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName)
+            $this->createWhereStatementFromQuery($identifier, $tableName)
         );
         $this->checkSqlErrors();
 
@@ -69,7 +70,7 @@ class V7Backend extends AbstractBackend
 
     public function getObjectCountByQuery($tableName, $query)
     {
-        $this->checkTableArgument($tableName);
+        $this->assertValidTableName($tableName);
 
         list($row) = $this->getConnection()->exec_SELECTgetRows(
             'COUNT(*) AS count',
@@ -83,15 +84,14 @@ class V7Backend extends AbstractBackend
 
     public function getObjectDataByQuery($tableName, $query)
     {
-        $this->checkTableArgument($tableName);
-
+        $this->assertValidTableName($tableName);
         $result = $this->getConnection()->exec_SELECTgetRows(
             '*',
             $tableName,
             $this->createWhereStatementFromQuery($query, $tableName),
             '',
-            $this->createOrderingStatementFromQuery($query),
-            $this->createLimitStatementFromQuery($query)
+            $query instanceof QueryInterface ? $this->createOrderingStatementFromQuery($query) : '',
+            $query instanceof QueryInterface ? $this->createLimitStatementFromQuery($query) : ''
         );
         $this->checkSqlErrors();
 
@@ -113,17 +113,19 @@ class V7Backend extends AbstractBackend
     protected function createWhereStatementFromQuery($query, $tableName)
     {
         $configuration = null;
-        $this->checkTableArgument($tableName);
+        $this->assertValidTableName($tableName);
 
         if ($query instanceof QueryInterface) {
             $configuration = $query->getConfiguration();
 
-            $statement = $query->getStatement();
-            if ($statement && $statement instanceof Statement) {
-                $sql = $statement->getStatement();
-                $parameters = $statement->getBoundVariables();
+            if ($query instanceof Query) {
+                $statement = $query->getStatement();
+                if ($statement && $statement instanceof Statement) {
+                    $sql = (string)$statement->getStatement();
+                    $parameters = $statement->getBoundVariables();
 
-                return $this->replacePlaceholders($sql, $parameters, $tableName);
+                    return $this->replacePlaceholders($sql, $parameters, $tableName);
+                }
             }
 
             $query = $query->getConstraint();
@@ -191,7 +193,6 @@ class V7Backend extends AbstractBackend
      */
     protected function replacePlaceholders(&$sqlString, array $parameters, $tableName = 'foo')
     {
-        // TODO profile this method again
         if (substr_count($sqlString, '?') !== count($parameters)) {
             throw new Exception(
                 'The number of question marks to replace must be equal to the number of parameters.',
@@ -237,50 +238,6 @@ class V7Backend extends AbstractBackend
     protected function resolveOperator($operator)
     {
         return WhereClauseBuilder::resolveOperator($operator);
-    }
-
-    /**
-     * Returns the order by statement for the given query
-     *
-     * @param QueryInterface $query
-     * @return string
-     */
-    protected function createOrderingStatementFromQuery($query)
-    {
-        if ($query instanceof QueryInterface) {
-            $orderings = $query->getOrderings();
-            $orderArray = array_map(
-                function ($property, $direction) {
-                    return $property . ' ' . $direction;
-                },
-                array_keys($orderings),
-                $orderings
-            );
-
-            return implode(', ', $orderArray);
-        }
-
-        return '';
-    }
-
-    /**
-     * Returns the offset and limit statement for the given query
-     *
-     * @param QueryInterface $query
-     * @return string
-     */
-    protected function createLimitStatementFromQuery($query)
-    {
-        if ($query instanceof QueryInterface) {
-            $limit = '' . $query->getOffset();
-            if ($query->getLimit()) {
-                $limit = ($limit ? $limit : '0') . ',' . $query->getLimit();
-            }
-
-            return $limit;
-        }
-
-        return '';
     }
 
     /**

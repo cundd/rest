@@ -3,6 +3,7 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
@@ -10,14 +11,14 @@ require_once __DIR__ . '/AbstractDatabaseCase.php';
 class RepositoryTest extends AbstractDatabaseCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface
+     * @var RepositoryInterface
      */
     protected $fixture;
 
     public function setUp()
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\RepositoryInterface');
+        $this->fixture = $this->objectManager->get(RepositoryInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
@@ -117,7 +118,7 @@ class RepositoryTest extends AbstractDatabaseCase
         $this->fixture->update($object);
 
         $result = $this->fixture->findByIdentifier($objectData['uid']);
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
+        $this->assertInstanceOf(VirtualObject::class, $result);
         $this->assertEquals($object->getData(), $result->getData());
     }
 
@@ -143,7 +144,7 @@ class RepositoryTest extends AbstractDatabaseCase
         $uid = 100;
         $result = $this->fixture->findByIdentifier($uid);
 
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
+        $this->assertInstanceOf(VirtualObject::class, $result);
 
         $resultData = $result->getData();
         $this->assertEquals($uid, $resultData['uid']);
@@ -152,7 +153,7 @@ class RepositoryTest extends AbstractDatabaseCase
     }
 
     /**
-     * @param array <VirtualObject> $collection
+     * @param VirtualObject[] $collection
      * @return array
      */
     protected function getTestDataFromObjectCollection($collection)
