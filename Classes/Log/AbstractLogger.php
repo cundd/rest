@@ -36,6 +36,11 @@ abstract class AbstractLogger extends \Psr\Log\AbstractLogger implements LoggerI
         }
     }
 
+    /**
+     * Logs the given exception
+     *
+     * @param \Exception|\Throwable $exception
+     */
     public function logException($exception)
     {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();

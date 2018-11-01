@@ -84,12 +84,11 @@ class PersistenceManager implements PersistenceManagerInterface
     public function update($object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
-        if (
-            $identifierQuery
-            && $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
-        ) {
-            $this->backend->updateRow(
-                $this->getSourceIdentifier(),
+        $sourceIdentifier = $this->getSourceIdentifier();
+        $backend = $this->backend;
+        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, $identifierQuery)) {
+            $backend->updateRow(
+                $sourceIdentifier,
                 $identifierQuery,
                 $this->getObjectConverter()->convertFromVirtualObject($object)
             );
@@ -105,12 +104,11 @@ class PersistenceManager implements PersistenceManagerInterface
     public function remove($object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
-        if (
-            $identifierQuery
-            && $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
-        ) {
-            $this->backend->removeRow(
-                $this->getSourceIdentifier(),
+        $sourceIdentifier = $this->getSourceIdentifier();
+        $backend = $this->backend;
+        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, $identifierQuery)) {
+            $backend->removeRow(
+                $sourceIdentifier,
                 $identifierQuery
             );
         }

@@ -54,8 +54,6 @@ class DoctrineConnection implements DatabaseConnectionInterface
         $query .= (string)$orderBy !== '' ? ' ORDER BY ' . $orderBy : '';
         $query .= (string)$limit !== '' ? ' LIMIT ' . $limit : '';
 
-//        var_dump($query,$this->sql_query($query));
-
         return $this->sql_query($query);
     }
 

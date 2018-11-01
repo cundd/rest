@@ -2,8 +2,6 @@
 
 namespace Cundd\Rest\Configuration;
 
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
-
 /**
  * Standalone Configuration Provider
  */

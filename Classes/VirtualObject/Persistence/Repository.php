@@ -205,7 +205,7 @@ class Repository implements RepositoryInterface
     public function createQuery()
     {
         /** @var QueryInterface $query */
-        $query = $this->objectManager->get('Cundd\\Rest\\VirtualObject\\Persistence\\QueryInterface');
+        $query = $this->objectManager->get(QueryInterface::class);
         $query->setConfiguration($this->getConfiguration());
 
         return $query;

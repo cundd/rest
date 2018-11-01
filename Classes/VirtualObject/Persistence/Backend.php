@@ -4,6 +4,7 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\Persistence\Backend\DoctrineBackend;
 use Cundd\Rest\VirtualObject\Persistence\Backend\V7Backend;
+use Cundd\Rest\VirtualObject\Persistence\Backend\WhereClauseBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -23,13 +24,13 @@ class Backend implements BackendInterface
     {
         if ($concreteBackend) {
             $this->concreteBackend = $concreteBackend;
-        } elseif (isset($GLOBALS['TYPO3_DB']) && is_object($GLOBALS['TYPO3_DB'])) {
+        } elseif ($this->getUseV7Backend()) {
             $this->concreteBackend = new V7Backend($GLOBALS['TYPO3_DB']);
         } else {
             /** @var ConnectionPool $connection */
             $connection = GeneralUtility::makeInstance(ConnectionPool::class);
 
-            $this->concreteBackend = new DoctrineBackend($connection);
+            $this->concreteBackend = new DoctrineBackend($connection, new WhereClauseBuilder());
         }
     }
 
@@ -38,14 +39,14 @@ class Backend implements BackendInterface
         return $this->concreteBackend->addRow($tableName, $row);
     }
 
-    public function updateRow($tableName, $query, array $row)
+    public function updateRow($tableName, array $identifier, array $row)
     {
-        return $this->concreteBackend->updateRow($tableName, $query, $row);
+        return $this->concreteBackend->updateRow($tableName, $identifier, $row);
     }
 
-    public function removeRow($tableName, array $query)
+    public function removeRow($tableName, array $identifier)
     {
-        return $this->concreteBackend->removeRow($tableName, $query);
+        return $this->concreteBackend->removeRow($tableName, $identifier);
     }
 
     public function getObjectCountByQuery($tableName, $query)
@@ -56,5 +57,19 @@ class Backend implements BackendInterface
     public function getObjectDataByQuery($tableName, $query)
     {
         return $this->concreteBackend->getObjectDataByQuery($tableName, $query);
+    }
+
+    /**
+     * @return bool
+     */
+    private function getUseV7Backend()
+    {
+        if (!isset($GLOBALS['TYPO3_DB'])) {
+            return false;
+        }
+
+        $database = $GLOBALS['TYPO3_DB'];
+
+        return is_object($database) && $database instanceof \TYPO3\CMS\Core\Database\DatabaseConnection;
     }
 }

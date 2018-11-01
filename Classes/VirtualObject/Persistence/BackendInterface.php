@@ -16,7 +16,7 @@ interface BackendInterface
      *
      * @param string $tableName Database table name
      * @param array  $row       Data to insert
-     * @return integer the UID of the inserted row
+     * @return int the UID of the inserted row
      * @throws InvalidTableNameException if the table name is not valid
      * @throws SqlErrorException on SQL errors
      */
