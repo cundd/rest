@@ -1,11 +1,3 @@
-### `url_scheme` must be added manually
-#plugin.tx_rest.settings.virtualObjects.page.mapping.properties {
-#    urlScheme {
-#        column = url_scheme
-#        type = integer
-#    }
-#}
-
 plugin.tx_rest.settings {
     paths {
         virtual_object-page {
@@ -107,11 +99,6 @@ plugin.tx_rest.settings {
                         type = int
                     }
 
-                    urlType {
-                        column = urltype
-                        type = integer
-                    }
-
                     shortcut {
                         column = shortcut
                         type = int
@@ -119,11 +106,6 @@ plugin.tx_rest.settings {
 
                     shortcutMode {
                         column = shortcut_mode
-                        type = int
-                    }
-
-                    noCache {
-                        column = no_cache
                         type = int
                     }
 
@@ -165,6 +147,11 @@ plugin.tx_rest.settings {
                     cacheTimeout {
                         column = cache_timeout
                         type = int
+                    }
+
+                    cacheTags {
+                        column = cache_tags
+                        type = string
                     }
 
                     newUntil {
@@ -250,6 +237,52 @@ plugin.tx_rest.settings {
                     backendLayoutNextLevel {
                         column = backend_layout_next_level
                         type = int
+                    }
+
+                    seoTitle {
+                        column = seo_title
+                        type = string
+                    }
+
+                    noIndex {
+                        column = no_index
+                        type = bool
+                    }
+
+                    noFollow {
+                        column = no_follow
+                        type = bool
+                    }
+
+                    ogTitle {
+                        column = og_title
+                        type = string
+                    }
+
+                    ogDescription {
+                        column = og_description
+                        type = string
+                    }
+
+
+                    twitterTitle {
+                        column = twitter_title
+                        type = string
+                    }
+
+                    twitterDescription {
+                        column = twitter_description
+                        type = string
+                    }
+
+                    twitterImage {
+                        column = twitter_image
+                        type = string
+                    }
+
+                    canonicalLink {
+                        column = canonical_link
+                        type = string
                     }
                 }
             }

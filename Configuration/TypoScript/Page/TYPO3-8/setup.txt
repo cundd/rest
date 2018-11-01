@@ -1,0 +1,258 @@
+### Mapping for `url_scheme` (before TYPO3 8 LTS) must be added manually
+#plugin.tx_rest.settings.virtualObjects.page.mapping.properties {
+#    urlScheme {
+#        column = url_scheme
+#        type = integer
+#    }
+#}
+
+plugin.tx_rest.settings {
+    paths {
+        virtual_object-page {
+            path = virtual_object-page
+            read = deny
+            write = deny
+        }
+    }
+
+    aliases {
+        # page = virtual_object-page
+    }
+
+    virtualObjects {
+        page {
+            mapping {
+                identifier = id
+                tableName = pages
+                skipUnknownProperties = true
+
+                properties {
+                    id {
+                        column = uid
+                        type = int
+                    }
+
+                    pageIdentifier {
+                        column = pid
+                        type = int
+                    }
+
+                    modificationDate {
+                        column = tstamp
+                        type = int
+                    }
+
+                    creationDate {
+                        column = crdate
+                        type = int
+                    }
+
+                    creationUserId {
+                        column = cruser_id
+                        type = int
+                    }
+
+                    sorting {
+                        column = sorting
+                        type = int
+                    }
+
+                    deleted {
+                        column = deleted
+                        type = bool
+                    }
+
+                    editLock {
+                        column = editlock
+                        type = boolean
+                    }
+
+                    hidden {
+                        column = hidden
+                        type = bool
+                    }
+
+                    title {
+                        column = title
+                        type = string
+                    }
+
+                    doktype {
+                        column = doktype
+                        type = integer
+                    }
+
+                    isSiteRoot {
+                        column = is_siteroot
+                        type = bool
+                    }
+
+                    phpTreeStop {
+                        column = php_tree_stop
+                        type = boolean
+                    }
+
+                    url {
+                        column = url
+                        type = string
+                    }
+
+                    startTime {
+                        column = starttime
+                        type = int
+                    }
+
+                    endTime {
+                        column = endtime
+                        type = int
+                    }
+
+                    urlType {
+                        column = urltype
+                        type = integer
+                    }
+
+                    shortcut {
+                        column = shortcut
+                        type = int
+                    }
+
+                    shortcutMode {
+                        column = shortcut_mode
+                        type = int
+                    }
+
+                    noCache {
+                        column = no_cache
+                        type = int
+                    }
+
+                    feGroup {
+                        column = fe_group
+                        type = string
+                    }
+
+                    subtitle {
+                        column = subtitle
+                        type = string
+                    }
+
+                    layout {
+                        column = layout
+                        type = integer
+                    }
+
+                    target {
+                        column = target
+                        type = string
+                    }
+
+                    media {
+                        column = media
+                        type = string
+                    }
+
+                    lastUpdated {
+                        column = lastUpdated
+                        type = int
+                    }
+
+                    keywords {
+                        column = keywords
+                        type = string
+                    }
+
+                    cacheTimeout {
+                        column = cache_timeout
+                        type = int
+                    }
+
+                    newUntil {
+                        column = newUntil
+                        type = int
+                    }
+
+                    description {
+                        column = description
+                        type = string
+                    }
+
+                    noSearch {
+                        column = no_search
+                        type = integer
+                    }
+
+                    abstract {
+                        column = abstract
+                        type = string
+                    }
+
+                    module {
+                        column = module
+                        type = string
+                    }
+
+                    extendToSubpages {
+                        column = extendToSubpages
+                        type = integer
+                    }
+
+                    author {
+                        column = author
+                        type = string
+                    }
+
+                    authorEmail {
+                        column = author_email
+                        type = string
+                    }
+
+                    navigationTitle {
+                        column = nav_title
+                        type = string
+                    }
+
+                    navigationHide {
+                        column = nav_hide
+                        type = integer
+                    }
+
+                    contentFromPageIdentifier {
+                        column = content_from_pid
+                        type = int
+                    }
+
+                    mountPageIdentifier {
+                        column = mount_pid
+                        type = int
+                    }
+
+                    mountPageIdentifierOL {
+                        column = mount_pid_ol
+                        type = integer
+                    }
+
+                    alias {
+                        column = alias
+                        type = string
+                    }
+
+                    feLoginMode {
+                        column = fe_login_mode
+                        type = integer
+                    }
+
+                    backendLayout {
+                        column = backend_layout
+                        type = int
+                    }
+
+                    backendLayoutNextLevel {
+                        column = backend_layout_next_level
+                        type = int
+                    }
+                }
+            }
+        }
+    }
+}
