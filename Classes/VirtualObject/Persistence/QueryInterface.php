@@ -202,21 +202,4 @@ interface QueryInterface
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
     public function getConfiguration();
-
-    /**
-     * Sets the statement of this query programmatically. If you use this, you will lose the abstraction from a concrete
-     * storage backend (database)
-     *
-     * @param string $statement  The statement
-     * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
-     * @return QueryInterface
-     */
-    public function statement($statement, array $parameters = []);
-
-    /**
-     * Returns the statement of this query.
-     *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
-     */
-    public function getStatement();
 }

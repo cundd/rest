@@ -64,7 +64,6 @@ class Query implements QueryInterface
         return $this->persistenceManager->getObjectDataByQuery($this);
     }
 
-
     /**
      * Returns the query result count
      *
@@ -228,6 +227,7 @@ class Query implements QueryInterface
      *
      * @param string $statement  The statement
      * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
+     * @deprecated only implemented for TYPO3 without Doctrine. Will be removed in 4.0.0
      * @return QueryInterface
      */
     public function statement($statement, array $parameters = [])
@@ -238,9 +238,10 @@ class Query implements QueryInterface
     }
 
     /**
-     * Returns the statement of this query.
+     * Returns the statement of this query
      *
-     * @return Statement
+     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
+     * @deprecated only implemented for TYPO3 without Doctrine. Will be removed in 4.0.0
      */
     public function getStatement()
     {
