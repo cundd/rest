@@ -10,6 +10,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${PHPUNIT_BINARY=""}
 : ${CHECK_MYSQL_CREDENTIALS="yes"}
 : ${DEBUG=""}
+: ${TEST_MODE="yes"}
 
 : ${typo3DatabaseName="typo3"}
 : ${typo3DatabaseHost="127.0.0.1"}
@@ -140,27 +141,27 @@ function init {
 # Run Unit Tests
 function unit_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$@";
     else
-        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$PROJECT_HOME/Tests/Unit" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$PROJECT_HOME/Tests/Unit" "$@";
     fi
 }
 
 # Run Manual Tests
 function manual_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$@";
     else
-        ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$PROJECT_HOME/Tests/Manual" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$PROJECT_HOME/Tests/Manual" "$@";
     fi
 }
 
 # Run Functional Tests
 function functional_tests {
     if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$@";
     else
-        ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$PROJECT_HOME/Tests/Functional" "$@";
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$PROJECT_HOME/Tests/Functional" "$@";
     fi
 }
 

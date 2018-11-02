@@ -22,6 +22,9 @@ class ErrorHandler
      */
     public static function getShowDebugInformation()
     {
+        if ('' !== (string)getenv('TEST_MODE')) {
+            return false;
+        }
         if (php_sapi_name() === 'cli') {
             return true;
         }
