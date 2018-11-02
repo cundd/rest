@@ -215,4 +215,14 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
 
         return $router->reveal();
     }
+
+    public function __sleep()
+    {
+        $properties = get_object_vars($this);
+
+        // Do not try to serialize the `exceptionHandler` callback (only happens in case of an error)
+        unset($properties['exceptionHandler']);
+
+        return $properties;
+    }
 }
