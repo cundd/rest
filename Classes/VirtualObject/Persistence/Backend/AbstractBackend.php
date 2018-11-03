@@ -7,8 +7,9 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
+use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 
-abstract class AbstractBackend implements BackendInterface
+abstract class AbstractBackend implements BackendInterface, RawQueryBackendInterface
 {
     /**
      * Checks if the given table name is valid
@@ -40,12 +41,19 @@ abstract class AbstractBackend implements BackendInterface
      */
     protected function createLimitStatementFromQuery(QueryInterface $query)
     {
-        $offset = (string)(int)$query->getOffset();
-        if ($query->getLimit()) {
-            return $offset . ',' . $query->getLimit();
+        $offset = (int)$query->getOffset();
+        $limit = (int)$query->getLimit();
+        if ($limit > 0) {
+            return $offset . ',' . $limit;
         }
 
-        return $offset;
+        if ($offset > 0) {
+            throw new \LogicException(
+                'Queries with offset but without limit are not implemented'
+            );
+        }
+
+        return '';
     }
 
     /**
@@ -66,5 +74,20 @@ abstract class AbstractBackend implements BackendInterface
         );
 
         return implode(', ', $orderArray);
+    }
+
+    /**
+     * Return if the query is empty
+     *
+     * @param array|QueryInterface $query
+     * @return bool
+     */
+    protected function isQueryEmpty($query)
+    {
+        if ($query instanceof QueryInterface) {
+            return empty($query->getConstraint());
+        } else {
+            return empty($query);
+        }
     }
 }

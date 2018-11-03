@@ -22,7 +22,7 @@ class DoctrineBackend extends AbstractBackend
     /**
      * DoctrineConnection constructor
      *
-     * @param ConnectionPool $connectionPool
+     * @param ConnectionPool     $connectionPool
      * @param WhereClauseBuilder $whereClauseBuilder
      */
     public function __construct(ConnectionPool $connectionPool, WhereClauseBuilder $whereClauseBuilder)
@@ -118,19 +118,9 @@ class DoctrineBackend extends AbstractBackend
         return $statement->fetchAll();
     }
 
-    /**
-     * Return if the query is empty
-     *
-     * @param array|QueryInterface $query
-     * @return bool
-     */
-    private function isQueryEmpty($query)
+    function executeQuery($query)
     {
-        if ($query instanceof QueryInterface) {
-            return empty($query->getConstraint());
-        } else {
-            return empty($query);
-        }
+        return $this->getConnection('fe_users')->executeQuery($query);
     }
 
     private function getConnection($table)

@@ -2,16 +2,16 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
-use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
+use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
-use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException;
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException as Typo3SqlErrorException;
 
 class V7Backend extends AbstractBackend
 {
@@ -23,9 +23,9 @@ class V7Backend extends AbstractBackend
     /**
      * V7Backend constructor
      *
-     * @param DatabaseConnection|DatabaseConnectionInterface $connection
+     * @param DatabaseConnection $connection
      */
-    public function __construct($connection)
+    public function __construct(DatabaseConnection $connection)
     {
         $this->connection = $connection;
     }
@@ -34,9 +34,13 @@ class V7Backend extends AbstractBackend
     {
         $this->assertValidTableName($tableName);
 
-        $this->getConnection()->exec_INSERTquery($tableName, $row);
-        $uid = $this->getConnection()->sql_insert_id();
-        $this->checkSqlErrors();
+        try {
+            $this->getConnection()->exec_INSERTquery($tableName, $row);
+            $uid = $this->getConnection()->sql_insert_id();
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
 
         return (integer)$uid;
     }
@@ -44,13 +48,16 @@ class V7Backend extends AbstractBackend
     public function updateRow($tableName, array $identifier, array $row)
     {
         $this->assertValidTableName($tableName);
-
-        $result = $this->getConnection()->exec_UPDATEquery(
-            $tableName,
-            $this->createWhereStatementFromQuery($identifier, $tableName),
-            $row
-        );
-        $this->checkSqlErrors();
+        try {
+            $result = $this->getConnection()->exec_UPDATEquery(
+                $tableName,
+                $this->createWhereStatementFromQuery($identifier, $tableName),
+                $row
+            );
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
 
         return $result;
     }
@@ -58,12 +65,15 @@ class V7Backend extends AbstractBackend
     public function removeRow($tableName, array $identifier)
     {
         $this->assertValidTableName($tableName);
-
-        $result = $this->getConnection()->exec_DELETEquery(
-            $tableName,
-            $this->createWhereStatementFromQuery($identifier, $tableName)
-        );
-        $this->checkSqlErrors();
+        try {
+            $result = $this->getConnection()->exec_DELETEquery(
+                $tableName,
+                $this->createWhereStatementFromQuery($identifier, $tableName)
+            );
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
 
         return $result;
     }
@@ -71,13 +81,16 @@ class V7Backend extends AbstractBackend
     public function getObjectCountByQuery($tableName, $query)
     {
         $this->assertValidTableName($tableName);
-
-        list($row) = $this->getConnection()->exec_SELECTgetRows(
-            'COUNT(*) AS count',
-            $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName)
-        );
-        $this->checkSqlErrors();
+        try {
+            list($row) = $this->getConnection()->exec_SELECTgetRows(
+                'COUNT(*) AS count',
+                $tableName,
+                $this->createWhereStatementFromQuery($query, $tableName)
+            );
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
 
         return intval($row['count']);
     }
@@ -85,15 +98,32 @@ class V7Backend extends AbstractBackend
     public function getObjectDataByQuery($tableName, $query)
     {
         $this->assertValidTableName($tableName);
-        $result = $this->getConnection()->exec_SELECTgetRows(
-            '*',
-            $tableName,
-            $this->createWhereStatementFromQuery($query, $tableName),
-            '',
-            $query instanceof QueryInterface ? $this->createOrderingStatementFromQuery($query) : '',
-            $query instanceof QueryInterface ? $this->createLimitStatementFromQuery($query) : ''
-        );
-        $this->checkSqlErrors();
+        try {
+            $result = $this->getConnection()->exec_SELECTgetRows(
+                '*',
+                $tableName,
+                $this->createWhereStatementFromQuery($query, $tableName),
+                '',
+                $query instanceof QueryInterface ? $this->createOrderingStatementFromQuery($query) : '',
+                $query instanceof QueryInterface ? $this->createLimitStatementFromQuery($query) : ''
+            );
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
+
+        return $result;
+    }
+
+    function executeQuery($query)
+    {
+        $databaseConnection = $this->getConnection();
+        try {
+            $result = $databaseConnection->sql_query($query);
+        } catch (Typo3SqlErrorException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
+        $this->checkNonExceptionSqlErrors();
 
         return $result;
     }
@@ -168,7 +198,6 @@ class V7Backend extends AbstractBackend
                     $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
                 }
                 $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
-                //			} else if (is_object($value) && $value instanceof \TYPO3\CMS\Extbase\Persistence\Generic\Qom\ComparisonInterface) {
             } else {
                 throw new InvalidOperatorException('Operator could not be detected', 1404821478);
             }
@@ -256,12 +285,12 @@ class V7Backend extends AbstractBackend
      * @return void
      * @throws SqlErrorException
      */
-    protected function checkSqlErrors()
+    protected function checkNonExceptionSqlErrors()
     {
-        $error = $this->getConnection()->sql_error();
+        $databaseConnection = $this->getConnection();
+        $error = $databaseConnection->sql_error();
         if ($error !== '') {
-            $error = '#' . $this->getConnection()->sql_errno() . ': ' . $error;
-            throw new SqlErrorException($error, 1247602160);
+            throw new SqlErrorException($error, $databaseConnection->sql_errno());
         }
     }
 }

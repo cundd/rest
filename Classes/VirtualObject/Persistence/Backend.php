@@ -2,13 +2,7 @@
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
-use Cundd\Rest\VirtualObject\Persistence\Backend\DoctrineBackend;
-use Cundd\Rest\VirtualObject\Persistence\Backend\V7Backend;
-use Cundd\Rest\VirtualObject\Persistence\Backend\WhereClauseBuilder;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-class Backend implements BackendInterface
+class Backend implements BackendInterface, RawQueryBackendInterface
 {
     /**
      * @var BackendInterface
@@ -22,16 +16,7 @@ class Backend implements BackendInterface
      */
     public function __construct(BackendInterface $concreteBackend = null)
     {
-        if ($concreteBackend) {
-            $this->concreteBackend = $concreteBackend;
-        } elseif ($this->getUseV7Backend()) {
-            $this->concreteBackend = new V7Backend($GLOBALS['TYPO3_DB']);
-        } else {
-            /** @var ConnectionPool $connection */
-            $connection = GeneralUtility::makeInstance(ConnectionPool::class);
-
-            $this->concreteBackend = new DoctrineBackend($connection, new WhereClauseBuilder());
-        }
+        $this->concreteBackend = $concreteBackend ? $concreteBackend : BackendFactory::getBackend();
     }
 
     public function addRow($tableName, array $row)
@@ -59,17 +44,8 @@ class Backend implements BackendInterface
         return $this->concreteBackend->getObjectDataByQuery($tableName, $query);
     }
 
-    /**
-     * @return bool
-     */
-    private function getUseV7Backend()
+    public function executeQuery($query)
     {
-        if (!isset($GLOBALS['TYPO3_DB'])) {
-            return false;
-        }
-
-        $database = $GLOBALS['TYPO3_DB'];
-
-        return is_object($database) && $database instanceof \TYPO3\CMS\Core\Database\DatabaseConnection;
+        return $this->concreteBackend->executeQuery($query);
     }
 }
