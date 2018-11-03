@@ -13,11 +13,13 @@ use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
-use Cundd\Rest\Tests\Functional\Database\DatabaseConnectionInterface;
-use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
+use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
+use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
+use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
+use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
@@ -42,12 +44,12 @@ class AbstractCase extends FunctionalTestCase
         try {
             parent::setUp();
         } catch (\TYPO3\CMS\Core\Exception $exception) {
-        } catch (DBALException $e) {
+        } catch (DBALException $exception) {
         }
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
-        $GLOBALS['TYPO3_DB'] = $this->getDatabaseConnection();
+//        $GLOBALS['TYPO3_DB'] = $this->getDatabaseBackend();
 
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
@@ -97,16 +99,15 @@ class AbstractCase extends FunctionalTestCase
             );
         }
 
-        $database = $this->getDatabaseConnection();
-
+        $database = $this->getDatabaseBackend();
         $xml = simplexml_load_file($path);
         $foreignKeys = [];
 
-        /** @var $table \SimpleXMLElement */
+        /** @var \SimpleXMLElement $table */
         foreach ($xml->children() as $table) {
             $insertArray = [];
 
-            /** @var $column \SimpleXMLElement */
+            /** @var \SimpleXMLElement $column */
             foreach ($table->children() as $column) {
                 $columnName = $column->getName();
                 $columnValue = null;
@@ -124,30 +125,32 @@ class AbstractCase extends FunctionalTestCase
             }
 
             $tableName = $table->getName();
-            $result = $database->exec_INSERTquery($tableName, $insertArray);
-            if ($result === false) {
+            try {
+                $insertedId = $database->addRow($tableName, $insertArray);
+
+                if (isset($table['id'])) {
+                    $elementId = (string)$table['id'];
+                    $foreignKeys[$tableName][$elementId] = $insertedId;
+                }
+            } catch (SqlErrorException $exception) {
                 $this->markTestSkipped(
                     sprintf(
                         'Error when processing fixture file: %s. Can not insert data to table %s: %s',
                         $path,
                         $tableName,
-                        $database->sql_error()
+                        $exception->getMessage()
                     )
                 );
-            }
-            if (isset($table['id'])) {
-                $elementId = (string)$table['id'];
-                $foreignKeys[$tableName][$elementId] = $database->sql_insert_id();
             }
         }
     }
 
     /**
-     * @return DatabaseConnectionInterface
+     * @return BackendInterface|RawQueryBackendInterface
      */
-    protected function getDatabaseConnection()
+    protected function getDatabaseBackend()
     {
-        return Factory::getConnection();
+        return BackendFactory::getBackend();
     }
 
     /**
@@ -196,25 +199,25 @@ class AbstractCase extends FunctionalTestCase
         $configurationProvider->setSettings(
             [
                 "paths"            => [
-//                    "all" => [
-//                        "path"         => "all",
-//                        "read"         => "deny",
-//                        "write"        => "deny",
-//                        "handlerClass" => CrudHandler::class,
-//                    ],
-//
-//                    "document" => [
-//                        "path"  => "Document",
-//                        "read"  => "deny",
-//                        "write" => "deny",
-//                    ],
-//
-//                    "auth" => [
-//                        "path"         => "auth",
-//                        "read"         => "allow",
-//                        "write"        => "allow",
-//                        "handlerClass" => AuthHandler::class,
-//                    ],
+                    // "all" => [
+                    //     "path"         => "all",
+                    //     "read"         => "deny",
+                    //     "write"        => "deny",
+                    //     "handlerClass" => CrudHandler::class,
+                    // ],
+                    //
+                    // "document" => [
+                    //     "path"  => "Document",
+                    //     "read"  => "deny",
+                    //     "write" => "deny",
+                    // ],
+                    //
+                    // "auth" => [
+                    //     "path"         => "auth",
+                    //     "read"         => "allow",
+                    //     "write"        => "allow",
+                    //     "handlerClass" => AuthHandler::class,
+                    // ],
                 ],
 
                 # Define words that should not be converted to singular

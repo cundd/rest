@@ -3,7 +3,7 @@
 namespace Cundd\Rest\Authentication\UserProvider;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
-use Cundd\Rest\VirtualObject\Persistence\Backend;
+use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 /**
@@ -29,7 +29,7 @@ class FeUserProvider implements UserProviderInterface
             return false;
         }
 
-        $backend = new Backend();
+        $backend = BackendFactory::getBackend();
         $query = [
             'username'                 => $username,
             self::PASSWORD_COLUMN_NAME => $password,

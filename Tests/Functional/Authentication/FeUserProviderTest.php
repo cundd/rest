@@ -5,6 +5,7 @@ namespace Cundd\Rest\Tests\Functional\Authentication;
 use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
 
 
 /**
@@ -12,6 +13,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
  */
 class FeUserProviderTest extends AbstractCase
 {
+    use FeUserCaseTrait;
+
     /**
      * @var UserProviderInterface
      */
@@ -22,11 +25,7 @@ class FeUserProviderTest extends AbstractCase
         parent::setUp();
         $this->fixture = new FeUserProvider();
 
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query('ALTER TABLE fe_users ADD tx_rest_apikey TINYTEXT;');
-        if ($databaseConnection->sql_errno() && $databaseConnection->sql_errno() != 1060) {
-            throw new \Exception($databaseConnection->sql_error());
-        }
+        $this->addApiKeyColumn();
         $this->importDataSet(__DIR__ . '/../Fixtures/login.xml');
     }
 
