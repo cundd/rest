@@ -19,7 +19,7 @@ class ConfigurationFactory implements SingletonInterface
     protected $configurationProvider;
 
     /**
-     * ConfigurationFactory constructor.
+     * Configuration Factory constructor
      *
      * @param ConfigurationProviderInterface $configurationProvider
      */
