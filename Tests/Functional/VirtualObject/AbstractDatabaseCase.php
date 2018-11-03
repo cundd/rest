@@ -137,8 +137,8 @@ CREATE TABLE $testDatabaseTable (
 ) AUTO_INCREMENT=1;
 SQL;
 
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query($createTableSQL);
+        $databaseConnection = $this->getDatabaseBackend();
+        $databaseConnection->executeQuery($createTableSQL);
     }
 
     protected function dropTable()
@@ -147,8 +147,8 @@ SQL;
         $dropTableSQL = <<<SQL
 		DROP TABLE IF EXISTS $testDatabaseTable;
 SQL;
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query($dropTableSQL);
+        $databaseConnection = $this->getDatabaseBackend();
+        $databaseConnection->executeQuery($dropTableSQL);
     }
 
     protected function truncateTable()
@@ -158,16 +158,14 @@ SQL;
 		TRUNCATE TABLE  $testDatabaseTable
 
 SQL;
-        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query($dropTableSQL);
+        $databaseConnection = $this->getDatabaseBackend();
+        $databaseConnection->executeQuery($dropTableSQL);
     }
 
     protected function insertData()
     {
-        /** @var \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection */
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[0]);
-        $databaseConnection->exec_INSERTquery(self::$testDatabaseTable, self::$testData[1]);
+        $databaseConnection = $this->getDatabaseBackend();
+        $databaseConnection->addRow(self::$testDatabaseTable, self::$testData[0]);
+        $databaseConnection->addRow(self::$testDatabaseTable, self::$testData[1]);
     }
 }

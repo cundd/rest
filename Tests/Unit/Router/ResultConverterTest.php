@@ -3,6 +3,7 @@
 namespace Cundd\Rest\Tests\Unit\Router;
 
 
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
@@ -207,10 +208,12 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
         /** @var RouterInterface|ObjectProphecy $router */
         $router = $this->prophesize(RouterInterface::class);
 
+        /** @var RestRequestInterface $request */
+        $request = Argument::any();
         if (is_callable($response)) {
-            $router->dispatch(Argument::any())->will($response);
+            $router->dispatch($request)->will($response);
         } else {
-            $router->dispatch(Argument::any())->willReturn($response);
+            $router->dispatch($request)->willReturn($response);
         }
 
         return $router->reveal();

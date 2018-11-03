@@ -5,6 +5,7 @@ namespace Cundd\Rest\Tests\Functional\Integration;
 
 
 use Cundd\Rest\Authentication\UserProviderInterface;
+use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
 use Cundd\Rest\Tests\Functional\Fixtures\FrontendUserAuthentication;
 use Cundd\Rest\Tests\Functional\Fixtures\UserProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,17 +13,15 @@ use TYPO3\CMS\Extbase\Object\Container\Container;
 
 class AuthTest extends AbstractIntegrationCase
 {
+    use FeUserCaseTrait;
+
     public function setUp()
     {
         parent::setUp();
         $this->configureUserProvider();
         $this->configureFrontendUserAuthentication();
 
-        $databaseConnection = $this->getDatabaseConnection();
-        $databaseConnection->sql_query('ALTER TABLE fe_users ADD tx_rest_apikey TINYTEXT;');
-        if ($databaseConnection->sql_errno() && $databaseConnection->sql_errno() != 1060) {
-            throw new \Exception($databaseConnection->sql_error());
-        }
+        $this->addApiKeyColumn();
         $this->importDataSet(__DIR__ . '/../Fixtures/login.xml');
     }
 

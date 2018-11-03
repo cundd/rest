@@ -3,6 +3,7 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
@@ -17,9 +18,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
     public function setUp()
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get(
-            'Cundd\\Rest\\VirtualObject\\Persistence\\PersistenceManagerInterface'
-        );
+        $this->fixture = $this->objectManager->get(PersistenceManagerInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
@@ -119,7 +118,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $this->fixture->update($object);
 
         $result = $this->fixture->getObjectByIdentifier($objectData['uid']);
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
+        $this->assertInstanceOf(VirtualObject::class, $result);
         $this->assertEquals($object->getData(), $result->getData());
     }
 
@@ -131,7 +130,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $uid = 100;
         $result = $this->fixture->getObjectByIdentifier($uid);
 
-        $this->assertInstanceOf('Cundd\\Rest\\VirtualObject\\VirtualObject', $result);
+        $this->assertInstanceOf(VirtualObject::class, $result);
 
         $resultData = $result->getData();
         $this->assertEquals($uid, $resultData['uid']);
@@ -140,7 +139,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
     }
 
     /**
-     * @param array <VirtualObject> $collection
+     * @param VirtualObject[] $collection
      * @return array
      */
     protected function getTestDataFromObjectCollection($collection)

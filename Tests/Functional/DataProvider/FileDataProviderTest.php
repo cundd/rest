@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 class FileDataProviderTest extends AbstractCase
 {
     use FileBuilderTrait;
+    use DomainModelProphetTrait;
 
     /**
      * @var \Cundd\Rest\DataProvider\DataProviderInterface
@@ -35,25 +36,8 @@ class FileDataProviderTest extends AbstractCase
     }
 
     /**
-     * @param array $properties
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-     */
-    protected function createDomainModelFixture(array $properties = [])
-    {
-        /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
-        $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
-            ->setMockClassName('Mock_Test_Class')
-            ->setMethods(['_getProperties'])
-            ->getMockForAbstractClass();
-
-        $fixture->method('_getProperties')->willReturn($properties);
-
-        return $fixture;
-    }
-
-    /**
      * @param array $fileReferenceProperties
-     * @return \PHPUnit_Framework_MockObject_MockObject|FileReference|\TYPO3\CMS\Core\Tests\AccessibleObjectInterface
+     * @return FileReference
      */
     protected function createFileReferenceMock(array $fileReferenceProperties = [])
     {

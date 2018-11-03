@@ -2,19 +2,14 @@
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Handler\AuthHandler;
-use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\Logger;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\Functional\Database\Factory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response;

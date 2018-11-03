@@ -3,7 +3,6 @@
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject\Backend;
 
-use Cundd\Rest\Tests\Functional\Database\V7Connection;
 use Cundd\Rest\VirtualObject\Persistence\Backend\V7Backend;
 
 class V7BackendTest extends AbstractBackendTest
@@ -11,7 +10,7 @@ class V7BackendTest extends AbstractBackendTest
     public function setUp()
     {
         parent::setUp();
-        if (isset($GLOBALS['TYPO3_DB']) && $GLOBALS['TYPO3_DB'] instanceof V7Connection) {
+        if (isset($GLOBALS['TYPO3_DB'])) {
             $this->fixture = new V7Backend($GLOBALS['TYPO3_DB']);
         } else {
             $this->markTestSkipped('`$GLOBALS[\'TYPO3_DB\']` is not set');
@@ -24,10 +23,13 @@ class V7BackendTest extends AbstractBackendTest
             parent::objectDataByQueryDataProvider(),
             [
                 [
-                    'title' => [
-                        'doNotEscapeValue' => 'title',
-                        'value'            => "'Test entry' and content_time = '1395678480'",
+                    [
+                        'title' => [
+                            'doNotEscapeValue' => 'title',
+                            'value'            => "'Test entry' and content_time = '1395678480'",
+                        ],
                     ],
+                    self::$testData,
                 ],
             ]
         );
@@ -39,10 +41,13 @@ class V7BackendTest extends AbstractBackendTest
             parent::emptyResultQueryDataProvider(),
             [
                 [
-                    'title' => [
-                        'doNotEscapeValue' => 'title',
-                        'value'            => "'Test entry' and content_time = '" . time() . "'",
+                    [
+                        'title' => [
+                            'doNotEscapeValue' => 'title',
+                            'value'            => "'Test entry' and content_time = '" . time() . "'",
+                        ],
                     ],
+                    self::$testData,
                 ],
             ]
         );

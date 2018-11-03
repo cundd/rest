@@ -9,8 +9,8 @@ trait ClassBuilderTrait
      * Dynamically creates a class
      *
      * @param string|array $className
-     * @param string $namespace
-     * @param string $extends
+     * @param string       $namespace
+     * @param string       $extends
      * @throws \Exception
      */
     public static function buildClass($className, $namespace = '', $extends = '')

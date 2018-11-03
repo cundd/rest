@@ -3,9 +3,6 @@
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
-use PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount;
-use PHPUnit_Framework_MockObject_MockBuilder;
-use PHPUnit_Framework_MockObject_Stub_Return;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
@@ -15,7 +12,7 @@ trait FileBuilderTrait
 {
     /**
      * @param Prophet|null $prophet
-     * @return File|\PHPUnit_Framework_MockObject_MockObject
+     * @return File
      */
     public function createFileMock(Prophet $prophet = null)
     {

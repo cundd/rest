@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 class ExtractorFileTest extends AbstractCase
 {
     use FileBuilderTrait;
+    use DomainModelProphetTrait;
     /**
      * @var \Cundd\Rest\DataProvider\ExtractorInterface
      */
@@ -31,23 +32,6 @@ class ExtractorFileTest extends AbstractCase
     {
         unset($this->fixture);
         parent::tearDown();
-    }
-
-    /**
-     * @param array $properties
-     * @return \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface
-     */
-    protected function createDomainModelFixture(array $properties = [])
-    {
-        /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface|object $fixture */
-        $fixture = $this->getMockBuilder('TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface')
-            ->setMockClassName('Mock_Test_Class')
-            ->setMethods(['_getProperties'])
-            ->getMockForAbstractClass();
-
-        $fixture->method('_getProperties')->willReturn($properties);
-
-        return $fixture;
     }
 
     /**

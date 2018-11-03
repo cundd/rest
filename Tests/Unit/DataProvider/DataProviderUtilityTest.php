@@ -127,15 +127,15 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
     public function registerSingularForPluralTest()
     {
         $singularToPlural = [
-            'news' => 'news',
+            'news'      => 'news',
             'equipment' => 'equipment',
-            'species' => 'species',
-            'series' => 'series',
-            'News' => 'News',
+            'species'   => 'species',
+            'series'    => 'series',
+            'News'      => 'News',
             'Equipment' => 'Equipment',
-            'Species' => 'Species',
-            'Series' => 'Series',
-            'Singular' => 'Plural',
+            'Species'   => 'Species',
+            'Series'    => 'Series',
+            'Singular'  => 'Plural',
         ];
         foreach ($singularToPlural as $singular => $plural) {
             Utility::registerSingularForPlural($singular, $plural);

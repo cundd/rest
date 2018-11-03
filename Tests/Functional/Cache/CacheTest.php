@@ -10,7 +10,12 @@ use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
 /**
  * Tests for the Caching interface
@@ -125,7 +130,9 @@ class CacheTest extends AbstractCase
         $uri = 'MyAliasedModel' . time();
         $request = $this->buildRequestWithUri($uri);
 
-        $this->fixture->setCacheInstance($this->getFrontendCacheMock());
+        /** @var VariableFrontend $cacheInstance */
+        $cacheInstance = $this->getFrontendCacheProphecy()->reveal();
+        $this->fixture->setCacheInstance($cacheInstance);
         $cachedValue = $this->fixture->getCachedValueForRequest($request);
         $this->assertNull($cachedValue);
     }
@@ -145,8 +152,15 @@ class CacheTest extends AbstractCase
 
         $request = $this->buildRequestWithUri($uri);
 
-        $cacheInstance = $this->getFrontendCacheMock();
-        $cacheInstance->expects($this->atLeastOnce())->method('get')->will($this->returnValue($responseArray));
+        $cacheProphecy = $this->getFrontendCacheProphecy();
+
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $cacheProphecy->get(Argument::type('string'));
+        $methodProphecy->shouldBeCalled();
+        $methodProphecy->willReturn($responseArray);
+
+        /** @var VariableFrontend $cacheInstance */
+        $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheInstance($cacheInstance);
         $response = $this->fixture->getCachedValueForRequest($request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -163,8 +177,15 @@ class CacheTest extends AbstractCase
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
 
-        $cacheInstance = $this->getFrontendCacheMock();
-        $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
+        $cacheProphecy = $this->getFrontendCacheProphecy();
+
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
+        $methodProphecy->shouldBeCalled();
+        $methodProphecy->willReturn('');
+
+        /** @var VariableFrontend $cacheInstance */
+        $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheInstance($cacheInstance);
         $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
     }
@@ -178,9 +199,15 @@ class CacheTest extends AbstractCase
         $uri = 'MyAliasedModel';
         $request = $this->buildRequestWithUri($uri);
 
-        $cacheInstance = $this->getFrontendCacheMock();
-        $cacheInstance->expects($this->atLeastOnce())->method('set')->will($this->returnValue(''));
+        $cacheProphecy = $this->getFrontendCacheProphecy();
 
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
+        $methodProphecy->shouldBeCalled();
+        $methodProphecy->willReturn('');
+
+        /** @var VariableFrontend $cacheInstance */
+        $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheLifeTime(-1);
         $this->fixture->setCacheInstance($cacheInstance);
         $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request, 10));
@@ -195,9 +222,15 @@ class CacheTest extends AbstractCase
     {
         $request = $this->buildRequestWithUri('MyAliasedModel');
         $response = $this->buildTestResponse(200, $header, 'Test content');
-        $cacheInstance = $this->getFrontendCacheMock();
-        $cacheInstance->expects($this->never())->method('set')->will($this->returnValue(''));
 
+        $cacheProphecy = $this->getFrontendCacheProphecy();
+
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
+        $methodProphecy->shouldNotBeCalled();
+
+        /** @var VariableFrontend $cacheInstance */
+        $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheInstance($cacheInstance);
         $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
     }
@@ -240,20 +273,12 @@ class CacheTest extends AbstractCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @return ObjectProphecy|AbstractFrontend
      */
-    private function getFrontendCacheMock()
+    private function getFrontendCacheProphecy()
     {
-        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheInstance */
-        return $this->getMockForAbstractClass(
-            'TYPO3\\CMS\\Core\\Cache\\Frontend\\AbstractFrontend',
-            [],
-            '',
-            false,
-            false,
-            false,
-            ['getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag']
-        );
+        /** @var ObjectProphecy|AbstractFrontend $cacheProphecy */
+        return $this->prophesize(AbstractFrontend::class);
     }
 
     /**

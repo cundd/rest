@@ -337,7 +337,6 @@ class CustomRestTest extends AbstractApiCase
     public function differentTestsDataProvider()
     {
         return [
-
             ['customhandler', 200],
             ['customhandler/subpath', 200],
             ['customhandler/parameter/slug', 200],
@@ -345,7 +344,6 @@ class CustomRestTest extends AbstractApiCase
             ['customhandler/decimal/10.8', 200],
             ['customhandler/bool/yes', 200],
             ['customhandler/bool/no', 200],
-//            ['cundd-custom_rest-require', 200],
             ['cundd-custom_rest-person', 200],
             ['cundd-custom_rest-person/show/1', 200],
             ['cundd-custom_rest-person/firstname/daniel', 200],
@@ -354,7 +352,6 @@ class CustomRestTest extends AbstractApiCase
             ['cundd-custom_rest-person/show', 200],
             ['cundd-custom_rest-person/lastname', 404],
             ['cundd-custom_rest-person/firstname', 404],
-
         ];
     }
 }

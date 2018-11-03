@@ -1,56 +1,61 @@
 <?php
 
-namespace Cundd\Rest\Tests\Functional\VirtualObject;
+namespace Cundd\Rest\Tests\Unit\VirtualObject;
 
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Tests\Unit\VirtualObjectCaseTrait;
 use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 
 /**
  * Class ConfigurationTest
  */
-class ConfigurationFactoryTest extends AbstractVirtualObjectCase
+class ConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
 {
+    use VirtualObjectCaseTrait;
+
     /**
      * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
      */
     protected $fixture;
 
     protected $typoScriptDummyArray = [
-        'resource_type' => [
-            'mapping.' => [
-                'identifier'  => 'property1',
-                'tableName'   => 'my_resource_table',
-                'properties.' => [
-                    'property1.'      => [
-                        'type'   => 'string',
-                        'column' => 'property_one',
+        'virtualObjects' => [
+            'resource_type' => [
+                'mapping.' => [
+                    'identifier'  => 'property1',
+                    'tableName'   => 'my_resource_table',
+                    'properties.' => [
+                        'property1.'      => [
+                            'type'   => 'string',
+                            'column' => 'property_one',
+                        ],
+                        'property2.'      => [
+                            'type'   => 'float',
+                            'column' => 'property_two',
+                        ],
+                        'property3.'      => [
+                            'type'   => 'int',
+                            'column' => 'property_three',
+                        ],
+                        'property4.'      => [
+                            'type'   => 'integer',
+                            'column' => 'property_four',
+                        ],
+                        'property5.'      => [
+                            'type'   => 'bool',
+                            'column' => 'property_five',
+                        ],
+                        'property6.'      => [
+                            'type'   => 'boolean',
+                            'column' => 'property_six',
+                        ],
+                        'property_seven.' => [
+                            'type' => 'boolean',
+                        ],
+                        'property_eight.' => 'boolean',
                     ],
-                    'property2.'      => [
-                        'type'   => 'float',
-                        'column' => 'property_two',
-                    ],
-                    'property3.'      => [
-                        'type'   => 'int',
-                        'column' => 'property_three',
-                    ],
-                    'property4.'      => [
-                        'type'   => 'integer',
-                        'column' => 'property_four',
-                    ],
-                    'property5.'      => [
-                        'type'   => 'bool',
-                        'column' => 'property_five',
-                    ],
-                    'property6.'      => [
-                        'type'   => 'boolean',
-                        'column' => 'property_six',
-                    ],
-                    'property_seven.' => [
-                        'type' => 'boolean',
-                    ],
-                    'property_eight.' => 'boolean',
                 ],
             ],
         ],
@@ -60,19 +65,7 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
     public function setUp()
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get(ConfigurationFactory::class);
-
-        /** @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject $typeScriptConfigurationStub */
-        $typeScriptConfigurationStub = $this->getMockBuilder(TypoScriptConfigurationProvider::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->getMock();
-        $typeScriptConfigurationStub->expects($this->any())
-            ->method('getSetting')
-            ->will($this->returnValue($this->typoScriptDummyArray));
-
-        $this->fixture = new ConfigurationFactory($typeScriptConfigurationStub);
+        $this->fixture = new ConfigurationFactory(new StandaloneConfigurationProvider($this->typoScriptDummyArray));
     }
 
     public function tearDown()
@@ -106,7 +99,7 @@ class ConfigurationFactoryTest extends AbstractVirtualObjectCase
      */
     public function createWithConfigurationDataTest()
     {
-        $configurationData = $this->typoScriptDummyArray['resource_type']['mapping.'];
+        $configurationData = $this->typoScriptDummyArray['virtualObjects']['resource_type']['mapping.'];
         $configurationObject = $this->fixture->createWithConfigurationData($configurationData);
         $this->validateConfiguration($configurationObject);
     }
