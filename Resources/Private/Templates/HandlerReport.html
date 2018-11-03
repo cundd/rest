@@ -33,7 +33,7 @@
                                     <f:case value="GET">{handlerRoutes.configuration.read}</f:case>
                                     <f:case value="HEAD">{handlerRoutes.configuration.read}</f:case>
                                     <f:case value="OPTIONS">preflight</f:case>
-                                    <f:case default="true">{handlerRoutes.configuration.write}</f:case>
+                                    <f:defaultCase>{handlerRoutes.configuration.write}</f:defaultCase>
                                 </f:switch>
                             </code></td>
                             <td class="minimize">
