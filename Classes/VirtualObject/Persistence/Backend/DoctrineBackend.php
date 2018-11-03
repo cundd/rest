@@ -71,17 +71,29 @@ class DoctrineBackend extends AbstractBackend
 
         $baseQuery = "SELECT COUNT(*) AS count FROM `$tableName`";
         if ($this->isQueryEmpty($query)) {
-            $statement = $this->getConnection($tableName)->executeQuery($baseQuery);
+            try {
+                $statement = $this->getConnection($tableName)->executeQuery($baseQuery);
+            } catch (DBALException $exception) {
+                throw SqlErrorException::fromException($exception);
+            }
         } else {
             $this->whereClauseBuilder->build($query);
             $whereClause = $this->whereClauseBuilder->getWhere();
 
-            $statement = $this->getConnection($tableName)->executeQuery(
-                $baseQuery . " WHERE " . $whereClause->getClause(),
-                $whereClause->getBoundVariables()
-            );
+            try {
+                $statement = $this->getConnection($tableName)->executeQuery(
+                    $baseQuery . " WHERE " . $whereClause->getClause(),
+                    $whereClause->getBoundVariables()
+                );
+            } catch (DBALException $exception) {
+                throw SqlErrorException::fromException($exception);
+            }
         }
-        $result = $statement->fetch();
+        try {
+            $result = $statement->fetch();
+        } catch (DBALException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
 
         return $result['count'];
     }
@@ -99,7 +111,11 @@ class DoctrineBackend extends AbstractBackend
                     'Queries without constraints but pagination or orderings are not implemented'
                 );
             }
-            $statement = $this->getConnection($tableName)->executeQuery($baseSql);
+            try {
+                $statement = $this->getConnection($tableName)->executeQuery($baseSql);
+            } catch (DBALException $exception) {
+                throw SqlErrorException::fromException($exception);
+            }
         } else {
             $this->whereClauseBuilder->build($query);
             $whereClause = $this->whereClauseBuilder->getWhere();
@@ -109,18 +125,27 @@ class DoctrineBackend extends AbstractBackend
                 $sql = $this->addOrderingAndLimit($sql, $query);
             }
 
-            $statement = $this->getConnection($tableName)->executeQuery(
-                $sql,
-                $whereClause->getBoundVariables()
-            );
+            try {
+                $statement = $this->getConnection($tableName)->executeQuery($sql, $whereClause->getBoundVariables());
+            } catch (DBALException $exception) {
+                throw SqlErrorException::fromException($exception);
+            }
         }
 
-        return $statement->fetchAll();
+        try {
+            return $statement->fetchAll();
+        } catch (DBALException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
     }
 
     function executeQuery($query)
     {
-        return $this->getConnection('fe_users')->executeQuery($query);
+        try {
+            return $this->getConnection('fe_users')->executeQuery($query);
+        } catch (DBALException $exception) {
+            throw SqlErrorException::fromException($exception);
+        }
     }
 
     private function getConnection($table)
