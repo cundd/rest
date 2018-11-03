@@ -23,8 +23,11 @@ class GetClassViewHelper extends AbstractViewHelper
     public function render()
     {
         if (isset($this->arguments['object'])) {
-            return get_class($this->arguments['object']);
+            $object = $this->arguments['object'];
+        } else {
+            $object = $this->renderChildren();
         }
-        return get_class($this->renderChildren());
+
+        return is_object($object) ? get_class($object) : '';
     }
 }
