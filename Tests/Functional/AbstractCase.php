@@ -22,6 +22,8 @@ use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
+use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
@@ -173,6 +175,8 @@ class AbstractCase extends FunctionalTestCase
      */
     private function buildConfiguredObjectManager()
     {
+        $this->initializeIconRegistry();
+
         /** @var Container $objectContainer */
         $objectContainer = GeneralUtility::makeInstance(Container::class);
 
@@ -281,5 +285,18 @@ class AbstractCase extends FunctionalTestCase
         $container = GeneralUtility::makeInstance(Container::class);
         $container->registerImplementation(PsrLoggerInterface::class, StreamLogger::class);
         $container->registerImplementation(CunddLoggerInterface::class, StreamLogger::class);
+    }
+
+    private function initializeIconRegistry()
+    {
+        $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
+
+        if (!$iconRegistry->isRegistered('default-not-found')) {
+            $iconRegistry->registerIcon(
+                'default-not-found',
+                SvgIconProvider::class,
+                ['source' => 'EXT:rest/ext_icon.svg']
+            );
+        }
     }
 }
