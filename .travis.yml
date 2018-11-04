@@ -29,7 +29,11 @@ matrix:
     - php: hhvm
       env: TYPO3=master DB=mysql
 
-    # TYPO3 9 LTS
+    # TYPO3 9 branch
+    - php: 7.2
+      env: TYPO3=9.2 DB=mysql
+    - php: 7.2
+      env: TYPO3=9.3 DB=mysql
     - php: 7.2
       env: TYPO3=master DB=mysql
 
