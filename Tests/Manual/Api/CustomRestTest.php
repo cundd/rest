@@ -262,8 +262,6 @@ class CustomRestTest extends AbstractApiCase
      */
     public function runExtbaseTest()
     {
-        // TODO: In `\Cundd\CustomRest\Rest\Helper::callExtbasePlugin()` the correct action is not called
-        $this->markTestIncomplete('\\Cundd\\CustomRest\\Rest\\Helper::callExtbasePlugin not compatible with TYPO3 9');
         $path = 'cundd-custom_rest-route/create';
         $data = [
             'firstName' => 'john',
