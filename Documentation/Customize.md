@@ -243,10 +243,19 @@ Putting it together
 
 ```php
 namespace Cundd\CustomRest\Rest;
+
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
-use Cundd\Rest\Http\RestRequestInterface;
-class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
+
+class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface
+{
+    /**
+     * @var \Cundd\CustomRest\Rest\Helper
+     * @inject
+     */
+    protected $helper;
+
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
         # curl -X GET http://localhost:8888/rest/customhandler
@@ -254,11 +263,11 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
             Route::get(
                 $request->getResourceType(),
                 function (RestRequestInterface $request) {
-                    return array(
+                    return [
                         'path'         => $request->getPath(),
                         'uri'          => (string)$request->getUri(),
                         'resourceType' => (string)$request->getResourceType(),
-                    );
+                    ];
                 }
             )
         );
@@ -277,11 +286,11 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
             Route::get(
                 $request->getResourceType() . '/subpath',
                 function (RestRequestInterface $request) {
-                    return array(
+                    return [
                         'path'         => $request->getPath(),
                         'uri'          => (string)$request->getUri(),
                         'resourceType' => (string)$request->getResourceType(),
-                    );
+                    ];
                 }
             )
         );
@@ -291,12 +300,12 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
             Route::post(
                 $request->getResourceType() . '/subpath',
                 function (RestRequestInterface $request) {
-                    return array(
+                    return [
                         'path'         => $request->getPath(),
                         'uri'          => (string)$request->getUri(),
                         'resourceType' => (string)$request->getResourceType(),
                         'data'         => $request->getSentData(),
-                    );
+                    ];
                 }
             )
         );
@@ -306,16 +315,18 @@ class CustomHandler implements \Cundd\Rest\Handler\HandlerInterface {
             Route::post(
                 $request->getResourceType() . '/create',
                 function (RestRequestInterface $request) {
-                    /** @var Request $request */
                     $arguments = [
                         'person' => $request->getSentData(),
                     ];
 
-                    return $this->callExtbasePlugin(
-                        'myPlugin',
+                    /**
+                     * @see \Cundd\CustomRest\Rest\Helper for more information regarding Extbase calls
+                     */
+                    return $this->helper->callExtbasePlugin(
+                        'customRest',
                         'Cundd',
                         'CustomRest',
-                        'Example',
+                        'Person',
                         'create',
                         $arguments
                     );
