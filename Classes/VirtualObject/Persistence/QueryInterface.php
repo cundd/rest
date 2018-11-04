@@ -95,6 +95,16 @@ interface QueryInterface
     const COMBINATOR_OR = 'OR';
 
     /**
+     * Ascending ordering of results
+     */
+    const ORDER_ASCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING;
+
+    /**
+     * Descending ordering of results
+     */
+    const ORDER_DESCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING;
+
+    /**
      * Executes the query and returns the result
      *
      * @return array Returns the result

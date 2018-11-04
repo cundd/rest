@@ -139,7 +139,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    function executeQuery($query)
+    public function executeQuery($query)
     {
         try {
             return $this->getConnection('fe_users')->executeQuery($query);

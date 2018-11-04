@@ -5,6 +5,8 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
 
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
+use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
+use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidOrderingException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
@@ -67,6 +69,9 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
         $orderings = $query->getOrderings();
         $orderArray = array_map(
             function ($property, $direction) {
+                InvalidColumnNameException::assertValidColumnName($property);
+                InvalidOrderingException::assertValidOrdering($direction);
+
                 return $property . ' ' . $direction;
             },
             array_keys($orderings),

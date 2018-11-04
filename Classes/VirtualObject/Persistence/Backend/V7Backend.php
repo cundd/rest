@@ -115,7 +115,7 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    function executeQuery($query)
+    public function executeQuery($query)
     {
         $databaseConnection = $this->getConnection();
         try {
