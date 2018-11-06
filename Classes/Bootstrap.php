@@ -149,6 +149,12 @@ class Bootstrap
 
         if (null !== $requestedLanguageUid) {
             $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
+            // Add LinkVars and language to work with correct localized labels
+            $frontendController->config['config']['linkVars'] = 'L(int)';
+
+            if ($this->getLanguageUidFromAcceptLanguageHeader($frontendController) !== null) {
+                $frontendController->config['config']['language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            }
         }
     }
 
@@ -160,16 +166,12 @@ class Bootstrap
      */
     private function getRequestedLanguageUid(TypoScriptFrontendController $frontendController)
     {
-        // Test the full HTTP_ACCEPT_LANGUAGE header
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $typoscriptValue = $this->readConfigurationFromTyposcript(
-                'plugin.tx_rest.settings.languages.' . $_SERVER['HTTP_ACCEPT_LANGUAGE'],
-                $frontendController
-            );
-
-            if ($typoscriptValue !== null) {
-                return intval($typoscriptValue);
-            }
+        if (false === isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            return null;
+        }
+        $languageUidFromAcceptLanguageHeader = $this->getLanguageUidFromAcceptLanguageHeader($frontendController);
+        if ($languageUidFromAcceptLanguageHeader !== null) {
+            return $languageUidFromAcceptLanguageHeader;
         }
 
         // Retrieve and test the parsed header
@@ -187,6 +189,28 @@ class Bootstrap
         }
 
         return intval($typoscriptValue);
+    }
+
+    /**
+     * Retrieve the language UID from TypoScript for the full HTTP_ACCEPT_LANGUAGE header
+     *
+     * @param TypoScriptFrontendController $frontendController
+     * @return int|null Returns the UID if mapped otherwise NULL
+     */
+    private function getLanguageUidFromAcceptLanguageHeader(TypoScriptFrontendController $frontendController)
+    {
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $typoscriptValue = $this->readConfigurationFromTyposcript(
+                'plugin.tx_rest.settings.languages.' . $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+                $frontendController
+            );
+
+            if ($typoscriptValue !== null) {
+                return intval($typoscriptValue);
+            }
+        }
+
+        return null;
     }
 
     /**
