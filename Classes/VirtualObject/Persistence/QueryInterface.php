@@ -179,6 +179,8 @@ interface QueryInterface
     /**
      * Returns the maximum size of the result set to limit
      *
+     * Return zero if no limit should be applied
+     *
      * @return integer
      * @api
      */

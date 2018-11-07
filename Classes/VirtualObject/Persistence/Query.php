@@ -53,39 +53,16 @@ class Query implements QueryInterface
      */
     protected $statement;
 
-    /**
-     * Executes the query and returns the result
-     *
-     * @return array Returns the result
-     * @api
-     */
     public function execute()
     {
         return $this->persistenceManager->getObjectDataByQuery($this);
     }
 
-    /**
-     * Returns the query result count
-     *
-     * @return integer The query result count
-     * @api
-     */
     public function count()
     {
         return $this->persistenceManager->getObjectCountByQuery($this);
     }
 
-    /**
-     * Sets the property names to order the result by. Expected like this:
-     * array(
-     *  'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
-     *  'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
-     * )
-     *
-     * @param array $orderings The property names to order by
-     * @return QueryInterface
-     * @api
-     */
     public function setOrderings(array $orderings)
     {
         $this->orderings = $orderings;
@@ -93,15 +70,6 @@ class Query implements QueryInterface
         return $this;
     }
 
-    /**
-     * Sets the maximum size of the result set to limit
-     *
-     * Returns $this to allow for chaining (fluid interface)
-     *
-     * @param integer $limit
-     * @return QueryInterface
-     * @api
-     */
     public function setLimit($limit)
     {
         $this->limit = $limit;
@@ -109,15 +77,6 @@ class Query implements QueryInterface
         return $this;
     }
 
-    /**
-     * Sets the start offset of the result set to offset
-     *
-     * Returns $this to allow for chaining (fluid interface).
-     *
-     * @param integer $offset
-     * @return QueryInterface
-     * @api
-     */
     public function setOffset($offset)
     {
         $this->offset = $offset;
@@ -125,61 +84,26 @@ class Query implements QueryInterface
         return $this;
     }
 
-    /**
-     * Gets the property names to order the result by, like this:
-     * array(
-     *  'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
-     *  'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
-     * )
-     *
-     * @return array
-     * @api
-     */
     public function getOrderings()
     {
         return $this->orderings;
     }
 
-    /**
-     * Returns the maximum size of the result set to limit
-     *
-     * @return integer
-     * @api
-     */
     public function getLimit()
     {
         return $this->limit;
     }
 
-    /**
-     * Returns the start offset of the result set
-     *
-     * @return integer
-     * @api
-     */
     public function getOffset()
     {
         return $this->offset;
     }
 
-    /**
-     * Gets the constraint for this query
-     *
-     * @return mixed the constraint, or null if none
-     * @api
-     */
     public function getConstraint()
     {
         return $this->constraint;
     }
 
-    /**
-     * Gets the constraint for this query
-     *
-     * @param array $constraint
-     * @return QueryInterface
-     * @api
-     */
     public function setConstraint($constraint)
     {
         $this->constraint = $constraint;
@@ -187,22 +111,11 @@ class Query implements QueryInterface
         return $this;
     }
 
-    /**
-     * Returns the source identifier for the new query
-     *
-     * @return string
-     */
     public function getSourceIdentifier()
     {
         return $this->sourceIdentifier;
     }
 
-    /**
-     * Sets the configuration to use when converting
-     *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
-     * @return $this
-     */
     public function setConfiguration($configuration)
     {
         $this->persistenceManager->setConfiguration($configuration);
@@ -210,12 +123,6 @@ class Query implements QueryInterface
         return $this;
     }
 
-    /**
-     * Returns the configuration to use when converting
-     *
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
-     */
     public function getConfiguration()
     {
         return $this->persistenceManager->getConfiguration();
