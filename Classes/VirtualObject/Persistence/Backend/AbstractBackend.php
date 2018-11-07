@@ -67,6 +67,9 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
     protected function createOrderingStatementFromQuery(QueryInterface $query)
     {
         $orderings = $query->getOrderings();
+        if (!$orderings) {
+            return '';
+        }
         $orderArray = array_map(
             function ($property, $direction) {
                 InvalidColumnNameException::assertValidColumnName($property);
