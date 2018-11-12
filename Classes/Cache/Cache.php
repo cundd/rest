@@ -248,7 +248,7 @@ class Cache implements CacheInterface
     private function getTags(RestRequestInterface $request)
     {
         $currentPath = $request->getPath();
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($currentPath);
+        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($request->getResourceType());
 
         return array_filter(
             array_map(

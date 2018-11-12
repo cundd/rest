@@ -32,16 +32,20 @@ class Utility
      *     MyModel
      *   )
      *
-     * @param string $resourceType
-     * @param bool   $convertPlural Indicates if plural resource names should be converted
+     * @param ResourceType $resourceType
+     * @param bool         $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
-    public static function getClassNamePartsForResourceType($resourceType, $convertPlural = true)
+    public static function getClassNamePartsForResourceType(ResourceType $resourceType, $convertPlural = true)
     {
-        if (strpos($resourceType, '_') !== false) {
-            $resourceType = static::underscoredToUpperCamelCase($resourceType);
+        $resourceTypeString = (string)$resourceType;
+        if ('' === $resourceTypeString) {
+            return ['', '', ''];
         }
-        $parts = explode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceType, 3);
+        if (strpos($resourceTypeString, '_') !== false) {
+            $resourceTypeString = static::underscoredToUpperCamelCase($resourceTypeString);
+        }
+        $parts = explode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceTypeString, 3);
         if (count($parts) < 3) {
             array_unshift($parts, '');
         }
@@ -54,7 +58,9 @@ class Utility
         return [
             ucfirst($parts[0]),
             ucfirst($parts[1]),
-            str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2]))),
+            isset($parts[2])
+                ? str_replace(' ', '\\', ucwords(str_replace('-', ' ', $parts[2])))
+                : '',
         ];
     }
 
@@ -62,7 +68,7 @@ class Utility
      * Tries to generate the API resource type for the given class name
      *
      * @param string $className
-     * @return string|bool Returns the resource type or FALSE if it couldn't be determined
+     * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
      */
     public static function getResourceTypeForClassName($className)
     {
@@ -79,7 +85,11 @@ class Utility
             explode('\\', $className)
         );
 
-        return implode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts);
+        try {
+            return new ResourceType(implode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts));
+        } catch (\InvalidArgumentException $exception) {
+            return false;
+        }
     }
 
     /**
