@@ -135,6 +135,7 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Returns a domain model for the given API resource type and data
+     *
      * This method will load existing models.
      *
      * @param array|string|int $data         Data of the new model or it's UID
@@ -169,6 +170,7 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Returns a domain model for the given API resource type and data
+     *
      * Even if the data contains an identifier, the existing model will not be loaded.
      *
      * @param array|string|int $data         Data of the new model or it's UID

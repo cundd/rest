@@ -71,13 +71,6 @@ class Extractor implements ExtractorInterface
         $this->maxDepthOfObjectTreeTraversal = $maxDepthOfObjectTreeTraversal;
     }
 
-    /**
-     * Returns the data from the given input
-     *
-     * @param mixed $input
-     * @return mixed
-     * @throws \Exception
-     */
     public function extract($input)
     {
         return $this->extractData($input, null, null);

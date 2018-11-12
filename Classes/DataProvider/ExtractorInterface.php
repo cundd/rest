@@ -12,7 +12,8 @@ interface ExtractorInterface
      *
      * @param mixed $input
      * @return mixed
-     * @throws \Exception
+     * @throws \RuntimeException if the data nesting is too deep
+     * @throws \InvalidArgumentException if the input type is not supported
      */
     public function extract($input);
 }
