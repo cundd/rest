@@ -248,7 +248,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         }
 
         $result = array_map([$dataProvider, 'getModelData'], $allModels);
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+        if ($this->getAddRootObjectForCollection()) {
             return [
                 $request->getRootObjectKey() => $result,
             ];
@@ -327,12 +327,20 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      */
     protected function prepareResult(RestRequestInterface $request, $result)
     {
-        if ($this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection')) {
+        if ($this->getAddRootObjectForCollection()) {
             return [
                 Utility::singularize($request->getRootObjectKey()) => $result,
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getAddRootObjectForCollection()
+    {
+        return (bool)$this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
     }
 }
