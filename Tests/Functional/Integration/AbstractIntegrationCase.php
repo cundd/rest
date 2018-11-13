@@ -69,7 +69,7 @@ class AbstractIntegrationCase extends AbstractCase
     protected function getErrorDescription(ResponseInterface $response)
     {
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr((string)$response->getBody(), 0, 300) . PHP_EOL
+            . substr((string)$response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
             . '------------------------------------';
 
         return sprintf(

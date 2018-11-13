@@ -5,14 +5,12 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\Persistence\Repository;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
-use TYPO3\CMS\Core\Log\LogLevel;
-use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
-use TYPO3\CMS\Extbase\Property\Exception;
 
 /**
  * Data Provider for Virtual Objects
@@ -20,7 +18,7 @@ use TYPO3\CMS\Extbase\Property\Exception;
 class VirtualObjectDataProvider extends DataProvider
 {
     /**
-     * @var array<\Cundd\Rest\VirtualObject\ObjectConverter>
+     * @var ObjectConverter[]
      */
     protected $objectConverterMap = [];
 
@@ -31,16 +29,15 @@ class VirtualObjectDataProvider extends DataProvider
     protected $configurationFactory;
 
     /**
-     * Returns the Object Converter with the currently matching configuration
+     * Return the Object Converter with the matching configuration
      *
      * @param ResourceType|string $resourceType
-     * @return \Cundd\Rest\VirtualObject\ObjectConverter
+     * @return ObjectConverter
      */
     public function getObjectConverterForResourceType(ResourceType $resourceType)
     {
         $resourceTypeString = (string)$resourceType;
         if (!isset($this->objectConverterMap[$resourceTypeString])) {
-            /** @var ObjectConverter $objectConverter */
             $objectConverter = $this->objectManager->get(ObjectConverter::class);
             $objectConverter->setConfiguration($this->getConfigurationForResourceType($resourceType));
 
@@ -53,7 +50,7 @@ class VirtualObjectDataProvider extends DataProvider
     }
 
     /**
-     * Returns the Configuration for the given resource type
+     * Return the Configuration for the given resource type
      *
      * @param ResourceType $resourceType
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
@@ -61,9 +58,10 @@ class VirtualObjectDataProvider extends DataProvider
      */
     public function getConfigurationForResourceType(ResourceType $resourceType)
     {
+        $resourceTypeString = (string)$resourceType;
         $virtualResourceTypeString = substr(
-            $resourceType,
-            strpos($resourceType, '-') + 1
+            $resourceTypeString,
+            strpos($resourceTypeString, '-') + 1
         ); // Strip the "VirtualObject-" from the resource type
         if (!$virtualResourceTypeString) {
             throw new MissingConfigurationException('Could not get configuration for empty resource type', 1395932408);
@@ -78,23 +76,43 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    /**
-     * Returns the domain model repository class name for the given resource type
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return string
-     */
+    public function createModel(array $data, ResourceType $resourceType)
+    {
+        // If no data is given return a new empty instance
+        if (!$data) {
+            return $this->getEmptyModelForResourceType($resourceType);
+        }
+
+        // It is possible to insert Models with a defined UID
+        // If a UID is given save and remove it from the data array
+        $uid = null;
+        //if (isset($data['__identity']) && $data['__identity']) {
+        //    // Load the UID of the existing model
+        //    $uid = $this->getUidOfModelWithIdentityForResourceType($data['__identity'], $resourceType);
+        //} elseif (isset($data['uid']) && $data['uid']) {
+        //    $uid = $data['uid'];
+        //}
+        //if ($uid) {
+        //    unset($data['__identity']);
+        //    unset($data['uid']);
+        //}
+
+        // Get a fresh model
+        $model = $this->convertIntoModel($data, $resourceType);
+
+        if ($uid !== null) {
+            // Set the saved identifier
+            $model->_setProperty('uid', $uid);
+        }
+
+        return $model;
+    }
+
     public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
         return Repository::class;
     }
 
-    /**
-     * Returns the domain model repository for the models the given API resource type points to
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
-     */
     public function getRepositoryForResourceType(ResourceType $resourceType)
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
@@ -105,55 +123,11 @@ class VirtualObjectDataProvider extends DataProvider
         return $repository;
     }
 
-    /**
-     * Returns a domain model for the given API resource type and data
-     * This method will load existing models.
-     *
-     * @param array|string|int $data         Data of the new model or it's UID
-     * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return object|DomainObjectInterface|VirtualObject
-     */
-    public function getModelWithDataForResourceType($data, ResourceType $resourceType)
-    {
-        // If no data is given return a new instance
-        if (!$data) {
-            return $this->getEmptyModelForResourceType($resourceType);
-        } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForResourceType($data, $resourceType);
-        }
-
-        $data = $this->prepareModelData($data);
-        try {
-            $objectConverter = $this->getObjectConverterForResourceType($resourceType);
-            $modelData = $objectConverter->convertFromVirtualObject($data);
-            $model = $objectConverter->convertToVirtualObject($modelData);
-        } catch (Exception $exception) {
-            $model = null;
-
-            $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-            $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
-        }
-
-        return $model;
-    }
-
-    /**
-     * Returns a new domain model for the given API resource type points to
-     *
-     * @param ResourceType $resourceType API resource type to get the model for
-     * @return object|VirtualObject
-     */
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
         return new VirtualObject();
     }
 
-    /**
-     * Returns the data from the given model
-     *
-     * @param object|DomainObjectInterface $model
-     * @return array
-     */
     public function getModelData($model)
     {
         $properties = parent::getModelData($model);
@@ -164,13 +138,6 @@ class VirtualObjectDataProvider extends DataProvider
         return $properties;
     }
 
-    /**
-     * Returns the property data from the given model
-     *
-     * @param object|DomainObjectInterface $model
-     * @param string                       $propertyKey
-     * @return mixed
-     */
     public function getModelProperty($model, $propertyKey)
     {
         /** @var VirtualObject $model */
@@ -182,14 +149,7 @@ class VirtualObjectDataProvider extends DataProvider
         return null;
     }
 
-    /**
-     * Adds or updates the given model in the repository for the given API resource type
-     *
-     * @param object|DomainObjectInterface $model
-     * @param ResourceType                 $resourceType The API resource type
-     * @return void
-     */
-    public function saveModelForResourceType($model, ResourceType $resourceType)
+    public function saveModel($model, ResourceType $resourceType)
     {
         /** @var VirtualObject $model */
         /** @var RepositoryInterface $repository */
@@ -200,11 +160,29 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    /**
-     * Persist all changes to the database
-     */
+    public function convertIntoModel(array $data, ResourceType $resourceType)
+    {
+        try {
+            $objectConverter = $this->getObjectConverterForResourceType($resourceType);
+            $modelData = $objectConverter->convertFromVirtualObject($this->prepareModelData($data));
+
+            return $objectConverter->convertToVirtualObject($modelData);
+        } catch (InvalidPropertyException $exception) {
+            $this->logException($exception);
+
+            return null;
+        }
+    }
+
     public function persistAllChanges()
     {
         // We don't have to do anything because changes are persisted live
+    }
+
+    protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
+    {
+        $model = $this->getModelWithIdentityForResourceType($identifier, $resourceType);
+
+        return $model ? $model->getUid() : null;
     }
 }

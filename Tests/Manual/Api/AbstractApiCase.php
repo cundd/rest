@@ -49,7 +49,7 @@ abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
     protected function getErrorDescription($response)
     {
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr($response->body, 0, 300) . PHP_EOL
+            . substr($response->body, 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
             . '------------------------------------';
 
         return sprintf(

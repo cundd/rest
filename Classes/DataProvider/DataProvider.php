@@ -3,60 +3,64 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
-use TYPO3\CMS\Core\Log\LogLevel;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
+use TYPO3\CMS\Extbase\Property\PropertyMapper;
+use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 
 /**
  * DataProvider instance
  */
-class DataProvider implements DataProviderInterface
+class DataProvider implements DataProviderInterface, ClassLoadingInterface
 {
     /**
      * @var \Cundd\Rest\ObjectManagerInterface
-     * @inject
      */
     protected $objectManager;
 
     /**
-     * The property mapper
-     *
-     * @var \TYPO3\CMS\Extbase\Property\PropertyMapper
-     * @inject
-     */
-    protected $propertyMapper;
-
-    /**
-     * The reflection service
-     *
-     * @var \TYPO3\CMS\Extbase\Reflection\ReflectionService
-     * @inject
-     */
-    protected $reflectionService;
-
-    /**
-     * @var \TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder
-     * @inject
-     */
-    protected $configurationBuilder;
-
-    /**
      * @var \Cundd\Rest\DataProvider\ExtractorInterface
-     * @inject
      */
     protected $extractor;
 
     /**
      * Logger instance
      *
-     * @var \TYPO3\CMS\Core\Log\Logger
+     * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var IdentityProviderInterface
+     */
+    private $identityProvider;
+
+    /**
+     * Data Provider constructor
+     *
+     * @param ObjectManagerInterface    $objectManager
+     * @param ExtractorInterface        $extractor
+     * @param IdentityProviderInterface $identityProvider
+     * @param LoggerInterface           $logger
+     */
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ExtractorInterface $extractor,
+        IdentityProviderInterface $identityProvider,
+        LoggerInterface $logger = null
+    ) {
+        $this->objectManager = $objectManager;
+        $this->extractor = $extractor;
+        $this->logger = $logger;
+        $this->identityProvider = $identityProvider;
+    }
 
     public function getModelData($model)
     {
@@ -77,8 +81,23 @@ class DataProvider implements DataProviderInterface
     public function getRepositoryForResourceType(ResourceType $resourceType)
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
+        $repository = null;
+        $exception = null;
         /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
-        $repository = $this->objectManager->get($repositoryClass);
+        try {
+            $repository = $this->objectManager->get($repositoryClass);
+        } catch (\Exception $exception) {
+        }
+        if (!$repository) {
+            throw new \LogicException(
+                sprintf(
+                    'Repository for resource type "%s" could not be found',
+                    $resourceType
+                ),
+                1542116782,
+                $exception
+            );
+        }
         /** @var QuerySettingsInterface $defaultQuerySettings */
         $defaultQuerySettings = $this->objectManager->get(RestQuerySettings::class);
         $repository->setDefaultQuerySettings($defaultQuerySettings);
@@ -97,82 +116,39 @@ class DataProvider implements DataProviderInterface
         return $modelClass;
     }
 
-    public function getAllModelsForResourceType(ResourceType $resourceType)
+    public function fetchAllModels(ResourceType $resourceType)
     {
         return $this->getRepositoryForResourceType($resourceType)->findAll();
     }
 
-    public function getModelWithDataForResourceType($data, ResourceType $resourceType)
+    public function fetchModel($identifier, ResourceType $resourceType)
     {
-        $modelClass = $this->getModelClassForResourceType($resourceType);
-
-        // If no data is given return a new instance
-        if (!$data) {
-            return $this->getEmptyModelForResourceType($resourceType);
-        } elseif (is_scalar($data)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForResourceType($data, $resourceType);
-        }
-
-        $data = $this->prepareModelData($data);
-        try {
-            return $this->propertyMapper->convert(
-                $data,
-                $modelClass,
-                $this->getPropertyMappingConfigurationForResourceType($resourceType)
-            );
-        } catch (ExtbaseException $exception) {
-            $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-            $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
+        if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
+            return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
         }
 
         return null;
     }
 
-    public function getNewModelWithDataForResourceType($data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType)
     {
-        $uid = null;
-        // If no data is given return a new instance
+        // If no data is given return a new empty instance
         if (!$data) {
             return $this->getEmptyModelForResourceType($resourceType);
         }
 
-        // Save the identifier and remove it from the data array
+        // It is possible to insert Models with a defined UID
+        // If a UID is given save and remove it from the data array
         if (isset($data['__identity']) && $data['__identity']) {
-            // Load the UID of the existing model
-            $uid = $this->getUidOfModelWithIdentityForResourceType($data['__identity'], $resourceType);
+            return new \UnexpectedValueException('Invalid property "__identity"');
         } elseif (isset($data['uid']) && $data['uid']) {
-            $uid = $data['uid'];
-        }
-        if ($uid) {
-            unset($data['__identity']);
-            unset($data['uid']);
+            return new \UnexpectedValueException('Invalid property "uid"');
         }
 
         // Get a fresh model
-        $model = $this->getModelWithDataForResourceType($data, $resourceType);
-
-        if ($model) {
-            // Set the saved identifier
-            $model->_setProperty('uid', $uid);
-        }
+        $model = $this->convertIntoModel($data, $resourceType);
 
         return $model;
-    }
-
-    /**
-     * Returns a new domain model for the given API resource type
-     *
-     * @param ResourceType $resourceType
-     * @return object|DomainObjectInterface
-     */
-    public function getModelForResourceType(ResourceType $resourceType)
-    {
-        return $this->getModelWithDataForResourceType([], $resourceType);
-    }
-
-    public function getEmptyModelForResourceType(ResourceType $resourceType)
-    {
-        return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
 
     public function getModelProperty($model, $propertyKey)
@@ -180,63 +156,77 @@ class DataProvider implements DataProviderInterface
         return $this->getModelData($model->_getProperty($propertyKey));
     }
 
-    public function saveModelForResourceType($model, ResourceType $resourceType)
+    public function saveModel($model, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
-        if ($repository) {
-            if ($model->_isNew()) {
-                $repository->add($model);
-            } else {
-                $repository->update($model);
-            }
-            $this->persistAllChanges();
+        if ($model->_isNew()) {
+            $repository->add($model);
+        } else {
+            $repository->update($model);
+        }
+        $this->persistAllChanges();
+    }
+
+    public function updateModel($updatedModel, ResourceType $resourceType)
+    {
+        $repository = $this->getRepositoryForResourceType($resourceType);
+        $repository->update($updatedModel);
+        $this->persistAllChanges();
+    }
+
+    public function removeModel($model, ResourceType $resourceType)
+    {
+        $repository = $this->getRepositoryForResourceType($resourceType);
+        $repository->remove($model);
+        $this->persistAllChanges();
+    }
+
+    public function convertIntoModel(array $data, ResourceType $resourceType)
+    {
+        $propertyMapper = $this->objectManager->get(PropertyMapper::class);
+        try {
+            return $propertyMapper->convert(
+                $this->prepareModelData($data),
+                $this->getModelClassForResourceType($resourceType),
+                $this->getPropertyMappingConfigurationForResourceType($resourceType)
+            );
+        } catch (ExtbaseException $exception) {
+            $this->logException($exception);
+
+            return null;
         }
     }
 
-    public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType)
+    public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
-        $repository = $this->getRepositoryForResourceType($resourceType);
-        if ($repository) {
-            $repository->update($newModel);
-            $this->persistAllChanges();
-        }
+        return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
 
-    public function removeModelForResourceType($model, ResourceType $resourceType)
+    /**
+     * Persist all changes to the database
+     */
+    protected function persistAllChanges()
     {
-        $repository = $this->getRepositoryForResourceType($resourceType);
-        if ($repository) {
-            $repository->remove($model);
-            $this->persistAllChanges();
-        }
-    }
-
-    public function persistAllChanges()
-    {
-        /** @var PersistenceManagerInterface $persistenceManager */
-        $persistenceManager = $this->objectManager->get(ObjectManager::getPersistenceManagerClassName());
+        $persistenceManager = $this->objectManager->get(PersistenceManagerInterface::class);
         $persistenceManager->persistAll();
     }
 
     /**
-     * Returns the UID of the model with the given identifier
+     * Return the UID of the model with the given identifier
      *
      * @param mixed        $identifier   The identifier
      * @param ResourceType $resourceType The resource type
-     * @return int|null Returns the UID of NULL if the object couldn't be found
+     * @return int|null Returns the UID or NULL if the object couldn't be found
      */
     protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
         $model = $this->getModelWithIdentityForResourceType($identifier, $resourceType);
-        if (!$model) {
-            return null;
-        }
 
-        return $model->getUid();
+        return $model ? $model->getUid() : null;
     }
 
     /**
-     * Returns the configuration for property mapping
+     * Return the configuration for property mapping
      *
      * @param ResourceType|string $resourceType
      * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
@@ -245,15 +235,15 @@ class DataProvider implements DataProviderInterface
         /** @noinspection PhpUnusedParameterInspection */
         ResourceType $resourceType
     ) {
-        return $this->configurationBuilder->build();
+        return $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
     }
 
     /**
-     * Loads the model with the given identifier
+     * Load the model with the given identifier
      *
      * @param mixed               $identifier
      * @param ResourceType|string $resourceType
-     * @return mixed|null|object
+     * @return null|object
      */
     protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
@@ -265,18 +255,9 @@ class DataProvider implements DataProviderInterface
             return $object;
         }
 
-
-        // Fetch the first identity property and search the repository for it
-        $type = null;
-        $property = null;
-        try {
-            $classSchema = $this->reflectionService->getClassSchema($this->getModelClassForResourceType($resourceType));
-            $identityProperties = $classSchema->getIdentityProperties();
-
-            $type = reset($identityProperties);
-            $property = key($identityProperties);
-        } catch (\Exception $exception) {
-        }
+        list($property, $type) = $this->identityProvider->getIdentityProperty(
+            $this->getModelClassForResourceType($resourceType)
+        );
 
         switch ($type) {
             case 'string':
@@ -323,14 +304,23 @@ class DataProvider implements DataProviderInterface
     /**
      * Returns the logger
      *
-     * @return \TYPO3\CMS\Core\Log\Logger
+     * @return LoggerInterface
      */
     protected function getLogger()
     {
         if (!$this->logger) {
-            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
 
         return $this->logger;
+    }
+
+    /**
+     * @param $exception
+     */
+    protected function logException(\Exception $exception)
+    {
+        $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
+        $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
     }
 }

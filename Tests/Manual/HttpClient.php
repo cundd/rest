@@ -39,7 +39,7 @@ class HttpClient
         $response->content = json_decode($response->body, true);
         if ($response->content === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-                . substr($response->body, 0, 200) . PHP_EOL
+                . substr($response->body, 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
                 . '------------------------------------' . PHP_EOL
                 . $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
             throw new \UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);

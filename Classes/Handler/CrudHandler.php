@@ -81,7 +81,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function getProperty(RestRequestInterface $request, $identifier, $propertyKey)
     {
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
+        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
@@ -92,7 +92,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function show(RestRequestInterface $request, $identifier)
     {
         $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
+        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
@@ -101,25 +101,25 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    public function replace(RestRequestInterface $request, $identifier)
+    public function create(RestRequestInterface $request)
     {
         $dataProvider = $this->getDataProvider();
 
         $data = $request->getSentData();
-        $data['__identity'] = $identifier;
-        $this->logger->logRequest('update request', ['body' => $data]);
+        $this->logger->logRequest('create request', ['body' => $data]);
 
-        $oldModel = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
-        if (!$oldModel) {
-            return $this->responseFactory->createErrorResponse(null, 404, $request);
+        if (isset($data['__identity'])) {
+            return $this->update($request, $data['__identity']);
         }
 
-        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
+        $model = $dataProvider->createModel($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400, $request);
+        } elseif ($model instanceof \Exception) {
+            return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
 
-        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
+        $dataProvider->saveModel($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
 
         return $this->prepareResult($request, $result);
@@ -133,12 +133,20 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $data['__identity'] = $identifier;
         $this->logger->logRequest('update request', ['body' => $data]);
 
-        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
-        if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404, $request);
+        // Make sure the object with the given identifier exists
+        $oldObject = $dataProvider->fetchModel($identifier, $request->getResourceType());
+        if (!$oldObject) {
+            return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
 
-        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
+        $model = $dataProvider->convertIntoModel($data, $request->getResourceType());
+        if (!$model) {
+            return $this->responseFactory->createErrorResponse(null, 400, $request);
+        } elseif ($model instanceof \Exception) {
+            return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
+        }
+
+        $dataProvider->saveModel($model, $request->getResourceType());
         $result = $dataProvider->getModelData($model);
 
         return $this->prepareResult($request, $result);
@@ -148,31 +156,13 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     {
         $dataProvider = $this->getDataProvider();
         $this->logger->logRequest('delete request', ['identifier' => $identifier]);
-        $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
+        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404, $request);
+            return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
-        $dataProvider->removeModelForResourceType($model, $request->getResourceType());
+        $dataProvider->removeModel($model, $request->getResourceType());
 
         return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
-    }
-
-    public function create(RestRequestInterface $request)
-    {
-        $dataProvider = $this->getDataProvider();
-
-        $data = $request->getSentData();
-        $this->logger->logRequest('create request', ['body' => $data]);
-
-        $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
-        if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 400, $request);
-        }
-
-        $dataProvider->saveModelForResourceType($model, $request->getResourceType());
-        $result = $dataProvider->getModelData($model);
-
-        return $this->prepareResult($request, $result);
     }
 
     /**
@@ -185,7 +175,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     {
         $dataProvider = $this->getDataProvider();
 
-        $allModels = $dataProvider->getAllModelsForResourceType($request->getResourceType());
+        $allModels = $dataProvider->fetchAllModels($request->getResourceType());
         if (!is_array($allModels) && $allModels instanceof Traversable) {
             $allModels = iterator_to_array($allModels);
         }
@@ -201,7 +191,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      */
     public function countAll(RestRequestInterface $request)
     {
-        $allModels = $this->getDataProvider()->getAllModelsForResourceType($request->getResourceType());
+        $allModels = $this->getDataProvider()->fetchAllModels($request->getResourceType());
 
         if (is_array($allModels) || $allModels instanceof Countable) {
             return count($allModels);
@@ -235,10 +225,10 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $router->add(Route::get($resourceType . '/_count/?', [$this, 'countAll']));
         $router->add(Route::post($resourceType . '/?', [$this, 'create']));
         $router->add(Route::get($resourceType . '/{slug}/?', [$this, 'show']));
-        $router->add(Route::put($resourceType . '/{slug}/?', [$this, 'replace']));
-        $router->add(Route::post($resourceType . '/{slug}/?', [$this, 'replace']));
+        $router->add(Route::put($resourceType . '/{slug}/?', [$this, 'update']));
+        $router->add(Route::post($resourceType . '/{slug}/?', [$this, 'update']));
         $router->add(Route::delete($resourceType . '/{slug}/?', [$this, 'delete']));
-        $router->add(Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', [$this, 'replace']));
+        $router->add(Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', [$this, 'update']));
         $router->add(Route::get($resourceType . '/{slug}/{slug}/?', [$this, 'getProperty']));
         $router->add(Route::routeWithPatternAndMethod($resourceType . '/?', 'OPTIONS', [$this, 'options']));
     }

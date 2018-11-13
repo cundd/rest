@@ -96,7 +96,7 @@ class NewsTest extends AbstractApiCase
 
         $this->assertSame(400, $response->status, $this->getErrorDescription($response));
         $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Bad Request"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Invalid property \"uid\""}', $response->body, $this->getErrorDescription($response));
     }
 
     /**

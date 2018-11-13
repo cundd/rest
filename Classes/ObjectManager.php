@@ -18,7 +18,6 @@ use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
-use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Specialized Object Manager
@@ -49,16 +48,6 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * @var AccessControllerInterface
      */
     protected $accessController;
-
-    /**
-     * Returns the correct class name of the Persistence Manager for the current TYPO3 version
-     *
-     * @return string
-     */
-    public static function getPersistenceManagerClassName()
-    {
-        return PersistenceManagerInterface::class;
-    }
 
     /**
      * Returns the Response Factory
@@ -129,7 +118,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * @param string[] $classes
      * @param string   $default
      * @return string
-     * @throws \Exception
+     * @throws \LogicException
      */
     private function getFirstExistingClass(array $classes, $default = '')
     {
@@ -140,7 +129,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
         }
 
         if ($default === '') {
-            throw new \Exception('No existing class found');
+            throw new \LogicException('No existing class found');
         }
 
         return $default;

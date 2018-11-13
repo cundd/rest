@@ -160,7 +160,7 @@ class Bootstrap extends AbstractBootstrap
         ) {
             class_alias(
                 'TYPO3\TestingFramework\Core\Functional\FunctionalTestCase',
-                'TYPO3\CMS\Core\Tests\FunctionalTestCase'
+                'TYPO3\CMS\Core' . '\Tests\FunctionalTestCase'
             );
         }
     }

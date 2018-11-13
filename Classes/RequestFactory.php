@@ -120,6 +120,10 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             'format'       => $pathAndFormat->format,
         ];
 
+        if (!$inputPath) {
+            return $pathInfo;
+        }
+
         // Strip the query
         $path = strtok($inputPath, '?');
         if (!$path) {
@@ -129,7 +133,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         // Get the first part of the path
         $resourceType = strtok($path, '/');
         if (!$resourceType) {
-            return $pathInfo;
+            return (object)[
+                'path'         => $path,
+                'originalPath' => '',
+                'resourceType' => '',
+                'format'       => $pathAndFormat->format,
+            ];
         }
 
         // Check for path aliases
@@ -177,7 +186,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
         }
 
-        $path = $this->removePathPrefix($path, $pathPrefix);
+        $path = $this->removePathPrefix($path, '/' . trim($pathPrefix, '/'));
         $path = $this->removePathPrefix($path, '/rest/');
 
         return $path;
@@ -191,7 +200,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     private function removePathPrefix($path, $pathPrefix)
     {
         if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
-            $pathPrefix = '/' . trim($pathPrefix, '/');
             if ($this->stringHasPrefix($path, $pathPrefix)) {
                 $path = substr($path, strlen($pathPrefix));
             }
