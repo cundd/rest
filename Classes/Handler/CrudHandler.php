@@ -7,7 +7,7 @@ use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
@@ -23,6 +23,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      * Current request
      *
      * @var RestRequestInterface
+     * @deprecated will be removed in 4.0.0
      */
     protected $request;
 
@@ -30,6 +31,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      * Unique identifier of the currently matching Domain Model
      *
      * @var string
+     * @deprecated will be removed in 4.0.0
      */
     protected $identifier;
 
@@ -53,12 +55,12 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * Handler constructor
      *
-     * @param ObjectManager            $objectManager
+     * @param ObjectManagerInterface   $objectManager
      * @param ResponseFactoryInterface $responseFactory
      * @param LoggerInterface          $logger
      */
     public function __construct(
-        ObjectManager $objectManager,
+        ObjectManagerInterface $objectManager,
         ResponseFactoryInterface $responseFactory,
         LoggerInterface $logger
     ) {

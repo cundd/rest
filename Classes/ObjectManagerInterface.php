@@ -13,7 +13,7 @@ interface ObjectManagerInterface extends TYPO3ObjectManagerInterface
     /**
      * Returns the configuration provider
      *
-     * @return \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     * @return \Cundd\Rest\Configuration\ConfigurationProviderInterface
      */
     public function getConfigurationProvider();
 
