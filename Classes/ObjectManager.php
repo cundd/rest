@@ -54,6 +54,7 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * Returns the correct class name of the Persistence Manager for the current TYPO3 version
      *
      * @return string
+     * @deprecated will be removed in 4.0.0
      */
     public static function getPersistenceManagerClassName()
     {
