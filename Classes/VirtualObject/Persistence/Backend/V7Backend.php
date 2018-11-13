@@ -169,10 +169,7 @@ class V7Backend extends AbstractBackend
             }
 
             $column = $configuration ? $configuration->getSourceKeyForProperty($property) : $property;
-
-            if (!ctype_alnum(str_replace('_', '', $column))) {
-                throw new InvalidColumnNameException('The given column is not valid', 1395678424);
-            }
+            InvalidColumnNameException::assertValidColumnName($column);
 
             if (is_scalar($value) || $value === null) {
                 $operator = '=';
