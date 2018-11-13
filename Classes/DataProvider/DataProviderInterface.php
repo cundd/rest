@@ -10,7 +10,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 interface DataProviderInterface extends SingletonInterface
 {
     /**
-     * Returns the domain model repository for the models the given API resource type points to
+     * Return the domain model repository for the models the given API resource type points to
      *
      * @param ResourceType $resourceType API resource type to get the repository for
      * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
@@ -18,7 +18,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getRepositoryForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns the domain model repository class name for the given API resource type
+     * Return the domain model repository class name for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
@@ -26,7 +26,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getRepositoryClassForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns all domain model for the given API resource type
+     * Return all domain model for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
      * @return object[]|DomainObjectInterface[]|QueryResultInterface
@@ -34,8 +34,9 @@ interface DataProviderInterface extends SingletonInterface
     public function getAllModelsForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns a domain model for the given API resource type and data
-     * This method will load existing models.
+     * Return a domain model for the given API resource type and data
+     *
+     * This method will load existing models
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
@@ -44,8 +45,9 @@ interface DataProviderInterface extends SingletonInterface
     public function getModelWithDataForResourceType($data, ResourceType $resourceType);
 
     /**
-     * Returns a domain model for the given API resource type and data
-     * Even if the data contains an identifier, the existing model will not be loaded.
+     * Return a domain model for the given API resource type and data
+     *
+     * Even if the data contains an identifier, the existing model will not be loaded
      *
      * @param array|string|int $data         Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
@@ -54,7 +56,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getNewModelWithDataForResourceType($data, ResourceType $resourceType);
 
     /**
-     * Returns the domain model class name for the given API resource type
+     * Return the domain model class name for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
      * @return string
@@ -62,7 +64,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getModelClassForResourceType(ResourceType $resourceType);
 
     /**
-     * Returns the data from the given model
+     * Return the data from the given model
      *
      * @param object|DomainObjectInterface $model
      * @return array
@@ -70,7 +72,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getModelData($model);
 
     /**
-     * Returns the property data from the given model
+     * Return the property data from the given model
      *
      * @param object|DomainObjectInterface $model
      * @param string                       $propertyKey
@@ -79,8 +81,7 @@ interface DataProviderInterface extends SingletonInterface
     public function getModelProperty($model, $propertyKey);
 
     /**
-     * Adds or updates the given model in the repository for the
-     * given API resource type
+     * Add or update the given model in the repository for the given API resource type
      *
      * @param object|DomainObjectInterface $model
      * @param ResourceType                 $resourceType The API resource type
@@ -89,8 +90,7 @@ interface DataProviderInterface extends SingletonInterface
     public function saveModelForResourceType($model, ResourceType $resourceType);
 
     /**
-     * Tells the Data Provider to replace the given old model with the new one
-     * in the repository for the given API resource type
+     * Tell the Data Provider to replace the given old model with the new one in the repository for the given API resource type
      *
      * @param object|DomainObjectInterface $oldModel
      * @param object|DomainObjectInterface $newModel
@@ -100,8 +100,7 @@ interface DataProviderInterface extends SingletonInterface
     public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType);
 
     /**
-     * Adds or updates the given model in the repository for the
-     * given API resource type
+     * Add or updates the given model in the repository for the given API resource type
      *
      * @param object|DomainObjectInterface $model
      * @param ResourceType                 $resourceType The API resource type

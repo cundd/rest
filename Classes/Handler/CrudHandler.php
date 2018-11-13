@@ -11,7 +11,6 @@ use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
-use Psr\Http\Message\ResponseInterface;
 use Traversable;
 
 /**
@@ -79,14 +78,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return 'Default Handler for CRUD requests';
     }
 
-    /**
-     * Returns the given property of the currently matching Model
-     *
-     * @param RestRequestInterface $request
-     * @param int|string           $identifier
-     * @param string               $propertyKey
-     * @return mixed
-     */
     public function getProperty(RestRequestInterface $request, $identifier, $propertyKey)
     {
         $dataProvider = $this->getDataProvider();
@@ -98,18 +89,8 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $dataProvider->getModelProperty($model, $propertyKey);
     }
 
-    /**
-     * Returns the data of the current Model
-     *
-     * @param RestRequestInterface $request
-     * @param                      $identifier
-     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
-     */
     public function show(RestRequestInterface $request, $identifier)
     {
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        /* SHOW
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
         $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
@@ -120,13 +101,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    /**
-     * Replaces the currently matching Model with the data from the request
-     *
-     * @param RestRequestInterface $request
-     * @param                      $identifier
-     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
-     */
     public function replace(RestRequestInterface $request, $identifier)
     {
         $dataProvider = $this->getDataProvider();
@@ -140,7 +114,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
             return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
 
-        /** @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model */
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400, $request);
@@ -152,13 +125,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    /**
-     * Updates the currently matching Model with the data from the request
-     *
-     * @param RestRequestInterface $request
-     * @param                      $identifier
-     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
-     */
     public function update(RestRequestInterface $request, $identifier)
     {
         $dataProvider = $this->getDataProvider();
@@ -168,7 +134,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $this->logger->logRequest('update request', ['body' => $data]);
 
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
-
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
@@ -179,19 +144,10 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    /**
-     * Deletes the currently matching Model
-     *
-     * @param RestRequestInterface $request
-     * @param                      $identifier
-     * @return int|ResponseInterface Returns 200 an success
-     */
     public function delete(RestRequestInterface $request, $identifier)
     {
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        /* REMOVE																	 */
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
+        $this->logger->logRequest('delete request', ['identifier' => $identifier]);
         $model = $dataProvider->getModelWithDataForResourceType($identifier, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
@@ -201,25 +157,13 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
     }
 
-    /**
-     * Creates a new Model with the data from the request
-     *
-     * @param RestRequestInterface $request
-     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
-     */
     public function create(RestRequestInterface $request)
     {
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        /* CREATE																	 */
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
 
         $data = $request->getSentData();
         $this->logger->logRequest('create request', ['body' => $data]);
 
-        /**
-         * @var \TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface $model
-         */
         $model = $dataProvider->getModelWithDataForResourceType($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 400, $request);
@@ -239,9 +183,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      */
     public function listAll(RestRequestInterface $request)
     {
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
-        /* LIST 																	 */
-        /* MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWM */
         $dataProvider = $this->getDataProvider();
 
         $allModels = $dataProvider->getAllModelsForResourceType($request->getResourceType());
@@ -249,14 +190,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
             $allModels = iterator_to_array($allModels);
         }
 
-        $result = array_map([$dataProvider, 'getModelData'], $allModels);
-        if ($this->getAddRootObjectForCollection()) {
-            return [
-                $request->getRootObjectKey() => $result,
-            ];
-        }
-
-        return $result;
+        return $this->prepareResult($request, array_map([$dataProvider, 'getModelData'], $allModels), false);
     }
 
     /**
@@ -280,7 +214,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     }
 
     /**
-     *
      * @return bool
      */
     public function options()
@@ -325,20 +258,23 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      *
      * @param RestRequestInterface $request
      * @param mixed                $result
+     * @param bool                 $singularize
      * @return array
      */
-    protected function prepareResult(RestRequestInterface $request, $result)
+    protected function prepareResult(RestRequestInterface $request, $result, $singularize = true)
     {
         if ($this->getAddRootObjectForCollection()) {
-            return [
-                Utility::singularize($request->getRootObjectKey()) => $result,
-            ];
+            $key = $singularize ? Utility::singularize($request->getRootObjectKey()) : $request->getRootObjectKey();
+
+            return [$key => $result];
         }
 
         return $result;
     }
 
     /**
+     * Return if the root object key should be added to the response data
+     *
      * @return bool
      */
     protected function getAddRootObjectForCollection()

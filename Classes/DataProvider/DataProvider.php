@@ -10,7 +10,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 
 /**
@@ -59,23 +58,11 @@ class DataProvider implements DataProviderInterface
      */
     protected $logger;
 
-    /**
-     * Returns the data from the given model
-     *
-     * @param object|DomainObjectInterface $model
-     * @return array
-     */
     public function getModelData($model)
     {
         return $this->extractor->extract($model);
     }
 
-    /**
-     * Returns the domain model repository class name for the given API resource type
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return string
-     */
     public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
@@ -87,12 +74,6 @@ class DataProvider implements DataProviderInterface
         return $repositoryClass;
     }
 
-    /**
-     * Returns the domain model repository for the models the given API resource type points to
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return \TYPO3\CMS\Extbase\Persistence\RepositoryInterface
-     */
     public function getRepositoryForResourceType(ResourceType $resourceType)
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
@@ -105,12 +86,6 @@ class DataProvider implements DataProviderInterface
         return $repository;
     }
 
-    /**
-     * Returns the domain model class name for the given API resource type
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return string
-     */
     public function getModelClassForResourceType(ResourceType $resourceType)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
@@ -122,26 +97,11 @@ class DataProvider implements DataProviderInterface
         return $modelClass;
     }
 
-    /**
-     * Returns all domain model for the given API resource type
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     * @return object[]|DomainObjectInterface[]|QueryResultInterface
-     */
     public function getAllModelsForResourceType(ResourceType $resourceType)
     {
         return $this->getRepositoryForResourceType($resourceType)->findAll();
     }
 
-    /**
-     * Returns a domain model for the given API resource type and data
-     *
-     * This method will load existing models.
-     *
-     * @param array|string|int $data         Data of the new model or it's UID
-     * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return object
-     */
     public function getModelWithDataForResourceType($data, ResourceType $resourceType)
     {
         $modelClass = $this->getModelClassForResourceType($resourceType);
@@ -168,15 +128,6 @@ class DataProvider implements DataProviderInterface
         return null;
     }
 
-    /**
-     * Returns a domain model for the given API resource type and data
-     *
-     * Even if the data contains an identifier, the existing model will not be loaded.
-     *
-     * @param array|string|int $data         Data of the new model or it's UID
-     * @param ResourceType     $resourceType API resource type to get the repository for
-     * @return object|DomainObjectInterface
-     */
     public function getNewModelWithDataForResourceType($data, ResourceType $resourceType)
     {
         $uid = null;
@@ -219,37 +170,16 @@ class DataProvider implements DataProviderInterface
         return $this->getModelWithDataForResourceType([], $resourceType);
     }
 
-    /**
-     * Returns a new domain model for the given API resource type points to
-     *
-     * @param ResourceType $resourceType API resource type to get the model for
-     * @return object
-     */
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
         return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
 
-    /**
-     * Returns the property data from the given model
-     *
-     * @param object|DomainObjectInterface $model
-     * @param string                       $propertyKey
-     * @return mixed
-     */
     public function getModelProperty($model, $propertyKey)
     {
         return $this->getModelData($model->_getProperty($propertyKey));
     }
 
-    /**
-     * Adds or updates the given model in the repository for the
-     * given API resource type
-     *
-     * @param object|DomainObjectInterface $model
-     * @param ResourceType                 $resourceType The API resource type
-     * @return void
-     */
     public function saveModelForResourceType($model, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
@@ -263,15 +193,6 @@ class DataProvider implements DataProviderInterface
         }
     }
 
-    /**
-     * Tells the Data Provider to replace the given old model with the new one
-     * in the repository for the given API resource type
-     *
-     * @param object|DomainObjectInterface $oldModel
-     * @param object|DomainObjectInterface $newModel
-     * @param ResourceType                 $resourceType The API resource type
-     * @return void
-     */
     public function replaceModelForResourceType($oldModel, $newModel, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
@@ -281,14 +202,6 @@ class DataProvider implements DataProviderInterface
         }
     }
 
-    /**
-     * Adds or updates the given model in the repository for the
-     * given API resource type
-     *
-     * @param object|DomainObjectInterface $model
-     * @param ResourceType                 $resourceType The API resource type
-     * @return void
-     */
     public function removeModelForResourceType($model, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
@@ -298,9 +211,6 @@ class DataProvider implements DataProviderInterface
         }
     }
 
-    /**
-     * Persist all changes to the database
-     */
     public function persistAllChanges()
     {
         /** @var PersistenceManagerInterface $persistenceManager */
@@ -331,8 +241,10 @@ class DataProvider implements DataProviderInterface
      * @param ResourceType|string $resourceType
      * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
      */
-    protected function getPropertyMappingConfigurationForResourceType(ResourceType $resourceType)
-    {
+    protected function getPropertyMappingConfigurationForResourceType(
+        /** @noinspection PhpUnusedParameterInspection */
+        ResourceType $resourceType
+    ) {
         return $this->configurationBuilder->build();
     }
 

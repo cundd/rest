@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 interface CrudHandlerInterface extends HandlerInterface
 {
     /**
-     * Returns the given property of the currently matching Model
+     * Return the given property of the requested Model
      *
      * @param RestRequestInterface $request
      * @param int|string           $identifier
@@ -21,7 +21,7 @@ interface CrudHandlerInterface extends HandlerInterface
     public function getProperty(RestRequestInterface $request, $identifier, $propertyKey);
 
     /**
-     * Returns the data of the current Model
+     * Return the data of the current Model
      *
      * @param RestRequestInterface $request
      * @param int|string           $identifier
@@ -30,7 +30,7 @@ interface CrudHandlerInterface extends HandlerInterface
     public function show(RestRequestInterface $request, $identifier);
 
     /**
-     * Replaces the currently matching Model with the data from the request
+     * Replace the requested Model with the data from the request
      *
      * @param RestRequestInterface $request
      * @param int|string           $identifier
@@ -39,7 +39,7 @@ interface CrudHandlerInterface extends HandlerInterface
     public function replace(RestRequestInterface $request, $identifier);
 
     /**
-     * Updates the currently matching Model with the data from the request
+     * Update the requested Model with the data from the request
      *
      * @param RestRequestInterface $request
      * @param int|string           $identifier
@@ -48,7 +48,7 @@ interface CrudHandlerInterface extends HandlerInterface
     public function update(RestRequestInterface $request, $identifier);
 
     /**
-     * Deletes the currently matching Model
+     * Delete the requested Model
      *
      * @param RestRequestInterface $request
      * @param int|string           $identifier
@@ -57,7 +57,7 @@ interface CrudHandlerInterface extends HandlerInterface
     public function delete(RestRequestInterface $request, $identifier);
 
     /**
-     * Creates a new Model with the data from the request
+     * Create a new Model with the data from the request
      *
      * @param RestRequestInterface $request
      * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
