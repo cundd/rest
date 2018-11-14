@@ -47,7 +47,7 @@ class HttpClient
     {
         $response = $this->request($path, $method, $body, $headers, $basicAuth);
 
-        $response = $response->withContent(json_decode($response->getBody(), true));
+        $response = $response->withParsedBody(json_decode($response->getBody(), true));
         if ($response->getParsedBody() === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
                 . substr($response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL

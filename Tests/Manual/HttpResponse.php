@@ -50,13 +50,13 @@ class HttpResponse
     }
 
     /**
-     * @param string|null|array|object $content
+     * @param string|null|array|object $parsedBody
      * @return HttpResponse
      */
-    public function withContent($content)
+    public function withParsedBody($parsedBody)
     {
         $clone = clone $this;
-        $clone->parsedBody = $content;
+        $clone->parsedBody = $parsedBody;
 
         return $clone;
     }
