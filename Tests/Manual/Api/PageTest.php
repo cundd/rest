@@ -14,9 +14,10 @@ class PageTest extends AbstractApiCase
     {
         $response = $this->requestJson('virtual_object-page' . $suffix);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', reset($response->content), $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $parsedBody = $response->getParsedBody();
+        $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', reset($parsedBody), $this->getErrorDescription($response));
     }
 
     /**
@@ -28,10 +29,10 @@ class PageTest extends AbstractApiCase
     {
         $response = $this->requestJson('virtual_object-page/1' . $suffix);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', $response->content, $this->getErrorDescription($response));
-        $this->assertSame(1, $response->content['id'], $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(1, $response->getParsedBody()['id'], $this->getErrorDescription($response));
     }
 
     /**
@@ -43,8 +44,8 @@ class PageTest extends AbstractApiCase
     {
         $response = $this->requestJson('virtual_object-page/2300' . $suffix);
 
-        $this->assertSame(404, $response->status, $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Not Found"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame(404, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Not Found"}', $response->getBody(), $this->getErrorDescription($response));
     }
 
     /**
@@ -66,10 +67,10 @@ class PageTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', $response->content, $this->getErrorDescription($response));
-        $this->assertSame($title, $response->content['title'], $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame($title, $response->getParsedBody()['title'], $this->getErrorDescription($response));
     }
 
     /**
@@ -92,11 +93,11 @@ class PageTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', $response->content, $this->getErrorDescription($response));
-        $this->assertSame(100, $response->content['id'], $this->getErrorDescription($response));
-        $this->assertSame($title, $response->content['title'], $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(100, $response->getParsedBody()['id'], $this->getErrorDescription($response));
+        $this->assertSame($title, $response->getParsedBody()['title'], $this->getErrorDescription($response));
     }
 
     /**
@@ -121,11 +122,11 @@ class PageTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', $response->content, $this->getErrorDescription($response));
-        $this->assertSame(100, $response->content['id'], $this->getErrorDescription($response));
-        $this->assertSame($title, $response->content['title'], $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(100, $response->getParsedBody()['id'], $this->getErrorDescription($response));
+        $this->assertSame($title, $response->getParsedBody()['title'], $this->getErrorDescription($response));
     }
 
     /**
@@ -151,11 +152,11 @@ class PageTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('id', $response->content, $this->getErrorDescription($response));
-        $this->assertSame(100, $response->content['id'], $this->getErrorDescription($response));
-        $this->assertSame($title, $response->content['title'], $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('id', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(100, $response->getParsedBody()['id'], $this->getErrorDescription($response));
+        $this->assertSame($title, $response->getParsedBody()['title'], $this->getErrorDescription($response));
     }
 
     /**
@@ -175,8 +176,8 @@ class PageTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"Deleted"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Deleted"}', $response->getBody(), $this->getErrorDescription($response));
     }
 }

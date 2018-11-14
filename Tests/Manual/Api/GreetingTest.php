@@ -11,10 +11,10 @@ class GreetingTest extends AbstractApiCase
     {
         $response = $this->request('/');
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
         $this->assertTrue(
             in_array(
-                $response->content,
+                $response->getParsedBody(),
                 [
                     '{"message":"What\'s up?"}',
                     '{"message":"Good Morning!"}',

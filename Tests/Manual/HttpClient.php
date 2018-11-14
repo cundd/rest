@@ -1,28 +1,38 @@
-<?php
+<?php /** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace Cundd\Rest\Tests\Manual;
 
 class HttpClient
 {
     private $verbose;
+    private $baseUrl;
 
     /**
-     * HttpClient constructor.
+     * HTTP Client constructor
      *
-     * @param bool $verbose
+     * @param bool   $verbose
+     * @param string $baseUrl Provide a base URL for all requests (if used '/rest/' will not be appended to URLs)
      */
-    public function __construct($verbose = false)
+    public function __construct($verbose = false, $baseUrl = '')
     {
+        if (!is_bool($verbose)) {
+            throw new \InvalidArgumentException('Expected argument "verbose" to be of type boolean');
+        }
+        if (!is_string($baseUrl) && !(is_object($baseUrl) && method_exists($baseUrl, '__toString'))) {
+            throw new \InvalidArgumentException('Expected argument "baseUrl" to be of type string');
+        }
         $this->verbose = (bool)$verbose;
+        $this->baseUrl = (string)$baseUrl;
     }
 
     /**
-     * @param bool $verbose
+     * @param bool   $verbose
+     * @param string $baseUrl
      * @return HttpClient
      */
-    public static function client($verbose = false)
+    public static function client($verbose = false, $baseUrl = '')
     {
-        return new self($verbose);
+        return new self($verbose, $baseUrl);
     }
 
     /**
@@ -31,15 +41,16 @@ class HttpClient
      * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
-     * @return object
+     * @return HttpResponse
      */
     public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
         $response = $this->request($path, $method, $body, $headers, $basicAuth);
-        $response->content = json_decode($response->body, true);
-        if ($response->content === null) {
+
+        $response = $response->withContent(json_decode($response->getBody(), true));
+        if ($response->getParsedBody() === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-                . substr($response->body, 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+                . substr($response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
                 . '------------------------------------' . PHP_EOL
                 . $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
             throw new \UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);
@@ -54,7 +65,7 @@ class HttpClient
      * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
-     * @return object
+     * @return HttpResponse
      */
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
     {
@@ -158,9 +169,10 @@ class HttpClient
 
     /**
      * @param string $headerString
+     * @param int    $statusCode
      * @return array
      */
-    private function parseResponseHeaders($headerString)
+    private function parseResponseHeaders($headerString, &$statusCode)
     {
         if (!$headerString) {
             return [];
@@ -171,14 +183,19 @@ class HttpClient
 
         foreach ($headerLines as $i => $line) {
             if ($i === 0) {
-                list($httpCode, $statusCode, $statusPhrase) = explode(' ', $line, 3);
-                $headers['http_code'] = $httpCode;
-                $headers['status_code'] = intval($statusCode);
-                $headers['status_phrase'] = $statusPhrase;
+                list($httpCode, $rawStatusCode, $statusPhrase) = explode(' ', $line, 3);
+                $statusCode = intval($rawStatusCode);
+                $headers['status_code'] = [$statusCode];
+                $headers['http_code'] = [$httpCode];
+                $headers['status_phrase'] = [$statusPhrase];
             } else {
                 list($key, $value) = explode(': ', $line);
 
-                $headers[$key] = $value;
+                if (!isset($headers[$key])) {
+                    $headers[$key] = [$value];
+                } else {
+                    $headers[$key][] = $value;
+                }
             }
         }
 
@@ -187,6 +204,10 @@ class HttpClient
 
     private function getBaseUrl()
     {
+        if ($this->baseUrl) {
+            return $this->baseUrl;
+        }
+
         return (getenv('API_HOST') ?: 'http://localhost:8888') . '/rest/';
     }
 
@@ -210,17 +231,17 @@ class HttpClient
     }
 
     /**
-     * @param                 $curlClient
+     * @param resource        $curlClient
      * @param array|\stdClass $requestData
-     * @return object
-     * @throws \Exception
+     * @return HttpResponse
+     * @throws \RuntimeException
      */
     private function send($curlClient, $requestData)
     {
         $response = curl_exec($curlClient);
 
         $headerSize = curl_getinfo($curlClient, CURLINFO_HEADER_SIZE);
-        $responseHeaders = $this->parseResponseHeaders(substr($response, 0, $headerSize));
+        $responseHeaders = $this->parseResponseHeaders(substr($response, 0, $headerSize), $statusCode);
         $responseBody = substr($response, $headerSize);
 
         $error = curl_error($curlClient);
@@ -228,16 +249,17 @@ class HttpClient
         curl_close($curlClient);
 
         if ($error) {
-            throw  new \Exception($error);
+            throw  new \RuntimeException($error);
         }
 
-        return (object)[
-            'body'        => $responseBody,
-            'content'     => $responseBody,
-            'headers'     => $responseHeaders,
-            'status'      => $responseHeaders['status_code'],
-            'requestData' => (object)$requestData,
-        ];
+        //$status, $body, $parsedBody, array $headers, $requestData
+        return new HttpResponse(
+            $statusCode,
+            $responseBody,
+            $responseBody,
+            $responseHeaders,
+            (object)$requestData
+        );
     }
 
     /**

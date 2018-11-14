@@ -15,17 +15,17 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
     }
@@ -38,9 +38,9 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/';
         $response = $this->requestJson($path);
 
-        $this->assertSame(404, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Not Found"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame(404, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Not Found"}', $response->getBody(), $this->getErrorDescription($response));
     }
 
     /**
@@ -51,17 +51,17 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route.json';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
     }
@@ -74,17 +74,17 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/subpath.json';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route/subpath',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
     }
@@ -97,19 +97,19 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/parameter/slug.json';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('slug', $response->content, $this->getErrorDescription($response));
-        $this->assertSame('slug', $response->content['slug'], $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('slug', $response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('slug', $response->getParsedBody()['slug'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route/parameter/slug',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
     }
@@ -122,11 +122,15 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/12.json';
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('integer', $response->content['parameterType'], $this->getErrorDescription($response));
-        $this->assertSame(12, $response->content['value'], $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(
+            'integer',
+            $response->getParsedBody()['parameterType'],
+            $this->getErrorDescription($response)
+        );
+        $this->assertSame(12, $response->getParsedBody()['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
     }
 
     /**
@@ -139,11 +143,11 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/decimal/12.0' . $suffix;
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('double', $response->content['parameterType'], $this->getErrorDescription($response));
-        $this->assertSame(12, $response->content['value'], $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('double', $response->getParsedBody()['parameterType'], $this->getErrorDescription($response));
+        $this->assertSame(12, $response->getParsedBody()['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
     }
 
     public function getWithParameterFloatDataProvider()
@@ -165,11 +169,15 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-route/bool/' . $suffix;
         $response = $this->requestJson($path);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('boolean', $response->content['parameterType'], $this->getErrorDescription($response));
-        $this->assertSame($expected, $response->content['value'], $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame(
+            'boolean',
+            $response->getParsedBody()['parameterType'],
+            $this->getErrorDescription($response)
+        );
+        $this->assertSame($expected, $response->getParsedBody()['value'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
     }
 
     public function boolSuffixDataProvider()
@@ -198,22 +206,22 @@ class CustomRestTest extends AbstractApiCase
         ];
         $response = $this->requestJson($path, 'POST', $data, ['Content-Type' => 'application/json']);
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route/subpath',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             $data,
-            $response->content['data'],
+            $response->getParsedBody()['data'],
             $this->getErrorDescription($response)
         );
     }
@@ -237,22 +245,22 @@ class CustomRestTest extends AbstractApiCase
             ]
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('path', $response->content, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertArrayHasKey('path', $response->getParsedBody(), $this->getErrorDescription($response));
         $this->assertSame(
             '/cundd-custom_rest-route/subpath',
-            $response->content['path'],
+            $response->getParsedBody()['path'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             'cundd-custom_rest-route',
-            $response->content['resourceType'],
+            $response->getParsedBody()['resourceType'],
             $this->getErrorDescription($response)
         );
         $this->assertSame(
             $data,
-            $response->content['data'],
+            $response->getParsedBody()['data'],
             $this->getErrorDescription($response)
         );
     }
@@ -276,10 +284,10 @@ class CustomRestTest extends AbstractApiCase
             ]
         );
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"success":1}', $response->body, $this->getErrorDescription($response));
-        $this->assertSame('application/json', $response->headers['Content-Type']);
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('{"success":1}', $response->getBody(), $this->getErrorDescription($response));
+        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -290,9 +298,9 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-require';
         $response = $this->requestJson($path);
 
-        $this->assertSame(401, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Unauthorized"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame(401, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('{"error":"Unauthorized"}', $response->getBody(), $this->getErrorDescription($response));
     }
 
     /**
@@ -303,9 +311,9 @@ class CustomRestTest extends AbstractApiCase
         $path = 'cundd-custom_rest-require';
         $response = $this->requestJson($path, 'GET', null, [], $this->getApiUser() . ':' . $this->getApiKey());
 
-        $this->assertSame(200, $response->status, $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->content, $this->getErrorDescription($response));
-        $this->assertSame('{"message":"Access Granted"}', $response->body, $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $this->assertSame('{"message":"Access Granted"}', $response->getBody(), $this->getErrorDescription($response));
     }
 
     /**
@@ -314,7 +322,7 @@ class CustomRestTest extends AbstractApiCase
     public function getForbiddenTest()
     {
         $response = $this->request('cundd-custom_rest-require');
-        $this->assertSame(401, $response->status);
+        $this->assertSame(401, $response->getStatusCode());
     }
 
     /**
@@ -326,7 +334,7 @@ class CustomRestTest extends AbstractApiCase
     public function differentTests($path, $expectedStatus)
     {
         $response = $this->requestJson($path);
-        $this->assertSame($expectedStatus, $response->status, $this->getErrorDescription($response));
+        $this->assertSame($expectedStatus, $response->getStatusCode(), $this->getErrorDescription($response));
     }
 
     /**
