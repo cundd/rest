@@ -153,7 +153,7 @@ class HttpClient
         if (null !== $body) {
             $body = $this->prepareBody($body, $headers);
             $command[] = '-d';
-            $command[] = escapeshellarg($body);
+            $command[] = '\'' . addslashes($body) . '\'';
         }
 
         // Headers
