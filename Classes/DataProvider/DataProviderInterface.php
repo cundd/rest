@@ -3,11 +3,10 @@
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\SingletonInterface;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
-interface DataProviderInterface extends SingletonInterface
+interface DataProviderInterface
 {
     /**
      * Return all Domain Models for the given API resource type
@@ -16,6 +15,14 @@ interface DataProviderInterface extends SingletonInterface
      * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
     public function fetchAllModels(ResourceType $resourceType);
+
+    /**
+     * Return the number of all Domain Models for the given API resource type
+     *
+     * @param ResourceType $resourceType API resource type to get the repository for
+     * @return int
+     */
+    public function countAllModels(ResourceType $resourceType);
 
     /**
      * Return a Domain Model for the given API resource type and data

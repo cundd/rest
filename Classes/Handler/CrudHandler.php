@@ -2,7 +2,6 @@
 
 namespace Cundd\Rest\Handler;
 
-use Countable;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -18,22 +17,6 @@ use Traversable;
  */
 class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 {
-    /**
-     * Current request
-     *
-     * @var RestRequestInterface
-     * @deprecated will be removed in 4.0.0
-     */
-    protected $request;
-
-    /**
-     * Unique identifier of the currently matching Domain Model
-     *
-     * @var string
-     * @deprecated will be removed in 4.0.0
-     */
-    protected $identifier;
-
     /**
      * Object Manager
      *
@@ -68,11 +51,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $this->logger = $logger;
     }
 
-    /**
-     * Return the description of the handler
-     *
-     * @return string
-     */
     public function getDescription()
     {
         return 'Default Handler for CRUD requests';
@@ -165,12 +143,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
     }
 
-    /**
-     * List all Models
-     *
-     * @param RestRequestInterface $request
-     * @return array Returns all Models
-     */
     public function listAll(RestRequestInterface $request)
     {
         $dataProvider = $this->getDataProvider();
@@ -183,24 +155,9 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, array_map([$dataProvider, 'getModelData'], $allModels), false);
     }
 
-    /**
-     * Count all Models
-     *
-     * @param RestRequestInterface $request
-     * @return int Returns the number of models
-     */
     public function countAll(RestRequestInterface $request)
     {
-        $allModels = $this->getDataProvider()->fetchAllModels($request->getResourceType());
-
-        if (is_array($allModels) || $allModels instanceof Countable) {
-            return count($allModels);
-        }
-        if ($allModels instanceof Traversable) {
-            return count(iterator_to_array($allModels));
-        }
-
-        return NAN;
+        return $this->getDataProvider()->countAllModels($request->getResourceType());
     }
 
     /**
@@ -212,12 +169,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return true;
     }
 
-    /**
-     * Let the handler configure the routes
-     *
-     * @param RouterInterface      $router
-     * @param RestRequestInterface $request
-     */
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
         $resourceType = $request->getResourceType();

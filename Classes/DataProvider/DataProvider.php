@@ -5,6 +5,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
+use Cundd\Rest\SingletonInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -16,9 +17,9 @@ use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 
 /**
- * DataProvider instance
+ * Data Provider implementation for Extbase based Models
  */
-class DataProvider implements DataProviderInterface, ClassLoadingInterface
+class DataProvider implements DataProviderInterface, ClassLoadingInterface, SingletonInterface
 {
     /**
      * @var \Cundd\Rest\ObjectManagerInterface
@@ -119,6 +120,11 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface
     public function fetchAllModels(ResourceType $resourceType)
     {
         return $this->getRepositoryForResourceType($resourceType)->findAll();
+    }
+
+    public function countAllModels(ResourceType $resourceType)
+    {
+        return $this->getRepositoryForResourceType($resourceType)->countAll();
     }
 
     public function fetchModel($identifier, ResourceType $resourceType)

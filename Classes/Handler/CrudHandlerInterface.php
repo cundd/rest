@@ -39,15 +39,6 @@ interface CrudHandlerInterface extends HandlerInterface
     public function update(RestRequestInterface $request, $identifier);
 
     /**
-     * Update the requested Model with the data from the request
-     *
-     * @param RestRequestInterface $request
-     * @param int|string           $identifier
-     * @return array|int|ResponseInterface Returns the Model's data on success, otherwise a descriptive error code
-     */
-    //public function update(RestRequestInterface $request, $identifier);
-
-    /**
      * Delete the requested Model
      *
      * @param RestRequestInterface $request
@@ -71,4 +62,12 @@ interface CrudHandlerInterface extends HandlerInterface
      * @return array Returns all Models
      */
     public function listAll(RestRequestInterface $request);
+
+    /**
+     * Count all Models
+     *
+     * @param RestRequestInterface $request
+     * @return int Returns the number of models
+     */
+    public function countAll(RestRequestInterface $request);
 }
