@@ -4,10 +4,13 @@ namespace Cundd\Rest\Tests\Manual\Api;
 
 
 use Cundd\Rest\Tests\Manual\HttpClient;
+use Cundd\Rest\Tests\Manual\HttpErrorDescriptionTrait;
 use Cundd\Rest\Tests\Manual\HttpResponse;
 
 abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
 {
+    use HttpErrorDescriptionTrait;
+
     /**
      * @param string            $path
      * @param string            $method
@@ -57,23 +60,5 @@ abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
     protected function getApiKey()
     {
         return getenv('API_KEY') ?: 'api-key';
-    }
-
-    /**
-     * @param $response
-     * @return string
-     */
-    protected function getErrorDescription(HttpResponse $response)
-    {
-        $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr($response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
-            . '------------------------------------';
-
-        return sprintf(
-            'Error for request %s %s with response content: %s',
-            $response->getRequestData()->method,
-            $response->getRequestData()->url,
-            $bodyPart
-        );
     }
 }
