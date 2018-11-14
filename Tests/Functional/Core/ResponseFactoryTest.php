@@ -2,6 +2,7 @@
 
 namespace Cundd\Rest\Tests\Functional\Core;
 
+use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\Tests\Functional\AbstractCase;
@@ -38,7 +39,9 @@ class ResponseFactoryTest extends AbstractCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"error":"Everything ok"}', (string)$response->getBody());
 
-        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
+        $this->requestFactory->registerCurrentRequest(
+            $this->requestFactory->getRequest()->withFormat(Format::formatHtml())
+        );
         $response = $this->fixture->createErrorResponse(
             'HTML format is currently not supported',
             200,
@@ -50,7 +53,9 @@ class ResponseFactoryTest extends AbstractCase
             (string)$response->getBody()
         );
 
-        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
+        $this->requestFactory->registerCurrentRequest(
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
+        );
         $response = $this->fixture->createErrorResponse(null, 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"error":"OK"}', (string)$response->getBody());
@@ -73,7 +78,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createErrorResponse(
             'HTML format is currently not supported',
             200,
-            $this->requestFactory->getRequest()->withFormat('html')
+            $this->requestFactory->getRequest()->withFormat(Format::formatHtml())
         );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -84,7 +89,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createErrorResponse(
             null,
             200,
-            $this->requestFactory->getRequest()->withFormat('json')
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
         );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"error":"OK"}', (string)$response->getBody());
@@ -92,7 +97,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createErrorResponse(
             null,
             404,
-            $this->requestFactory->getRequest()->withFormat('json')
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
         );
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());
@@ -108,7 +113,9 @@ class ResponseFactoryTest extends AbstractCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"message":"Everything ok"}', (string)$response->getBody());
 
-        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('html'));
+        $this->requestFactory->registerCurrentRequest(
+            $this->requestFactory->getRequest()->withFormat(Format::formatHtml())
+        );
         $response = $this->fixture->createSuccessResponse(
             'HTML format is currently not supported',
             200,
@@ -120,7 +127,9 @@ class ResponseFactoryTest extends AbstractCase
             (string)$response->getBody()
         );
 
-        $this->requestFactory->registerCurrentRequest($this->requestFactory->getRequest()->withFormat('json'));
+        $this->requestFactory->registerCurrentRequest(
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
+        );
         $response = $this->fixture->createSuccessResponse(null, 200, $this->requestFactory->getRequest());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"message":"OK"}', (string)$response->getBody());
@@ -144,7 +153,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createSuccessResponse(
             'HTML format is currently not supported',
             200,
-            $this->requestFactory->getRequest()->withFormat('html')
+            $this->requestFactory->getRequest()->withFormat(Format::formatHtml())
         );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -155,7 +164,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createSuccessResponse(
             null,
             200,
-            $this->requestFactory->getRequest()->withFormat('json')
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
         );
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"message":"OK"}', (string)$response->getBody());
@@ -164,7 +173,7 @@ class ResponseFactoryTest extends AbstractCase
         $response = $this->fixture->createSuccessResponse(
             null,
             404,
-            $this->requestFactory->getRequest()->withFormat('json')
+            $this->requestFactory->getRequest()->withFormat(Format::formatJson())
         );
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('{"error":"Not Found"}', (string)$response->getBody());

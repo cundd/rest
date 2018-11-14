@@ -51,7 +51,7 @@ class Format
     }
 
     /**
-     * Returns an instance of the default format
+     * Return an instance of the default format
      *
      * @return Format
      */
@@ -61,18 +61,32 @@ class Format
     }
 
     /**
-     * The __toString method allows a class to decide how it will react when it is converted to a string.
+     * Return a HTML Format instance
      *
-     * @return string
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.tostring
+     * @return Format
      */
+    public static function formatHtml()
+    {
+        return new static('html');
+    }
+
+    /**
+     * Return a JSON Format instance
+     *
+     * @return Format
+     */
+    public static function formatJson()
+    {
+        return new static('json');
+    }
+
     public function __toString()
     {
         return $this->format;
     }
 
     /**
-     * Returns if the given format is valid
+     * Return if the given format is valid
      *
      * @param $format
      * @return boolean

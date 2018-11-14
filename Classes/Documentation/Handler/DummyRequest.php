@@ -39,6 +39,11 @@ class DummyRequest implements RestRequestInterface
         return $this->resourceType;
     }
 
+    public function withResourceType(ResourceType $resourceType)
+    {
+        return clone $this;
+    }
+
     public function getSentData()
     {
         return null;
@@ -69,7 +74,7 @@ class DummyRequest implements RestRequestInterface
         return '';
     }
 
-    public function withFormat($format)
+    public function withFormat(Format $format)
     {
         return clone $this;
     }

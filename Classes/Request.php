@@ -84,43 +84,24 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return $this->originalRequest;
     }
 
-    /**
-     * Returns the request path (eventually aliases have been mapped)
-     *
-     * @return string
-     */
     public function getPath()
     {
         return $this->internalUri->getPath();
     }
 
-    /**
-     * Returns the requested resource type
-     *
-     * The resource type is the first part of the request path, after mapping aliases
-     *
-     * @return ResourceType
-     */
     public function getResourceType()
     {
         return $this->resourceType;
     }
 
-    /**
-     * Returns the request path before mapping aliases
-     *
-     * @return string
-     */
-    public function getOriginalResourceType()
+    public function withResourceType(ResourceType $resourceType)
     {
-        return (string)strtok(strtok($this->originalPath, '?'), '/');
+        $clone = clone $this;
+        $clone->resourceType = $resourceType;
+
+        return $clone;
     }
 
-    /**
-     * Returns the sent data
-     *
-     * @return mixed
-     */
     public function getSentData()
     {
         if ($this->sentData) {
@@ -148,62 +129,32 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return $this->sentData;
     }
 
-    /**
-     * Returns the requested format
-     *
-     * @return Format
-     */
     public function getFormat()
     {
         return $this->format;
     }
 
-    /**
-     * Returns if the request is a preflight request
-     *
-     * @return bool
-     */
     public function isPreflight()
     {
         return strtoupper($this->getMethod()) === 'OPTIONS';
     }
 
-    /**
-     * Returns if the request wants to write data
-     *
-     * @return bool
-     */
     public function isWrite()
     {
         return !$this->isRead() && !$this->isPreflight();
     }
 
-    /**
-     * Returns if the request wants to read data
-     *
-     * @return bool
-     */
     public function isRead()
     {
         return in_array(strtoupper($this->getMethod()), ['GET', 'HEAD']);
     }
 
-    /**
-     * Returns the key to use for the root object if addRootObjectForCollection
-     * is enabled
-     *
-     * @return string
-     */
     public function getRootObjectKey()
     {
         return $this->getOriginalResourceType();
     }
 
-    /**
-     * @param $format
-     * @return static
-     */
-    public function withFormat($format)
+    public function withFormat(Format $format)
     {
         return new static(
             $this->originalRequest,
@@ -212,6 +163,16 @@ class Request implements ServerRequestInterface, RestRequestInterface
             $this->resourceType,
             new Format((string)$format)
         );
+    }
+
+    /**
+     * Returns the request path before mapping aliases
+     *
+     * @return string
+     */
+    public function getOriginalResourceType()
+    {
+        return (string)strtok(strtok($this->originalPath, '?'), '/');
     }
 
     /**
