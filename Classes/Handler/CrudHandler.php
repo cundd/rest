@@ -81,15 +81,18 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function create(RestRequestInterface $request)
     {
-        $dataProvider = $this->getDataProvider();
-
         $data = $request->getSentData();
         $this->logger->logRequest('create request', ['body' => $data]);
+
+        if (null === $data) {
+            return $this->responseFactory->createErrorResponse('Invalid or missing payload', 400, $request);
+        }
 
         if (isset($data['__identity'])) {
             return $this->update($request, $data['__identity']);
         }
 
+        $dataProvider = $this->getDataProvider();
         $model = $dataProvider->createModel($data, $request->getResourceType());
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400, $request);
