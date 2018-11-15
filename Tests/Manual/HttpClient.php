@@ -6,6 +6,17 @@ class HttpClient
 {
     private $verbose;
     private $baseUrl;
+    private $statistics = [
+        'numberOfRequestsTotal'     => 0,
+        'numberOfRequestsPerMethod' => [
+            'GET'     => 0,
+            'POST'    => 0,
+            'DELETE'  => 0,
+            'PUT'     => 0,
+            'PATCH'   => 0,
+            'OPTIONS' => 0,
+        ],
+    ];
 
     /**
      * HTTP Client constructor
@@ -86,8 +97,12 @@ class HttpClient
             CURLOPT_HTTPHEADER     => $this->flattenRequestHeaders($headers),
         ];
 
-        if ($basicAuth) {
-            $options[CURLOPT_USERPWD] = $basicAuth;
+        if ($basicAuth !== null) {
+            if (is_string($basicAuth)) {
+                $options[CURLOPT_USERPWD] = $basicAuth;
+            } else {
+                throw new \InvalidArgumentException('Expected argument "basicAuth" to be of type string');
+            }
         }
 
         if ($body !== null) {
@@ -105,7 +120,24 @@ class HttpClient
 
         $this->debugCurl($path, $method, $body, $headers, $basicAuth);
 
+        $this->statistics['numberOfRequestsTotal'] += 1;
+        if (isset($this->statistics['numberOfRequestsPerMethod'][$method])) {
+            $this->statistics['numberOfRequestsPerMethod'][$method] += 1;
+        } else {
+            $this->statistics['numberOfRequestsPerMethod'][$method] = 1;
+        }
+
         return $this->send($curlClient, $request);
+    }
+
+    /**
+     * Return an array with some basic statistics of this client instance
+     *
+     * @return string[]
+     */
+    public function getStatistics()
+    {
+        return $this->statistics;
     }
 
     /**
