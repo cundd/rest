@@ -86,7 +86,6 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 
         switch ($request->getFormat()) {
             case 'json':
-
                 switch (gettype($data)) {
                     case 'string':
                         $body = [

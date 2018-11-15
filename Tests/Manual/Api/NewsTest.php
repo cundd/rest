@@ -74,10 +74,12 @@ class NewsTest extends AbstractApiCase
         );
 
         $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('title', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame($header, $response->getParsedBody()['title'], $this->getErrorDescription($response));
+        $parsedBody = $response->getParsedBody();
+        $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
+        $this->assertArrayHasKey('uid', $parsedBody, $this->getErrorDescription($response));
+        $this->assertInternalType('int', $parsedBody['uid'], $this->getErrorDescription($response));
+        $this->assertArrayHasKey('title', $parsedBody, $this->getErrorDescription($response));
+        $this->assertSame($header, $parsedBody['title'], $this->getErrorDescription($response));
     }
 
     /**
