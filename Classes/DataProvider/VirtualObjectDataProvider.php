@@ -83,29 +83,7 @@ class VirtualObjectDataProvider extends DataProvider
             return $this->getEmptyModelForResourceType($resourceType);
         }
 
-        // It is possible to insert Models with a defined UID
-        // If a UID is given save and remove it from the data array
-        $uid = null;
-        //if (isset($data['__identity']) && $data['__identity']) {
-        //    // Load the UID of the existing model
-        //    $uid = $this->getUidOfModelWithIdentityForResourceType($data['__identity'], $resourceType);
-        //} elseif (isset($data['uid']) && $data['uid']) {
-        //    $uid = $data['uid'];
-        //}
-        //if ($uid) {
-        //    unset($data['__identity']);
-        //    unset($data['uid']);
-        //}
-
-        // Get a fresh model
-        $model = $this->convertIntoModel($data, $resourceType);
-
-        if ($uid !== null) {
-            // Set the saved identifier
-            $model->_setProperty('uid', $uid);
-        }
-
-        return $model;
+        return $this->convertIntoModel($data, $resourceType);
     }
 
     public function getRepositoryClassForResourceType(ResourceType $resourceType)

@@ -42,7 +42,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * @var IdentityProviderInterface
      */
-    private $identityProvider;
+    protected $identityProvider;
 
     /**
      * Data Provider constructor
@@ -144,8 +144,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             return $this->getEmptyModelForResourceType($resourceType);
         }
 
-        // It is possible to insert Models with a defined UID
-        // If a UID is given save and remove it from the data array
+        // It is **not** allowed to insert Models with a defined UID
         if (isset($data['__identity']) && $data['__identity']) {
             return new \UnexpectedValueException('Invalid property "__identity"');
         } elseif (isset($data['uid']) && $data['uid']) {
@@ -160,7 +159,16 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     public function getModelProperty($model, $propertyKey)
     {
-        return $this->getModelData($model->_getProperty($propertyKey));
+        if ($model instanceof DomainObjectInterface) {
+            return $this->getModelData($model->_getProperty($propertyKey));
+        }
+
+        $getter = 'get' . ucfirst($propertyKey);
+        if (is_callable([$model, $getter])) {
+            return $this->getModelData($model->$getter());
+        }
+
+        return null;
     }
 
     public function saveModel($model, ResourceType $resourceType)
