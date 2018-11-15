@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
@@ -165,7 +166,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     public function saveModel($model, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
-        if ($model->_isNew()) {
+        if ($this->isModelNew($model)) {
             $repository->add($model);
         } else {
             $repository->update($model);
@@ -328,5 +329,23 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
         $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
+    }
+
+    /**
+     * Return if the given instance is not yet stored in the database
+     *
+     * @param object|DomainObjectInterface $model
+     * @return bool
+     */
+    protected function isModelNew($model)
+    {
+        if ($model instanceof DomainObjectInterface) {
+            return $model->_isNew();
+        }
+        if (is_callable($model, 'getUid')) {
+            return $model->getUid() === null;
+        }
+
+        return true;
     }
 }
