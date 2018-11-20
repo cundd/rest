@@ -3,12 +3,11 @@
 namespace Cundd\Rest;
 
 use Cundd\Rest\Handler\HandlerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 
 /**
  * Interface for the specialized Object Manager
  */
-interface ObjectManagerInterface extends TYPO3ObjectManagerInterface
+interface ObjectManagerInterface
 {
     /**
      * Returns the configuration provider
