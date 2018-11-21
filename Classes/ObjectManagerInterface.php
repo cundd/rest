@@ -10,6 +10,15 @@ use Cundd\Rest\Handler\HandlerInterface;
 interface ObjectManagerInterface
 {
     /**
+     * Return an instance of the given class
+     *
+     * @param string $class The class name of the object to return an instance of
+     * @param array  $arguments
+     * @return object The object instance
+     */
+    public function get($class, ...$arguments);
+
+    /**
      * Returns the configuration provider
      *
      * @return \Cundd\Rest\Configuration\ConfigurationProviderInterface

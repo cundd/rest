@@ -16,16 +16,16 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager as BaseObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
+use Psr\Container\ContainerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager as TYPO3ObjectManager;
 
 /**
  * Specialized Object Manager
  *
- * @method mixed get($class)
  * @method bool isRegistered($class)
  */
-class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInterface, ObjectManagerInterface, SingletonInterface
+class ObjectManager implements ObjectManagerInterface, SingletonInterface
 {
     /**
      * @var DataProviderInterface
@@ -48,6 +48,26 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
      * @var AccessControllerInterface
      */
     protected $accessController;
+
+    /**
+     * @var ContainerInterface|\TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     */
+    protected $container;
+
+    /**
+     * Object Manager constructor
+     *
+     * @param ContainerInterface|\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $container
+     */
+    public function __construct($container = null)
+    {
+        $this->container = $container ?: GeneralUtility::makeInstance(TYPO3ObjectManager::class);
+    }
+
+    public function get($class, ...$arguments)
+    {
+        return $this->container->get($class, ...$arguments);
+    }
 
     /**
      * Returns the Response Factory
@@ -301,5 +321,10 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
         }
 
         return $this->get($handlerClass);
+    }
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([$this->container, $name], $arguments);
     }
 }
