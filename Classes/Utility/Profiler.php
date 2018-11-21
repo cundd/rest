@@ -71,7 +71,7 @@ class Profiler
         $runEndTime = microtime(true);
         $runId = count($this->profilingData);
         $lastRunData = end($this->profilingData);
-        $runStartTime = $lastRunData ? $lastRunData['collectTime'] : $this->startTime;
+        $runStartTime = $lastRunData ? $lastRunData['startTime'] : $this->startTime;
 
         $currentRunData = [
             'runId' => $runId,
@@ -102,40 +102,19 @@ class Profiler
      */
     public function output()
     {
-        $messageParts = [];
+        return $this->outputProfilingData($this->profilingData);
+    }
 
-        foreach ($this->profilingData as $currentRunData) {
-            $currentMessagePart = sprintf(
-                'Profiling run %s: Duration: %0.9f | Memory: %s (%s max)',
-                $currentRunData['name'],
-                $currentRunData['duration'],
-                $this->formatMemory($currentRunData['memory']),
-                $this->formatMemory($currentRunData['memoryPeak'])
-            );
-            if (isset($currentRunData['caller'])) {
-                $caller = $currentRunData['caller'];
-                $currentMessagePart .= sprintf(
-                    ' @ %s:%s',
-                    $caller['file'],
-                    $caller['line']
-                );;
-            }
-            $messageParts[] = $currentMessagePart;
-        }
-        $message = implode(PHP_EOL, $messageParts);
+    /**
+     * Outputs a profiling message using the output handler
+     *
+     * @return string Returns the message
+     */
+    public function outputLast()
+    {
+        $profilingData = $this->profilingData;
 
-        switch ($this->outputHandler) {
-            case STDOUT:
-            case STDERR:
-                fwrite($this->outputHandler, $message);
-                break;
-
-            case is_object($this->outputHandler) && method_exists($this->outputHandler, 'log'):
-                $this->outputHandler->log(LogLevel::DEBUG, $message);
-                break;
-        }
-
-        return $message;
+        return $this->outputProfilingData([count($profilingData) => end($profilingData)]);
     }
 
     /**
@@ -155,6 +134,19 @@ class Profiler
     {
         $currentRunData = $this->collect();
         $this->output();
+
+        return $currentRunData;
+    }
+
+    /**
+     * Outputs a profiling message using the output handler
+     *
+     * @return array Returns last run data
+     */
+    public function collectAndOutputLast()
+    {
+        $currentRunData = $this->collect();
+        $this->outputLast();
 
         return $currentRunData;
     }
@@ -276,5 +268,51 @@ class Profiler
         }
 
         return $instance;
+    }
+
+    /**
+     * @param array $profilingData
+     * @return string
+     */
+    private function outputProfilingData(array $profilingData)
+    {
+        if (empty($profilingData)) {
+            return '';
+        }
+
+        $messageParts = [];
+        foreach ($profilingData as $index => $currentRunData) {
+            $currentMessagePart = sprintf(
+                'Profiling run %s (#%05d): Duration: %0.9f | Memory: %s (%s max)',
+                $currentRunData['name'],
+                $index,
+                $currentRunData['duration'],
+                $this->formatMemory($currentRunData['memory']),
+                $this->formatMemory($currentRunData['memoryPeak'])
+            );
+            if (isset($currentRunData['caller'])) {
+                $caller = $currentRunData['caller'];
+                $currentMessagePart .= sprintf(
+                    ' @ %s:%s',
+                    $caller['file'],
+                    $caller['line']
+                );;
+            }
+            $messageParts[] = $currentMessagePart;
+        }
+        $message = implode(PHP_EOL, $messageParts) . PHP_EOL;
+
+        switch ($this->outputHandler) {
+            case STDOUT:
+            case STDERR:
+                fwrite($this->outputHandler, $message);
+                break;
+
+            case is_object($this->outputHandler) && method_exists($this->outputHandler, 'log'):
+                $this->outputHandler->log(LogLevel::DEBUG, $message);
+                break;
+        }
+
+        return $message;
     }
 }
