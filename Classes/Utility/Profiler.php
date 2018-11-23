@@ -243,7 +243,7 @@ class Profiler
      * @param resource|object|bool $outputHandler
      * @return Profiler
      */
-    public static function create($outputHandler = STDIN)
+    public static function create($outputHandler = STDOUT)
     {
         /** @var Profiler $instance */
         $instance = new static($outputHandler);
@@ -258,7 +258,7 @@ class Profiler
      * @param resource|object|bool $outputHandler
      * @return Profiler
      */
-    public static function sharedInstance($outputHandler = STDIN)
+    public static function sharedInstance($outputHandler = STDOUT)
     {
         static $instance = null;
         if (!$instance) {
