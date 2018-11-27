@@ -158,13 +158,13 @@ class WhereClauseBuilder
         }
 
         $bindingKey = $bindingPrefix . $column;
-        $this->where->appendSql(
+        $this->appendSql(
             $escapeColumnName($column)
             . ' ' . $operator . ' '
             . ':' . $bindingKey . '',
             $combinator
         );
-        $this->where->bindVariable(
+        $this->bindVariable(
             $bindingKey,
             $prepareValue($comparisonValue)
         );
@@ -241,9 +241,37 @@ class WhereClauseBuilder
     }
 
     /**
+     * Append the string to the SQL WHERE-clause
+     *
+     * @param string $clause
+     * @param string $combinator
+     * @return $this
+     */
+    protected function appendSql($clause, $combinator = QueryInterface::COMBINATOR_AND)
+    {
+        $this->where->appendSql($clause, $combinator);
+
+        return $this;
+    }
+
+    /**
+     * Bind the variable to the SQL WHERE-clause
+     *
+     * @param string           $key
+     * @param string|int|float $value
+     * @return $this
+     */
+    protected function bindVariable($key, $value)
+    {
+        $this->where->bindVariable($key, $value);
+
+        return $this;
+    }
+
+    /**
      * @return \Closure
      */
-    private function getDefaultPrepareValueCallback()
+    protected function getDefaultPrepareValueCallback()
     {
         return function ($queryValue) {
             return $queryValue;
@@ -253,7 +281,7 @@ class WhereClauseBuilder
     /**
      * @return \Closure
      */
-    private function getDefaultEscapeColumnNameCallback()
+    protected function getDefaultEscapeColumnNameCallback()
     {
         return function ($propertyName) {
             return '`' . $propertyName . '`';

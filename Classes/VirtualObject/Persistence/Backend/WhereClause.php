@@ -77,6 +77,8 @@ class WhereClause
     }
 
     /**
+     * Bind the variable to the SQL WHERE-clause
+     *
      * @param string           $key
      * @param string|int|float $value
      * @return $this
