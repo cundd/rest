@@ -1,14 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace Cundd\Rest\Utility;
 
-use TYPO3\CMS\Core\Log\LogLevel;
+use Cundd\Rest\Utility\Profiler\Run;
 
 /**
  * A simple profiling utility
  */
 class Profiler
 {
+    const OUTPUT_ECHO = 'echo';
+    const OUTPUT_STDOUT = STDOUT;
+    const OUTPUT_STDERR = STDERR;
+
     /**
      * Start time
      *
@@ -26,25 +31,35 @@ class Profiler
     /**
      * Data of the last run
      *
-     * @var array
+     * @var Run[]
      */
     protected $profilingData = [];
 
     /**
      * @var resource|object
      */
-    protected $outputHandler;
+    protected $defaultOutputHandler;
 
     /**
-     * @param resource|object|bool $outputHandler Output handler to use
+     * @var string
      */
-    public function __construct($outputHandler = STDOUT)
+    private $defaultLabel = '';
+
+    /**
+     * @var boolean
+     */
+    private $collectCaller = true;
+
+    /**
+     * @param resource|object|bool|string $defaultOutputHandler Output handler to use
+     */
+    public function __construct($defaultOutputHandler = STDOUT)
     {
-        $this->outputHandler = $outputHandler;
+        $this->defaultOutputHandler = $defaultOutputHandler;
     }
 
     /**
-     * Starts the profiling
+     * Start the profiling
      *
      * @param array|string $options Additional options to pass to the profiler. If a string is given it will be used as name
      * @return $this
@@ -52,7 +67,15 @@ class Profiler
     public function start($options = [])
     {
         if (is_string($options)) {
-            $options = ['name' => $options];
+            $this->defaultLabel = $options;
+        } elseif (isset($options['label'])) {
+            $this->defaultLabel = $options['label'];
+        } elseif (isset($options['name'])) {
+            $this->defaultLabel = $options['name'];
+        }
+
+        if (isset($options['collectCaller'])) {
+            $this->collectCaller = $options['collectCaller'];
         }
         $this->options = $options;
         $this->profilingData = [];
@@ -62,63 +85,77 @@ class Profiler
     }
 
     /**
-     * Collects and returns profiling data of the current run
+     * Collect and returns profiling data of the current run
      *
-     * @return array
+     * @param string|null $label Optional label for the run
+     * @return Run
      */
-    public function collect()
+    public function collect(string $label = null)
     {
         $runEndTime = microtime(true);
         $runId = count($this->profilingData);
-        $lastRunData = end($this->profilingData);
-        $runStartTime = $lastRunData ? $lastRunData['startTime'] : $this->startTime;
-
-        $currentRunData = [
-            'runId' => $runId,
-            'name'  => isset($this->options['name']) ? $this->options['name'] : 'unnamed',
-
-            'startTime' => $this->startTime,
-            'duration'  => $runEndTime - $this->startTime,
-
-            'runStartTime' => $runStartTime,
-            'runEndTime'   => $runEndTime,
-            'runDuration'  => $runEndTime - $runStartTime,
-            'memory'       => memory_get_usage(true),
-            'memoryPeak'   => memory_get_peak_usage(true),
-        ];
-
-        if (isset($this->options['collectCaller']) && $this->options['collectCaller']) {
-            $currentRunData['caller'] = $this->getCaller();
+        if ($runId > 0) {
+            $lastRunData = end($this->profilingData);
+            $runStartTime = $lastRunData->runEndTime;
+        } else {
+            $runStartTime = $this->startTime;
         }
-        $this->profilingData[$runId] = $currentRunData;
 
-        return $currentRunData;
+        $requestStartTime = $_SERVER['REQUEST_TIME_FLOAT'];
+        $name = $label ?? $this->defaultLabel;
+        $caller = $this->collectCaller ? $this->getCaller() : [];
+
+        $run = new Run(
+            $runId,                             // Run ID
+            $name,                              // Name
+            $this->startTime,                   // Profiling Start Time
+            $runEndTime - $this->startTime,     // Profiling Duration
+            $requestStartTime,                  // Request Start Time
+            $runEndTime - $requestStartTime,    // Request Duration
+            $runStartTime,                      // Run Start Time
+            $runEndTime,                        // Run End Time
+            $runEndTime - $runStartTime,        // Run Duration
+            memory_get_usage(true),             // Memory
+            memory_get_peak_usage(true),        // Peak Memory
+            $caller                             // Caller
+        );
+        $this->profilingData[$runId] = $run;
+
+        return $run;
     }
 
     /**
-     * Outputs a profiling message using the output handler
+     * Output a profiling message using the output handler
      *
+     * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @return string Returns the message
      */
-    public function output()
+    public function output($outputHandler = null)
     {
-        return $this->outputProfilingData($this->profilingData);
+        return $this->outputProfilingData(
+            $this->profilingData,
+            $outputHandler
+        );
     }
 
     /**
-     * Outputs a profiling message using the output handler
+     * Output a profiling message using the output handler
      *
+     * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @return string Returns the message
      */
-    public function outputLast()
+    public function outputLast($outputHandler = null)
     {
         $profilingData = $this->profilingData;
 
-        return $this->outputProfilingData([count($profilingData) => end($profilingData)]);
+        return $this->outputProfilingData(
+            [count($profilingData) => end($profilingData)],
+            $outputHandler
+        );
     }
 
     /**
-     * Clears the profiling data
+     * Clear the profiling data
      */
     public function clear()
     {
@@ -126,47 +163,53 @@ class Profiler
     }
 
     /**
-     * Outputs a profiling message using the output handler
+     * Output a profiling message using the output handler
      *
-     * @return array Returns last run data
+     * @param resource|object|string|null $outputHandler Optionally specify the output handler
+     * @param string|null                 $label         Optional label for the run
+     * @return Run Returns data of the last run
      */
-    public function collectAndOutput()
+    public function collectAndOutput($outputHandler = null, string $label = null)
     {
-        $currentRunData = $this->collect();
-        $this->output();
+        $currentRunData = $this->collect($label);
+        $this->output($outputHandler);
 
         return $currentRunData;
     }
 
     /**
-     * Outputs a profiling message using the output handler
+     * Output a profiling message using the output handler
      *
-     * @return array Returns last run data
+     * @param resource|object|string|null $outputHandler Optionally specify the output handler
+     * @param string|null                 $label         Optional label for the run
+     * @return Run Returns data of the last run
      */
-    public function collectAndOutputLast()
+    public function collectAndOutputLast($outputHandler = null, string $label = null)
     {
-        $currentRunData = $this->collect();
-        $this->outputLast();
+        $currentRunData = $this->collect($label);
+        $this->outputLast($outputHandler);
 
         return $currentRunData;
     }
 
     /**
-     * Outputs a profiling message using the output handler
+     * Output a profiling message using the output handler
      *
-     * @return array Returns last run data
+     * @param resource|object|string|null $outputHandler Optionally specify the output handler
+     * @param string|null                 $label         Optional label for the run
+     * @return Run Returns data of the last run
      */
-    public function collectClearAndOutput()
+    public function collectClearAndOutput($outputHandler = null, string $label = null)
     {
-        $currentRunData = $this->collect();
-        $this->output();
+        $currentRunData = $this->collect($label);
+        $this->output($outputHandler);
         $this->clear();
 
         return $currentRunData;
     }
 
     /**
-     * Returns the data of the last profiling run
+     * Return the data of the last profiling run
      *
      * @return array
      */
@@ -176,27 +219,27 @@ class Profiler
     }
 
     /**
-     * Sets the output handler to use
+     * Set the output handler to use
      *
      * The output handler can either be a file handle resource, or an object that responds to log($level, $message)
      *
-     * @param resource|object $outputHandler
+     * @param resource|object $defaultOutputHandler
      */
-    public function setOutputHandler($outputHandler)
+    public function setDefaultOutputHandler($defaultOutputHandler)
     {
-        $this->outputHandler = $outputHandler;
+        $this->defaultOutputHandler = $defaultOutputHandler;
     }
 
     /**
-     * Returns the output handler to use
+     * Return the output handler to use
      *
      * The output handler can either be a file handle resource, or an object that responds to log($level, $message)
      *
      * @return resource|object
      */
-    public function getOutputHandler()
+    public function getDefaultOutputHandler()
     {
-        return $this->outputHandler;
+        return $this->defaultOutputHandler;
     }
 
     /**
@@ -213,57 +256,52 @@ class Profiler
     }
 
     /**
-     * Returns the information about the caller of the debug output
+     * Return the information about the caller of the debug output
      *
      * @return array
      */
     protected function getCaller()
     {
-        static $php54 = null;
-        if ($php54 === null) {
-            $php54 = (version_compare(PHP_VERSION, '5.4.0') >= 0);
-        }
-
-        if ($php54) {
-            $backtrace = debug_backtrace(false, 5);
-        } else {
-            $backtrace = debug_backtrace(false);
-        }
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        array_shift($backtrace);
+        array_shift($backtrace);
         $backtraceEntry = current($backtrace);
         while (isset($backtraceEntry['class']) && $backtraceEntry['class'] === __CLASS__) {
             $backtraceEntry = next($backtrace);
         }
 
-        return prev($backtrace);
+        $callingEntry = prev($backtrace);
+
+        return $callingEntry ?: ($backtraceEntry ?: []);
     }
 
     /**
      * Starts and returns a new profiler instance
      *
-     * @param resource|object|bool $outputHandler
+     * @param resource|object|bool $defaultOutputHandler
      * @return Profiler
      */
-    public static function create($outputHandler = STDOUT)
+    public static function create($defaultOutputHandler = STDOUT)
     {
         /** @var Profiler $instance */
-        $instance = new static($outputHandler);
+        $instance = new static($defaultOutputHandler);
         $instance->start();
 
         return $instance;
     }
 
     /**
-     * Returns a shared profiler instance
+     * Return a shared profiler instance
      *
-     * @param resource|object|bool $outputHandler
+     * @param resource|object|bool $defaultOutputHandler
      * @return Profiler
      */
-    public static function sharedInstance($outputHandler = STDOUT)
+    public static function sharedInstance($defaultOutputHandler = STDOUT)
     {
         static $instance = null;
         if (!$instance) {
             /** @var Profiler $instance */
-            $instance = new static($outputHandler);
+            $instance = new static($defaultOutputHandler);
             $instance->start();
         }
 
@@ -271,48 +309,72 @@ class Profiler
     }
 
     /**
-     * @param array $profilingData
+     * @param Run[]                       $profilingData
+     * @param resource|object|string|null $outputHandler
      * @return string
      */
-    private function outputProfilingData(array $profilingData)
+    private function outputProfilingData(array $profilingData, $outputHandler)
     {
         if (empty($profilingData)) {
             return '';
         }
 
+        $maxLabelLength = $this->getMaxLabelLengthOfProfilingData();
+
         $messageParts = [];
         foreach ($profilingData as $index => $currentRunData) {
+            /** @var Run $currentRunData */
+            $runDurationMs = $currentRunData->runDuration * 1000;
+            $requestDurationMs = $currentRunData->requestDuration * 1000;
+
+            $label = str_pad($currentRunData->label, $maxLabelLength, ' ');
             $currentMessagePart = sprintf(
-                'Profiling run %s (#%05d): Duration: %0.9f | Memory: %s (%s max)',
-                $currentRunData['name'],
-                $index,
-                $currentRunData['duration'],
-                $this->formatMemory($currentRunData['memory']),
-                $this->formatMemory($currentRunData['memoryPeak'])
+                'Profiling run #%05d: Duration: % 11.6fms | Since request: % 11.6fms | Memory: %s (%s max)',
+                $currentRunData->runId,
+                $runDurationMs,
+                $requestDurationMs,
+                $this->formatMemory($currentRunData->memory),
+                $this->formatMemory($currentRunData->memoryPeak)
             );
-            if (isset($currentRunData['caller'])) {
-                $caller = $currentRunData['caller'];
+            if (!empty($currentRunData->caller)) {
+                $caller = $currentRunData->caller;
                 $currentMessagePart .= sprintf(
                     ' @ %s:%s',
                     $caller['file'],
                     $caller['line']
-                );;
+                );
             }
+
+            if ($label) {
+                $currentMessagePart .= ' ' . $label;
+            }
+
             $messageParts[] = $currentMessagePart;
         }
         $message = implode(PHP_EOL, $messageParts) . PHP_EOL;
 
-        switch ($this->outputHandler) {
-            case STDOUT:
-            case STDERR:
-                fwrite($this->outputHandler, $message);
-                break;
-
-            case is_object($this->outputHandler) && method_exists($this->outputHandler, 'log'):
-                $this->outputHandler->log(LogLevel::DEBUG, $message);
-                break;
+        $effectiveOutputHandler = $outputHandler !== null ? $outputHandler : $this->defaultOutputHandler;
+        if (is_resource($effectiveOutputHandler)) {
+            fwrite($effectiveOutputHandler, $message);
+        } elseif (self::OUTPUT_ECHO === $effectiveOutputHandler) {
+            echo $message;
+        } elseif (is_object($effectiveOutputHandler) && method_exists($effectiveOutputHandler, 'log')) {
+            $effectiveOutputHandler->log(\Psr\Log\LogLevel::DEBUG, $message);
         }
 
         return $message;
+    }
+
+    private function getMaxLabelLengthOfProfilingData()
+    {
+        return array_reduce(
+            $this->profilingData,
+            function ($carry, Run $item) {
+                $labelLength = strlen($item->label);
+
+                return $labelLength > $carry ? $labelLength : $carry;
+            },
+            0
+        );
     }
 }
