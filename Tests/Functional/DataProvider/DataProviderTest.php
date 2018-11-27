@@ -82,18 +82,18 @@ class DataProviderTest extends AbstractCase
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $propertyMapperMock->convert(
             Argument::exact($data),
-            Argument::exact('AVendor\\AnotherExt\\Domain\\Model\\MyModel'),
+            Argument::exact('Tx_AnotherExt_Domain_Model_MyModel'),
             Argument::type(PropertyMappingConfigurationInterface::class)
         );
 
         $methodProphecy->shouldBeCalled();
 
-        /** @var ObjectProphecy|ObjectManagerInterface $om */
-        $om = $this->prophesize(ObjectManagerInterface::class);
+        /** @var ObjectProphecy|ObjectManagerInterface $objectManagerProphecy */
+        $objectManagerProphecy = $this->prophesize(ObjectManagerInterface::class);
 
         $propertyMapper = $propertyMapperMock->reveal();
         /** @var MethodProphecy $methodProphecy */
-        $om->get(Argument::type('string'))->will(
+        $objectManagerProphecy->get(Argument::type('string'))->will(
             function ($args) use ($propertyMapper, $concreteObjectManager) {
                 if ($args[0] === PropertyMapper::class) {
                     return $propertyMapper;
@@ -103,10 +103,15 @@ class DataProviderTest extends AbstractCase
             }
         );
 
+        /** @var ObjectManagerInterface $objectManager */
+        $objectManager = $objectManagerProphecy->reveal();
+
+        /** @var IdentityProviderInterface $identityProvider */
+        $identityProvider = $this->prophesize(IdentityProviderInterface::class)->reveal();
         $this->fixture = new DataProvider(
-            $om->reveal(),
+            $objectManager,
             new Extractor(new ConfigurationProvider()),
-            $this->prophesize(IdentityProviderInterface::class)->reveal()
+            $identityProvider
         );
 
         //$this->injectPropertyIntoObject()

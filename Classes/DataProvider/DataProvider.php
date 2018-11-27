@@ -72,9 +72,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     public function getRepositoryClassForResourceType(ResourceType $resourceType)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
-        $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
+        $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
-            $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+            $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         }
 
         return $repositoryClass;
@@ -110,9 +110,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     public function getModelClassForResourceType(ResourceType $resourceType)
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
-        $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
+        $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
         if (!class_exists($modelClass)) {
-            $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
+            $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
         }
 
         return $modelClass;
