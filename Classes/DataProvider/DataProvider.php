@@ -91,14 +91,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         } catch (\Exception $exception) {
         }
         if (!$repository) {
-            throw new \LogicException(
-                sprintf(
-                    'Repository for resource type "%s" could not be found',
-                    $resourceType
-                ),
-                1542116782,
-                $exception
-            );
+            $message = sprintf('Repository for resource type "%s" could not be found', $resourceType);
+
+            if ($exception) {
+                throw new \LogicException($message . ': ' . $exception->getMessage(), 1542116783, $exception);
+            } else {
+                throw new \LogicException($message, 1542116782);
+            }
         }
         /** @var QuerySettingsInterface $defaultQuerySettings */
         $defaultQuerySettings = $this->objectManager->get(RestQuerySettings::class);
