@@ -48,24 +48,24 @@ interface BackendInterface
     /**
      * Returns the number of items matching the query
      *
-     * @param string               $tableName Database table name
-     * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
+     * @param string         $tableName Database table name
+     * @param QueryInterface $query     A Query instance to construct the WHERE clause
      * @return integer
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function getObjectCountByQuery($tableName, $query);
+    public function getObjectCountByQuery($tableName, QueryInterface $query);
 
     /**
      * Returns the object data matching the $query
      *
-     * @param string               $tableName Database table name
-     * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
+     * @param string         $tableName Database table name
+     * @param QueryInterface $query     A Query instance to construct the WHERE clause
      * @return array
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function getObjectDataByQuery($tableName, $query);
+    public function getObjectDataByQuery($tableName, QueryInterface $query);
 }

@@ -79,7 +79,7 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    public function getObjectCountByQuery($tableName, $query)
+    public function getObjectCountByQuery($tableName, QueryInterface $query)
     {
         $this->assertValidTableName($tableName);
         try {
@@ -96,7 +96,7 @@ class V7Backend extends AbstractBackend
         return intval($row['count']);
     }
 
-    public function getObjectDataByQuery($tableName, $query)
+    public function getObjectDataByQuery($tableName, QueryInterface $query)
     {
         $this->assertValidTableName($tableName);
         try {
@@ -211,9 +211,9 @@ class V7Backend extends AbstractBackend
     /**
      * Replace query placeholders in a query part by the given parameters
      *
-     * @param string &$sqlString The query part with placeholders
-     * @param array  $parameters The parameters
-     * @param string $tableName
+     * @param string &$sqlString  The query part with placeholders
+     * @param array   $parameters The parameters
+     * @param string  $tableName
      *
      * @throws Exception
      * @return string

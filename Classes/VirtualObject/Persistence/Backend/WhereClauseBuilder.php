@@ -33,41 +33,39 @@ class WhereClauseBuilder
      *
      * The current WHERE-clause will be reset
      *
-     * @param QueryInterface|array $query
-     * @param callable|null        $prepareValue     `mixed function(mixed $queryValue)`
-     * @param callable|null        $escapeColumnName `string function(string $propertyName)`
-     * @param string               $bindingPrefix
+     * @param QueryInterface $query
+     * @param callable|null  $prepareValue     `mixed function(mixed $queryValue)`
+     * @param callable|null  $escapeColumnName `string function(string $propertyName)`
+     * @param string         $bindingPrefix
      * @return self
      * @throws MissingConfigurationException
      * @throws InvalidColumnNameException
      */
-    public function build($query, callable $prepareValue = null, callable $escapeColumnName = null, $bindingPrefix = '')
-    {
+    public function build(
+        QueryInterface $query,
+        callable $prepareValue = null,
+        callable $escapeColumnName = null,
+        $bindingPrefix = ''
+    ) {
         $this->reset();
-        $configuration = null;
-
         if ($query instanceof Query && $query->getStatement()) {
             throw new \LogicException('`Query->getStatement()` is not supported by the Doctrine Backend');
         }
-        if ($query instanceof QueryInterface) {
-            $configuration = $query->getConfiguration();
-            $query = $query->getConstraint();
-        }
 
         return $this->addConstraints(
-            $query,
+            $query->getConstraint(),
             $prepareValue,
             $escapeColumnName,
             $bindingPrefix,
             QueryInterface::COMBINATOR_AND,
-            $configuration
+            $query->getConfiguration()
         );
     }
 
     /**
      * Add multiple constraints to the WHERE-clause
      *
-     * @param array                       $query Map of property => value pairs to add constraints
+     * @param array                       $constraints Map of property => value pairs to add constraints
      * @param callable|null               $prepareValue
      * @param callable|null               $escapeColumnName
      * @param string                      $bindingPrefix
@@ -78,7 +76,7 @@ class WhereClauseBuilder
      * @throws InvalidOperatorException
      */
     public function addConstraints(
-        array $query,
+        array $constraints,
         callable $prepareValue = null,
         callable $escapeColumnName = null,
         $bindingPrefix = '',
@@ -86,7 +84,7 @@ class WhereClauseBuilder
         ConfigurationInterface $configuration = null
     ) {
         WhereClause::assertCombinator($combinator);
-        foreach ($query as $property => $value) {
+        foreach ($constraints as $property => $value) {
             $this->addConstraint(
                 $property,
                 $value,

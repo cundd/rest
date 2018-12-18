@@ -35,12 +35,12 @@ class Backend implements BackendInterface, RawQueryBackendInterface
         return $this->concreteBackend->removeRow($tableName, $identifier);
     }
 
-    public function getObjectCountByQuery($tableName, $query)
+    public function getObjectCountByQuery($tableName, QueryInterface $query)
     {
         return $this->concreteBackend->getObjectCountByQuery($tableName, $query);
     }
 
-    public function getObjectDataByQuery($tableName, $query)
+    public function getObjectDataByQuery($tableName, QueryInterface $query)
     {
         return $this->concreteBackend->getObjectDataByQuery($tableName, $query);
     }

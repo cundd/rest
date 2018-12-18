@@ -66,7 +66,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    public function getObjectCountByQuery($tableName, $query)
+    public function getObjectCountByQuery($tableName, QueryInterface $query)
     {
         $this->assertValidTableName($tableName);
 
@@ -99,7 +99,7 @@ class DoctrineBackend extends AbstractBackend
         return $result['count'];
     }
 
-    public function getObjectDataByQuery($tableName, $query)
+    public function getObjectDataByQuery($tableName, QueryInterface $query)
     {
         $this->assertValidTableName($tableName);
 
