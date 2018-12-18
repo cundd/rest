@@ -38,6 +38,7 @@ class WhereClauseBuilder
      * @param string               $bindingPrefix
      * @return self
      * @throws MissingConfigurationException
+     * @throws InvalidColumnNameException
      */
     public function build($query, callable $prepareValue = null, callable $escapeColumnName = null, $bindingPrefix = '')
     {
