@@ -122,6 +122,7 @@ interface QueryInterface
      * @param array $orderings The property names to order by
      * @return QueryInterface
      * @api
+     * @deprecated will be removed in 4.0.0
      */
     public function setOrderings(array $orderings);
 
@@ -133,6 +134,7 @@ interface QueryInterface
      * @param integer $limit
      * @return QueryInterface
      * @api
+     * @deprecated will be removed in 4.0.0
      */
     public function setLimit($limit);
 
@@ -144,6 +146,7 @@ interface QueryInterface
      * @param integer $offset
      * @return QueryInterface
      * @api
+     * @deprecated will be removed in 4.0.0
      */
     public function setOffset($offset);
 
@@ -153,6 +156,7 @@ interface QueryInterface
      * @param array $constraint
      * @return QueryInterface
      * @api
+     * @deprecated will be removed in 4.0.0
      */
     public function setConstraint($constraint);
 
@@ -214,6 +218,7 @@ interface QueryInterface
      *
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
+     * @deprecated will be removed in 4.0.0
      */
     public function setConfiguration($configuration);
 

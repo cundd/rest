@@ -12,6 +12,7 @@ class Query implements QueryInterface
     /**
      * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
      * @inject
+     * @deprecated will be removed in 4.0.0
      */
     protected $backend;
 

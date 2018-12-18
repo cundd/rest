@@ -47,8 +47,10 @@ interface BackendInterface
     /**
      * Returns the number of items matching the query
      *
-     * @param string               $tableName Database table name
-     * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
+     * WARNING: Only Query objects will be allowed from 4.0.0
+     *
+     * @param string         $tableName Database table name
+     * @param QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
      * @return integer
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
@@ -59,8 +61,10 @@ interface BackendInterface
     /**
      * Returns the object data matching the $query
      *
-     * @param string               $tableName Database table name
-     * @param array|QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
+     * WARNING: Only Query objects will be allowed from 4.0.0
+     *
+     * @param string         $tableName Database table name
+     * @param QueryInterface $query     A Query instance or a map of key value pairs to construct the WHERE clause
      * @return array
      * @throws InvalidTableNameException if the table name is not valid
      * @throws InvalidOperatorException if the where clause could not be built
