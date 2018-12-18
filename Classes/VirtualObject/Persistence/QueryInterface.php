@@ -113,48 +113,42 @@ interface QueryInterface
     public function execute();
 
     /**
-     * Sets the property names to order the result by. Expected like this:
-     * array(
-     *  'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
-     *  'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
-     * )
-     *
-     * @param array $orderings The property names to order by
-     * @return QueryInterface
-     * @api
-     */
-    public function setOrderings(array $orderings);
-
-    /**
-     * Sets the maximum size of the result set to limit
-     *
-     * Returns $this to allow for chaining (fluid interface)
-     *
-     * @param integer $limit
-     * @return QueryInterface
-     * @api
-     */
-    public function setLimit($limit);
-
-    /**
-     * Sets the start offset of the result set to offset
-     *
-     * Returns $this to allow for chaining (fluid interface).
-     *
-     * @param integer $offset
-     * @return QueryInterface
-     * @api
-     */
-    public function setOffset($offset);
-
-    /**
-     * Gets the constraint for this query
+     * Return a copy of the Query with the given constraints
      *
      * @param array $constraint
-     * @return QueryInterface
-     * @api
+     * @return Query
      */
-    public function setConstraint($constraint);
+    public function withConstraints(array $constraint): self;
+
+    /**
+     * Return a copy of the Query with the given property names to order the result by
+     *
+     * @example
+     *  [
+     *      'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
+     *      'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
+     *  ]
+     *
+     * @param array $orderings
+     * @return Query
+     */
+    public function withOrderings(array $orderings): self;
+
+    /**
+     * Return a copy of the Query with the given limit
+     *
+     * @param int $limit
+     * @return Query
+     */
+    public function withLimit(int $limit): self;
+
+    /**
+     * Return a copy of the Query with the given offset
+     *
+     * @param int $offset
+     * @return Query
+     */
+    public function withOffset(int $offset): self;
 
     /**
      * Returns the query result count

@@ -10,12 +10,6 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 class Query implements QueryInterface
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
-     * @inject
-     */
-    protected $backend;
-
-    /**
      * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManager
      * @inject
      */
@@ -63,27 +57,6 @@ class Query implements QueryInterface
         return $this->persistenceManager->getObjectCountByQuery($this);
     }
 
-    public function setOrderings(array $orderings)
-    {
-        $this->orderings = $orderings;
-
-        return $this;
-    }
-
-    public function setLimit($limit)
-    {
-        $this->limit = $limit;
-
-        return $this;
-    }
-
-    public function setOffset($offset)
-    {
-        $this->offset = $offset;
-
-        return $this;
-    }
-
     public function getOrderings()
     {
         return $this->orderings;
@@ -104,16 +77,65 @@ class Query implements QueryInterface
         return $this->constraint;
     }
 
-    public function setConstraint($constraint)
-    {
-        $this->constraint = $constraint;
-
-        return $this;
-    }
-
     public function getSourceIdentifier()
     {
         return $this->sourceIdentifier;
+    }
+
+    /**
+     * Return a copy of the Query with the given constraints
+     *
+     * @param array $constraint
+     * @return QueryInterface
+     */
+    public function withConstraints(array $constraint): QueryInterface
+    {
+        $clone = clone $this;
+        $clone->constraint = $constraint;
+
+        return $clone;
+    }
+
+    /**
+     * Return a copy of the Query with the given orderings
+     *
+     * @param array $orderings
+     * @return QueryInterface
+     */
+    public function withOrderings(array $orderings): QueryInterface
+    {
+        $clone = clone $this;
+        $clone->orderings = $orderings;
+
+        return $clone;
+    }
+
+    /**
+     * Return a copy of the Query with the given limit
+     *
+     * @param int $limit
+     * @return QueryInterface
+     */
+    public function withLimit(int $limit): QueryInterface
+    {
+        $clone = clone $this;
+        $clone->limit = $limit;
+
+        return $clone;
+    }
+
+    /**
+     * Return a copy of the Query with the given offset
+     *
+     * @param int $offset
+     * @return QueryInterface
+     */
+    public function withOffset(int $offset): QueryInterface
+    {
+        $clone = clone $this;
+        $clone->offset = $offset;
+
+        return $clone;
     }
 
     public function setConfiguration($configuration)
