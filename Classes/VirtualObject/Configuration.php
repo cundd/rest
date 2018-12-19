@@ -44,7 +44,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties(): array
     {
         return array_keys($this->configurationData['properties']);
     }
@@ -54,7 +54,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    public function getAllSourceKeys()
+    public function getAllSourceKeys(): array
     {
         return array_map(
             function ($item) {
@@ -70,7 +70,7 @@ class Configuration implements ConfigurationInterface
      * @param string $propertyName
      * @return boolean
      */
-    public function hasProperty($propertyName)
+    public function hasProperty(string $propertyName): bool
     {
         return isset($this->configurationData['properties'][$propertyName]);
     }
@@ -83,7 +83,7 @@ class Configuration implements ConfigurationInterface
      * @param string $sourceKey
      * @return boolean
      */
-    public function hasSourceKey($sourceKey)
+    public function hasSourceKey(string $sourceKey): bool
     {
         $sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
 
@@ -96,7 +96,7 @@ class Configuration implements ConfigurationInterface
      * @param string $propertyName
      * @return array
      */
-    public function getConfigurationForProperty($propertyName)
+    public function getConfigurationForProperty(string $propertyName)
     {
         return isset($this->configurationData['properties'][$propertyName])
             ? $this->configurationData['properties'][$propertyName]
@@ -109,7 +109,7 @@ class Configuration implements ConfigurationInterface
      * @param string $propertyName
      * @return string
      */
-    public function getSourceKeyForProperty($propertyName)
+    public function getSourceKeyForProperty($propertyName): ?string
     {
         if (!$this->hasProperty($propertyName)) {
             return null;
@@ -126,7 +126,7 @@ class Configuration implements ConfigurationInterface
      * @param string $sourceKey
      * @return string
      */
-    public function getPropertyForSourceKey($sourceKey)
+    public function getPropertyForSourceKey(string $sourceKey): ?string
     {
         $sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
 
@@ -141,7 +141,7 @@ class Configuration implements ConfigurationInterface
      * @param string $propertyName
      * @return string Returns one of the following: "string", "float", "int", "integer", "bool", "boolean"
      */
-    public function getTypeForProperty($propertyName)
+    public function getTypeForProperty(string $propertyName): ?string
     {
         if (!$this->hasProperty($propertyName)) {
             return null;
@@ -157,7 +157,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return string
      */
-    public function getSourceIdentifier()
+    public function getSourceIdentifier(): ?string
     {
         return isset($this->configurationData['tableName'])
             ? $this->configurationData['tableName']
@@ -186,7 +186,7 @@ class Configuration implements ConfigurationInterface
      * @param boolean $skipUnknownProperties
      * @return $this
      */
-    public function setSkipUnknownProperties($skipUnknownProperties)
+    public function setSkipUnknownProperties(bool $skipUnknownProperties): self
     {
         $this->skipUnknownProperties = $skipUnknownProperties;
 
@@ -198,7 +198,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return boolean
      */
-    public function shouldSkipUnknownProperties()
+    public function shouldSkipUnknownProperties(): bool
     {
         return $this->skipUnknownProperties;
     }
@@ -208,7 +208,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?string
     {
         return isset($this->configurationData['identifier']) ? $this->configurationData['identifier'] : null;
     }

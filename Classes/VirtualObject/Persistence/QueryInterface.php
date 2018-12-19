@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\VirtualObject\ConfigurationInterface;
+
 /**
  * A persistence query interface
  */
@@ -108,7 +110,7 @@ interface QueryInterface
     /**
      * Executes the query and returns the result
      *
-     * @return array Returns the result
+     * @return array Return the result
      * @api
      */
     public function execute();
@@ -152,12 +154,12 @@ interface QueryInterface
     public function withOffset(int $offset): self;
 
     /**
-     * Returns the query result count
+     * Return the query result count
      *
      * @return integer The query result count
      * @api
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Gets the property names to order the result by, like this:
@@ -169,25 +171,25 @@ interface QueryInterface
      * @return array
      * @api
      */
-    public function getOrderings();
+    public function getOrderings(): array;
 
     /**
-     * Returns the maximum size of the result set to limit
+     * Return the maximum size of the result set to limit
      *
      * Return zero if no limit should be applied
      *
      * @return integer
      * @api
      */
-    public function getLimit();
+    public function getLimit(): int;
 
     /**
-     * Returns the start offset of the result set
+     * Return the start offset of the result set
      *
      * @return integer
      * @api
      */
-    public function getOffset();
+    public function getOffset(): int;
 
     /**
      * Gets the constraint for this query
@@ -195,28 +197,28 @@ interface QueryInterface
      * @return mixed the constraint, or null if none
      * @api
      */
-    public function getConstraint();
+    public function getConstraint(): array;
 
     /**
-     * Returns the source identifier for the new query
+     * Return the source identifier for the new query
      *
      * @return string
      */
-    public function getSourceIdentifier();
+    public function getSourceIdentifier(): string;
 
     /**
-     * Sets the configuration to use when converting
+     * Set the configuration to use when converting
      *
      * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration);
+    public function setConfiguration($configuration): self;
 
     /**
-     * Returns the configuration to use when converting
+     * Return the configuration to use when converting
      *
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      */
-    public function getConfiguration();
+    public function getConfiguration(): ?ConfigurationInterface;
 }

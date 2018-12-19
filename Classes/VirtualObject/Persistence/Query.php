@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 
 /**
@@ -48,47 +49,68 @@ class Query implements QueryInterface
      */
     protected $statement;
 
+    /**
+     * Query constructor
+     *
+     * @param array              $constraint
+     * @param array              $orderings
+     * @param int                $limit
+     * @param int                $offset
+     * @param string             $sourceIdentifier
+     * @param PersistenceManager $persistenceManager
+     */
+    public function __construct(
+        array $constraint = [],
+        array $orderings = [],
+        int $limit = 0,
+        int $offset = 0,
+        string $sourceIdentifier = null,
+        PersistenceManager $persistenceManager = null
+    ) {
+        $this->persistenceManager = $persistenceManager;
+        $this->constraint = $constraint;
+        $this->orderings = $orderings;
+        $this->limit = $limit;
+        $this->offset = $offset;
+        $this->sourceIdentifier = $sourceIdentifier;
+    }
+
+
     public function execute()
     {
         return $this->persistenceManager->getObjectDataByQuery($this);
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->persistenceManager->getObjectCountByQuery($this);
     }
 
-    public function getOrderings()
+    public function getOrderings(): array
     {
         return $this->orderings;
     }
 
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
-    public function getConstraint()
+    public function getConstraint(): array
     {
         return $this->constraint;
     }
 
-    public function getSourceIdentifier()
+    public function getSourceIdentifier(): string
     {
         return $this->sourceIdentifier;
     }
 
-    /**
-     * Return a copy of the Query with the given constraints
-     *
-     * @param array $constraint
-     * @return QueryInterface
-     */
     public function withConstraints(array $constraint): QueryInterface
     {
         $clone = clone $this;
@@ -97,12 +119,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given orderings
-     *
-     * @param array $orderings
-     * @return QueryInterface
-     */
     public function withOrderings(array $orderings): QueryInterface
     {
         $clone = clone $this;
@@ -111,12 +127,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given limit
-     *
-     * @param int $limit
-     * @return QueryInterface
-     */
     public function withLimit(int $limit): QueryInterface
     {
         $clone = clone $this;
@@ -125,12 +135,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given offset
-     *
-     * @param int $offset
-     * @return QueryInterface
-     */
     public function withOffset(int $offset): QueryInterface
     {
         $clone = clone $this;
@@ -139,14 +143,14 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    public function setConfiguration($configuration)
+    public function setConfiguration($configuration): QueryInterface
     {
         $this->persistenceManager->setConfiguration($configuration);
 
         return $this;
     }
 
-    public function getConfiguration()
+    public function getConfiguration(): ?ConfigurationInterface
     {
         return $this->persistenceManager->getConfiguration();
     }

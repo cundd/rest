@@ -12,18 +12,18 @@ namespace Cundd\Rest\VirtualObject;
 interface ConfigurationInterface
 {
     /**
-     * Returns the list of all properties
+     * Return the list of all properties
      *
      * @return array
      */
-    public function getAllProperties();
+    public function getAllProperties(): array;
 
     /**
-     * Returns the list of all source keys
+     * Return the list of all source keys
      *
      * @return array
      */
-    public function getAllSourceKeys();
+    public function getAllSourceKeys(): array;
 
     /**
      * Returns TRUE if the given property name exists
@@ -31,7 +31,7 @@ interface ConfigurationInterface
      * @param string $propertyName
      * @return boolean
      */
-    public function hasProperty($propertyName);
+    public function hasProperty(string $propertyName): bool;
 
     /**
      * Returns TRUE if the given source key is mapped
@@ -41,53 +41,53 @@ interface ConfigurationInterface
      * @param string $sourceKey
      * @return boolean
      */
-    public function hasSourceKey($sourceKey);
+    public function hasSourceKey(string $sourceKey): bool;
 
     /**
-     * Returns the configuration for the given property name
+     * Return the configuration for the given property name
      *
      * @param string $propertyName
      * @return array
      */
-    public function getConfigurationForProperty($propertyName);
+    public function getConfigurationForProperty(string $propertyName);
 
     /**
-     * Returns the source key (column name) for the given property name
+     * Return the source key (column name) for the given property name, or NULL if it isn't defined
      *
      * @param string $propertyName
-     * @return string
+     * @return string|null
      */
-    public function getSourceKeyForProperty($propertyName);
+    public function getSourceKeyForProperty($propertyName): ?string;
 
     /**
-     * Returns the property for the given source property (column)
+     * Return the property for the given source property (column)
      *
-     * @param $sourceKey
+     * @param string $sourceKey
      * @return string
      */
-    public function getPropertyForSourceKey($sourceKey);
+    public function getPropertyForSourceKey(string $sourceKey): ?string;
 
     /**
-     * Returns the data type for the given property name
+     * Return the data type for the given property name
      *
      * @param string $propertyName
      * @return string Returns one of the following simple "string", "float", "int", "integer", "bool", "boolean" or one of the complex types
      */
-    public function getTypeForProperty($propertyName);
+    public function getTypeForProperty(string $propertyName): ?string;
 
     /**
-     * Returns the source identifier (the database table name)
+     * Return the source identifier (the database table name)
      *
      * @return string
      */
-    public function getSourceIdentifier();
+    public function getSourceIdentifier(): ?string;
 
     /**
-     * Returns the name of the property which uniquely identifies an object
+     * Return the name of the property which uniquely identifies an object
      *
      * @return string
      */
-    public function getIdentifier();
+    public function getIdentifier(): ?string;
 
     /**
      * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
@@ -95,12 +95,12 @@ interface ConfigurationInterface
      * @param boolean $skipUnknownProperties
      * @return $this
      */
-    public function setSkipUnknownProperties($skipUnknownProperties);
+    public function setSkipUnknownProperties(bool $skipUnknownProperties): self;
 
     /**
      * Return whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
      *
      * @return boolean
      */
-    public function shouldSkipUnknownProperties();
+    public function shouldSkipUnknownProperties(): bool;
 }
