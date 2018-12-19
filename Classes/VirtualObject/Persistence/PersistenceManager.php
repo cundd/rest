@@ -50,7 +50,7 @@ class PersistenceManager implements PersistenceManagerInterface
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         if (
             $identifierQuery
-            && $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $identifierQuery)
+            && $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), new Query($identifierQuery))
         ) {
             $this->update($object);
         } else {
@@ -60,12 +60,6 @@ class PersistenceManager implements PersistenceManagerInterface
         return $object;
     }
 
-    /**
-     * Adds the given object to the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
     public function add($object)
     {
         $identifierValue = $this->backend->addRow(
@@ -76,18 +70,12 @@ class PersistenceManager implements PersistenceManagerInterface
         $object->setValueForKey($identifierKey, $identifierValue);
     }
 
-    /**
-     * Updates the given object in the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
     public function update($object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
         $backend = $this->backend;
-        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, $identifierQuery)) {
+        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, new Query($identifierQuery))) {
             $backend->updateRow(
                 $sourceIdentifier,
                 $identifierQuery,
@@ -96,18 +84,12 @@ class PersistenceManager implements PersistenceManagerInterface
         }
     }
 
-    /**
-     * Removes the given object from the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
     public function remove($object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
         $backend = $this->backend;
-        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, $identifierQuery)) {
+        if ($identifierQuery && $backend->getObjectCountByQuery($sourceIdentifier, new Query($identifierQuery))) {
             $backend->removeRow(
                 $sourceIdentifier,
                 $identifierQuery
@@ -115,26 +97,12 @@ class PersistenceManager implements PersistenceManagerInterface
         }
     }
 
-    /**
-     * Returns the number of items matching the query
-     *
-     * @param QueryInterface|array $query
-     * @return integer
-     * @api
-     */
-    public function getObjectCountByQuery($query)
+    public function getObjectCountByQuery(QueryInterface $query): int
     {
         return $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $query);
     }
 
-    /**
-     * Returns the object data matching the $query
-     *
-     * @param QueryInterface|array $query
-     * @return array
-     * @api
-     */
-    public function getObjectDataByQuery($query)
+    public function getObjectDataByQuery(QueryInterface $query)
     {
         $objectConverter = $this->getObjectConverter();
         $objectCollection = [];
@@ -147,12 +115,6 @@ class PersistenceManager implements PersistenceManagerInterface
         return $objectCollection;
     }
 
-    /**
-     * Returns the object with the given identifier
-     *
-     * @param string $identifier
-     * @return VirtualObject
-     */
     public function getObjectByIdentifier($identifier)
     {
         $configuration = $this->getConfiguration();
@@ -162,9 +124,7 @@ class PersistenceManager implements PersistenceManagerInterface
 
 
         $objectConverter = $this->getObjectConverter();
-        $query = [
-            $identifierKey => $identifier,
-        ];
+        $query = new Query([$identifierKey => $identifier]);
 
         $rawObjectCollection = $this->backend->getObjectDataByQuery($this->getSourceIdentifier(), $query);
         foreach ($rawObjectCollection as $rawObjectData) {
@@ -174,12 +134,6 @@ class PersistenceManager implements PersistenceManagerInterface
         return null;
     }
 
-    /**
-     * Returns the array of identifier properties of the object
-     *
-     * @param object $object
-     * @return array
-     */
     public function getIdentifiersOfObject($object)
     {
         $objectData = $object->getData();
@@ -188,12 +142,6 @@ class PersistenceManager implements PersistenceManagerInterface
         return isset($objectData[$identifier]) ? [$identifier => $objectData[$identifier]] : [];
     }
 
-    /**
-     * Returns the array of identifier columns and value of the object
-     *
-     * @param object $object
-     * @return array
-     */
     public function getIdentifierColumnsOfObject($object)
     {
         $configuration = $this->getConfiguration();
@@ -204,23 +152,11 @@ class PersistenceManager implements PersistenceManagerInterface
         return isset($objectData[$identifier]) ? [$identifierColumn => $objectData[$identifier]] : [];
     }
 
-
-    /**
-     * Returns the source identifier (the database table name)
-     *
-     * @return string
-     */
     public function getSourceIdentifier()
     {
         return $this->getConfiguration()->getSourceIdentifier();
     }
 
-    /**
-     * Sets the configuration to use when converting
-     *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
-     * @return $this
-     */
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
@@ -229,12 +165,6 @@ class PersistenceManager implements PersistenceManagerInterface
         return $this;
     }
 
-    /**
-     * Returns the configuration to use when converting
-     *
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
-     */
     public function getConfiguration()
     {
         if (!$this->configuration) {

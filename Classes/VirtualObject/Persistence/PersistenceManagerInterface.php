@@ -93,7 +93,7 @@ interface PersistenceManagerInterface
      * @return integer
      * @api
      */
-    public function getObjectCountByQuery($query);
+    public function getObjectCountByQuery(QueryInterface $query): int;
 
     /**
      * Returns the object data matching the $query
@@ -102,7 +102,7 @@ interface PersistenceManagerInterface
      * @return array
      * @api
      */
-    public function getObjectDataByQuery($query);
+    public function getObjectDataByQuery(QueryInterface $query);
 
     /**
      * Returns the object with the given identifier
