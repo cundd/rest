@@ -83,7 +83,7 @@ class DoctrineBackend extends AbstractBackend
 
             try {
                 $statement = $this->getConnection($tableName)->executeQuery(
-                    $baseQuery . " WHERE " . $whereClause->getClause(),
+                    $baseQuery . " WHERE " . $whereClause->getExpression(),
                     $whereClause->getBoundVariables()
                 );
             } catch (DBALException $exception) {
@@ -121,7 +121,7 @@ class DoctrineBackend extends AbstractBackend
             $this->whereClauseBuilder->build($query);
             $whereClause = $this->whereClauseBuilder->getWhere();
 
-            $sql = $baseSql . " WHERE " . $whereClause->getClause();
+            $sql = $baseSql . " WHERE " . $whereClause->getExpression();
             if ($query instanceof QueryInterface) {
                 $sql = $this->addOrderingAndLimit($sql, $query);
             }

@@ -20,7 +20,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => 'value'],
@@ -35,7 +35,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :property OR `another_property` = :another_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => 'value', 'another_property' => 200],
@@ -56,7 +56,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => '--value--'],
@@ -78,7 +78,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '@property@ = :property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => 'value'],
@@ -99,7 +99,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :pp_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['pp_property' => 'value'],
@@ -116,7 +116,7 @@ class WhereClauseBuilderTest extends TestCase
     {
         $where = $this->fixture->getWhere();
         $this->assertInstanceOf(WhereClause::class, $where);
-        $this->assertEquals('', $where->getClause());
+        $this->assertEquals('', $where->getExpression());
         $this->assertEmpty($where->getBoundVariables());
     }
 
@@ -129,7 +129,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :property AND `another_property` = :another_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => 'value', 'another_property' => 200],
@@ -149,7 +149,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :property AND `another_property` = :another_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => 'value', 'another_property' => 200],
@@ -172,7 +172,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '@property@ = :property AND @another_property@ = :another_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['property' => '--value--', 'another_property' => '--200--'],
@@ -192,7 +192,7 @@ class WhereClauseBuilderTest extends TestCase
         $where = $this->fixture->getWhere();
         $this->assertEquals(
             '`property` = :pp_property AND `another_property` = :pp_another_property',
-            $where->getClause()
+            $where->getExpression()
         );
         $this->assertEquals(
             ['pp_property' => 'value', 'pp_another_property' => 200],
