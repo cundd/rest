@@ -42,6 +42,7 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         parent::setUp();
+        putenv('TEST_MODE=yes');
         $this->responseFactory = new ResponseFactory();
         $this->exceptionHandler = function () {
         };
