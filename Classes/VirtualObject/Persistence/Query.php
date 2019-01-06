@@ -48,6 +48,32 @@ class Query implements QueryInterface
      */
     protected $statement;
 
+    /**
+     * Query constructor.
+     *
+     * @param array              $constraint
+     * @param array              $orderings
+     * @param int                $limit
+     * @param int                $offset
+     * @param string             $sourceIdentifier
+     * @param PersistenceManager $persistenceManager
+     */
+    public function __construct(
+        array $constraint = [],
+        array $orderings = [],
+        int $limit = 0,
+        int $offset = 0,
+        string $sourceIdentifier = '',
+        PersistenceManager $persistenceManager = null
+    ) {
+        $this->persistenceManager = $persistenceManager;
+        $this->constraint = $constraint;
+        $this->orderings = $orderings;
+        $this->limit = $limit;
+        $this->offset = $offset;
+        $this->sourceIdentifier = $sourceIdentifier;
+    }
+
     public function execute()
     {
         return $this->persistenceManager->getObjectDataByQuery($this);
@@ -148,6 +174,10 @@ class Query implements QueryInterface
 
     public function getConfiguration()
     {
+        if (!$this->persistenceManager) {
+            return null;
+        }
+
         return $this->persistenceManager->getConfiguration();
     }
 

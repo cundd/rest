@@ -98,12 +98,12 @@ interface QueryInterface
     /**
      * Ascending ordering of results
      */
-    const ORDER_ASCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING;
+    const ORDER_ASCENDING = 'ASC';
 
     /**
      * Descending ordering of results
      */
-    const ORDER_DESCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING;
+    const ORDER_DESCENDING = 'DESC';
 
     /**
      * Executes the query and returns the result

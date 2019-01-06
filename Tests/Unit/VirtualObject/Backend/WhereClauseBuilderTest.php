@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -136,7 +137,7 @@ class WhereClauseBuilderTest extends TestCase
             $where->getBoundVariables()
         );
 
-        $this->fixture->build([]);
+        $this->fixture->build(new Query());
         $this->assertEmptyWhere();
     }
 

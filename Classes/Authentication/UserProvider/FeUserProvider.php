@@ -5,6 +5,7 @@ namespace Cundd\Rest\Authentication\UserProvider;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
+use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 /**
@@ -52,7 +53,7 @@ class FeUserProvider implements UserProviderInterface
             ],
         ];
 
-        return 0 < $backend->getObjectCountByQuery('fe_users', array_merge($query, $endtimeZero))
-            || 0 < $backend->getObjectCountByQuery('fe_users', array_merge($query, $endtimeGtNow));
+        return 0 < $backend->getObjectCountByQuery('fe_users', new Query(array_merge($query, $endtimeZero)))
+            || 0 < $backend->getObjectCountByQuery('fe_users', new Query(array_merge($query, $endtimeGtNow)));
     }
 }
