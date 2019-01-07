@@ -50,7 +50,7 @@ class Query implements QueryInterface
     protected $statement;
 
     /**
-     * Query constructor
+     * Query constructor.
      *
      * @param array              $constraint
      * @param array              $orderings
@@ -64,7 +64,7 @@ class Query implements QueryInterface
         array $orderings = [],
         int $limit = 0,
         int $offset = 0,
-        string $sourceIdentifier = null,
+        string $sourceIdentifier = '',
         PersistenceManager $persistenceManager = null
     ) {
         $this->persistenceManager = $persistenceManager;
@@ -74,7 +74,6 @@ class Query implements QueryInterface
         $this->offset = $offset;
         $this->sourceIdentifier = $sourceIdentifier;
     }
-
 
     public function execute()
     {
@@ -111,6 +110,12 @@ class Query implements QueryInterface
         return $this->sourceIdentifier;
     }
 
+    /**
+     * Return a copy of the Query with the given constraints
+     *
+     * @param array $constraint
+     * @return QueryInterface
+     */
     public function withConstraints(array $constraint): QueryInterface
     {
         $clone = clone $this;
@@ -119,6 +124,12 @@ class Query implements QueryInterface
         return $clone;
     }
 
+    /**
+     * Return a copy of the Query with the given orderings
+     *
+     * @param array $orderings
+     * @return QueryInterface
+     */
     public function withOrderings(array $orderings): QueryInterface
     {
         $clone = clone $this;
@@ -127,6 +138,12 @@ class Query implements QueryInterface
         return $clone;
     }
 
+    /**
+     * Return a copy of the Query with the given limit
+     *
+     * @param int $limit
+     * @return QueryInterface
+     */
     public function withLimit(int $limit): QueryInterface
     {
         $clone = clone $this;
@@ -135,6 +152,12 @@ class Query implements QueryInterface
         return $clone;
     }
 
+    /**
+     * Return a copy of the Query with the given offset
+     *
+     * @param int $offset
+     * @return QueryInterface
+     */
     public function withOffset(int $offset): QueryInterface
     {
         $clone = clone $this;
@@ -143,15 +166,19 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    public function setConfiguration($configuration): QueryInterface
+    public function setConfiguration(ConfigurationInterface $configuration): QueryInterface
     {
         $this->persistenceManager->setConfiguration($configuration);
 
         return $this;
     }
 
-    public function getConfiguration(): ?ConfigurationInterface
+    public function getConfiguration()
     {
+        if (!$this->persistenceManager) {
+            return null;
+        }
+
         return $this->persistenceManager->getConfiguration();
     }
 

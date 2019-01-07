@@ -100,12 +100,12 @@ interface QueryInterface
     /**
      * Ascending ordering of results
      */
-    const ORDER_ASCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING;
+    const ORDER_ASCENDING = 'ASC';
 
     /**
      * Descending ordering of results
      */
-    const ORDER_DESCENDING = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING;
+    const ORDER_DESCENDING = 'DESC';
 
     /**
      * Executes the query and returns the result
@@ -209,16 +209,16 @@ interface QueryInterface
     /**
      * Set the configuration to use when converting
      *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
+     * @param ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration($configuration): self;
+    public function setConfiguration(ConfigurationInterface $configuration): self;
 
     /**
      * Return the configuration to use when converting
      *
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+     * @return ConfigurationInterface|null
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      */
-    public function getConfiguration(): ?ConfigurationInterface;
+    public function getConfiguration();
 }

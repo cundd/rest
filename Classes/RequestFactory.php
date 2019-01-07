@@ -187,7 +187,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
         }
 
-        $path = $this->removePathPrefix($path, '/' . trim($pathPrefix, '/'));
+        $path = $this->removePathPrefix($path, '/' . trim((string)$pathPrefix, '/'));
         $path = $this->removePathPrefix($path, '/rest/');
 
         return $path;
