@@ -220,5 +220,5 @@ interface QueryInterface
      * @return ConfigurationInterface|null
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
      */
-    public function getConfiguration();
+    public function getConfiguration(): ?ConfigurationInterface;
 }

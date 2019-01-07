@@ -173,7 +173,7 @@ class Query implements QueryInterface
         return $this;
     }
 
-    public function getConfiguration()
+    public function getConfiguration(): ?ConfigurationInterface
     {
         if (!$this->persistenceManager) {
             return null;
