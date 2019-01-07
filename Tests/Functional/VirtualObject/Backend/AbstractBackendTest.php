@@ -5,6 +5,7 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject\Backend;
 
 use Cundd\Rest\Tests\Functional\VirtualObject\AbstractDatabaseCase;
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
+use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 abstract class AbstractBackendTest extends AbstractDatabaseCase
@@ -28,7 +29,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     public function getObjectCountByQuery(array $query, $expected)
     {
-        $result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+        $result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($query));
         $this->assertEquals($expected, $result);
     }
 
@@ -40,7 +41,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     public function getObjectDataByQuery(array $query, array $expected)
     {
-        $result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+        $result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, new Query($query));
         $this->assertEquals($expected, $result);
     }
 
@@ -52,7 +53,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     public function getObjectCountByQueryWithZeroResult(array $query)
     {
-        $result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query);
+        $result = $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($query));
         $this->assertEquals(0, $result);
     }
 
@@ -63,7 +64,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     public function getObjectDataByQueryWithEmptyResult(array $query)
     {
-        $result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, $query);
+        $result = $this->fixture->getObjectDataByQuery(self::$testDatabaseTable, new Query($query));
         $this->assertEmpty($result);
     }
 
@@ -83,7 +84,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
             'content_time' => $newData['content_time'],
         ];
 
-        $this->assertEquals(1, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query));
+        $this->assertEquals(1, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($query)));
     }
 
 
@@ -103,7 +104,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
         $this->assertEquals(1, $this->fixture->updateRow(self::$testDatabaseTable, $query, $newData));
 
         // Record with UID `100` should not exist anymore
-        $this->assertEquals(0, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $query));
+        $this->assertEquals(0, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($query)));
     }
 
     /**
@@ -117,7 +118,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
         $this->assertEquals(1, $this->fixture->removeRow(self::$testDatabaseTable, $identifier));
 
         // Record with UID `200` should not exist anymore
-        $this->assertEquals(0, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, $identifier));
+        $this->assertEquals(0, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($identifier)));
     }
 
 
@@ -126,7 +127,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     public function findAll()
     {
-        $this->assertEquals(2, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, []));
+        $this->assertEquals(2, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query()));
     }
 
     public function emptyResultQueryDataProvider()

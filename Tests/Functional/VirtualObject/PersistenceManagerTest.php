@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
 use Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface;
+use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractDatabaseCase.php';
@@ -34,7 +35,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
      */
     public function findAllTest()
     {
-        $result = $this->fixture->getObjectDataByQuery([]);
+        $result = $this->fixture->getObjectDataByQuery(new Query());
         $result = $this->getTestDataFromObjectCollection($result);
         $this->assertEquals(self::$testData, $result);
     }
@@ -44,7 +45,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
      */
     public function countAllTest()
     {
-        $this->assertEquals(2, $this->fixture->getObjectCountByQuery([]));
+        $this->assertEquals(2, $this->fixture->getObjectCountByQuery(new Query()));
     }
 
     /**
@@ -63,9 +64,9 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $this->fixture->add($object);
 
 
-        $this->assertEquals(3, $this->fixture->getObjectCountByQuery([]));
+        $this->assertEquals(3, $this->fixture->getObjectCountByQuery(new Query()));
 
-        $result = $this->fixture->getObjectDataByQuery([]);
+        $result = $this->fixture->getObjectDataByQuery(new Query());
         $result = $this->getTestDataFromObjectCollection($result);
 
         $newObjectData['content_time'] = $newObjectData['contentTime'];
@@ -90,7 +91,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $object = new VirtualObject($objectData);
         $this->fixture->remove($object);
 
-        $this->assertEquals(1, $this->fixture->getObjectCountByQuery([]));
+        $this->assertEquals(1, $this->fixture->getObjectCountByQuery(new Query()));
 
 
         $objectData = [
@@ -100,7 +101,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $object = new VirtualObject($objectData);
         $this->fixture->remove($object);
 
-        $this->assertEquals(0, $this->fixture->getObjectCountByQuery([]));
+        $this->assertEquals(0, $this->fixture->getObjectCountByQuery(new Query()));
     }
 
     /**

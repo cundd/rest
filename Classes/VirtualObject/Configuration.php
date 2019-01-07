@@ -186,7 +186,7 @@ class Configuration implements ConfigurationInterface
      * @param boolean $skipUnknownProperties
      * @return $this
      */
-    public function setSkipUnknownProperties(bool $skipUnknownProperties): self
+    public function setSkipUnknownProperties(bool $skipUnknownProperties): ConfigurationInterface
     {
         $this->skipUnknownProperties = $skipUnknownProperties;
 

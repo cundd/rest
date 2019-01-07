@@ -167,7 +167,7 @@ class ObjectConverter
 
             // Special types
             case 'slug':
-                $result = (preg_match('/^[a-zA-Z0-9-_]+$/', $value) > 0 ? (string)$value : null);
+                $result = (preg_match('/^[a-zA-Z0-9-_]+$/', (string)$value) > 0 ? (string)$value : null);
                 break;
 
             case 'url':
@@ -179,7 +179,7 @@ class ObjectConverter
                 break;
 
             case 'trim':
-                $result = trim($value);
+                $result = trim((string)$value);
                 break;
 
 
