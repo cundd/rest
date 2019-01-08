@@ -11,7 +11,7 @@ use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
-use Traversable;
+use LimitIterator;
 
 /**
  * Handler for default CRUD requests
@@ -152,11 +152,12 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $dataProvider = $this->getDataProvider();
 
         $allModels = $dataProvider->fetchAllModels($request->getResourceType());
-        if (!is_array($allModels) && $allModels instanceof Traversable) {
-            $allModels = iterator_to_array($allModels);
-        }
 
-        return $this->prepareResult($request, array_map([$dataProvider, 'getModelData'], $allModels), false);
+        return $this->prepareResult(
+            $request,
+            array_map([$dataProvider, 'getModelData'], $this->sliceResults($allModels)),
+            false
+        );
     }
 
     public function countAll(RestRequestInterface $request)
@@ -225,5 +226,35 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     protected function getAddRootObjectForCollection()
     {
         return (bool)$this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
+    }
+
+    /**
+     * @param iterable|array $models
+     * @return array|LimitIterator
+     */
+    protected function sliceResults($models)
+    {
+        $limit = $this->getListLimit();
+        if (is_array($models)) {
+            return array_slice($models, 0, $limit, true);
+        }
+        if ($models instanceof \IteratorAggregate) {
+            $models = $models->getIterator();
+        }
+        if ($models instanceof \Iterator) {
+            return iterator_to_array(new LimitIterator($models, 0, $limit));
+        }
+
+        return $models;
+    }
+
+    /**
+     * Specifies the maximum number of models that should be output in `listAll()`
+     *
+     * @return int
+     */
+    protected function getListLimit(): int
+    {
+        return PHP_INT_MAX;
     }
 }
