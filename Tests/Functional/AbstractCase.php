@@ -74,6 +74,7 @@ class AbstractCase extends FunctionalTestCase
 
 //        $GLOBALS['TYPO3_DB'] = $this->getDatabaseBackend();
 
+        $this->registerAssetCache();
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
         $this->configureConfigurationProvider();
@@ -316,12 +317,6 @@ class AbstractCase extends FunctionalTestCase
     private function initializeIconRegistry()
     {
         $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
-        try {
-            $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('assets');
-        } catch (\Exception $e){
-            $cache = new VariableFrontend('assets', new NullBackend('unused'));
-        }
-        IconRegistry::setCache($cache);
 
         if (!$iconRegistry->isRegistered('default-not-found')) {
             $iconRegistry->registerIcon(
@@ -329,6 +324,17 @@ class AbstractCase extends FunctionalTestCase
                 SvgIconProvider::class,
                 ['source' => 'EXT:rest/ext_icon.svg']
             );
+        }
+    }
+
+    private function registerAssetCache()
+    {
+        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
+        try {
+            $cacheManager->getCache('assets');
+        } catch (\Exception $e) {
+            $cache = new VariableFrontend('assets', new NullBackend('unused'));
+            $cacheManager->registerCache($cache);
         }
     }
 }
