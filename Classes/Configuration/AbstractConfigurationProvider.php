@@ -28,7 +28,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param mixed  $defaultValue
      * @return mixed
      */
-    public function getSetting($keyPath, $defaultValue = null)
+    public function getSetting(string $keyPath, $defaultValue = null)
     {
         $matchingSetting = $this->getSettings();
 
@@ -58,7 +58,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      *
      * @return array
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         if ($this->settings === null) {
             throw new InvalidConfigurationException('No settings provided');
@@ -84,7 +84,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param ResourceType $resourceType
      * @return ResourceConfiguration
      */
-    public function getResourceConfiguration(ResourceType $resourceType)
+    public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration
     {
         $configuredPaths = $this->getConfiguredResources();
         $matchingConfiguration = null;
@@ -122,7 +122,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      *
      * @return ResourceConfiguration[]
      */
-    public function getConfiguredResources()
+    public function getConfiguredResources(): array
     {
         $configurationCollection = [];
         foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {

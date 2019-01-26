@@ -12,5 +12,5 @@ interface UserProviderInterface
      * @param string $password
      * @return boolean
      */
-    public function checkCredentials($username, $password);
+    public function checkCredentials(string $username, string $password): bool;
 }

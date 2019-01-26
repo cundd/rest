@@ -40,7 +40,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate(RestRequestInterface $request)
+    public function authenticate(RestRequestInterface $request): bool
     {
         /** @var AuthenticationProviderInterface $authenticationProvider */
         foreach ($this->providers as $authenticationProvider) {

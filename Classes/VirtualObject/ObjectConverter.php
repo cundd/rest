@@ -19,7 +19,7 @@ class ObjectConverter
      */
     protected $configuration;
 
-    public function __construct($configuration = null)
+    public function __construct(ConfigurationInterface $configuration = null)
     {
         $this->configuration = $configuration;
     }
@@ -33,7 +33,7 @@ class ObjectConverter
      * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return array
      */
-    public function prepareDataFromVirtualObjectData($virtualObjectData, $replace = true)
+    public function prepareDataFromVirtualObjectData($virtualObjectData, bool $replace = true)
     {
         $configuration = $this->getConfiguration();
         $convertedData = [];
@@ -93,7 +93,7 @@ class ObjectConverter
      * @throws MissingConfigurationException if the configuration is not set
      * @return array
      */
-    public function prepareForVirtualObjectData($source, $replace = true)
+    public function prepareForVirtualObjectData($source, bool $replace = true)
     {
         $configuration = $this->getConfiguration();
         $convertedData = [];
@@ -128,7 +128,7 @@ class ObjectConverter
      * @throws MissingConfigurationException if the configuration is not set
      * @return VirtualObject
      */
-    public function convertToVirtualObject($source)
+    public function convertToVirtualObject($source): VirtualObject
     {
         return new VirtualObject($this->prepareForVirtualObjectData($source));
     }
@@ -141,62 +141,52 @@ class ObjectConverter
      * @throws Exception\InvalidConverterTypeException if the given type is not valid
      * @return mixed Returns the converted value
      */
-    public function convertToType($value, $type)
+    public function convertToType($value, string $type)
     {
         $result = null;
         switch (strtolower($type)) {
             // Builtin types
             case 'integer':
             case 'int':
-                $result = intval($value);
-                break;
+                return intval($value);
 
             case 'boolean':
             case 'bool':
-                $result = (bool)$value;
-                break;
+                return (bool)$value;
 
             case 'float':
-                $result = floatval($value);
-                break;
+                return floatval($value);
 
             case 'string':
-                $result = (string)$value;
-                break;
+                return (string)$value;
 
 
             // Special types
             case 'slug':
-                $result = (preg_match('/^[a-zA-Z0-9-_]+$/', (string)$value) > 0 ? (string)$value : null);
-                break;
+                return (preg_match('/^[a-zA-Z0-9-_]+$/', (string)$value) > 0 ? (string)$value : null);
 
             case 'url':
-                $result = filter_var($value, FILTER_SANITIZE_URL);
-                break;
+                return filter_var($value, FILTER_SANITIZE_URL);
 
             case 'email':
-                $result = filter_var($value, FILTER_SANITIZE_EMAIL);
-                break;
+                return filter_var($value, FILTER_SANITIZE_EMAIL);
 
             case 'trim':
-                $result = trim((string)$value);
-                break;
+                return trim((string)$value);
 
 
             default:
                 throw new InvalidConverterTypeException('Can not convert to type ' . $type, 1395661844);
         }
-
-        return $result;
     }
 
     /**
      * Sets the configuration to use when converting
      *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
-     * @return $this
+     * @param ConfigurationInterface $configuration
+     * @return self
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration(ConfigurationInterface $configuration): self
     {
         $this->configuration = $configuration;
 
@@ -206,10 +196,10 @@ class ObjectConverter
     /**
      * Returns the configuration to use when converting
      *
-     * @throws Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
+     * @return ConfigurationInterface
+     * @throws MissingConfigurationException if the configuration is not set
      */
-    public function getConfiguration()
+    public function getConfiguration(): ConfigurationInterface
     {
         if (!$this->configuration) {
             throw new MissingConfigurationException('Virtual Object Configuration is not set', 1395666846);

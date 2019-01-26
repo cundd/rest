@@ -22,7 +22,7 @@ class DummyAuthenticationProvider implements AuthenticationProviderInterface
         $this->isAuthenticated = (bool)$isAuthenticated;
     }
 
-    public function authenticate(RestRequestInterface $request)
+    public function authenticate(RestRequestInterface $request): bool
     {
         return $this->isAuthenticated;
     }

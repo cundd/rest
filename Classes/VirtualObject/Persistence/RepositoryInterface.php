@@ -17,7 +17,7 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function add($object);
+    public function add(VirtualObject $object);
 
     /**
      * Removes the given object from the database
@@ -25,7 +25,7 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function remove($object);
+    public function remove(VirtualObject $object);
 
     /**
      * Updates the given object in the database
@@ -33,7 +33,7 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function update($object);
+    public function update(VirtualObject $object);
 
     /**
      * Returns all objects from the database
@@ -48,7 +48,7 @@ interface RepositoryInterface
      * @return integer The object count
      * @api
      */
-    public function countAll();
+    public function countAll(): int;
 
     /**
      * Removes all objects of this repository as if remove() was called for
@@ -62,26 +62,26 @@ interface RepositoryInterface
     /**
      * Returns the object with the given identifier
      *
-     * @param string $identifier
-     * @return VirtualObject
+     * @param string|int $identifier
+     * @return VirtualObject|null
      */
     public function findByIdentifier($identifier);
 
     /**
      * Sets the configuration to use when converting
      *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
+     * @param ConfigurationInterface $configuration
      * @return $this
      */
-    public function setConfiguration(ConfigurationInterface $configuration);
+    public function setConfiguration(ConfigurationInterface $configuration): self;
 
     /**
      * Returns the configuration to use when converting
      *
+     * @return ConfigurationInterface
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration();
+    public function getConfiguration(): ConfigurationInterface;
 
     /**
      * Registers the given Virtual Object
@@ -94,5 +94,5 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return VirtualObject Returns the registered Document
      */
-    public function registerObject($object);
+    public function registerObject(VirtualObject $object): VirtualObject;
 }

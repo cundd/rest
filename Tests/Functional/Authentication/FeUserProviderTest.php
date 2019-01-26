@@ -35,7 +35,6 @@ class FeUserProviderTest extends AbstractCase
      */
     public function checkCredentialsForValidUserTest()
     {
-        $this->assertFalse($this->fixture->checkCredentials('dan', null));
         $this->assertFalse($this->fixture->checkCredentials('dan', ''));
         $this->assertFalse($this->fixture->checkCredentials('dan', 'wrongKey'));
 
@@ -50,7 +49,6 @@ class FeUserProviderTest extends AbstractCase
         $this->assertFalse($this->fixture->checkCredentials('test', 'someKey'));
         $this->assertFalse($this->fixture->checkCredentials('test', 'NULL'));
         $this->assertFalse($this->fixture->checkCredentials('test', ''));
-        $this->assertFalse($this->fixture->checkCredentials('test', null));
     }
 
     /**
@@ -61,7 +59,6 @@ class FeUserProviderTest extends AbstractCase
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', 'myApiKey'));
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', ''));
-        $this->assertFalse($this->fixture->checkCredentials('deleted_user', null));
     }
 
     /**
@@ -72,7 +69,6 @@ class FeUserProviderTest extends AbstractCase
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', 'myApiKey'));
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', ''));
-        $this->assertFalse($this->fixture->checkCredentials('disabled_user', null));
     }
 
     /**
@@ -83,7 +79,6 @@ class FeUserProviderTest extends AbstractCase
         $this->assertFalse($this->fixture->checkCredentials('expired_user', 'myApiKey'));
         $this->assertFalse($this->fixture->checkCredentials('expired_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('expired_user', ''));
-        $this->assertFalse($this->fixture->checkCredentials('expired_user', null));
     }
 
     /**
@@ -94,6 +89,5 @@ class FeUserProviderTest extends AbstractCase
         $this->assertFalse($this->fixture->checkCredentials('future_user', 'myApiKey'));
         $this->assertFalse($this->fixture->checkCredentials('future_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('future_user', ''));
-        $this->assertFalse($this->fixture->checkCredentials('future_user', null));
     }
 }

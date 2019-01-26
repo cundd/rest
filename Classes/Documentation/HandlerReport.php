@@ -35,6 +35,7 @@ class HandlerReport implements ReportInterface
      * @param HandlerDescriptor $handlerDescriptor
      */
     public function __construct(
+        /** @noinspection PhpUnusedParameterInspection */
         ReportController $reportController,
         ViewInterface $view = null,
         HandlerDescriptor $handlerDescriptor = null

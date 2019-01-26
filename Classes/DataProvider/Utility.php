@@ -14,7 +14,7 @@ class Utility
     /**
      * Separator between vendor, extension and model in the API resource type
      */
-    const API_RESOURCE_TYPE_PART_SEPARATOR = '-';
+    private const API_RESOURCE_TYPE_PART_SEPARATOR = '-';
 
     /**
      * Mapping from singular to plural

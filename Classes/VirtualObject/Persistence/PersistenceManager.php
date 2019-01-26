@@ -34,18 +34,7 @@ class PersistenceManager implements PersistenceManagerInterface
      */
     protected $configuration;
 
-    /**
-     * Registers the given Virtual Object
-     *
-     * This is a high level shorthand for:
-     * Object exists?
-     *    Yes -> update
-     *    No -> add
-     *
-     * @param VirtualObject $object
-     * @return VirtualObject Returns the registered Document
-     */
-    public function registerObject($object)
+    public function registerObject(VirtualObject $object): VirtualObject
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         if (
@@ -60,7 +49,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return $object;
     }
 
-    public function add($object)
+    public function add(VirtualObject $object)
     {
         $identifierValue = $this->backend->addRow(
             $this->getSourceIdentifier(),
@@ -70,7 +59,7 @@ class PersistenceManager implements PersistenceManagerInterface
         $object->setValueForKey($identifierKey, $identifierValue);
     }
 
-    public function update($object)
+    public function update(VirtualObject $object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
@@ -84,7 +73,7 @@ class PersistenceManager implements PersistenceManagerInterface
         }
     }
 
-    public function remove($object)
+    public function remove(VirtualObject $object)
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
@@ -102,7 +91,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return $this->backend->getObjectCountByQuery($this->getSourceIdentifier(), $query);
     }
 
-    public function getObjectDataByQuery(QueryInterface $query)
+    public function getObjectDataByQuery(QueryInterface $query): array
     {
         $objectConverter = $this->getObjectConverter();
         $objectCollection = [];
@@ -134,7 +123,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return null;
     }
 
-    public function getIdentifiersOfObject($object)
+    public function getIdentifiersOfObject(VirtualObject $object): array
     {
         $objectData = $object->getData();
         $identifier = $this->getConfiguration()->getIdentifier();
@@ -142,7 +131,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return isset($objectData[$identifier]) ? [$identifier => $objectData[$identifier]] : [];
     }
 
-    public function getIdentifierColumnsOfObject($object)
+    public function getIdentifierColumnsOfObject(VirtualObject $object): array
     {
         $configuration = $this->getConfiguration();
         $objectData = $object->getData();
@@ -157,7 +146,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return $this->getConfiguration()->getSourceIdentifier();
     }
 
-    public function setConfiguration($configuration)
+    public function setConfiguration(ConfigurationInterface $configuration): PersistenceManagerInterface
     {
         $this->configuration = $configuration;
         $this->objectConverter = null;
@@ -165,7 +154,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return $this;
     }
 
-    public function getConfiguration()
+    public function getConfiguration(): ConfigurationInterface
     {
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);

@@ -338,6 +338,7 @@ class ObjectManagerTest extends AbstractCase
 
     /**
      * @param string $handler
+     * @param array  $settings
      */
     private function injectConfigurationProviderUsingHandlerClass($handler, array $settings = [])
     {
@@ -355,8 +356,10 @@ class ObjectManagerTest extends AbstractCase
         $methodProphecy
             ->willReturn($resourceConfiguration->reveal());
 
+        /** @var string $typeToken */
+        $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
-        $getSettingsProphecy = $configurationProvider->getSetting(Argument::type('string'));
+        $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
         $getSettingsProphecy->will(
             function ($args) use ($settings) {
                 return isset($settings[$args[0]]) ? $settings[$args[0]] : null;

@@ -32,7 +32,7 @@ class DoctrineBackend extends AbstractBackend
         $this->whereClauseBuilder = $whereClauseBuilder;
     }
 
-    public function addRow($tableName, array $row)
+    public function addRow(string $tableName, array $row): int
     {
         $this->assertValidTableName($tableName);
 
@@ -46,7 +46,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    public function updateRow($tableName, array $identifier, array $row)
+    public function updateRow(string $tableName, array $identifier, array $row): int
     {
         $this->assertValidTableName($tableName);
         try {
@@ -56,7 +56,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    public function removeRow($tableName, array $identifier)
+    public function removeRow(string $tableName, array $identifier): int
     {
         $this->assertValidTableName($tableName);
         try {
@@ -66,7 +66,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    public function getObjectCountByQuery($tableName, QueryInterface $query)
+    public function getObjectCountByQuery(string $tableName, QueryInterface $query): int
     {
         $this->assertValidTableName($tableName);
 
@@ -99,7 +99,7 @@ class DoctrineBackend extends AbstractBackend
         return $result['count'];
     }
 
-    public function getObjectDataByQuery($tableName, QueryInterface $query)
+    public function getObjectDataByQuery(string $tableName, QueryInterface $query): array
     {
         $this->assertValidTableName($tableName);
 
@@ -140,7 +140,7 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    public function executeQuery($query)
+    public function executeQuery(string $query)
     {
         try {
             return $this->getConnection('fe_users')->executeQuery($query);

@@ -9,7 +9,7 @@ use Cundd\Rest\Authentication\UserProviderInterface;
 
 class UserProvider implements UserProviderInterface
 {
-    public function checkCredentials($username, $password)
+    public function checkCredentials(string $username, string $password): bool
     {
         return $username === $this->getApiUser() && $password === $this->getApiKey();
     }

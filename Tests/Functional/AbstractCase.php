@@ -31,11 +31,15 @@ use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use Webmozart\Assert\Assert;
 
+/**
+ * @method \Prophecy\Prophecy\ObjectProphecy prophesize($classOrInterface = null);
+ */
 class AbstractCase extends FunctionalTestCase
 {
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
+    use AssertTrait;
 
     /**
      * @var ObjectManager
@@ -57,6 +61,11 @@ class AbstractCase extends FunctionalTestCase
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
         $this->configureConfigurationProvider();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
     }
 
     /**

@@ -10,7 +10,6 @@ use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -136,8 +135,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param ResponseInterface    $response
      * @return ResponseInterface
      */
-    private function getCachedResponseOrCallHandler(RestRequestInterface $request, ResponseInterface $response)
-    {
+    private function getCachedResponseOrCallHandler(
+        RestRequestInterface $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        ResponseInterface $response
+    ) {
         $cache = $this->objectManager->getCache();
         $cachedResponse = $cache->getCachedValueForRequest($request);
 
@@ -164,7 +166,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $router = $this->objectManager->get(RouterInterface::class);
 
-        return new ResultConverter($router, $this->responseFactory, [$this, 'logException']);
+        return new ResultConverter($router, $this->responseFactory, [$this->logger, 'logException']);
     }
 
     /**
@@ -214,105 +216,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         );
 
         return $response;
-    }
-
-    /**
-     * Returns the request
-     *
-     * Better use the RequestFactory::getRequest() instead
-     *
-     * @return RestRequestInterface
-     * @deprecated will be removed in 4.0.0
-     */
-    public function getRequest()
-    {
-        return $this->requestFactory->getRequest();
-    }
-
-    /**
-     * Returns the logger
-     *
-     * @return LoggerInterface
-     * @deprecated will be removed in 4.0.0
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * Logs the given request message and data
-     *
-     * @param string $message
-     * @param array  $data
-     * @deprecated will be removed in 4.0.0
-     */
-    public function logRequest($message, $data = null)
-    {
-        $this->getLogger()->logRequest($message, $data);
-    }
-
-    /**
-     * Logs the given response message and data
-     *
-     * @param string $message
-     * @param array  $data
-     * @deprecated will be removed in 4.0.0
-     */
-    public function logResponse($message, $data = null)
-    {
-        $this->getLogger()->logResponse($message, $data);
-    }
-
-    /**
-     * Logs the given exception
-     *
-     * @param \Exception $exception
-     * @deprecated will be removed in 4.0.0
-     */
-    public function logException($exception)
-    {
-        $this->getLogger()->logException($exception);
-    }
-
-    /**
-     * Logs the given message and data
-     *
-     * @param string $message
-     * @param array  $data
-     * @deprecated will be removed in 4.0.0
-     */
-    public function log($message, $data = null)
-    {
-        if ($data) {
-            $this->getLogger()->log(LogLevel::DEBUG, $message, $data);
-        } else {
-            $this->getLogger()->log(LogLevel::DEBUG, $message);
-        }
-    }
-
-    /**
-     * Returns the extension configuration for the given key
-     *
-     * @param $key
-     * @return mixed
-     * @deprecated will be removed in 4.0.0
-     */
-    protected function getExtensionConfiguration($key)
-    {
-        // Read the configuration from the globals
-        static $configuration;
-        if (!$configuration) {
-            if (isset($GLOBALS['TYPO3_CONF_VARS'])
-                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT'])
-                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'])
-                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest'])
-            ) {
-                $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest']);
-            }
-        }
-
-        return isset($configuration[$key]) ? $configuration[$key] : null;
     }
 
     /**

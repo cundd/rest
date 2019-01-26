@@ -34,7 +34,7 @@ class ConfigurationFactory implements SingletonInterface
      *
      * @return ConfigurationInterface
      */
-    public function create()
+    public function create(): ConfigurationInterface
     {
         return $this->createWithConfigurationData([]);
     }
@@ -44,7 +44,7 @@ class ConfigurationFactory implements SingletonInterface
      *
      * @param array        $configurationArray
      * @param ResourceType $resourceType
-     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createFromArrayForResourceType($configurationArray, ResourceType $resourceType)
     {
@@ -65,10 +65,10 @@ class ConfigurationFactory implements SingletonInterface
      * Tries to read the configuration from TypoScript
      *
      * @param ResourceType $resourceType
-     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     * @return ConfigurationInterface Returns the Configuration object
      * @throws MissingConfigurationException
      */
-    public function createFromTypoScriptForResourceType(ResourceType $resourceType)
+    public function createFromTypoScriptForResourceType(ResourceType $resourceType): ConfigurationInterface
     {
         $normalizedConfiguration = $this->normalizedVirtualObjectConfigurations(
             $this->configurationProvider->getSetting('virtualObjects')
@@ -114,7 +114,7 @@ class ConfigurationFactory implements SingletonInterface
      *
      * @param string $jsonString
      * @param        $resourceType
-     * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
+     * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createFromJsonForResourceType($jsonString, ResourceType $resourceType)
     {
@@ -135,7 +135,7 @@ class ConfigurationFactory implements SingletonInterface
      * @param array $configurationData
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createWithConfigurationData($configurationData)
+    public function createWithConfigurationData($configurationData): ConfigurationInterface
     {
         $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 

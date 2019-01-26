@@ -20,32 +20,32 @@ class Backend implements BackendInterface, RawQueryBackendInterface
         $this->concreteBackend = $concreteBackend ? $concreteBackend : BackendFactory::getBackend();
     }
 
-    public function addRow($tableName, array $row)
+    public function addRow(string $tableName, array $row): int
     {
         return $this->concreteBackend->addRow($tableName, $row);
     }
 
-    public function updateRow($tableName, array $identifier, array $row)
+    public function updateRow(string $tableName, array $identifier, array $row): int
     {
         return $this->concreteBackend->updateRow($tableName, $identifier, $row);
     }
 
-    public function removeRow($tableName, array $identifier)
+    public function removeRow(string $tableName, array $identifier): int
     {
         return $this->concreteBackend->removeRow($tableName, $identifier);
     }
 
-    public function getObjectCountByQuery($tableName, QueryInterface $query)
+    public function getObjectCountByQuery(string $tableName, QueryInterface $query): int
     {
         return $this->concreteBackend->getObjectCountByQuery($tableName, $query);
     }
 
-    public function getObjectDataByQuery($tableName, QueryInterface $query)
+    public function getObjectDataByQuery(string $tableName, QueryInterface $query): array
     {
         return $this->concreteBackend->getObjectDataByQuery($tableName, $query);
     }
 
-    public function executeQuery($query)
+    public function executeQuery(string $query)
     {
         return $this->concreteBackend->executeQuery($query);
     }

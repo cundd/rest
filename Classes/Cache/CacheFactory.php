@@ -13,8 +13,10 @@ class CacheFactory
      * @param ObjectManager                  $objectManager
      * @return CacheInterface
      */
-    public function buildCache(ConfigurationProviderInterface $configurationProvider, ObjectManager $objectManager)
-    {
+    public function buildCache(
+        ConfigurationProviderInterface $configurationProvider,
+        ObjectManager $objectManager
+    ): CacheInterface {
         $cacheInstance = $this->getCacheInstance($configurationProvider, $objectManager);
 
         if ($cacheInstance instanceof CacheInterface) {
@@ -46,22 +48,21 @@ class CacheFactory
      * @param ConfigurationProviderInterface $configurationProvider
      * @return int|mixed
      */
-    private function getCacheLifeTime(ConfigurationProviderInterface $configurationProvider)
+    private function getCacheLifeTime(ConfigurationProviderInterface $configurationProvider): int
     {
         $readCacheLifeTime = $configurationProvider->getSetting('cacheLifeTime');
         if ($readCacheLifeTime === null) {
             $readCacheLifeTime = -1;
         }
-        $readCacheLifeTime = intval($readCacheLifeTime);
 
-        return $readCacheLifeTime;
+        return (int)$readCacheLifeTime;
     }
 
     /**
      * @param ConfigurationProviderInterface $configurationProvider
      * @return int|mixed
      */
-    private function getExpiresHeaderLifeTime(ConfigurationProviderInterface $configurationProvider)
+    private function getExpiresHeaderLifeTime(ConfigurationProviderInterface $configurationProvider): int
     {
         $expiresHeaderLifeTime = $configurationProvider->getSetting('expiresHeaderLifeTime');
 

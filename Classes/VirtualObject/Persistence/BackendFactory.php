@@ -16,7 +16,7 @@ abstract class BackendFactory
      *
      * @return BackendInterface|RawQueryBackendInterface
      */
-    public static function getBackend()
+    public static function getBackend(): BackendInterface
     {
         if (false === static::getUseV7Backend()) {
             /** @var ConnectionPool $connection */

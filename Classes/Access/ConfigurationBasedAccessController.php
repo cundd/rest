@@ -42,7 +42,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @return Access
      * @throws \Exception
      */
-    public function getAccess(RestRequestInterface $request)
+    public function getAccess(RestRequestInterface $request): Access
     {
         $access = $this->getAccessConfiguration($request);
         if ($access->isRequireLogin()) {
@@ -70,7 +70,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @return bool
      * @throws Exception\InvalidConfigurationException
      */
-    public function requestNeedsAuthentication(RestRequestInterface $request)
+    public function requestNeedsAuthentication(RestRequestInterface $request): bool
     {
         return $this->getAccessConfiguration($request)->isRequireLogin();
     }
@@ -81,7 +81,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @param RestRequestInterface $request
      * @return bool
      */
-    protected function requiresAuthorization($request)
+    protected function requiresAuthorization($request): bool
     {
         return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
     }
@@ -90,7 +90,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @param RestRequestInterface $request
      * @return Access
      */
-    protected function getAccessConfiguration(RestRequestInterface $request)
+    protected function getAccessConfiguration(RestRequestInterface $request): Access
     {
         if (!$this->requiresAuthorization($request)) {
             return Access::allowed();

@@ -21,7 +21,7 @@ class TypoScriptConfigurationProvider extends AbstractConfigurationProvider
      *
      * @return array
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         if ($this->settings === null) {
             $this->settings = [];

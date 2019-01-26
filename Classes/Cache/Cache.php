@@ -30,14 +30,14 @@ class Cache implements CacheInterface
      *
      * @var integer
      */
-    private $cacheLifeTime;
+    private $cacheLifeTime = 0;
 
     /**
      * Life time defined in the expires header
      *
      * @var integer
      */
-    private $expiresHeaderLifeTime;
+    private $expiresHeaderLifeTime = 0;
 
     /**
      * @var ResponseFactory
@@ -54,7 +54,7 @@ class Cache implements CacheInterface
         $this->responseFactory = $responseFactory;
     }
 
-    public function getCachedValueForRequest(RestRequestInterface $request)
+    public function getCachedValueForRequest(RestRequestInterface $request): ?ResponseInterface
     {
         $cacheLifeTime = $this->getCacheLifeTime();
 
@@ -133,7 +133,7 @@ class Cache implements CacheInterface
      * @param RestRequestInterface $request
      * @return string
      */
-    public function getCacheKeyForRequest(RestRequestInterface $request)
+    public function getCacheKeyForRequest(RestRequestInterface $request): string
     {
         $cacheKey = sha1($request->getUri() . '_' . $request->getFormat() . '_' . $request->getMethod());
         $params = $request->getQueryParams();
@@ -150,7 +150,7 @@ class Cache implements CacheInterface
      * @param int $cacheLifeTime
      * @return $this
      */
-    public function setCacheLifeTime($cacheLifeTime)
+    public function setCacheLifeTime(int $cacheLifeTime): CacheInterface
     {
         $this->cacheLifeTime = $cacheLifeTime;
 
@@ -162,7 +162,7 @@ class Cache implements CacheInterface
      *
      * @return int
      */
-    public function getCacheLifeTime()
+    public function getCacheLifeTime(): int
     {
         return $this->cacheLifeTime;
     }
@@ -173,7 +173,7 @@ class Cache implements CacheInterface
      * @param int $expiresHeaderLifeTime
      * @return $this
      */
-    public function setExpiresHeaderLifeTime($expiresHeaderLifeTime)
+    public function setExpiresHeaderLifeTime(int $expiresHeaderLifeTime): CacheInterface
     {
         $this->expiresHeaderLifeTime = $expiresHeaderLifeTime;
 
@@ -185,7 +185,7 @@ class Cache implements CacheInterface
      *
      * @return int
      */
-    public function getExpiresHeaderLifeTime()
+    public function getExpiresHeaderLifeTime(): int
     {
         return $this->expiresHeaderLifeTime;
     }

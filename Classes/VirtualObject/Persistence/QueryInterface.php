@@ -210,7 +210,7 @@ interface QueryInterface
      * Set the configuration to use when converting
      *
      * @param ConfigurationInterface $configuration
-     * @return $this
+     * @return self
      */
     public function setConfiguration(ConfigurationInterface $configuration): self;
 
@@ -219,6 +219,7 @@ interface QueryInterface
      *
      * @return ConfigurationInterface|null
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface|null
      */
     public function getConfiguration(): ?ConfigurationInterface;
 }

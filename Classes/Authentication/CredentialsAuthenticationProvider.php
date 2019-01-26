@@ -23,7 +23,7 @@ class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider
      * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate(RestRequestInterface $request)
+    public function authenticate(RestRequestInterface $request): bool
     {
         return $this->sessionManager->valueForKey('loginStatus') === AuthHandler::STATUS_LOGGED_IN;
     }

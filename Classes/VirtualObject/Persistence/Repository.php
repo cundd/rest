@@ -32,83 +32,36 @@ class Repository implements RepositoryInterface
      */
     protected $persistenceManager;
 
-    /**
-     * Registers the given Virtual Object
-     *
-     * This is a high level shorthand for:
-     * Object exists?
-     *    Yes -> update
-     *    No -> add
-     *
-     * @param VirtualObject $object
-     * @return VirtualObject Returns the registered Document
-     */
-    public function registerObject($object)
+    public function registerObject(VirtualObject $object): VirtualObject
     {
         return $this->persistenceManager->registerObject($object);
     }
 
-    /**
-     * Adds the given object to the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
-    public function add($object)
+    public function add(VirtualObject $object)
     {
         $this->persistenceManager->add($object);
     }
 
-    /**
-     * Updates the given object in the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
-    public function update($object)
+    public function update(VirtualObject $object)
     {
         $this->persistenceManager->update($object);
     }
 
-    /**
-     * Removes the given object from the database
-     *
-     * @param VirtualObject $object
-     * @return void
-     */
-    public function remove($object)
+    public function remove(VirtualObject $object)
     {
         $this->persistenceManager->remove($object);
     }
 
-    /**
-     * Returns all objects from the database
-     *
-     * @return array
-     */
     public function findAll()
     {
         return $this->createQuery()->execute();
     }
 
-    /**
-     * Returns the total number objects of this repository.
-     *
-     * @return integer The object count
-     * @api
-     */
-    public function countAll()
+    public function countAll(): int
     {
         return $this->createQuery()->count();
     }
 
-    /**
-     * Removes all objects of this repository as if remove() was called for
-     * all of them.
-     *
-     * @return void
-     * @api
-     */
     public function removeAll()
     {
         foreach ($this->findAll() as $object) {
@@ -116,24 +69,12 @@ class Repository implements RepositoryInterface
         }
     }
 
-    /**
-     * Returns the object with the given identifier
-     *
-     * @param string $identifier
-     * @return VirtualObject
-     */
     public function findByIdentifier($identifier)
     {
         return $this->persistenceManager->getObjectByIdentifier($identifier);
     }
 
-    /**
-     * Sets the configuration to use when converting
-     *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
-     * @return $this
-     */
-    public function setConfiguration(ConfigurationInterface $configuration)
+    public function setConfiguration(ConfigurationInterface $configuration): RepositoryInterface
     {
         $this->configuration = $configuration;
         $this->persistenceManager->setConfiguration($configuration);
@@ -141,13 +82,7 @@ class Repository implements RepositoryInterface
         return $this;
     }
 
-    /**
-     * Returns the configuration to use when converting
-     *
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
-     */
-    public function getConfiguration()
+    public function getConfiguration(): ConfigurationInterface
     {
         if (!$this->configuration) {
             throw new MissingConfigurationException('Configuration not set', 1395681118);
@@ -157,7 +92,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Finds an object matching the given identifier.
+     * Finds an object matching the given identifier
      *
      * @param integer $uid The identifier of the object to find
      * @return object The matching object if found, otherwise NULL
@@ -203,7 +138,7 @@ class Repository implements RepositoryInterface
      * @return QueryInterface
      * @api
      */
-    public function createQuery()
+    public function createQuery(): QueryInterface
     {
         /** @var QueryInterface $query */
         $query = $this->objectManager->get(QueryInterface::class);

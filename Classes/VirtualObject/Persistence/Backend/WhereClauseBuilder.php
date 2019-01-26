@@ -7,7 +7,6 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
-use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 /**
@@ -48,9 +47,6 @@ class WhereClauseBuilder
         $bindingPrefix = ''
     ) {
         $this->reset();
-        if ($query instanceof Query && $query->getStatement()) {
-            throw new \LogicException('`Query->getStatement()` is not supported by the Doctrine Backend');
-        }
 
         return $this->addConstraints(
             $query->getConstraint(),

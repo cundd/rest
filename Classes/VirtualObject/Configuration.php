@@ -33,27 +33,16 @@ class Configuration implements ConfigurationInterface
      */
     protected $skipUnknownProperties = false;
 
-
     public function __construct($configurationData = [])
     {
         $this->configurationData = $configurationData;
     }
 
-    /**
-     * Returns the list of all properties
-     *
-     * @return array
-     */
     public function getAllProperties(): array
     {
         return array_keys($this->configurationData['properties']);
     }
 
-    /**
-     * Returns the list of all source keys
-     *
-     * @return array
-     */
     public function getAllSourceKeys(): array
     {
         return array_map(
@@ -64,25 +53,11 @@ class Configuration implements ConfigurationInterface
         );
     }
 
-    /**
-     * Returns TRUE if the given property name should be mapped, FALSE otherwise.
-     *
-     * @param string $propertyName
-     * @return boolean
-     */
     public function hasProperty(string $propertyName): bool
     {
         return isset($this->configurationData['properties'][$propertyName]);
     }
 
-    /**
-     * Returns TRUE if the given source key is mapped
-     *
-     * Checks if one of the configured property mappings uses the given source key
-     *
-     * @param string $sourceKey
-     * @return boolean
-     */
     public function hasSourceKey(string $sourceKey): bool
     {
         $sourceKeyToPropertyMap = $this->getSourceKeyToPropertyMap();
@@ -90,13 +65,7 @@ class Configuration implements ConfigurationInterface
         return isset($sourceKeyToPropertyMap[$sourceKey]);
     }
 
-    /**
-     * Returns the configuration for the given property name
-     *
-     * @param string $propertyName
-     * @return array
-     */
-    public function getConfigurationForProperty(string $propertyName)
+    public function getConfigurationForProperty(string $propertyName): array
     {
         return isset($this->configurationData['properties'][$propertyName])
             ? $this->configurationData['properties'][$propertyName]
@@ -109,7 +78,7 @@ class Configuration implements ConfigurationInterface
      * @param string $propertyName
      * @return string
      */
-    public function getSourceKeyForProperty($propertyName): ?string
+    public function getSourceKeyForProperty(string $propertyName): ?string
     {
         if (!$this->hasProperty($propertyName)) {
             return null;

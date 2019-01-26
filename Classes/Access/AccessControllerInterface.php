@@ -14,7 +14,7 @@ interface AccessControllerInterface
      * @param RestRequestInterface $request
      * @return Access
      */
-    public function getAccess(RestRequestInterface $request);
+    public function getAccess(RestRequestInterface $request): Access;
 
     /**
      * Returns if the given request needs authentication
@@ -22,6 +22,5 @@ interface AccessControllerInterface
      * @param RestRequestInterface $request
      * @return bool
      */
-    public function requestNeedsAuthentication(RestRequestInterface $request);
-
+    public function requestNeedsAuthentication(RestRequestInterface $request): bool;
 }

@@ -32,7 +32,7 @@ abstract class AbstractAccessController implements AccessControllerInterface
      * @return Access
      * @throws \Exception
      */
-    protected function checkAuthentication(RestRequestInterface $request)
+    protected function checkAuthentication(RestRequestInterface $request): Access
     {
         try {
             $isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate($request);

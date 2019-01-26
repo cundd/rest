@@ -13,7 +13,7 @@ interface LoggerInterface extends BaseLoggerInterface
      * @param string $message
      * @param array  $data
      */
-    public function logRequest($message,array  $data = []);
+    public function logRequest($message, array $data = []);
 
     /**
      * Logs the given response message and data

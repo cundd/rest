@@ -59,8 +59,14 @@ class AbstractIntegrationCase extends AbstractCase
      * @param null   $basicAuth Ignored
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
-    {
+    public function request(
+        $path,
+        $method = 'GET',
+        $body = null,
+        array $headers = [],
+        /** @noinspection PhpUnusedParameterInspection */
+        $basicAuth = null
+    ) {
         $uri = 'http://localhost:8888/' . ltrim($path, '/');
         $request = $this->buildTestRequest($uri, $method, [], $headers, $body, $body);
 

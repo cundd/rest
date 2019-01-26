@@ -26,21 +26,21 @@ interface ConfigurationProviderInterface
      * @param mixed  $defaultValue
      * @return mixed
      */
-    public function getSetting($keyPath, $defaultValue = null);
+    public function getSetting(string $keyPath, $defaultValue = null);
 
     /**
      * Returns the settings read from the TypoScript
      *
      * @return array
      */
-    public function getSettings();
+    public function getSettings(): array;
 
     /**
      * Returns the paths configured in the settings
      *
      * @return ResourceConfiguration[]
      */
-    public function getConfiguredResources();
+    public function getConfiguredResources(): array;
 
     /**
      * Returns the configuration matching the given resource type
@@ -48,5 +48,5 @@ interface ConfigurationProviderInterface
      * @param ResourceType $resourceType
      * @return ResourceConfiguration|null
      */
-    public function getResourceConfiguration(ResourceType $resourceType);
+    public function getResourceConfiguration(ResourceType $resourceType): ?\Cundd\Rest\Configuration\ResourceConfiguration;
 }

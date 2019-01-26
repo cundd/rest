@@ -24,7 +24,7 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
      * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
-    public function authenticate(RestRequestInterface $request)
+    public function authenticate(RestRequestInterface $request): bool
     {
         $username = null;
         $password = null;
@@ -38,6 +38,10 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
             list($username, $password) = $tuple;
         } elseif ($tuple = $this->checkServerData('REDIRECT_HTTP_AUTHORIZATION')) {
             list($username, $password) = $tuple;
+        }
+
+        if (!is_string($username) || !is_string($password)) {
+            return false;
         }
 
         return $this->userProvider->checkCredentials($username, $password);

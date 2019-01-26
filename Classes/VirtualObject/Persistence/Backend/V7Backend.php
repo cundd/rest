@@ -7,11 +7,9 @@ use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
-use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Extbase\Persistence\Generic\Exception;
-use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\SqlErrorException as Typo3SqlErrorException;
 
 class V7Backend extends AbstractBackend
@@ -31,7 +29,7 @@ class V7Backend extends AbstractBackend
         $this->connection = $connection;
     }
 
-    public function addRow($tableName, array $row)
+    public function addRow(string $tableName, array $row): int
     {
         $this->assertValidTableName($tableName);
 
@@ -46,11 +44,12 @@ class V7Backend extends AbstractBackend
         return (integer)$uid;
     }
 
-    public function updateRow($tableName, array $identifier, array $row)
+    public function updateRow(string $tableName, array $identifier, array $row): int
     {
         $this->assertValidTableName($tableName);
+        $databaseConnection = $this->getConnection();
         try {
-            $result = $this->getConnection()->exec_UPDATEquery(
+            $databaseConnection->exec_UPDATEquery(
                 $tableName,
                 $this->createWhereStatementFromQuery($identifier, $tableName),
                 $row
@@ -60,14 +59,15 @@ class V7Backend extends AbstractBackend
         }
         $this->checkNonExceptionSqlErrors();
 
-        return $result;
+        return $databaseConnection->sql_affected_rows();
     }
 
-    public function removeRow($tableName, array $identifier)
+    public function removeRow(string $tableName, array $identifier): int
     {
         $this->assertValidTableName($tableName);
+        $databaseConnection = $this->getConnection();
         try {
-            $result = $this->getConnection()->exec_DELETEquery(
+            $databaseConnection->exec_DELETEquery(
                 $tableName,
                 $this->createWhereStatementFromQuery($identifier, $tableName)
             );
@@ -76,10 +76,10 @@ class V7Backend extends AbstractBackend
         }
         $this->checkNonExceptionSqlErrors();
 
-        return $result;
+        return $databaseConnection->sql_affected_rows();
     }
 
-    public function getObjectCountByQuery($tableName, QueryInterface $query)
+    public function getObjectCountByQuery(string $tableName, QueryInterface $query): int
     {
         $this->assertValidTableName($tableName);
         try {
@@ -96,7 +96,7 @@ class V7Backend extends AbstractBackend
         return intval($row['count']);
     }
 
-    public function getObjectDataByQuery($tableName, QueryInterface $query)
+    public function getObjectDataByQuery(string $tableName, QueryInterface $query): array
     {
         $this->assertValidTableName($tableName);
         try {
@@ -116,7 +116,7 @@ class V7Backend extends AbstractBackend
         return $result;
     }
 
-    public function executeQuery($query)
+    public function executeQuery(string $query)
     {
         $databaseConnection = $this->getConnection();
         try {
@@ -139,7 +139,6 @@ class V7Backend extends AbstractBackend
      * @throws InvalidOperatorException
      * @throws InvalidTableNameException if the table name is invalid
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
-     * @throws Exception
      */
     protected function createWhereStatementFromQuery($query, $tableName)
     {
@@ -148,16 +147,6 @@ class V7Backend extends AbstractBackend
 
         if ($query instanceof QueryInterface) {
             $configuration = $query->getConfiguration();
-
-            if ($query instanceof Query) {
-                $statement = $query->getStatement();
-                if ($statement && $statement instanceof Statement) {
-                    $sql = (string)$statement->getStatement();
-                    $parameters = $statement->getBoundVariables();
-
-                    return $this->replacePlaceholders($sql, $parameters, $tableName);
-                }
-            }
 
             $query = $query->getConstraint();
         }

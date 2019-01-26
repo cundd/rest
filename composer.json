@@ -23,7 +23,8 @@
         "cundd/test-flight": "^0.1.5",
         "phpspec/prophecy": "*",
         "ext-simplexml": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "psr/container": "^1.0"
     },
     "homepage": "https://rest.cundd.net/",
     "authors": [

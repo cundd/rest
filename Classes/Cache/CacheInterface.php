@@ -19,7 +19,7 @@ interface CacheInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface|null
      */
-    public function getCachedValueForRequest(RestRequestInterface $request);
+    public function getCachedValueForRequest(RestRequestInterface $request): ?ResponseInterface;
 
     /**
      * Sets the cache value for the given request
@@ -41,7 +41,7 @@ interface CacheInterface
      * @param RestRequestInterface $request
      * @return string
      */
-    public function getCacheKeyForRequest(RestRequestInterface $request);
+    public function getCacheKeyForRequest(RestRequestInterface $request): string;
 
     /**
      * Sets the cache life time
@@ -49,14 +49,14 @@ interface CacheInterface
      * @param int $cacheLifeTime
      * @return $this
      */
-    public function setCacheLifeTime($cacheLifeTime);
+    public function setCacheLifeTime(int $cacheLifeTime): self;
 
     /**
      * Returns the cache life time
      *
      * @return int
      */
-    public function getCacheLifeTime();
+    public function getCacheLifeTime(): int;
 
     /**
      * Sets the life time defined in the expires header
@@ -64,12 +64,12 @@ interface CacheInterface
      * @param int $expiresHeaderLifeTime
      * @return $this
      */
-    public function setExpiresHeaderLifeTime($expiresHeaderLifeTime);
+    public function setExpiresHeaderLifeTime(int $expiresHeaderLifeTime): self;
 
     /**
      * Returns the life time defined in the expires header
      *
      * @return int
      */
-    public function getExpiresHeaderLifeTime();
+    public function getExpiresHeaderLifeTime(): int;
 }

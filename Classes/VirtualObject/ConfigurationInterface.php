@@ -49,7 +49,7 @@ interface ConfigurationInterface
      * @param string $propertyName
      * @return array
      */
-    public function getConfigurationForProperty(string $propertyName);
+    public function getConfigurationForProperty(string $propertyName): array;
 
     /**
      * Return the source key (column name) for the given property name, or NULL if it isn't defined
@@ -57,13 +57,13 @@ interface ConfigurationInterface
      * @param string $propertyName
      * @return string|null
      */
-    public function getSourceKeyForProperty($propertyName): ?string;
+    public function getSourceKeyForProperty(string $propertyName): ?string;
 
     /**
      * Return the property for the given source property (column)
      *
      * @param string $sourceKey
-     * @return string
+     * @return string|null
      */
     public function getPropertyForSourceKey(string $sourceKey): ?string;
 
@@ -71,7 +71,7 @@ interface ConfigurationInterface
      * Return the data type for the given property name
      *
      * @param string $propertyName
-     * @return string Returns one of the following simple "string", "float", "int", "integer", "bool", "boolean" or one of the complex types
+     * @return string|null Returns one of the following simple "string", "float", "int", "integer", "bool", "boolean" or one of the complex types
      */
     public function getTypeForProperty(string $propertyName): ?string;
 
@@ -93,7 +93,7 @@ interface ConfigurationInterface
      * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
      *
      * @param boolean $skipUnknownProperties
-     * @return $this
+     * @return self
      */
     public function setSkipUnknownProperties(bool $skipUnknownProperties): self;
 

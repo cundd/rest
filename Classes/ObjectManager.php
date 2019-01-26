@@ -15,6 +15,7 @@ use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
+use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Container\ContainerInterface;
@@ -70,22 +71,12 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->container->get($class, ...$arguments);
     }
 
-    /**
-     * Returns the Response Factory
-     *
-     * @return ResponseFactoryInterface
-     */
-    public function getResponseFactory()
+    public function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->get(ResponseFactoryInterface::class);
     }
 
-    /**
-     * Returns the data provider
-     *
-     * @return DataProviderInterface
-     */
-    public function getDataProvider()
+    public function getDataProvider(): DataProviderInterface
     {
         if (!$this->dataProvider) {
             list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType(
@@ -113,55 +104,12 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->dataProvider;
     }
 
-    /**
-     * Returns the current request
-     *
-     * @return RestRequestInterface
-     */
-    protected function getRequest()
-    {
-        return $this->getRequestFactory()->getRequest();
-    }
-
-    /**
-     * Returns the Request Factory
-     *
-     * @return RequestFactoryInterface
-     */
-    public function getRequestFactory()
+    public function getRequestFactory(): RequestFactoryInterface
     {
         return $this->get(RequestFactoryInterface::class);
     }
 
-    /**
-     * Returns the first of the classes that exists
-     *
-     * @param string[] $classes
-     * @param string   $default
-     * @return string
-     * @throws \LogicException
-     */
-    private function getFirstExistingClass(array $classes, $default = '')
-    {
-        foreach ($classes as $class) {
-            if (class_exists($class)) {
-                return $class;
-            }
-        }
-
-        if ($default === '') {
-            throw new \LogicException('No existing class found');
-        }
-
-        return $default;
-    }
-
-    /**
-     * Returns the Authentication Provider
-     *
-     * @return AuthenticationProviderInterface
-     */
-    public function getAuthenticationProvider()
+    public function getAuthenticationProvider(): AuthenticationProviderInterface
     {
         if (!$this->authenticationProvider) {
             list($vendor, $extension,) = Utility::getClassNamePartsForResourceType(
@@ -199,12 +147,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->authenticationProvider;
     }
 
-    /**
-     * Returns the Access Controller
-     *
-     * @return AccessControllerInterface
-     */
-    public function getAccessController()
+    public function getAccessController(): AccessControllerInterface
     {
         if (!$this->accessController) {
             list($vendor, $extension,) = Utility::getClassNamePartsForResourceType(
@@ -227,12 +170,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->accessController;
     }
 
-    /**
-     * Returns the Handler which is responsible for handling the current request
-     *
-     * @return HandlerInterface
-     */
-    public function getHandler()
+    public function getHandler(): HandlerInterface
     {
         $resourceType = $this->getRequest()->getResourceType();
         $handler = $this->getHandlerFromResourceConfiguration($resourceType);
@@ -243,24 +181,20 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
 
         $classes = [
-            // Check if an extension provides a Data Provider
-            sprintf('Tx_' . $extension . '_Rest_Handler'),
+            // Check if an extension provides a Handler
+            // @deprecated register a `handlerClass` instead
             sprintf('%s%s\\Rest\\Handler', ($vendor ? $vendor . '\\' : ''), $extension),
+            sprintf('Tx_' . $extension . '_Rest_Handler'),
 
             // Check for a specific builtin Handler
-            // @deprecated register a `handlerClass` instead
             'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
+            CrudHandler::class,
         ];
 
         return $this->get($this->getFirstExistingClass($classes, HandlerInterface::class));
     }
 
-    /**
-     * Returns the Cache instance
-     *
-     * @return CacheInterface
-     */
-    public function getCache()
+    public function getCache(): CacheInterface
     {
         /** @var CacheFactory $cacheFactory */
         $cacheFactory = $this->get(CacheFactory::class);
@@ -268,12 +202,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $cacheFactory->buildCache($this->getConfigurationProvider(), $this);
     }
 
-    /**
-     * Returns the configuration provider
-     *
-     * @return ConfigurationProviderInterface
-     */
-    public function getConfigurationProvider()
+    public function getConfigurationProvider(): ConfigurationProviderInterface
     {
         if (!$this->configurationProvider) {
             $this->configurationProvider = $this->get(ConfigurationProviderInterface::class);
@@ -291,6 +220,39 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $this->authenticationProvider = null;
         $this->configurationProvider = null;
         $this->accessController = null;
+    }
+
+    /**
+     * Returns the current request
+     *
+     * @return RestRequestInterface
+     */
+    protected function getRequest()
+    {
+        return $this->getRequestFactory()->getRequest();
+    }
+
+    /**
+     * Returns the first of the classes that exists
+     *
+     * @param string[] $classes
+     * @param string   $default
+     * @return string
+     * @throws \LogicException
+     */
+    private function getFirstExistingClass(array $classes, $default = '')
+    {
+        foreach ($classes as $class) {
+            if (class_exists($class)) {
+                return $class;
+            }
+        }
+
+        if ($default === '') {
+            throw new \LogicException('No existing class found');
+        }
+
+        return $default;
     }
 
     /**

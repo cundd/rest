@@ -50,7 +50,7 @@ class Query implements QueryInterface
     protected $statement;
 
     /**
-     * Query constructor.
+     * Query constructor
      *
      * @param array              $constraint
      * @param array              $orderings
@@ -110,12 +110,6 @@ class Query implements QueryInterface
         return $this->sourceIdentifier;
     }
 
-    /**
-     * Return a copy of the Query with the given constraints
-     *
-     * @param array $constraint
-     * @return QueryInterface
-     */
     public function withConstraints(array $constraint): QueryInterface
     {
         $clone = clone $this;
@@ -124,12 +118,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given orderings
-     *
-     * @param array $orderings
-     * @return QueryInterface
-     */
     public function withOrderings(array $orderings): QueryInterface
     {
         $clone = clone $this;
@@ -138,12 +126,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given limit
-     *
-     * @param int $limit
-     * @return QueryInterface
-     */
     public function withLimit(int $limit): QueryInterface
     {
         $clone = clone $this;
@@ -152,12 +134,6 @@ class Query implements QueryInterface
         return $clone;
     }
 
-    /**
-     * Return a copy of the Query with the given offset
-     *
-     * @param int $offset
-     * @return QueryInterface
-     */
     public function withOffset(int $offset): QueryInterface
     {
         $clone = clone $this;
@@ -180,32 +156,5 @@ class Query implements QueryInterface
         }
 
         return $this->persistenceManager->getConfiguration();
-    }
-
-    /**
-     * Sets the statement of this query programmatically. If you use this, you will lose the abstraction from a concrete
-     * storage backend (database)
-     *
-     * @param string $statement  The statement
-     * @param array  $parameters An array of parameters. These will be bound to placeholders '?' in the $statement.
-     * @deprecated only implemented for TYPO3 without Doctrine. Will be removed in 4.0.0
-     * @return QueryInterface
-     */
-    public function statement($statement, array $parameters = [])
-    {
-        $this->statement = new Statement($statement, $parameters);
-
-        return $this;
-    }
-
-    /**
-     * Returns the statement of this query
-     *
-     * @return \TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement
-     * @deprecated only implemented for TYPO3 without Doctrine. Will be removed in 4.0.0
-     */
-    public function getStatement()
-    {
-        return $this->statement;
     }
 }

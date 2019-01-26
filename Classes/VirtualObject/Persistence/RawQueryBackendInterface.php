@@ -17,5 +17,5 @@ interface RawQueryBackendInterface
      * @return mixed
      * @throws SqlErrorException if the query failed
      */
-    public function executeQuery($query);
+    public function executeQuery(string $query);
 }

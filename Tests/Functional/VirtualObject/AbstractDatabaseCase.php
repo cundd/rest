@@ -51,7 +51,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
      *
      * @return Configuration
      */
-    protected function getTestConfiguration()
+    protected function getTestConfiguration(): Configuration
     {
         $testConfiguration = $this->getTestConfigurationData();
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 /**
@@ -16,7 +17,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function add($object);
+    public function add(VirtualObject $object);
 
     /**
      * Removes the given object from the database
@@ -24,7 +25,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function remove($object);
+    public function remove(VirtualObject $object);
 
     /**
      * Updates the given object in the database
@@ -32,46 +33,46 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function update($object);
+    public function update(VirtualObject $object);
 
     /**
      * Returns the array of identifier properties of the object
      *
-     * @param object $object
+     * @param VirtualObject $object
      * @return array
      */
-    public function getIdentifiersOfObject($object);
+    public function getIdentifiersOfObject(VirtualObject $object): array;
 
     /**
      * Returns the array of identifier columns and value of the object
      *
-     * @param object $object
+     * @param VirtualObject $object
      * @return array
      */
-    public function getIdentifierColumnsOfObject($object);
+    public function getIdentifierColumnsOfObject(VirtualObject $object): array;
 
     /**
      * Returns the source identifier (the database table name)
      *
-     * @return string
+     * @return string|null
      */
     public function getSourceIdentifier();
 
     /**
      * Sets the configuration to use when converting
      *
-     * @param \Cundd\Rest\VirtualObject\ConfigurationInterface $configuration
-     * @return $this
+     * @param ConfigurationInterface $configuration
+     * @return self
      */
-    public function setConfiguration($configuration);
+    public function setConfiguration(ConfigurationInterface $configuration): self;
 
     /**
      * Returns the configuration to use when converting
      *
+     * @return ConfigurationInterface
      * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface
      */
-    public function getConfiguration();
+    public function getConfiguration(): ConfigurationInterface;
 
     /**
      * Registers the given Virtual Object
@@ -84,7 +85,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return VirtualObject Returns the registered Document
      */
-    public function registerObject($object);
+    public function registerObject(VirtualObject $object): VirtualObject;
 
     /**
      * Returns the number of items matching the query
@@ -102,13 +103,13 @@ interface PersistenceManagerInterface
      * @return array
      * @api
      */
-    public function getObjectDataByQuery(QueryInterface $query);
+    public function getObjectDataByQuery(QueryInterface $query): array;
 
     /**
      * Returns the object with the given identifier
      *
-     * @param string $identifier
-     * @return VirtualObject
+     * @param string|int $identifier
+     * @return VirtualObject|null
      */
     public function getObjectByIdentifier($identifier);
 }

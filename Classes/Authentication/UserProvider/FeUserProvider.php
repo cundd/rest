@@ -25,9 +25,9 @@ class FeUserProvider implements UserProviderInterface
      * @param string $password
      * @return boolean
      */
-    public function checkCredentials($username, $password)
+    public function checkCredentials(string $username, string $password): bool
     {
-        if (!is_string($password) || '' === $password) {
+        if ('' === $username || '' === $password) {
             return false;
         }
 

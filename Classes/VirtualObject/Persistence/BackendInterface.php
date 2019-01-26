@@ -21,7 +21,7 @@ interface BackendInterface
      * @throws InvalidTableNameException if the table name is not valid
      * @throws SqlErrorException on SQL errors
      */
-    public function addRow($tableName, array $row);
+    public function addRow(string $tableName, array $row): int;
 
     /**
      * Updates a row in the storage
@@ -31,7 +31,7 @@ interface BackendInterface
      * @param array  $row        Data to update the row
      * @return int the number of affected rows
      */
-    public function updateRow($tableName, array $identifier, array $row);
+    public function updateRow(string $tableName, array $identifier, array $row): int;
 
     /**
      * Deletes a row in the storage
@@ -43,7 +43,7 @@ interface BackendInterface
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function removeRow($tableName, array $identifier);
+    public function removeRow(string $tableName, array $identifier): int;
 
     /**
      * Returns the number of items matching the query
@@ -55,7 +55,7 @@ interface BackendInterface
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function getObjectCountByQuery($tableName, QueryInterface $query);
+    public function getObjectCountByQuery(string $tableName, QueryInterface $query): int;
 
     /**
      * Returns the object data matching the $query
@@ -67,5 +67,5 @@ interface BackendInterface
      * @throws InvalidOperatorException if the where clause could not be built
      * @throws SqlErrorException on SQL errors
      */
-    public function getObjectDataByQuery($tableName, QueryInterface $query);
+    public function getObjectDataByQuery(string $tableName, QueryInterface $query): array;
 }

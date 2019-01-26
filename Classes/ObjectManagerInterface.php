@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Access\AccessControllerInterface;
+use Cundd\Rest\Authentication\AuthenticationProviderInterface;
+use Cundd\Rest\Cache\CacheInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Handler\HandlerInterface;
 
 /**
@@ -22,56 +27,56 @@ interface ObjectManagerInterface
     /**
      * Returns the configuration provider
      *
-     * @return \Cundd\Rest\Configuration\ConfigurationProviderInterface
+     * @return ConfigurationProviderInterface
      */
-    public function getConfigurationProvider();
+    public function getConfigurationProvider(): ConfigurationProviderInterface;
 
     /**
      * Returns the configuration provider
      *
      * @return RequestFactoryInterface
      */
-    public function getRequestFactory();
+    public function getRequestFactory(): RequestFactoryInterface;
 
     /**
      * Returns the Response Factory
      *
      * @return ResponseFactoryInterface
      */
-    public function getResponseFactory();
+    public function getResponseFactory(): ResponseFactoryInterface;
 
     /**
      * Returns the data provider
      *
-     * @return \Cundd\Rest\DataProvider\DataProviderInterface
+     * @return DataProviderInterface
      */
-    public function getDataProvider();
+    public function getDataProvider(): DataProviderInterface;
 
     /**
      * Returns the Authentication Provider
      *
-     * @return \Cundd\Rest\Authentication\AuthenticationProviderInterface
+     * @return AuthenticationProviderInterface
      */
-    public function getAuthenticationProvider();
+    public function getAuthenticationProvider(): AuthenticationProviderInterface;
 
     /**
      * Returns the Access Controller
      *
-     * @return \Cundd\Rest\Access\AccessControllerInterface
+     * @return AccessControllerInterface
      */
-    public function getAccessController();
+    public function getAccessController(): AccessControllerInterface;
 
     /**
      * Returns the Handler which is responsible for handling the current request
      *
      * @return HandlerInterface
      */
-    public function getHandler();
+    public function getHandler(): HandlerInterface;
 
     /**
      * Returns the Cache instance
      *
-     * @return \Cundd\Rest\Cache\CacheInterface
+     * @return CacheInterface
      */
-    public function getCache();
+    public function getCache(): CacheInterface;
 }
