@@ -23,6 +23,9 @@ use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use TYPO3\CMS\Core\Cache\Backend\NullBackend;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Tests\FunctionalTestCase;
@@ -313,6 +316,12 @@ class AbstractCase extends FunctionalTestCase
     private function initializeIconRegistry()
     {
         $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
+        try {
+            $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('assets');
+        } catch (\Exception $e){
+            $cache = new VariableFrontend('assets', new NullBackend('unused'));
+        }
+        IconRegistry::setCache($cache);
 
         if (!$iconRegistry->isRegistered('default-not-found')) {
             $iconRegistry->registerIcon(
