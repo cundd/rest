@@ -69,7 +69,9 @@ class HandlerDescriptor
             $className = CrudHandler::class;
         }
         if (!class_exists($className)) {
-            return $this->buildError($this->buildException('Handler class "%s" does not seem to exist', $className));
+            $error = $this->buildException('Handler class "%s" does not seem to exist', $className);
+
+            return $this->buildError($error, $className, $configuration);
         }
         if ($className[0] === '\\') {
             $className = substr($className, 1);
@@ -78,16 +80,16 @@ class HandlerDescriptor
         try {
             $handler = $this->objectManager->get($className);
         } catch (\Exception $exception) {
-            return $this->buildError($exception);
+            return $this->buildError($exception, $className, $configuration);
         }
         if (!($handler instanceof HandlerInterface)) {
-            return $this->buildError(
-                $this->buildException(
-                    'Registered handler class "%s" does not implement "%s"',
-                    $className,
-                    HandlerInterface::class
-                )
+            $error = $this->buildException(
+                'Registered handler class "%s" does not implement "%s"',
+                $className,
+                HandlerInterface::class
             );
+
+            return $this->buildError($error, $className, $configuration);
         }
 
         $router = new DescriptiveRouter();
@@ -95,7 +97,7 @@ class HandlerDescriptor
         try {
             $handler->configureRoutes($router, $request);
         } catch (\Exception $exception) {
-            return $this->buildError($exception);
+            return $this->buildError($exception, $className, $configuration);
         }
 
         return [
@@ -105,12 +107,14 @@ class HandlerDescriptor
         ];
     }
 
-    private function buildError(\Exception $exception)
+    private function buildError(\Exception $exception, string $handlerClass, $configuration)
     {
         return [
-            'errorMessage' => $exception->getMessage(),
-            'error'        => $exception,
-            'trace'        => $exception->getTraceAsString(),
+            'handlerClass'  => $handlerClass,
+            'configuration' => $configuration,
+            'errorMessage'  => $exception->getMessage(),
+            'error'         => $exception,
+            'trace'         => $exception->getTraceAsString(),
         ];
     }
 

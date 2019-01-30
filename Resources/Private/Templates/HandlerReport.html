@@ -10,8 +10,17 @@
         <div class="resources">
             <h2 title="{handlerRoutes.handler.description -> f:format.stripTags()}">
                 Path <code>{handlerRoutes.configuration.resourceType}</code>
-                <small>(Handler: {handlerRoutes.handler -> r:getClass()})</small>
+                <small>
+                    <f:if condition="{handlerRoutes.handler}">
+                        <f:then>(Handler: {handlerRoutes.handler -> r:getClass()})</f:then>
+                        <f:else>(Handler: {handlerRoutes.handlerClass})</f:else>
+                    </f:if>
+                </small>
             </h2>
+
+            <f:if condition="{handlerRoutes.error}">
+                <div class="alert alert-warning">Error: {handlerRoutes.errorMessage}</div>
+            </f:if>
 
             <table class="routes table table-striped table-hover">
                 <f:for each="{handlerRoutes.routes}" as="routes" key="method">
