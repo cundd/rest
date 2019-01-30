@@ -97,35 +97,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     public function dispatch(RestRequestInterface $request, ResponseInterface $response)
     {
-        $requestPath = $request->getPath();
-        if (!$requestPath || $requestPath === '/') {
-            return $this->greet($request);
-        }
-
-        // Checks if the request needs authentication
-        $access = $this->objectManager->getAccessController()->getAccess($request);
-        switch (true) {
-            case $access->isAllowed():
-            case $access->isAuthorized():
-                break;
-
-            case $access->isUnauthorized():
-                return $this->responseFactory->createErrorResponse('Unauthorized', 401, $request);
-
-            case $access->isDenied():
-            default:
-                return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
-        }
-
-        $newResponse = $this->getCachedResponseOrCallHandler($request, $response);
-        $newResponse = $this->addAdditionalHeaders($newResponse);
-
-        $this->logger->logResponse(
-            'response: ' . $newResponse->getStatusCode(),
-            ['response' => (string)$newResponse->getBody()]
-        );
-
-        return $newResponse;
+        return $this->addAdditionalHeaders($this->dispatchInternal($request, $response));
     }
 
     /**
@@ -269,5 +241,42 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         return $response;
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @param ResponseInterface    $response
+     * @return ResponseInterface
+     */
+    private function dispatchInternal(RestRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $requestPath = $request->getPath();
+        if (!$requestPath || $requestPath === '/') {
+            return $this->greet($request);
+        }
+
+        // Checks if the request needs authentication
+        $access = $this->objectManager->getAccessController()->getAccess($request);
+        switch (true) {
+            case $access->isAllowed():
+            case $access->isAuthorized():
+                break;
+
+            case $access->isUnauthorized():
+                return $this->responseFactory->createErrorResponse('Unauthorized', 401, $request);
+
+            case $access->isDenied():
+            default:
+                return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
+        }
+
+        $newResponse = $this->getCachedResponseOrCallHandler($request, $response);
+
+        $this->logger->logResponse(
+            'response: ' . $newResponse->getStatusCode(),
+            ['response' => (string)$newResponse->getBody()]
+        );
+
+        return $newResponse;
     }
 }
