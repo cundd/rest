@@ -121,6 +121,10 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
             ['MyExt-*', 'my_ext-*'],
             ['GeorgRinger-News-news', 'georg_ringer-news-news'],
             ['GeorgRinger-News-*', 'georg_ringer-news-*'],
+            ['georgRinger-News-*', 'georg_ringer-news-*'],
+            ['dCorn-Test-*', 'd_corn-test-*'],
+            ['D', 'd'],
+            ['d', 'd'],
         ];
     }
 
