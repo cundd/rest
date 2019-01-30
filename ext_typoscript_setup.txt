@@ -22,6 +22,9 @@ plugin.tx_rest.settings {
     #    Access-Control-Allow-Origin = example.com
     #    Access-Control-Allow-Methods = GET, POST, OPTIONS, DELETE
     #}
+    #cors.allowedOrigins {
+    #    0 = http://localhost:3000
+    #}
 
     # This is not defined here to allow easy customization in third party extensions TypoScript setup
     # cacheLifeTime = -1

@@ -77,6 +77,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      * @return ResponseInterface
+     * @throws \Exception
      */
     public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -97,7 +98,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     public function dispatch(RestRequestInterface $request, ResponseInterface $response)
     {
-        return $this->addAdditionalHeaders($this->dispatchInternal($request, $response));
+        return $this->addCorsHeaders(
+            $request,
+            $this->addAdditionalHeaders($this->dispatchInternal($request, $response))
+        );
     }
 
     /**
@@ -146,7 +150,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param RestRequestInterface $request
      * @return ResponseInterface
-     * @throws \Exception
      */
     private function callHandler(RestRequestInterface $request)
     {
@@ -237,6 +240,24 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                     rtrim($responseHeaderType, '.'),
                     GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
                 );
+            }
+        }
+
+        return $response;
+    }
+
+    private function addCorsHeaders(RestRequestInterface $request, ResponseInterface $response)
+    {
+        $origin = $request->getHeaderLine('origin');
+        if ($origin) {
+            $allowedOrigins = $this->objectManager
+                ->getConfigurationProvider()
+                ->getSetting('cors.allowedOrigins', []);
+
+            foreach ($allowedOrigins as $allowedOrigin) {
+                if ($allowedOrigin === $origin) {
+                    return $response->withHeader('Access-Control-Allow-Origin', $allowedOrigin);
+                }
             }
         }
 
