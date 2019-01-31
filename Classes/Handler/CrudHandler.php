@@ -21,7 +21,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * Object Manager
      *
-     * @var \Cundd\Rest\ObjectManager
+     * @var \Cundd\Rest\ObjectManagerInterface
      */
     protected $objectManager;
 
