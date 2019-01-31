@@ -92,7 +92,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         } catch (\Exception $exception) {
         }
         if (!$repository) {
-            $message = sprintf('Repository for resource type "%s" could not be found', $resourceType);
+            list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
+            $message = sprintf(
+                'Repository for resource type "%s" could not be found. Tried "%s" and "%s"',
+                $resourceType,
+                ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
+                'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
+            );
 
             if ($exception) {
                 throw new \LogicException($message . ': ' . $exception->getMessage(), 1542116783, $exception);
