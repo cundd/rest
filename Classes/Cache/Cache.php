@@ -97,7 +97,7 @@ class Cache implements CacheInterface
             return;
         }
 
-        $cacheLifeTime = $resourceConfiguration->getCacheLiveTime();
+        $cacheLifeTime = $resourceConfiguration->getCacheLifetime();
         if ($cacheLifeTime < 0) {
             $cacheLifeTime = $this->getCacheLifeTime();
         }

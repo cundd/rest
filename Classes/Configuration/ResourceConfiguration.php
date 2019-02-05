@@ -27,7 +27,7 @@ class ResourceConfiguration
     /**
      * @var int
      */
-    private $cacheLiveTime = 0;
+    private $cacheLifetime = 0;
 
     /**
      * @var string
@@ -45,7 +45,7 @@ class ResourceConfiguration
      * @param ResourceType $resourceType
      * @param Access       $read
      * @param Access       $write
-     * @param int          $cacheLiveTime
+     * @param int          $cacheLifetime
      * @param string       $handlerClass
      * @param string[]     $aliases
      */
@@ -53,14 +53,14 @@ class ResourceConfiguration
         ResourceType $resourceType,
         Access $read,
         Access $write,
-        $cacheLiveTime,
+        $cacheLifetime,
         $handlerClass,
         array $aliases
     ) {
         $this->resourceType = $resourceType;
         $this->read = $read;
         $this->write = $write;
-        $this->cacheLiveTime = (int)$cacheLiveTime;
+        $this->cacheLifetime = (int)$cacheLifetime;
         $this->handlerClass = (string)$handlerClass;
         $this->assertStringArray($aliases);
         $this->aliases = $aliases;
@@ -93,10 +93,20 @@ class ResourceConfiguration
     /**
      * @return int
      */
+    public function getCacheLifetime()
+    {
+        return $this->cacheLifetime;
+    }
+
+    /**
+     * @return int
+     * @deprecated will be removed in 4.0. Use getCacheLifetime() instead
+     */
     public function getCacheLiveTime()
     {
-        return $this->cacheLiveTime;
+        return $this->cacheLifetime;
     }
+
 
     /**
      * @return string

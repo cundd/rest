@@ -104,19 +104,19 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $this->assertSame('my_protectedext-*', (string)$resourceConfiguration1->getResourceType());
         $this->assertTrue($resourceConfiguration1->getRead()->isAllowed());
         $this->assertTrue($resourceConfiguration1->getWrite()->isRequireLogin());
-        $this->assertSame(-1, $resourceConfiguration1->getCacheLiveTime());
+        $this->assertSame(-1, $resourceConfiguration1->getCacheLifetime());
 
         $resourceConfiguration2 = $resourceTypeConfigurations['vendor-my_ext-my_model'];
         $this->assertSame('vendor-my_ext-my_model', (string)$resourceConfiguration2->getResourceType());
         $this->assertTrue($resourceConfiguration2->getRead()->isRequireLogin());
         $this->assertTrue($resourceConfiguration2->getWrite()->isDenied());
-        $this->assertSame(-1, $resourceConfiguration2->getCacheLiveTime());
+        $this->assertSame(-1, $resourceConfiguration2->getCacheLifetime());
 
         $resourceConfiguration3 = $resourceTypeConfigurations['vendor-my_other_ext-my_model'];
         $this->assertSame('vendor-my_other_ext-my_model', (string)$resourceConfiguration3->getResourceType());
         $this->assertTrue($resourceConfiguration3->getRead()->isDenied());
         $this->assertTrue($resourceConfiguration3->getWrite()->isDenied());
-        $this->assertSame(2, $resourceConfiguration3->getCacheLiveTime());
+        $this->assertSame(2, $resourceConfiguration3->getCacheLifetime());
     }
 
     /**
