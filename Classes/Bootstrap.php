@@ -150,6 +150,9 @@ class Bootstrap
 
         if (null !== $requestedLanguageUid) {
             $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
+            // Add LinkVars and language to work with correct localized labels
+            $frontendController->config['config']['linkVars'] = 'L(int)';
+            $frontendController->config['config']['language'] = $this->getRequestedLanguageCode();
         }
     }
 
