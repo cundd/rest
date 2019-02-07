@@ -141,7 +141,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             $resourceType = new ResourceType($normalizeResourceType);
             $cacheLifetime = $this->detectCacheLifetimeConfiguration($configuration);
 
-            var_dump($normalizeResourceType);
             $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
                 $resourceType,
                 $readAccess,
