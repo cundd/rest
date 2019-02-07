@@ -4,7 +4,7 @@ plugin.tx_rest.settings {
             path = all
             read = deny
             write = deny
-            cacheLifeTime = -1
+            cacheLifetime = -1
             handlerClass = \Cundd\Rest\Handler\CrudHandler
         }
 
@@ -12,7 +12,7 @@ plugin.tx_rest.settings {
             path = auth
             read = allow
             write = allow
-            cacheLifeTime = -1
+            cacheLifetime = -1
             handlerClass = \Cundd\Rest\Handler\AuthHandler
         }
     }
@@ -24,8 +24,8 @@ plugin.tx_rest.settings {
     #}
 
     # This is not defined here to allow easy customization in third party extensions TypoScript setup
-    # cacheLifeTime = -1
-    # expiresHeaderLifeTime =
+    # cacheLifetime = -1
+    # expiresHeaderLifetime =
     # doNotAddClass = 1
 
     # Define words that should not be converted to singular

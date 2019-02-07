@@ -137,7 +137,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     private function getCachedResponseOrCallHandler(RestRequestInterface $request, ResponseInterface $response)
     {
-        $cache = $this->objectManager->getCache();
+        $cache = $this->objectManager->getCache($request->getResourceType());
         $cachedResponse = $cache->getCachedValueForRequest($request);
 
         // If a cached response exists return it

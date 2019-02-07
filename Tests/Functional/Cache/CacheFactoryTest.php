@@ -5,16 +5,23 @@ namespace Cundd\Rest\Tests\Functional\Cache;
 
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Cache\CacheFactory;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\ResourceConfiguration;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\Tests\RequestBuilderTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Argument\Token\TypeToken;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class CacheFactoryTest extends TestCase
 {
+    use RequestBuilderTrait;
+
     /**
      * @var CacheFactory
      */
@@ -43,32 +50,66 @@ class CacheFactoryTest extends TestCase
     /**
      * @test
      * @dataProvider buildCacheDataProvider
-     * @param int      $cacheLifeTime
-     * @param int|null $expiresHeaderLifeTime
-     * @param int      $expectedCacheLifeTime
-     * @param int      $expectedExpiresHeaderLifeTime
+     * @param int|null $cacheLifetime
+     * @param int|null $expiresHeaderLifetime
+     * @param int      $resourceTypeCacheLifetime
+     * @param int      $_
+     * @param int      $expectedExpiresHeaderLifetime
      */
-    public function buildCacheTest(
-        $cacheLifeTime,
-        $expiresHeaderLifeTime,
-        $expectedCacheLifeTime,
-        $expectedExpiresHeaderLifeTime
+    public function buildCacheCheckExpiresHeaderLifetimeTest(
+        $cacheLifetime,
+        $expiresHeaderLifetime,
+        $resourceTypeCacheLifetime,
+        $_,
+        $expectedExpiresHeaderLifetime
     ) {
         $cache = $this->fixture->buildCache(
-            $this->getConfigurationProvider($cacheLifeTime, $expiresHeaderLifeTime),
+            new ResourceType(''),
+            $this->getConfigurationProvider(
+                $cacheLifetime,
+                $expiresHeaderLifetime,
+                $resourceTypeCacheLifetime
+            ),
             $this->getObjectManager()
         );
-        $this->assertEquals($expectedCacheLifeTime, $cache->getCacheLifeTime());
-        $this->assertEquals($expectedExpiresHeaderLifeTime, $cache->getExpiresHeaderLifeTime());
+        $this->assertEquals($expectedExpiresHeaderLifetime, $cache->getExpiresHeaderLifetime());
+    }
+
+    /**
+     * @test
+     * @dataProvider buildCacheDataProvider
+     * @param int|null $cacheLifetime
+     * @param int|null $expiresHeaderLifetime
+     * @param int      $resourceTypeCacheLifetime
+     * @param int      $expectedCacheLifetime
+     */
+    public function buildCacheCheckLifetimeTest(
+        $cacheLifetime,
+        $expiresHeaderLifetime,
+        $resourceTypeCacheLifetime,
+        $expectedCacheLifetime
+    ) {
+        $cache = $this->fixture->buildCache(
+            new ResourceType(''),
+            $this->getConfigurationProvider(
+                $cacheLifetime,
+                $expiresHeaderLifetime,
+                $resourceTypeCacheLifetime
+            ),
+            $this->getObjectManager()
+        );
+        $this->assertEquals($expectedCacheLifetime, $cache->getCacheLifetime());
     }
 
     public function buildCacheDataProvider()
     {
         return [
-            [10, 20, 10, 20],
-            [10, null, 10, 10],
-            [20, null, 20, 20],
-            [null, null, -1, -1],
+            [10, 20, -1, 10, 20],
+            [10, null, -1, 10, 10],
+            [20, null, -1, 20, 20],
+            [10, 20, 30, 30, 20],
+            [null, null, 30, 30, 30],
+            [null, null, -1, -1, -1],
         ];
     }
 
@@ -88,27 +129,47 @@ class CacheFactoryTest extends TestCase
     }
 
     /**
-     * @param $cacheLifeTime
-     * @param $expiresHeaderLifeTime
+     * @param int $cacheLifetime
+     * @param int $expiresHeaderLifetime
+     * @param int $resourceTypeCacheLifetime
      * @return ConfigurationProviderInterface
      */
-    private function getConfigurationProvider($cacheLifeTime, $expiresHeaderLifeTime)
-    {
+    private function getConfigurationProvider(
+        $cacheLifetime,
+        $expiresHeaderLifetime,
+        $resourceTypeCacheLifetime
+    ) {
         /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProvider */
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
 
         $configurationProvider->getSetting(Argument::type('string'))->will(
-            function ($args) use ($expiresHeaderLifeTime, $cacheLifeTime) {
+            function ($args) use ($expiresHeaderLifetime, $cacheLifetime, $resourceTypeCacheLifetime) {
                 if (isset($args[0])) {
-                    if ($args[0] === 'cacheLifeTime') {
-                        return $cacheLifeTime;
+                    if ($args[0] === 'cacheLifetime') {
+                        return $cacheLifetime;
                     }
-                    if ($args[0] === 'expiresHeaderLifeTime') {
-                        return $expiresHeaderLifeTime;
+
+                    if ($args[0] === 'expiresHeaderLifetime') {
+                        return $expiresHeaderLifetime;
                     }
                 }
 
                 return null;
+            }
+        );
+
+        /** @var ResourceType|TypeToken $resourceType */
+        $resourceType = Argument::type(ResourceType::class);
+        $configurationProvider->getResourceConfiguration($resourceType)->will(
+            function () use ($resourceTypeCacheLifetime) {
+                return new ResourceConfiguration(
+                    new ResourceType(''),
+                    Access::allowed(),
+                    Access::denied(),
+                    $resourceTypeCacheLifetime,
+                    '',
+                    []
+                );
             }
         );
 

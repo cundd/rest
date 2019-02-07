@@ -247,16 +247,17 @@ class ObjectManager extends BaseObjectManager implements TYPO3ObjectManagerInter
     }
 
     /**
-     * Returns the Cache instance
+     * Returns the Cache instance for the given Resource Type
      *
+     * @param ResourceType $resourceType
      * @return CacheInterface
      */
-    public function getCache()
+    public function getCache(ResourceType $resourceType)
     {
         /** @var CacheFactory $cacheFactory */
         $cacheFactory = $this->get(CacheFactory::class);
 
-        return $cacheFactory->buildCache($this->getConfigurationProvider(), $this);
+        return $cacheFactory->buildCache($resourceType, $this->getConfigurationProvider(), $this);
     }
 
     /**

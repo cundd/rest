@@ -33,8 +33,8 @@ class CacheTest extends AbstractCase
 
         /** @var Cache $fixture */
         $fixture = $this->objectManager->get(Cache::class);
-        $fixture->setCacheLifeTime(10);
-        $fixture->setExpiresHeaderLifeTime(5);
+        $fixture->setCacheLifetime(10);
+        $fixture->setExpiresHeaderLifetime(5);
         $this->fixture = $fixture;
     }
 
@@ -192,29 +192,6 @@ class CacheTest extends AbstractCase
 
     /**
      * @test
-     */
-    public function setCachedValueForRequestWithResourceConfigurationTest()
-    {
-        $response = $this->buildTestResponse(200, [], 'Test content');
-        $uri = 'MyAliasedModel';
-        $request = $this->buildRequestWithUri($uri);
-
-        $cacheProphecy = $this->getFrontendCacheProphecy();
-
-        /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
-        $methodProphecy->shouldBeCalled();
-        $methodProphecy->willReturn('');
-
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $cacheProphecy->reveal();
-        $this->fixture->setCacheLifeTime(-1);
-        $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request, 10));
-    }
-
-    /**
-     * @test
      * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
      * @param array $header
      */
@@ -283,16 +260,16 @@ class CacheTest extends AbstractCase
 
     /**
      * @param RestRequestInterface $request
-     * @param int                  $cacheLifeTime
+     * @param int                  $cacheLifetime
      * @return ResourceConfiguration
      */
-    private function buildResourceConfiguration(RestRequestInterface $request, $cacheLifeTime = -1)
+    private function buildResourceConfiguration(RestRequestInterface $request, $cacheLifetime = -1)
     {
         return new ResourceConfiguration(
             $request->getResourceType(),
             Access::allowed(),
             Access::allowed(),
-            $cacheLifeTime,
+            $cacheLifetime,
             '',
             []
         );

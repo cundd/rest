@@ -2,6 +2,8 @@
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Cache\CacheInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\HandlerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 
@@ -60,9 +62,10 @@ interface ObjectManagerInterface extends TYPO3ObjectManagerInterface
     public function getHandler();
 
     /**
-     * Returns the Cache instance
+     * Returns the Cache instance for the given Resource Type
      *
-     * @return \Cundd\Rest\Cache\CacheInterface
+     * @param ResourceType $resourceType
+     * @return CacheInterface|object
      */
-    public function getCache();
+    public function getCache(ResourceType $resourceType);
 }

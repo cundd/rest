@@ -219,13 +219,13 @@ Caching
 To enable caching set the cache life time:
 
 ```typoscript
-plugin.tx_rest.settings.cacheLifeTime = 3600
+plugin.tx_rest.settings.cacheLifetime = 3600
 ```
 
 Additionally a separate life time for the expires header can be defined:
 
 ```typoscript
-plugin.tx_rest.settings.expiresHeaderLifeTime = 300
+plugin.tx_rest.settings.expiresHeaderLifetime = 300
 ```
 
 
