@@ -171,6 +171,8 @@ class Utility
      */
     public static function normalizeResourceType($resourceType)
     {
+        $resourceTypeString = trim((string)$resourceType, '.');
+
         return implode(
             '-',
             array_map(
@@ -181,7 +183,7 @@ class Utility
 
                     return static::camelCaseToLowerCaseUnderscored($part);
                 },
-                explode('-', (string)$resourceType)
+                explode('-', $resourceTypeString)
             )
         );
     }
@@ -205,6 +207,7 @@ class Utility
     {
         $value = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $input);
 
+        /** @noinspection PhpComposerExtensionStubsInspection */
         return is_callable('mb_strtolower') ? mb_strtolower($value, 'utf-8') : strtolower($value);
     }
 }
