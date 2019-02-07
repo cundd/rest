@@ -87,13 +87,17 @@ abstract class AbstractConfigurationProviderCase extends TestCase
                         'path'          => 'vendor-my_other_ext-my_model',
                         'cacheLifeTime' => 2,
                     ],
+                    'vendor-my_other_ext-my_model2' => [
+                        'path'          => 'vendor-my_other_ext-my_model2',
+                        'cacheLifetime' => 3,
+                    ],
                 ],
             ]
         );
 
         $resourceTypeConfigurations = $this->fixture->getConfiguredResources();
         $this->assertInternalType('array', $resourceTypeConfigurations);
-        $this->assertCount(3, $resourceTypeConfigurations);
+        $this->assertCount(4, $resourceTypeConfigurations);
         array_map(
             function ($c) {
                 $this->assertInstanceOf(ResourceConfiguration::class, $c);
@@ -118,6 +122,12 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $this->assertTrue($resourceConfiguration3->getRead()->isDenied());
         $this->assertTrue($resourceConfiguration3->getWrite()->isDenied());
         $this->assertSame(2, $resourceConfiguration3->getCacheLifetime());
+
+        $resourceConfiguration4 = $resourceTypeConfigurations['vendor-my_other_ext-my_model2'];
+        $this->assertSame('vendor-my_other_ext-my_model2', (string)$resourceConfiguration4->getResourceType());
+        $this->assertTrue($resourceConfiguration4->getRead()->isDenied());
+        $this->assertTrue($resourceConfiguration4->getWrite()->isDenied());
+        $this->assertSame(3, $resourceConfiguration4->getCacheLifetime());
     }
 
     /**

@@ -194,12 +194,12 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->get($this->getFirstExistingClass($classes, HandlerInterface::class));
     }
 
-    public function getCache(): CacheInterface
+    public function getCache(ResourceType $resourceType): CacheInterface
     {
         /** @var CacheFactory $cacheFactory */
         $cacheFactory = $this->get(CacheFactory::class);
 
-        return $cacheFactory->buildCache($this->getConfigurationProvider(), $this);
+        return $cacheFactory->buildCache($resourceType, $this->getConfigurationProvider(), $this);
     }
 
     public function getConfigurationProvider(): ConfigurationProviderInterface

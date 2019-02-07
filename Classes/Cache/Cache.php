@@ -30,14 +30,14 @@ class Cache implements CacheInterface
      *
      * @var integer
      */
-    private $cacheLifeTime = 0;
+    private $cacheLifetime;
 
     /**
      * Life time defined in the expires header
      *
      * @var integer
      */
-    private $expiresHeaderLifeTime = 0;
+    private $expiresHeaderLifetime;
 
     /**
      * @var ResponseFactory
@@ -56,13 +56,13 @@ class Cache implements CacheInterface
 
     public function getCachedValueForRequest(RestRequestInterface $request): ?ResponseInterface
     {
-        $cacheLifeTime = $this->getCacheLifeTime();
+        $cacheLifetime = $this->getCacheLifetime();
 
         /*
          * Use caching if the cache life time configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifeTime !== -1) && $request->getPath();
+        $useCaching = ($cacheLifetime !== -1) && $request->getPath();
         if (!$useCaching) {
             return null;
         }
@@ -85,7 +85,7 @@ class Cache implements CacheInterface
         return $response
             ->withHeader(Header::CONTENT_TYPE, $responseData[Header::CONTENT_TYPE])
             ->withHeader(Header::LAST_MODIFIED, $responseData[Header::LAST_MODIFIED])
-            ->withHeader(Header::EXPIRES, $this->getHttpDate(time() + $this->getExpiresHeaderLifeTime()))
+            ->withHeader(Header::EXPIRES, $this->getHttpDate(time() + $this->getExpiresHeaderLifetime()))
             ->withHeader(Header::CUNDD_REST_CACHED, 'true');
     }
 
@@ -93,21 +93,18 @@ class Cache implements CacheInterface
         RestRequestInterface $request,
         ResponseInterface $response,
         ResourceConfiguration $resourceConfiguration
-    ) {
+    ): void {
         if (false === $this->canBeCached($request, $response)) {
             return;
         }
 
-        $cacheLifeTime = $resourceConfiguration->getCacheLifetime();
-        if ($cacheLifeTime < 0) {
-            $cacheLifeTime = $this->getCacheLifeTime();
-        }
+        $cacheLifetime = $this->getCacheLifetime();
 
         /*
          * Use caching if the cache life time configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifeTime !== -1) && $request->getPath();
+        $useCaching = ($cacheLifetime !== -1) && $request->getPath();
         if (!$useCaching) {
             return;
         }
@@ -123,7 +120,7 @@ class Cache implements CacheInterface
                 Header::LAST_MODIFIED => $this->getHttpDate(time()),
             ],
             $this->getTags($request),
-            $cacheLifeTime
+            $cacheLifetime
         );
     }
 
@@ -147,12 +144,12 @@ class Cache implements CacheInterface
     /**
      * Sets the cache life time
      *
-     * @param int $cacheLifeTime
+     * @param int $cacheLifetime
      * @return $this
      */
-    public function setCacheLifeTime(int $cacheLifeTime): CacheInterface
+    public function setCacheLifetime(int $cacheLifetime): CacheInterface
     {
-        $this->cacheLifeTime = $cacheLifeTime;
+        $this->cacheLifetime = $cacheLifetime;
 
         return $this;
     }
@@ -162,20 +159,20 @@ class Cache implements CacheInterface
      *
      * @return int
      */
-    public function getCacheLifeTime(): int
+    public function getCacheLifetime(): int
     {
-        return $this->cacheLifeTime;
+        return $this->cacheLifetime;
     }
 
     /**
      * Sets the life time defined in the expires header
      *
-     * @param int $expiresHeaderLifeTime
+     * @param int $expiresHeaderLifetime
      * @return $this
      */
-    public function setExpiresHeaderLifeTime(int $expiresHeaderLifeTime): CacheInterface
+    public function setExpiresHeaderLifetime(int $expiresHeaderLifetime): CacheInterface
     {
-        $this->expiresHeaderLifeTime = $expiresHeaderLifeTime;
+        $this->expiresHeaderLifetime = $expiresHeaderLifetime;
 
         return $this;
     }
@@ -185,9 +182,20 @@ class Cache implements CacheInterface
      *
      * @return int
      */
-    public function getExpiresHeaderLifeTime(): int
+    public function getExpiresHeaderLifetime(): int
     {
-        return $this->expiresHeaderLifeTime;
+        return $this->expiresHeaderLifetime;
+    }
+
+    /**
+     * Sets the concrete Cache instance
+     *
+     * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
+     * @internal
+     */
+    public function setCacheInstance($cacheInstance)
+    {
+        $this->cacheInstance = $cacheInstance;
     }
 
     /**
@@ -215,17 +223,6 @@ class Cache implements CacheInterface
         }
 
         return $this->cacheInstance;
-    }
-
-    /**
-     * Sets the concrete Cache instance
-     *
-     * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
-     * @internal
-     */
-    public function setCacheInstance($cacheInstance)
-    {
-        $this->cacheInstance = $cacheInstance;
     }
 
     /**

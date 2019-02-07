@@ -140,11 +140,13 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             }
 
             $resourceType = new ResourceType($normalizeResourceType);
+            $cacheLifetime = $this->detectCacheLifetimeConfiguration($configuration);
+
             $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
                 $resourceType,
                 $readAccess,
                 $writeAccess,
-                isset($configuration['cacheLifeTime']) ? intval($configuration['cacheLifeTime']) : -1,
+                $cacheLifetime,
                 isset($configuration['handlerClass']) ? $configuration['handlerClass'] : '',
                 $this->getAliasesForResourceType($resourceType)
             );
@@ -220,5 +222,21 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         $configuration['path'] = $normalizeResourceType;
 
         return [$configuration, $normalizeResourceType];
+    }
+
+    /**
+     * @param array $configuration
+     * @return int
+     */
+    private function detectCacheLifetimeConfiguration(array $configuration): int
+    {
+        if (isset($configuration['cacheLifeTime']) && is_numeric($configuration['cacheLifeTime'])) {
+            return (int)$configuration['cacheLifeTime'];
+        }
+        if (isset($configuration['cacheLifetime']) && is_numeric($configuration['cacheLifetime'])) {
+            return (int)$configuration['cacheLifetime'];
+        }
+
+        return -1;
     }
 }

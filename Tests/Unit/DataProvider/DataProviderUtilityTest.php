@@ -116,6 +116,8 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
     public function normalizeResourceTypeDataProvider()
     {
         return [
+            ['VirtualObject-Content', 'virtual_object-content'],
+            ['Virtual_object-Content', 'virtual_object-content'],
             ['Document-MyExt-MyModel', 'document-my_ext-my_model'],
             ['MyExt-MyModel', 'my_ext-my_model'],
             ['MyExt-*', 'my_ext-*'],

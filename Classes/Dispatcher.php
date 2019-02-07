@@ -116,7 +116,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         /** @noinspection PhpUnusedParameterInspection */
         ResponseInterface $response
     ) {
-        $cache = $this->objectManager->getCache();
+        $cache = $this->objectManager->getCache($request->getResourceType());
         $cachedResponse = $cache->getCachedValueForRequest($request);
 
         // If a cached response exists return it

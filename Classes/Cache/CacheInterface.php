@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 interface CacheInterface
 {
     /**
-     * Returns the cached value for the given request or NULL if it is not defined
+     * Return the cached value for the given request or NULL if it is not defined
      *
      * @param RestRequestInterface $request
      * @return ResponseInterface|null
@@ -22,7 +22,7 @@ interface CacheInterface
     public function getCachedValueForRequest(RestRequestInterface $request): ?ResponseInterface;
 
     /**
-     * Sets the cache value for the given request
+     * Set the cache value for the given request
      *
      * @param RestRequestInterface  $request
      * @param ResponseInterface     $response
@@ -33,10 +33,10 @@ interface CacheInterface
         RestRequestInterface $request,
         ResponseInterface $response,
         ResourceConfiguration $resourceConfiguration
-    );
+    ): void;
 
     /**
-     * Returns the cache key for the given request
+     * Return the cache key for the given request
      *
      * @param RestRequestInterface $request
      * @return string
@@ -44,32 +44,32 @@ interface CacheInterface
     public function getCacheKeyForRequest(RestRequestInterface $request): string;
 
     /**
-     * Sets the cache life time
+     * Set the cache lifetime
      *
-     * @param int $cacheLifeTime
+     * @param int $cacheLifetime
      * @return $this
      */
-    public function setCacheLifeTime(int $cacheLifeTime): self;
+    public function setCacheLifetime(int $cacheLifetime): self;
 
     /**
-     * Returns the cache life time
+     * Return the cache lifetime
      *
      * @return int
      */
-    public function getCacheLifeTime(): int;
+    public function getCacheLifetime();
 
     /**
-     * Sets the life time defined in the expires header
+     * Set the lifetime defined in the expires header
      *
-     * @param int $expiresHeaderLifeTime
+     * @param int $expiresHeaderLifetime
      * @return $this
      */
-    public function setExpiresHeaderLifeTime(int $expiresHeaderLifeTime): self;
+    public function setExpiresHeaderLifetime(int $expiresHeaderLifetime): self;
 
     /**
-     * Returns the life time defined in the expires header
+     * Return the lifetime defined in the expires header
      *
      * @return int
      */
-    public function getExpiresHeaderLifeTime(): int;
+    public function getExpiresHeaderLifetime();
 }

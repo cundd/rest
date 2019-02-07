@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\DataProviderInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\HandlerInterface;
 
 /**
@@ -74,9 +75,10 @@ interface ObjectManagerInterface
     public function getHandler(): HandlerInterface;
 
     /**
-     * Returns the Cache instance
+     * Returns the Cache instance for the given Resource Type
      *
+     * @param ResourceType $resourceType
      * @return CacheInterface
      */
-    public function getCache(): CacheInterface;
+    public function getCache(ResourceType $resourceType): CacheInterface;
 }
