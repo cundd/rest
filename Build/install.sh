@@ -50,7 +50,7 @@ function install_typo3 {
 
     export TYPO3_PATH_WEB="`pwd`";
 
-    if [ "$TRAVIS_PHP_VERSION" == "hhvm" ]; then
+    if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then
         lib::composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
     fi
     lib::composer install --ignore-platform-reqs --prefer-dist;
@@ -93,7 +93,7 @@ function prepare_database {
 function main {
     cd ${PROJECT_HOME};
 
-    if [ "$#" -eq "0" ];then
+    if [[ "$#" -eq "0" ]];then
         install_dependencies;
         install_typo3;
         prepare_database;

@@ -6,7 +6,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 
 function lib::_tput {
     : ${TERM="dumb"}
-    if [ "$TERM" != "dumb" ] && hash tput &>/dev/null; then
+    if [[ "$TERM" != "dumb" ]] && hash tput &>/dev/null; then
         tput $*;
     fi
 }
@@ -34,7 +34,7 @@ function print_info() {
 
 # Print a debug message
 function print_debug() {
-    if [ "$DEBUG" == "yes" ] || [ "$DEBUG" == "true" ]; then
+    if [[ "$DEBUG" == "yes" ]] || [[ "$DEBUG" == "true" ]]; then
         >&2 echo "[DEBUG] $@";
     fi
 }
@@ -71,9 +71,9 @@ function lib::popd {
 
 # Detects the path to the TYPO3 base
 function get_typo3_base_path {
-    if [ -d "$PROJECT_HOME/../TYPO3.CMS" ]; then
+    if [[ -d "$PROJECT_HOME/../TYPO3.CMS" ]]; then
         echo "$PROJECT_HOME/../TYPO3.CMS";
-    elif [ -d "$PROJECT_HOME/../../../typo3" ]; then
+    elif [[ -d "$PROJECT_HOME/../../../typo3" ]]; then
         dirname "$PROJECT_HOME/../../../typo3";
     fi
 }

@@ -18,20 +18,20 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 : ${typo3DatabaseUsername="root"}
 : ${typo3DatabasePassword="root"}
 
-if [ -e "lib.sh" ]; then source "lib.sh"; fi
+if [[ -e "lib.sh" ]]; then source "lib.sh"; fi
 source "$PROJECT_HOME/Build/lib.sh";
 
 # Detect the phpunit path to use for Functional Tests
 function get_phpunit_path_for_functional_tests() {
     init_typo3_path_web;
     print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit";
-    if [ -e "$TYPO3_PATH_WEB/bin/phpunit" ]; then
+    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
         echo "$TYPO3_PATH_WEB/bin/phpunit";
         return;
     fi
 
     print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit";
-    if [ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]; then
+    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
         echo "$TYPO3_PATH_WEB/vendor/bin/phpunit";
     else
         return 1;
@@ -49,19 +49,19 @@ function check_phpunit_path_for_functional_tests() {
 # Detect the phpunit path to use for Unit Tests
 function get_phpunit_path_for_unit_tests() {
     print_debug "Check if \$PHPUNIT_BINARY is set";
-    if [ "$PHPUNIT_BINARY" != "" ]; then
+    if [[ "$PHPUNIT_BINARY" != "" ]]; then
         echo "$PHPUNIT_BINARY";
         return;
     fi
 
     print_debug "Check phpunit at `pwd`/bin/phpunit";
-    if [ -e "`pwd`/bin/phpunit" ]; then
+    if [[ -e "`pwd`/bin/phpunit" ]]; then
         echo "`pwd`/bin/phpunit";
         return;
     fi
 
     print_debug "Check phpunit at `pwd`/vendor/bin/phpunit";
-    if [ -e "`pwd`/vendor/bin/phpunit" ]; then
+    if [[ -e "`pwd`/vendor/bin/phpunit" ]]; then
         echo "`pwd`/vendor/bin/phpunit";
     else
         get_phpunit_path_for_functional_tests;
@@ -117,9 +117,9 @@ function init_typo3 {
 
 # Test the TYPO3_PATH_WEB environment
 function init_typo3_path_web {
-    if [ "${TYPO3_PATH_WEB}" == "" ]; then
+    if [[ "${TYPO3_PATH_WEB}" == "" ]]; then
         TYPO3_PATH_WEB=$(get_typo3_base_path);
-        if [ "${TYPO3_PATH_WEB}" == "" ]; then
+        if [[ "${TYPO3_PATH_WEB}" == "" ]]; then
             print_error "Please set the TYPO3_PATH_WEB environment variable";
             exit 1;
         fi
