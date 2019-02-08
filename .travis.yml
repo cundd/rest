@@ -28,7 +28,7 @@ matrix:
     exclude:
         # TYPO3 9 LTS with PHP 7.1
         -   php: 7.1
-            env: TYPO3=9.3 DB=mysql
+            env: TYPO3=9.5 DB=mysql
 
         # TYPO3 8 LTS with PHP 7.3
         -   php: 7.3
