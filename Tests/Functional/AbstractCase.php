@@ -71,7 +71,6 @@ class AbstractCase extends FunctionalTestCase
         } catch (DBALException $exception) {
         }
 
-        // Define a fake HTTP host to build URLs
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
         $this->registerLoggerImplementation();
