@@ -8,7 +8,7 @@ php:
 
 env:
     - TYPO3=TYPO3_8-7 DB=mysql
-    - TYPO3=9.3 DB=mysql
+    - TYPO3=9.5 DB=mysql
     - TYPO3=master DB=mysql
 
 matrix:
