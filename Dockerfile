@@ -10,7 +10,7 @@
 # Run tests:
 # > docker-compose run test
 #
-FROM php:7.1-cli
+FROM php:7.3-cli
 
 # -----------------------------------------------------------------
 # PREPARE THE OS
@@ -40,6 +40,7 @@ ENV typo3DatabaseHost=${typo3DatabaseHost}
 
 COPY ./Build /app/Build
 RUN bash /app/Build/install.sh install_typo3 && bash /app/Build/install.sh prepare_database
+RUN ln -s /app/ /app/../TYPO3.CMS/typo3conf/ext/rest
 
 
 VOLUME /app

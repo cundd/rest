@@ -28,10 +28,10 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
-use TYPO3\CMS\Core\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Webmozart\Assert\Assert;
 
 /**
@@ -71,9 +71,8 @@ class AbstractCase extends FunctionalTestCase
         } catch (DBALException $exception) {
         }
 
+        // Define a fake HTTP host to build URLs
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
-
-//        $GLOBALS['TYPO3_DB'] = $this->getDatabaseBackend();
 
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();

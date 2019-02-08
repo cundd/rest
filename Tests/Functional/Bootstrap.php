@@ -40,8 +40,6 @@ class Bootstrap extends AbstractBootstrap
             require_once $functionalTestsBootstrapPath;
         }
 
-        $this->prepareTestBaseClass();
-
         if (!defined('ORIGINAL_ROOT')) {
             $this->printWarning('ORIGINAL_ROOT should be defined by now');
         }
@@ -61,18 +59,12 @@ class Bootstrap extends AbstractBootstrap
             return false;
         }
 
-        $paths = [
-            'v7.x' => $typo3BasePath . '/typo3/sysext/core/Build/FunctionalTestsBootstrap.php',
-            'v8.6' => $typo3BasePath . '/components/testing_framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
-            'v8.7' => $typo3BasePath . '/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php',
-        ];
-        foreach ($paths as $path) {
-            if (file_exists($path)) {
-                return $path;
-            }
+        $path = $typo3BasePath . '/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php';
+        if (file_exists($path)) {
+            return $path;
+        } else {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -149,21 +141,6 @@ class Bootstrap extends AbstractBootstrap
         }
 
         return false;
-    }
-
-    /**
-     * Creates an alias for the Testing Framework if needed
-     */
-    private function prepareTestBaseClass()
-    {
-        if (!class_exists('TYPO3\CMS\Core\Tests\FunctionalTestCase')
-            && class_exists('TYPO3\TestingFramework\Core\Functional\FunctionalTestCase', true)
-        ) {
-            class_alias(
-                'TYPO3\TestingFramework\Core\Functional\FunctionalTestCase',
-                'TYPO3\CMS\Core' . '\Tests\FunctionalTestCase'
-            );
-        }
     }
 
     /**

@@ -20,6 +20,7 @@ PROJECT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )";
 # @internal
 : ${TRAVIS_PHP_VERSION="7.0"}
 
+if [[ -e "lib.sh" ]]; then source "lib.sh"; fi
 source "$PROJECT_HOME/Build/lib.sh";
 
 
