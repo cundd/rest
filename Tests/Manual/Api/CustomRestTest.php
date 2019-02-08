@@ -361,4 +361,29 @@ class CustomRestTest extends AbstractApiCase
             ['cundd-custom_rest-person/firstname', 404],
         ];
     }
+
+    /**
+     * @test
+     * @dataProvider getCorrectTranslationDataProvider
+     */
+    public function getCorrectTranslationTest($language, $expected)
+    {
+        $response = $this->requestJson(
+            '/customhandler/translate/tx_customrest_domain_model_person.first_name.json',
+            'GET',
+            null,
+            ['Accept-Language' => $language]
+        );
+        $this->assertSame('tx_customrest_domain_model_person.first_name', $response->getParsedBody()['original']);
+        $this->assertSame($expected, $response->getParsedBody()['translated']);
+    }
+
+    public function getCorrectTranslationDataProvider(): array
+    {
+        return [
+            ['en-US', 'First Name'],
+            ['de-DE', 'Vorname'],
+        ];
+    }
+
 }

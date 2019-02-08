@@ -45,4 +45,8 @@ plugin.tx_rest.settings {
     aliases {
         customhandler = cundd-custom_rest-custom_handler
     }
+
+    languages {
+        de-DE = 1
+    }
 }
