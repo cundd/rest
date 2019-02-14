@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\VirtualObject\Backend;
 
 use Cundd\Rest\Tests\Functional\VirtualObject\AbstractDatabaseCase;
+use Cundd\Rest\VirtualObject\Persistence\Backend\Constraint;
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
+use Cundd\Rest\VirtualObject\Persistence\OperatorInterface;
 use Cundd\Rest\VirtualObject\Persistence\Query;
-use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 abstract class AbstractBackendTest extends AbstractDatabaseCase
 {
@@ -35,6 +36,32 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     * @dataProvider objectCountByQueryDataProvider
+     * @param array $query
+     * @param int   $expected
+     */
+    public function getObjectCountByQueryWithConstraint(array $query, $expected)
+    {
+        $result = $this->fixture->getObjectCountByQuery(
+            self::$testDatabaseTable,
+            new Query(
+                array_map(
+                    function ($q) {
+                        if (is_array($q)) {
+                            return new Constraint($q['operator'], $q['value']);
+                        } else {
+                            return Constraint::equalTo($q);
+                        }
+                    },
+                    $query
+                )
+            )
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
      * @dataProvider objectDataByQueryDataProvider
      * @param array $query
      * @param array $expected
@@ -45,6 +72,31 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @test
+     * @dataProvider objectDataByQueryDataProvider
+     * @param array $query
+     * @param array $expected
+     */
+    public function getObjectDataByQueryWithConstraints(array $query, array $expected)
+    {
+        $result = $this->fixture->getObjectDataByQuery(
+            self::$testDatabaseTable,
+            new Query(
+                array_map(
+                    function ($q) {
+                        if (is_array($q)) {
+                            return new Constraint($q['operator'], $q['value']);
+                        } else {
+                            return Constraint::equalTo($q);
+                        }
+                    },
+                    $query
+                )
+            )
+        );
+        $this->assertEquals($expected, $result);
+    }
 
     /**
      * @test
@@ -153,7 +205,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                 [
                     'content_time' => [
                         'value'    => time(),
-                        'operator' => QueryInterface::OPERATOR_GREATER_THAN,
+                        'operator' => OperatorInterface::OPERATOR_GREATER_THAN,
 
                     ],
                     'title'        => 'Test entry',
@@ -163,7 +215,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                 [
                     'content_time' => [
                         'value'    => time(),
-                        'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+                        'operator' => OperatorInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
 
                     ],
                     'title'        => 'Test entry',
@@ -220,7 +272,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                 [
                     'content_time' => [
                         'value'    => 1395678400,
-                        'operator' => QueryInterface::OPERATOR_GREATER_THAN,
+                        'operator' => OperatorInterface::OPERATOR_GREATER_THAN,
                     ],
                     'title'        => 'Test entry',
                 ],
@@ -230,9 +282,18 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                 [
                     'content_time' => [
                         'value'    => 1395678480,
-                        'operator' => QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+                        'operator' => OperatorInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
                     ],
                     'title'        => 'Test entry',
+                ],
+                self::$testData,
+            ],
+            [
+                [
+                    'uid' => [
+                        'value'    => [100, 200],
+                        'operator' => OperatorInterface::OPERATOR_IN,
+                    ],
                 ],
                 self::$testData,
             ],

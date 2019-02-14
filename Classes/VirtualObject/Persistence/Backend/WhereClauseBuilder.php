@@ -7,6 +7,7 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
+use Cundd\Rest\VirtualObject\Persistence\OperatorInterface;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 /**
@@ -129,22 +130,7 @@ class WhereClauseBuilder
         }
 
         InvalidColumnNameException::assertValidColumnName($column);
-
-        if (is_scalar($value) || $value === null || is_object($value)) {
-            $operator = '=';
-            $comparisonValue = $value;
-        } elseif (is_array($value)) {
-            $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
-            $comparisonValue = $value['value'];
-        } else {
-            throw new InvalidOperatorException(
-                sprintf(
-                    'Operator could not be detected for type "%s"',
-                    is_object($value) ? get_class($value) : gettype($value)
-                ),
-                1404821478
-            );
-        }
+        list('operator' => $operator, 'value' => $comparisonValue) = $this->extractOperatorAndValue($value);
 
         if ($prepareValue === null) {
             $prepareValue = $this->getDefaultPrepareValueCallback();
@@ -153,17 +139,27 @@ class WhereClauseBuilder
             $escapeColumnName = $this->getDefaultEscapeColumnNameCallback();
         }
 
-        $bindingKey = $bindingPrefix . $column;
-        $this->appendSql(
-            $escapeColumnName($column)
-            . ' ' . $operator . ' '
-            . ':' . $bindingKey . '',
-            $combinator
-        );
-        $this->bindVariable(
-            $bindingKey,
-            $prepareValue($comparisonValue)
-        );
+        if ($operator === OperatorInterface::OPERATOR_IN) {
+            $this->addInConstraint(
+                $prepareValue($comparisonValue),
+                $column,
+                $bindingPrefix,
+                $combinator,
+                $escapeColumnName
+            );
+        } else {
+            $bindingKey = $bindingPrefix . $column;
+            $this->appendSql(
+                $escapeColumnName($column)
+                . ' ' . $this->resolveOperator($operator) . ' '
+                . ':' . $bindingKey . '',
+                $combinator
+            );
+            $this->bindVariable(
+                $bindingKey,
+                $prepareValue($comparisonValue)
+            );
+        }
 
         return $this;
     }
@@ -199,38 +195,75 @@ class WhereClauseBuilder
      */
     public static function resolveOperator($operator)
     {
-        if (!is_scalar($operator)) {
-            throw new InvalidOperatorException('Operator must be a scalar value', 1541074670);
-        }
-        switch ($operator) {
+        switch (static::normalizeOperator($operator)) {
             case QueryInterface::OPERATOR_IN:
-            case 'IN':
-            case 'in':
                 return 'IN';
             case QueryInterface::OPERATOR_EQUAL_TO:
-            case '=':
-            case '==':
                 return '=';
             case QueryInterface::OPERATOR_NOT_EQUAL_TO:
-            case '!=':
-            case '<>':
                 return '!=';
             case QueryInterface::OPERATOR_LESS_THAN:
-            case '<':
                 return '<';
             case QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
-            case '<=':
                 return '<=';
             case QueryInterface::OPERATOR_GREATER_THAN:
-            case '>':
                 return '>';
             case QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
-            case '>=':
                 return '>=';
             case QueryInterface::OPERATOR_LIKE:
+                return 'LIKE';
+            default:
+                throw new \OutOfRangeException('Unsupported operator encountered. Normalization failed', 1242816074);
+        }
+    }
+
+    /**
+     * Returns the SQL operator constant for the given operator
+     *
+     * @param string $operator One of the OPERATOR_* constants
+     * @throws InvalidOperatorException
+     * @return int One of the OPERATOR_* constants
+     */
+    public static function normalizeOperator($operator): int
+    {
+        if (!is_scalar($operator)) {
+            throw new InvalidOperatorException(
+                sprintf(
+                    'Operator must be a scalar value, "%s" given',
+                    is_object($operator) ? get_class($operator) : gettype($operator)
+                ),
+                1541074670
+            );
+        }
+        switch ($operator) {
+            case 'IN':
+            case 'in':
+            case QueryInterface::OPERATOR_IN:
+                return QueryInterface::OPERATOR_IN;
+            case '=':
+            case '==':
+            case QueryInterface::OPERATOR_EQUAL_TO:
+                return QueryInterface::OPERATOR_EQUAL_TO;
+            case '!=':
+            case '<>':
+            case QueryInterface::OPERATOR_NOT_EQUAL_TO:
+                return QueryInterface::OPERATOR_NOT_EQUAL_TO;
+            case '<':
+            case QueryInterface::OPERATOR_LESS_THAN:
+                return QueryInterface::OPERATOR_LESS_THAN;
+            case '<=':
+            case QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
+                return QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO;
+            case '>':
+            case QueryInterface::OPERATOR_GREATER_THAN:
+                return QueryInterface::OPERATOR_GREATER_THAN;
+            case '>=':
+            case QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
+                return QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO;
             case 'LIKE':
             case 'like':
-                return 'LIKE';
+            case QueryInterface::OPERATOR_LIKE:
+                return QueryInterface::OPERATOR_LIKE;
             default:
                 throw new InvalidOperatorException('Unsupported operator encountered.', 1242816073);
         }
@@ -282,5 +315,90 @@ class WhereClauseBuilder
         return function ($propertyName) {
             return '`' . $propertyName . '`';
         };
+    }
+
+    /**
+     * @param $value
+     * @return array
+     */
+    private function extractOperatorAndValue($value): array
+    {
+        if ($value instanceof Constraint) {
+            return [
+                'operator' => $this->normalizeOperator($value->getOperator()),
+                'value'    => $value->getValue(),
+            ];
+        }
+
+        if (is_scalar($value) || $value === null || is_object($value)) {
+            return [
+                'operator' => OperatorInterface::OPERATOR_EQUAL_TO,
+                'value'    => $value,
+            ];
+        }
+
+        if (is_array($value)) {
+            $operator = isset($value['operator'])
+                ? $this->normalizeOperator($value['operator'])
+                : OperatorInterface::OPERATOR_EQUAL_TO;
+
+            return [
+                'operator' => $operator,
+                'value'    => $value['value'],
+            ];
+        }
+
+        throw new InvalidOperatorException(
+            sprintf(
+                'Operator could not be detected for type "%s"',
+                is_object($value) ? get_class($value) : gettype($value)
+            ),
+            1404821478
+        );
+    }
+
+    /**
+     * @param array       $values
+     * @param string|null $column
+     * @param string      $bindingPrefix
+     * @param string      $combinator
+     * @param callable    $escapeColumnName
+     * @return WhereClauseBuilder
+     */
+    private function addInConstraint(
+        array $values,
+        string $column,
+        string $bindingPrefix,
+        string $combinator,
+        callable $escapeColumnName
+    ): self {
+        $bindingKeyBase = ':' . $bindingPrefix . $column;
+
+        $hasOnlyIntegerValues = count(array_filter($values, 'is_int')) === count($values);
+        if ($hasOnlyIntegerValues) {
+            return $this->appendSql(
+                $escapeColumnName($column)
+                . ' ' . $this->resolveOperator(OperatorInterface::OPERATOR_IN) . ' '
+                . '(' . implode(',', array_values($values)) . ')',
+                $combinator
+            );
+        }
+
+        $i = 0;
+        $bindings = [];
+        foreach ($values as $value) {
+            $currentKey = $bindingKeyBase . $i;
+            $bindings[$currentKey] = $value;
+
+            $this->bindVariable($currentKey, $value);
+            $i += 1;
+        }
+
+        return $this->appendSql(
+            $escapeColumnName($column)
+            . ' ' . $this->resolveOperator(OperatorInterface::OPERATOR_IN) . ' '
+            . '(' . implode(',', array_keys($bindings)) . ')',
+            $combinator
+        );
     }
 }

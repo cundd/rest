@@ -160,11 +160,21 @@ class V7Backend extends AbstractBackend
 
             $column = $configuration ? $configuration->getSourceKeyForProperty($property) : $property;
             InvalidColumnNameException::assertValidColumnName($column);
-
+            $operator = null;
+            $comparisonValue = null;
             if (is_scalar($value) || $value === null) {
                 $operator = '=';
                 $comparisonValue = $adapter->fullQuoteStr($value, $tableName);
-            } elseif (is_array($value)) {
+            } elseif ($value instanceof Constraint) {
+                $value = [
+                    'operator' => $value->getOperator(),
+                    'value'    => $value->getValue(),
+                ];
+
+                // Continue with the value-array
+            }
+
+            if (is_array($value)) {
                 /**
                  * If you don't want the given value to be escaped set the constraint's "doNotEscapeValue" key to the
                  * name of it's property key
@@ -185,7 +195,9 @@ class V7Backend extends AbstractBackend
                     $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
                 }
                 $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
-            } else {
+            }
+
+            if ($operator === null) {
                 throw new InvalidOperatorException('Operator could not be detected', 1404821478);
             }
             $constraints[] = ''
