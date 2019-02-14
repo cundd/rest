@@ -8,104 +8,27 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 /**
  * A persistence query interface
  */
-interface QueryInterface
+interface QueryInterface extends OperatorInterface
 {
-    /**
-     * The '=' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_EQUAL_TO = 1;
-
-    /**
-     * The '!=' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_NOT_EQUAL_TO = 2;
-
-    /**
-     * The '<' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_LESS_THAN = 3;
-
-    /**
-     * The '<=' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
-
-    /**
-     * The '>' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_GREATER_THAN = 5;
-
-    /**
-     * The '>=' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
-
-    /**
-     * The 'like' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_LIKE = 7;
-
-    /**
-     * The 'contains' comparison operator for collections.
-     *
-     * @api
-     */
-    const OPERATOR_CONTAINS = 8;
-
-    /**
-     * The 'in' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_IN = 9;
-
-    /**
-     * The 'is NULL' comparison operator.
-     *
-     * @api
-     */
-    const OPERATOR_IS_NULL = 10;
-
-    /**
-     * The 'is empty' comparison operator for collections.
-     *
-     * @api
-     */
-    const OPERATOR_IS_EMPTY = 11;
-
     /**
      * Logical AND
      */
-    const COMBINATOR_AND = 'AND';
+    public const COMBINATOR_AND = 'AND';
 
     /**
      * Logical OR
      */
-    const COMBINATOR_OR = 'OR';
+    public const COMBINATOR_OR = 'OR';
 
     /**
      * Ascending ordering of results
      */
-    const ORDER_ASCENDING = 'ASC';
+    public const ORDER_ASCENDING = 'ASC';
 
     /**
      * Descending ordering of results
      */
-    const ORDER_DESCENDING = 'DESC';
+    public const ORDER_DESCENDING = 'DESC';
 
     /**
      * Executes the query and returns the result
