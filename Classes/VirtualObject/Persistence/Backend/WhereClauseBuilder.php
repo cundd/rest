@@ -44,7 +44,7 @@ class WhereClauseBuilder
         QueryInterface $query,
         callable $prepareValue = null,
         callable $escapeColumnName = null,
-        $bindingPrefix = ''
+        string $bindingPrefix = ''
     ) {
         $this->reset();
 
@@ -75,8 +75,8 @@ class WhereClauseBuilder
         array $constraints,
         callable $prepareValue = null,
         callable $escapeColumnName = null,
-        $bindingPrefix = '',
-        $combinator = QueryInterface::COMBINATOR_AND,
+        string $bindingPrefix = '',
+        string $combinator = QueryInterface::COMBINATOR_AND,
         ConfigurationInterface $configuration = null
     ) {
         WhereClause::assertCombinator($combinator);
@@ -98,24 +98,24 @@ class WhereClauseBuilder
     /**
      * Add a constraint to the WHERE-clause
      *
-     * @param string                      $property
-     * @param mixed                       $value
-     * @param callable|null               $prepareValue     `mixed function(mixed $queryValue)`
-     * @param callable|null               $escapeColumnName `string function(string $propertyName)`
-     * @param string                      $bindingPrefix
-     * @param string                      $combinator
-     * @param ConfigurationInterface|null $configuration
+     * @param string                                   $property
+     * @param int|float|string|array|Constraint|object $value
+     * @param callable|null                            $prepareValue     `mixed function(mixed $queryValue)`
+     * @param callable|null                            $escapeColumnName `string function(string $propertyName)`
+     * @param string                                   $bindingPrefix
+     * @param string                                   $combinator
+     * @param ConfigurationInterface|null              $configuration
      * @return WhereClauseBuilder
      * @throws InvalidColumnNameException
      * @throws InvalidOperatorException
      */
     public function addConstraint(
-        $property,
+        string $property,
         $value,
         callable $prepareValue = null,
         callable $escapeColumnName = null,
-        $bindingPrefix = '',
-        $combinator = QueryInterface::COMBINATOR_AND,
+        string $bindingPrefix = '',
+        string $combinator = QueryInterface::COMBINATOR_AND,
         ConfigurationInterface $configuration = null
     ) {
         WhereClause::assertCombinator($combinator);
