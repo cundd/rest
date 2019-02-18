@@ -278,6 +278,11 @@ class HttpClient
             $headerSize = curl_getinfo($curlClient, CURLINFO_HEADER_SIZE);
             $responseHeaders = $this->parseResponseHeaders(substr($response, 0, $headerSize), $statusCode);
             $responseBody = substr($response, $headerSize);
+        } else {
+            $statusCode = null;
+            $responseBody = null;
+            $responseBody = null;
+            $responseHeaders = null;
         }
 
         $error = curl_error($curlClient);
@@ -288,7 +293,6 @@ class HttpClient
             throw new \RuntimeException($error);
         }
 
-        //$status, $body, $parsedBody, array $headers, $requestData
         return new HttpResponse(
             $statusCode,
             $responseBody,
