@@ -221,15 +221,6 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                     'title'        => 'Test entry',
                 ],
             ],
-            // `doNotEscapeValue` is not supported by the Doctrine backend
-            // [
-            //     [
-            //         'title' => [
-            //             'doNotEscapeValue' => 'title',
-            //             'value'            => "'Test entry' and content_time = '" . time() . "'",
-            //         ],
-            //     ]
-            // ]
         ];
     }
 
@@ -297,16 +288,6 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                 ],
                 self::$testData,
             ],
-            // `doNotEscapeValue` is not supported by the Doctrine backend
-            // [
-            //     [
-            //         'title' => [
-            //             'doNotEscapeValue' => 'title',
-            //             'value'            => "'Test entry' and content_time = '1395678480'",
-            //         ],
-            //     ],
-            //     self::$testData,
-            // ],
         ];
     }
 }

@@ -175,25 +175,7 @@ class V7Backend extends AbstractBackend
             }
 
             if (is_array($value)) {
-                /**
-                 * If you don't want the given value to be escaped set the constraint's "doNotEscapeValue" key to the
-                 * name of it's property key
-                 *
-                 * Example:
-                 * Use the raw value for the property "dangerousValue"
-                 *
-                 * $constraints = array(
-                 *        "dangerousValue" => array(
-                 *            "value" => "a raw unescaped value",
-                 *            "doNotEscapeValue" => "dangerousValue"
-                 *        )
-                 * );
-                 */
-                if (isset($value['doNotEscapeValue']) && $value['doNotEscapeValue'] === $property) {
-                    $comparisonValue = $value['value'];
-                } else {
-                    $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
-                }
+                $comparisonValue = $adapter->fullQuoteStr($value['value'], $tableName);
                 $operator = isset($value['operator']) ? $this->resolveOperator($value['operator']) : '=';
             }
 
