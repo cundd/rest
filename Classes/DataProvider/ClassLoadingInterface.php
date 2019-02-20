@@ -27,8 +27,8 @@ interface ClassLoadingInterface
     /**
      * Return the domain model class name for the given API resource type
      *
-     * @param ResourceType $resourceType API resource type to get the repository for
+     * @param ResourceType $resourceType
      * @return string
      */
-    public function getModelClassForResourceType(ResourceType $resourceType);
+    public function getModelClassForResourceType(ResourceType $resourceType): string;
 }

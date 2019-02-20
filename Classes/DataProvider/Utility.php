@@ -66,6 +66,32 @@ class Utility
     }
 
     /**
+     * Return the Domain Model class or interface name for the given API resource type
+     *
+     * @param ResourceType $resourceType
+     * @param bool         $convertPlural
+     * @return string|null
+     */
+    public static function getModelEntityForResourceType(ResourceType $resourceType, $convertPlural = true): ?string
+    {
+        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType, $convertPlural);
+        $namespaceVersion = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
+        $underscoreVersion = 'Tx_' . $extension . '_Domain_Model_' . $model;
+
+        if (class_exists($namespaceVersion)) {
+            return $namespaceVersion;
+        } elseif (class_exists($underscoreVersion)) {
+            return $underscoreVersion;
+        } elseif (interface_exists($namespaceVersion)) {
+            return $namespaceVersion;
+        } elseif (interface_exists($underscoreVersion)) {
+            return $underscoreVersion;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Tries to generate the API resource type for the given class name
      *
      * @param string $className

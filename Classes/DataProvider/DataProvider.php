@@ -113,15 +113,14 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $repository;
     }
 
-    public function getModelClassForResourceType(ResourceType $resourceType)
+    public function getModelClassForResourceType(ResourceType $resourceType): string
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
-        $modelClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
-        if (!class_exists($modelClass)) {
-            $modelClass = 'Tx_' . $extension . '_Domain_Model_' . $model;
+        $modelEntityForResourceType = Utility::getModelEntityForResourceType($resourceType);
+        if ($modelEntityForResourceType && class_exists($modelEntityForResourceType)) {
+            return $modelEntityForResourceType;
         }
 
-        return $modelClass;
+        return '';
     }
 
     public function fetchAllModels(ResourceType $resourceType)
