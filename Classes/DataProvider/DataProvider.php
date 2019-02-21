@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\ClassLoadingException;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use Cundd\Rest\SingletonInterface;
@@ -93,17 +94,22 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
         if (!$repository) {
             list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
-            $message = sprintf(
-                'Repository for resource type "%s" could not be found. Tried "%s" and "%s"',
-                $resourceType,
-                ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
-                'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
-            );
 
             if ($exception) {
-                throw new \LogicException($message . ': ' . $exception->getMessage(), 1542116783, $exception);
+                $message = sprintf(
+                    'Repository for resource type "%s" could not be created: %s',
+                    $resourceType,
+                    $exception->getMessage()
+                );
+                throw new ClassLoadingException($message, 1542116783, $exception);
             } else {
-                throw new \LogicException($message, 1542116782);
+                $message = sprintf(
+                    'Repository for resource type "%s" could not be found. Tried "%s" and "%s"',
+                    $resourceType,
+                    ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
+                    'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
+                );
+                throw new ClassLoadingException($message, 1542116782);
             }
         }
         /** @var QuerySettingsInterface $defaultQuerySettings */
