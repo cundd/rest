@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\Persistence\Backend\DoctrineBackend;
-use Cundd\Rest\VirtualObject\Persistence\Backend\V7Backend;
 use Cundd\Rest\VirtualObject\Persistence\Backend\WhereClauseBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -18,27 +17,9 @@ abstract class BackendFactory
      */
     public static function getBackend(): BackendInterface
     {
-        if (false === static::getUseV7Backend()) {
-            /** @var ConnectionPool $connection */
-            $connection = GeneralUtility::makeInstance(ConnectionPool::class);
+        /** @var ConnectionPool $connection */
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class);
 
-            return new DoctrineBackend($connection, new WhereClauseBuilder());
-        } else {
-            return new V7Backend($GLOBALS['TYPO3_DB']);
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    private static function getUseV7Backend()
-    {
-        if (!isset($GLOBALS['TYPO3_DB'])) {
-            return false;
-        }
-
-        $database = $GLOBALS['TYPO3_DB'];
-
-        return is_object($database) && $database instanceof \TYPO3\CMS\Core\Database\DatabaseConnection;
+        return new DoctrineBackend($connection, new WhereClauseBuilder());
     }
 }

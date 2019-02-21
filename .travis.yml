@@ -18,13 +18,6 @@ matrix:
         -   php: hhvm
         -   env: TYPO3=master DB=mysql
 
-    include:
-        # TYPO3 7.6
-        -   php: 7.1
-            env: TYPO3=TYPO3_7-6 DB=mysql
-        -   php: 7.2
-            env: TYPO3=TYPO3_7-6 DB=mysql
-
     exclude:
         # TYPO3 9 LTS with PHP 7.1
         -   php: 7.1
