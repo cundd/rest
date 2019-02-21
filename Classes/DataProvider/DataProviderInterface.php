@@ -70,10 +70,10 @@ interface DataProviderInterface
      * Return the property data from the given Model
      *
      * @param object|DomainObjectInterface $model
-     * @param string                       $propertyKey
+     * @param string                       $propertyParameter
      * @return mixed
      */
-    public function getModelProperty($model, $propertyKey);
+    public function getModelProperty($model, string $propertyParameter);
 
     /**
      * Add or update the given Model in the repository

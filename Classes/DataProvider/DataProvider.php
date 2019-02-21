@@ -162,15 +162,27 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $model;
     }
 
-    public function getModelProperty($model, $propertyKey)
+    public function getModelProperty($model, string $propertyParameter)
     {
-        if ($model instanceof DomainObjectInterface) {
-            return $this->getModelData($model->_getProperty($propertyKey));
+        $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
+
+        $normalizedGetter = 'get' . ucfirst($propertyKey);
+        if (method_exists($model, $normalizedGetter) && is_callable([$model, $normalizedGetter])) {
+            return $this->getModelData($model->$normalizedGetter());
         }
 
-        $getter = 'get' . ucfirst($propertyKey);
-        if (is_callable([$model, $getter])) {
+        $getter = 'get' . ucfirst($propertyParameter);
+        if (method_exists($model, $getter) && is_callable([$model, $getter])) {
             return $this->getModelData($model->$getter());
+        }
+
+        if ($model instanceof DomainObjectInterface) {
+            $value = $model->_getProperty($propertyKey);
+            if (null !== $value) {
+                return $this->getModelData($value);
+            } else {
+                return $this->getModelData($model->_getProperty($propertyParameter));
+            }
         }
 
         return null;
@@ -243,6 +255,20 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $model = $this->getModelWithIdentityForResourceType($identifier, $resourceType);
 
         return $model ? $model->getUid() : null;
+    }
+
+    /**
+     * Convert incoming property parameter names into property keys
+     *
+     * Example:
+     *  'dog-name' => 'dogName'
+     *
+     * @param string $propertyParameter
+     * @return string
+     */
+    protected function convertPropertyParameterToKey(string $propertyParameter): string
+    {
+        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $propertyParameter)));
     }
 
     /**

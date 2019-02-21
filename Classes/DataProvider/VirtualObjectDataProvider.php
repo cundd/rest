@@ -117,12 +117,16 @@ class VirtualObjectDataProvider extends DataProvider
         return $properties;
     }
 
-    public function getModelProperty($model, $propertyKey)
+    public function getModelProperty($model, string $propertyParameter)
     {
         /** @var VirtualObject $model */
         $modelData = $model->getData();
+        $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
         if (isset($modelData[$propertyKey])) {
             return $modelData[$propertyKey];
+        }
+        if (isset($modelData[$propertyParameter])) {
+            return $modelData[$propertyParameter];
         }
 
         return null;
