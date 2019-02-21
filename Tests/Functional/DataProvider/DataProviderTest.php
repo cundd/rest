@@ -80,6 +80,8 @@ class DataProviderTest extends AbstractCase
         /** @var ObjectProphecy|PropertyMapper $propertyMapperMock */
         $propertyMapperMock = $this->prophesize(PropertyMapper::class);
 
+        $this->buildClassIfNotExists('Tx_AnotherExt_Domain_Model_MyModel');
+
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $propertyMapperMock->convert(
             Argument::exact($data),
@@ -115,8 +117,6 @@ class DataProviderTest extends AbstractCase
             $identityProvider
         );
 
-        //$this->injectPropertyIntoObject()
-        //$this->injectPropertyIntoObject($propertyMapperMock->reveal(), 'propertyMapper', $this->fixture);
         $this->fixture->createModel($data, new ResourceType('a_vendor-another_ext-my_model'));
     }
 
