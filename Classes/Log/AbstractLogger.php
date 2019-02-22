@@ -25,7 +25,7 @@ abstract class AbstractLogger extends \Psr\Log\AbstractLogger implements LoggerI
 
     protected function getExtensionConfiguration($key)
     {
-        if (class_exists(ExtensionConfiguration::class)) {
+        if (class_exists(GeneralUtility::class) && class_exists(ExtensionConfiguration::class)) {
             try {
                 return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('rest', $key);
             } catch (\Exception $e) {
