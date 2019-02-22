@@ -25,11 +25,27 @@ abstract class AbstractLogger extends \Psr\Log\AbstractLogger implements LoggerI
 
     protected function getExtensionConfiguration($key)
     {
-        try {
-            return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('rest', $key);
-        } catch (\Exception $e) {
-            return null;
+        if (class_exists(ExtensionConfiguration::class)) {
+            try {
+                return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('rest', $key);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
+
+        // Read the configuration from the globals
+        static $configuration;
+        if (!$configuration) {
+            if (isset($GLOBALS['TYPO3_CONF_VARS'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'])
+                && isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest'])
+            ) {
+                $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rest']);
+            }
+        }
+
+        return isset($configuration[$key]) ? $configuration[$key] : null;
     }
 
     /**
