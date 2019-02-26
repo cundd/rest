@@ -10,26 +10,30 @@ interface SqlExpressionInterface
     /**
      * Set the SQL expression string
      *
-     * @param string $expression
+     * @param string|Parentheses $expression
      * @return self
      */
-    public function setExpression(string $expression): self;
+    public function setExpression($expression): self;
 
     /**
      * Append the string to the SQL expression
      *
-     * @param string $expression
-     * @param string $combinator
+     * @param string|Parentheses $expression
+     * @param string             $combinator
      * @return self
      */
-    public function appendSql(string $expression, string $combinator = QueryInterface::COMBINATOR_AND): self;
+    public function appendSql($expression, ?string $combinator = QueryInterface::COMBINATOR_AND): self;
 
     /**
+     * Return the expression as string
+     *
      * @return string
      */
     public function getExpression(): string;
 
     /**
+     * Return the dictionary of bound variables
+     *
      * @return array
      */
     public function getBoundVariables(): array;

@@ -7,6 +7,7 @@ use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
+use Cundd\Rest\VirtualObject\Persistence\Exception\WhereClauseException;
 use Cundd\Rest\VirtualObject\Persistence\OperatorInterface;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
@@ -19,6 +20,13 @@ class WhereClauseBuilder
      * @var WhereClause
      */
     private $where;
+
+    /**
+     * The current level of nested opened parentheses
+     *
+     * @var int
+     */
+    private $openedParenthesesLevel = 0;
 
     /**
      * WHERE-Clause builder
@@ -165,6 +173,33 @@ class WhereClauseBuilder
     }
 
     /**
+     * Insert opening parentheses into the SQL query
+     *
+     * @param string $combinator
+     * @return $this
+     */
+    public function openParentheses(string $combinator = QueryInterface::COMBINATOR_AND)
+    {
+        $this->openedParenthesesLevel += 1;
+        $this->where->appendSql(Parentheses::open(), $combinator);
+
+        return $this;
+    }
+
+    /**
+     * Insert closing parentheses into the SQL query
+     *
+     * @return $this
+     */
+    public function closeParentheses()
+    {
+        $this->openedParenthesesLevel -= 1;
+        $this->where->appendSql(Parentheses::close(), null);
+
+        return $this;
+    }
+
+    /**
      * Reset the WHERE-clause
      *
      * @return self
@@ -180,9 +215,14 @@ class WhereClauseBuilder
      * Return the configured WHERE-clause
      *
      * @return WhereClause
+     * @throws WhereClauseException if parentheses are opened that are not closed
      */
     public function getWhere()
     {
+        if ($this->openedParenthesesLevel > 0) {
+            throw new WhereClauseException(sprintf('Detected %d unclosed parentheses', $this->openedParenthesesLevel));
+        }
+
         return $this->where;
     }
 

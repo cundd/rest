@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use Cundd\Rest\VirtualObject\Persistence\Exception\WhereClauseException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 
 abstract class AbstractSqlExpression implements SqlExpressionInterface
 {
-    private $expression = '';
+    /**
+     * @var string[]
+     */
+    private $expressionParts = [];
     private $boundVariables = [];
 
     /**
@@ -18,35 +22,43 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
      */
     public function __construct(string $sqlExpression = '', array $boundVariables = [])
     {
-        $this->expression = $sqlExpression;
+        $this->setExpression($sqlExpression);
         $this->boundVariables = $boundVariables;
     }
 
-    public function setExpression(string $expression): SqlExpressionInterface
+    public function setExpression($expression): SqlExpressionInterface
     {
-        $this->expression = $expression;
+        $this->assertExpression($expression);
+        if (trim($expression) !== '') {
+            $this->expressionParts = [$expression];
+        } else {
+            $this->expressionParts = [];
+        }
 
         return $this;
     }
 
     public function appendSql(
-        string $expression,
-        string $combinator = QueryInterface::COMBINATOR_AND
+        $expression,
+        ?string $combinator = QueryInterface::COMBINATOR_AND
     ): SqlExpressionInterface {
-        $this->assertCombinator($combinator);
-
-        if ($this->expression) {
-            $this->expression .= ' ' . strtoupper($combinator) . ' ' . $expression;
-        } else {
-            $this->expression = $expression;
+        $this->assertExpression($expression);
+        if (null !== $combinator) {
+            $this->assertCombinator($combinator);
         }
+
+        $lastExpressionPart = end($this->expressionParts);
+        if ($lastExpressionPart && false === ($lastExpressionPart instanceof Parentheses) && $combinator) {
+            $this->expressionParts[] = strtoupper($combinator);
+        }
+        $this->expressionParts[] = $expression;
 
         return $this;
     }
 
     public function getExpression(): string
     {
-        return $this->expression;
+        return implode(' ', $this->expressionParts);
     }
 
     public function getBoundVariables(): array
@@ -68,11 +80,12 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
 
     /**
      * @param $combinator
+     * @throws WhereClauseException
      */
     public static function assertCombinator($combinator)
     {
         if (!is_string($combinator)) {
-            throw new \InvalidArgumentException(
+            throw new WhereClauseException(
                 sprintf(
                     'Logical combinator must be of type string, \'%s\' given',
                     is_object($combinator) ? get_class($combinator) : gettype($combinator)
@@ -80,11 +93,30 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
             );
         }
         if (!in_array(strtoupper($combinator), [QueryInterface::COMBINATOR_AND, QueryInterface::COMBINATOR_OR])) {
-            throw new \InvalidArgumentException(
+            throw new WhereClauseException(
                 sprintf(
                     'Logical combinator must be either \'%s\' or \'%s\'',
                     QueryInterface::COMBINATOR_AND,
                     QueryInterface::COMBINATOR_OR
+                )
+            );
+        }
+    }
+
+    /**
+     * @param $expression
+     * @throws WhereClauseException
+     */
+    private function assertExpression($expression)
+    {
+        if (is_string($expression) || $expression instanceof Parentheses) {
+            return;
+        } else {
+            throw new WhereClauseException(
+                sprintf(
+                    'Argument "expression" must be of type string, or %s, \'%s\' given',
+                    Parentheses::class,
+                    is_object($expression) ? get_class($expression) : gettype($expression)
                 )
             );
         }
