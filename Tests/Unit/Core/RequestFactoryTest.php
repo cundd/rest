@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Core;
 
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Request;
@@ -401,20 +401,22 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private function buildRequestFactory($configurationProviderSetting = [])
     {
-        /** @var TypoScriptConfigurationProvider|ObjectProphecy $configurationProviderMock */
-        $configurationProviderMock = $this->prophesize(TypoScriptConfigurationProvider::class);
+        /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProviderMock */
+        $configurationProviderMock = $this->prophesize(ConfigurationProviderInterface::class);
 
         if (empty($configurationProviderSetting)) {
             $configurationProviderSetting = [
                 'aliases.myAlias' => 'MyExt-MyModel',
             ];
         }
-        $configurationProviderMock->getSetting(Argument::type('string'))->will(
+        /** @var string $stringArg */
+        $stringArg = Argument::type('string');
+        $configurationProviderMock->getSetting($stringArg, Argument::cetera())->will(
             function ($args) use ($configurationProviderSetting) {
                 if (isset($args[0])) {
                     $key = $args[0];
 
-                    return isset($configurationProviderSetting[$key]) ? $configurationProviderSetting[$key] : null;
+                    return $configurationProviderSetting[$key] ?? $args[1] ?? null;
                 }
 
                 return null;
@@ -423,6 +425,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
 
         $_SERVER['SERVER_NAME'] = 'rest.cundd.net';
 
-        return new RequestFactory($configurationProviderMock->reveal(), ServerRequestFactory::class);
+        /** @var ConfigurationProviderInterface $configurationProvider */
+        $configurationProvider = $configurationProviderMock->reveal();
+
+        return new RequestFactory($configurationProvider, ServerRequestFactory::class);
     }
 }
