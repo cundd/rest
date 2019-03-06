@@ -184,6 +184,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
         if ($pathPrefix === false) {
+            $pathPrefix = $this->configurationProvider->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
+        }
+        if ($pathPrefix === false) {
             $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
         }
 
