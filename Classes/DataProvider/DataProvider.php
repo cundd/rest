@@ -66,12 +66,12 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->identityProvider = $identityProvider;
     }
 
-    public function getModelData($model)
+    public function getModelData(?object $model)
     {
         return $this->extractor->extract($model);
     }
 
-    public function getRepositoryClassForResourceType(ResourceType $resourceType)
+    public function getRepositoryClassForResourceType(ResourceType $resourceType): string
     {
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
         $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
@@ -134,12 +134,12 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->getRepositoryForResourceType($resourceType)->findAll();
     }
 
-    public function countAllModels(ResourceType $resourceType)
+    public function countAllModels(ResourceType $resourceType): int
     {
         return $this->getRepositoryForResourceType($resourceType)->countAll();
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType)
+    public function fetchModel($identifier, ResourceType $resourceType): ?object
     {
         if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
@@ -148,7 +148,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function createModel(array $data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType): ?object
     {
         // If no data is given return a new empty instance
         if (!$data) {
@@ -163,12 +163,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
 
         // Get a fresh model
-        $model = $this->convertIntoModel($data, $resourceType);
-
-        return $model;
+        return $this->convertIntoModel($data, $resourceType);
     }
 
-    public function getModelProperty($model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter)
     {
         $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
 
@@ -194,7 +192,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function saveModel($model, ResourceType $resourceType)
+    public function saveModel(?object $model, ResourceType $resourceType): void
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
         if ($this->isModelNew($model)) {
@@ -205,21 +203,21 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    public function updateModel($updatedModel, ResourceType $resourceType)
+    public function updateModel(?object $updatedModel, ResourceType $resourceType): void
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->update($updatedModel);
         $this->persistAllChanges();
     }
 
-    public function removeModel($model, ResourceType $resourceType)
+    public function removeModel(?object $model, ResourceType $resourceType): void
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->remove($model);
         $this->persistAllChanges();
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType)
+    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
     {
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         try {
@@ -235,7 +233,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
     }
 
-    public function getEmptyModelForResourceType(ResourceType $resourceType)
+    public function getEmptyModelForResourceType(ResourceType $resourceType): ?object
     {
         return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
@@ -243,7 +241,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * Persist all changes to the database
      */
-    protected function persistAllChanges()
+    protected function persistAllChanges(): void
     {
         $persistenceManager = $this->objectManager->get(PersistenceManagerInterface::class);
         $persistenceManager->persistAll();
@@ -297,7 +295,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param ResourceType|string $resourceType
      * @return null|object
      */
-    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
+    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType): ?object
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
 
@@ -345,10 +343,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * Prepares the given data before transforming it to a model
      *
-     * @param $data
+     * @param array $data
      * @return array
      */
-    protected function prepareModelData($data)
+    protected function prepareModelData(array $data): array
     {
         return $data;
     }
@@ -382,7 +380,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param object|DomainObjectInterface $model
      * @return bool
      */
-    protected function isModelNew($model)
+    protected function isModelNew(?object $model): bool
     {
         if ($model instanceof DomainObjectInterface) {
             return $model->_isNew();

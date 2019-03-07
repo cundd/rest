@@ -77,7 +77,7 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    public function createModel(array $data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType): ?object
     {
         // If no data is given return a new empty instance
         if (!$data) {
@@ -87,7 +87,7 @@ class VirtualObjectDataProvider extends DataProvider
         return $this->convertIntoModel($data, $resourceType);
     }
 
-    public function getRepositoryClassForResourceType(ResourceType $resourceType)
+    public function getRepositoryClassForResourceType(ResourceType $resourceType): string
     {
         return Repository::class;
     }
@@ -102,12 +102,12 @@ class VirtualObjectDataProvider extends DataProvider
         return $repository;
     }
 
-    public function getEmptyModelForResourceType(ResourceType $resourceType)
+    public function getEmptyModelForResourceType(ResourceType $resourceType): ?object
     {
         return new VirtualObject();
     }
 
-    public function getModelData($model)
+    public function getModelData(?object $model)
     {
         $properties = parent::getModelData($model);
         if ($properties === $model) {
@@ -117,7 +117,7 @@ class VirtualObjectDataProvider extends DataProvider
         return $properties;
     }
 
-    public function getModelProperty($model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter)
     {
         /** @var VirtualObject $model */
         $modelData = $model->getData();
@@ -132,7 +132,7 @@ class VirtualObjectDataProvider extends DataProvider
         return null;
     }
 
-    public function saveModel($model, ResourceType $resourceType)
+    public function saveModel(?object $model, ResourceType $resourceType): void
     {
         /** @var VirtualObject $model */
         /** @var RepositoryInterface $repository */
@@ -143,7 +143,7 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType)
+    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
     {
         try {
             $objectConverter = $this->getObjectConverterForResourceType($resourceType);
@@ -157,7 +157,7 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    public function persistAllChanges()
+    public function persistAllChanges(): void
     {
         // We don't have to do anything because changes are persisted live
     }
