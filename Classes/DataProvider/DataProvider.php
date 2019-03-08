@@ -5,6 +5,7 @@ namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\ClassLoadingException;
+use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use Cundd\Rest\SingletonInterface;
@@ -66,7 +67,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->identityProvider = $identityProvider;
     }
 
-    public function getModelData(?object $model)
+    public function getModelData($model)
     {
         return $this->extractor->extract($model);
     }
@@ -139,7 +140,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->getRepositoryForResourceType($resourceType)->countAll();
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType): ?object
+    public function fetchModel($identifier, ResourceType $resourceType)
     {
         if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
@@ -148,7 +149,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function createModel(array $data, ResourceType $resourceType): ?object
+    public function createModel(array $data, ResourceType $resourceType)
     {
         // If no data is given return a new empty instance
         if (!$data) {
@@ -166,8 +167,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->convertIntoModel($data, $resourceType);
     }
 
-    public function getModelProperty(object $model, string $propertyParameter)
+    public function getModelProperty($model, string $propertyParameter)
     {
+        InvalidArgumentException::assertObject($model);
         $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
 
         $normalizedGetter = 'get' . ucfirst($propertyKey);
@@ -192,8 +194,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function saveModel(?object $model, ResourceType $resourceType): void
+    public function saveModel($model, ResourceType $resourceType): void
     {
+        InvalidArgumentException::assertObjectOrNull($model);
         $repository = $this->getRepositoryForResourceType($resourceType);
         if ($this->isModelNew($model)) {
             $repository->add($model);
@@ -203,21 +206,30 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    public function updateModel(?object $updatedModel, ResourceType $resourceType): void
-    {
+    /**
+     * @param object|null  $updatedModel
+     * @param ResourceType $resourceType
+     */
+    public function updateModel(
+        /*(?object)*/
+        $updatedModel,
+        ResourceType $resourceType
+    ): void {
+        InvalidArgumentException::assertObjectOrNull($updatedModel);
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->update($updatedModel);
         $this->persistAllChanges();
     }
 
-    public function removeModel(?object $model, ResourceType $resourceType): void
+    public function removeModel($model, ResourceType $resourceType): void
     {
+        InvalidArgumentException::assertObjectOrNull($model);
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->remove($model);
         $this->persistAllChanges();
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
+    public function convertIntoModel(array $data, ResourceType $resourceType)
     {
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         try {
@@ -233,7 +245,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
     }
 
-    public function getEmptyModelForResourceType(ResourceType $resourceType): ?object
+    public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
         return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
     }
@@ -295,7 +307,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param ResourceType|string $resourceType
      * @return null|object
      */
-    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType): ?object
+    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
 
@@ -380,8 +392,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param object|DomainObjectInterface $model
      * @return bool
      */
-    protected function isModelNew(?object $model): bool
-    {
+    protected function isModelNew(
+        /*(object)*/
+        $model
+    ): bool {
         if ($model instanceof DomainObjectInterface) {
             return $model->_isNew();
         }

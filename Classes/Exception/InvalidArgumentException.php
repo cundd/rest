@@ -23,4 +23,34 @@ class InvalidArgumentException extends \InvalidArgumentException
             )
         );
     }
+
+    /**
+     * Assert that the input is either an object or NULL
+     *
+     * @param object|null $value
+     * @param string|null $argumentName
+     */
+    public static function assertObjectOrNull($value, ?string $argumentName = null): void
+    {
+        if (false === (is_null($value) || is_object($value))) {
+            throw new static(
+                sprintf('%s must be either NULL or an object, %s given', $argumentName ?? 'Variable', gettype($value))
+            );
+        }
+    }
+
+    /**
+     * Assert that the input is an object
+     *
+     * @param object      $value
+     * @param string|null $argumentName
+     */
+    public static function assertObject($value, ?string $argumentName = null): void
+    {
+        if (!is_object($value)) {
+            throw new static(
+                sprintf('%s must be an object %s given', $argumentName ?? 'Variable', gettype($value))
+            );
+        }
+    }
 }

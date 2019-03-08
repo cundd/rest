@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface;
@@ -85,8 +86,13 @@ class Extractor implements ExtractorInterface
      * @param object|null     $owner
      * @return string|int|bool|float|null|array
      */
-    private function extractData($input, $key, ?object $owner)
-    {
+    private function extractData(
+        $input,
+        $key,
+        /*(?object)*/
+        $owner
+    ) {
+        InvalidArgumentException::assertObjectOrNull($owner);
         $this->assertValidKey($key);
 
         $this->assertExtractableType($input);
@@ -133,8 +139,15 @@ class Extractor implements ExtractorInterface
      * @param object|null     $owner
      * @return array|string
      */
-    private function extractObjectDataIfNotRecursion(object $input, $key, ?object $owner)
-    {
+    private function extractObjectDataIfNotRecursion(
+        /*(object)*/
+        $input,
+        $key,
+        /*(?object)*/
+        $owner
+    ) {
+        InvalidArgumentException::assertObject($input);
+        InvalidArgumentException::assertObjectOrNull($owner);
         $this->assertValidKey($key);
         $this->increaseObjectRecursionValue($input);
 
@@ -165,8 +178,12 @@ class Extractor implements ExtractorInterface
      * @param string|int|null $key
      * @return mixed
      */
-    private function extractObjectData(object $input, $key): array
-    {
+    private function extractObjectData(
+        /*(object)*/
+        $input,
+        $key
+    ): array {
+        InvalidArgumentException::assertObject($input);
         $this->assertValidKey($key);
         if (method_exists($input, 'jsonSerialize')) {
             // jsonSerialize() can return anything but `resource`
@@ -193,8 +210,12 @@ class Extractor implements ExtractorInterface
      * @param array                        $properties
      * @return array
      */
-    private function transformObjectProperties(object $model, array $properties): array
-    {
+    private function transformObjectProperties(
+        /*(object)*/
+        $model,
+        array $properties
+    ): array {
+        assert(is_object($model), sprintf('Input must be an object %s given', gettype($model)));
         $transformedCollection = [];
 
         // Transform objects recursive
@@ -250,8 +271,11 @@ class Extractor implements ExtractorInterface
      * @param object|DomainObjectInterface $model
      * @return string
      */
-    private function getUriToNestedResource(string $resourceKey, object $model): string
-    {
+    private function getUriToNestedResource(
+        string $resourceKey,
+        /*(object)*/
+        $model
+    ): string {
         return $this->getUriToResource($model) . $resourceKey;
     }
 
@@ -276,8 +300,10 @@ class Extractor implements ExtractorInterface
      * @param object|DomainObjectInterface $model
      * @return string
      */
-    private function getUriToResource(object $model): string
-    {
+    private function getUriToResource(
+        /*(object)*/
+        $model
+    ): string {
         $modelListingUri = $this->getUriRequestBase()
             . 'rest/'
             . Utility::getResourceTypeForClassName(get_class($model))
@@ -406,8 +432,11 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int Returns 0 if the object has not been processed before
      */
-    private function getObjectRecursionValue(object $object)
-    {
+    private function getObjectRecursionValue(
+        /*(object)*/
+        $object
+    ) {
+        InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
         return isset(static::$handledModels[$objectHash])
@@ -421,8 +450,11 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int
      */
-    private function increaseObjectRecursionValue(object $object)
-    {
+    private function increaseObjectRecursionValue(
+        /*(object)*/
+        $object
+    ) {
+        InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
         $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
@@ -438,8 +470,11 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int
      */
-    private function decreaseObjectRecursionValue(object $object)
-    {
+    private function decreaseObjectRecursionValue(
+        /*(object)*/
+        $object
+    ) {
+        InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
         $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
@@ -500,9 +535,13 @@ class Extractor implements ExtractorInterface
      */
     private function assertValidKey($key): void
     {
-        assert(
-            is_null($key) || is_scalar($key),
-            sprintf('Key must be either Null or scalar, %s given', is_object($key) ? get_class($key) : gettype($key))
-        );
+        if (false === (is_null($key) || is_scalar($key))) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Key must be either NULL or scalar, %s given',
+                    is_object($key) ? get_class($key) : gettype($key)
+                )
+            );
+        }
     }
 }
