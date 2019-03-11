@@ -6,6 +6,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\ClassLoadingException;
 use Cundd\Rest\Exception\InvalidArgumentException;
+use Cundd\Rest\Exception\InvalidPropertyException;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use Cundd\Rest\SingletonInterface;
@@ -158,9 +159,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
         // It is **not** allowed to insert Models with a defined UID
         if (isset($data['__identity']) && $data['__identity']) {
-            return new \UnexpectedValueException('Invalid property "__identity"');
+            return new InvalidPropertyException('Invalid property "__identity"');
         } elseif (isset($data['uid']) && $data['uid']) {
-            return new \UnexpectedValueException('Invalid property "uid"');
+            return new InvalidPropertyException('Invalid property "uid"');
         }
 
         // Get a fresh model
