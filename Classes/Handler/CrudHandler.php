@@ -92,10 +92,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
             return $this->responseFactory->createErrorResponse('Invalid or missing payload', 400, $request);
         }
 
-        if (isset($data['__identity'])) {
-            return $this->update($request, $data['__identity']);
-        }
-
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($resourceType);
         $model = $dataProvider->createModel($data, $resourceType);
