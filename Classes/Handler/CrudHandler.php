@@ -5,6 +5,7 @@ namespace Cundd\Rest\Handler;
 
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManagerInterface;
@@ -59,8 +60,9 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function getProperty(RestRequestInterface $request, $identifier, $propertyKey)
     {
-        $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
+        $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
@@ -70,8 +72,9 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function show(RestRequestInterface $request, $identifier)
     {
-        $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
+        $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
             return $this->responseFactory->createSuccessResponse(null, 404, $request);
         }
@@ -93,15 +96,16 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
             return $this->update($request, $data['__identity']);
         }
 
-        $dataProvider = $this->getDataProvider();
-        $model = $dataProvider->createModel($data, $request->getResourceType());
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
+        $model = $dataProvider->createModel($data, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400, $request);
         } elseif ($model instanceof \Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
 
-        $dataProvider->saveModel($model, $request->getResourceType());
+        $dataProvider->saveModel($model, $resourceType);
         $result = $dataProvider->getModelData($model);
 
         return $this->prepareResult($request, $result);
@@ -109,26 +113,27 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function update(RestRequestInterface $request, $identifier)
     {
-        $dataProvider = $this->getDataProvider();
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
         $this->logger->logRequest('update request', ['body' => $data]);
 
         // Make sure the object with the given identifier exists
-        $oldObject = $dataProvider->fetchModel($identifier, $request->getResourceType());
+        $oldObject = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$oldObject) {
             return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
 
-        $model = $dataProvider->convertIntoModel($data, $request->getResourceType());
+        $model = $dataProvider->convertIntoModel($data, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 400, $request);
         } elseif ($model instanceof \Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
 
-        $dataProvider->saveModel($model, $request->getResourceType());
+        $dataProvider->saveModel($model, $resourceType);
         $result = $dataProvider->getModelData($model);
 
         return $this->prepareResult($request, $result);
@@ -136,22 +141,23 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function delete(RestRequestInterface $request, $identifier)
     {
-        $dataProvider = $this->getDataProvider();
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
         $this->logger->logRequest('delete request', ['identifier' => $identifier]);
-        $model = $dataProvider->fetchModel($identifier, $request->getResourceType());
+        $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
-        $dataProvider->removeModel($model, $request->getResourceType());
+        $dataProvider->removeModel($model, $resourceType);
 
         return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
     }
 
     public function listAll(RestRequestInterface $request)
     {
-        $dataProvider = $this->getDataProvider();
-
-        $allModels = $dataProvider->fetchAllModels($request->getResourceType());
+        $resourceType = $request->getResourceType();
+        $dataProvider = $this->getDataProvider($resourceType);
+        $allModels = $dataProvider->fetchAllModels($resourceType);
 
         return $this->prepareResult(
             $request,
@@ -162,7 +168,9 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     public function countAll(RestRequestInterface $request)
     {
-        return $this->getDataProvider()->countAllModels($request->getResourceType());
+        $resourceType = $request->getResourceType();
+
+        return $this->getDataProvider($resourceType)->countAllModels($resourceType);
     }
 
     /**
@@ -192,10 +200,13 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * Returns the Data Provider
      *
+     * @param ResourceType $resourceType
      * @return DataProviderInterface
      */
-    protected function getDataProvider()
-    {
+    protected function getDataProvider(
+        /** @noinspection PhpUnusedParameterInspection */
+        ResourceType $resourceType
+    ) {
         return $this->objectManager->getDataProvider();
     }
 
@@ -256,5 +267,10 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     protected function getListLimit(): int
     {
         return PHP_INT_MAX;
+    }
+
+    protected function getLogger(): LoggerInterface
+    {
+        return $this->logger;
     }
 }
