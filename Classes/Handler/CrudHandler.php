@@ -196,9 +196,9 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $router->add(Route::put($resourceType . '/{slug}/?', [$this, 'update']));
         $router->add(Route::post($resourceType . '/{slug}/?', [$this, 'update']));
         $router->add(Route::delete($resourceType . '/{slug}/?', [$this, 'delete']));
-        $router->add(Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', [$this, 'update']));
+        $router->add(Route::patch($resourceType . '/{slug}/?', [$this, 'update']));
         $router->add(Route::get($resourceType . '/{slug}/{slug}/?', [$this, 'getProperty']));
-        $router->add(Route::routeWithPatternAndMethod($resourceType . '/?', 'OPTIONS', [$this, 'options']));
+        $router->add(Route::options($resourceType . '/?', [$this, 'options']));
     }
 
     /**

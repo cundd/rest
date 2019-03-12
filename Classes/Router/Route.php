@@ -61,7 +61,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param callable $callback
      * @return static
      */
-    public static function get($pattern, callable $callback)
+    public static function get($pattern, callable $callback): \Cundd\Rest\Router\Route
     {
         return new static($pattern, 'GET', $callback);
     }
@@ -73,7 +73,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param callable $callback
      * @return static
      */
-    public static function post($pattern, callable $callback)
+    public static function post($pattern, callable $callback): Route
     {
         return new static($pattern, 'POST', $callback);
     }
@@ -85,7 +85,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param callable $callback
      * @return static
      */
-    public static function put($pattern, callable $callback)
+    public static function put($pattern, callable $callback): Route
     {
         return new static($pattern, 'PUT', $callback);
     }
@@ -97,9 +97,33 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param callable $callback
      * @return static
      */
-    public static function delete($pattern, callable $callback)
+    public static function delete($pattern, callable $callback): Route
     {
         return new static($pattern, 'DELETE', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method OPTIONS
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function options($pattern, callable $callback): Route
+    {
+        return new static($pattern, 'OPTIONS', $callback);
+    }
+
+    /**
+     * Creates a new Route with the given pattern and callback for the method PATCH
+     *
+     * @param string   $pattern
+     * @param callable $callback
+     * @return static
+     */
+    public static function patch($pattern, callable $callback): Route
+    {
+        return new static($pattern, 'PATCH', $callback);
     }
 
     /**

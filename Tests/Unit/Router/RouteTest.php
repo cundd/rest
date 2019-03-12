@@ -322,5 +322,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('POST', Route::post('path/sub-path', $this->cb)->getMethod());
         $this->assertEquals('PUT', Route::put('path/sub-path', $this->cb)->getMethod());
         $this->assertEquals('DELETE', Route::delete('path/sub-path', $this->cb)->getMethod());
+        $this->assertEquals('OPTIONS', Route::options('path/sub-path', $this->cb)->getMethod());
+        $this->assertEquals('PATCH', Route::patch('path/sub-path', $this->cb)->getMethod());
     }
 }
