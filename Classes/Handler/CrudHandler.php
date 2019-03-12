@@ -64,7 +64,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $dataProvider = $this->getDataProvider($resourceType);
         $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404, $request);
+            return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
 
         return $dataProvider->getModelProperty($model, $propertyKey);
@@ -76,7 +76,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $dataProvider = $this->getDataProvider($resourceType);
         $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
-            return $this->responseFactory->createSuccessResponse(null, 404, $request);
+            return $this->responseFactory->createErrorResponse(null, 404, $request);
         }
         $result = $dataProvider->getModelData($model);
 
@@ -96,7 +96,11 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $dataProvider = $this->getDataProvider($resourceType);
         $model = $dataProvider->createModel($data, $resourceType);
         if (!$model) {
-            return $this->responseFactory->createErrorResponse(null, 400, $request);
+            return $this->responseFactory->createErrorResponse(
+                'Could not create model from data',
+                400,
+                $request
+            );
         } elseif ($model instanceof \Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
@@ -124,7 +128,11 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
         $model = $dataProvider->convertIntoModel($data, $resourceType);
         if (!$model) {
-            return $this->responseFactory->createErrorResponse(null, 400, $request);
+            return $this->responseFactory->createErrorResponse(
+                'Could not create model from data',
+                400,
+                $request
+            );
         } elseif ($model instanceof \Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
@@ -212,7 +220,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      * @param RestRequestInterface $request
      * @param mixed                $result
      * @param bool                 $singularize
-     * @return array
+     * @return mixed|array
      */
     protected function prepareResult(RestRequestInterface $request, $result, $singularize = true)
     {
