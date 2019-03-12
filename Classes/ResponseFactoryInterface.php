@@ -18,7 +18,7 @@ interface ResponseFactoryInterface
      * @param int          $status Status code of the response
      * @return ResponseInterface
      */
-    public function createResponse($data, $status);
+    public function createResponse($data, int $status): ResponseInterface;
 
     /**
      * Returns a response with the given message and status code
@@ -31,7 +31,7 @@ interface ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function createErrorResponse($data, $status, RestRequestInterface $request);
+    public function createErrorResponse($data, int $status, RestRequestInterface $request): ResponseInterface;
 
     /**
      * Returns a response with the given message and status code
@@ -44,5 +44,5 @@ interface ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function createSuccessResponse($data, $status, RestRequestInterface $request);
+    public function createSuccessResponse($data, int $status, RestRequestInterface $request): ResponseInterface;
 }

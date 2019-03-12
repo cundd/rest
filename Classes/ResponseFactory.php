@@ -14,7 +14,7 @@ use Zend\Diactoros\Response as ZendResponse;
  */
 class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 {
-    public function createResponse($data, $status)
+    public function createResponse($data, int $status): ResponseInterface
     {
         $responseClass = $this->getResponseImplementationClass();
         /** @var ResponseInterface $response */
@@ -25,12 +25,12 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
         return $response;
     }
 
-    public function createErrorResponse($data, $status, RestRequestInterface $request)
+    public function createErrorResponse($data, int $status, RestRequestInterface $request): ResponseInterface
     {
         return $this->createFormattedResponse($data, $status, true, $request);
     }
 
-    public function createSuccessResponse($data, $status, RestRequestInterface $request)
+    public function createSuccessResponse($data, int $status, RestRequestInterface $request): ResponseInterface
     {
         return $this->createFormattedResponse($data, $status, false, $request);
     }
@@ -44,8 +44,12 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function createFormattedResponse($data, $status, $forceError, RestRequestInterface $request)
-    {
+    private function createFormattedResponse(
+        $data,
+        int $status,
+        bool $forceError,
+        RestRequestInterface $request
+    ): ResponseInterface {
         $responseClass = $this->getResponseImplementationClass();
         /** @var ResponseInterface $response */
         $response = new $responseClass();
