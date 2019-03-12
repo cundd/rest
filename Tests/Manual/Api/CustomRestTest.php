@@ -374,8 +374,12 @@ class CustomRestTest extends AbstractApiCase
             null,
             ['Accept-Language' => $language]
         );
-        $this->assertSame('tx_customrest_domain_model_person.first_name', $response->getParsedBody()['original']);
-        $this->assertSame($expected, $response->getParsedBody()['translated']);
+        $parsedBody = $response->getParsedBody();
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertNotEmpty($parsedBody, $errorDescription);
+        $this->assertArrayHasKey('original', $parsedBody, $errorDescription);
+        $this->assertSame('tx_customrest_domain_model_person.first_name', $parsedBody['original'], $errorDescription);
+        $this->assertSame($expected, $parsedBody['translated'], $errorDescription);
     }
 
     public function getCorrectTranslationDataProvider(): array

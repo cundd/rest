@@ -88,7 +88,7 @@ class NewsTest extends AbstractApiCase
      * @param string $suffix
      * @dataProvider suffixDataProvider
      */
-    public function addNewsWithIdTest($suffix = '')
+    public function addNewsWithIdShouldFailTest($suffix = '')
     {
         $content = $this->getNewsData();
         $content['uid'] = 1;
@@ -141,7 +141,7 @@ class NewsTest extends AbstractApiCase
      * @dataProvider suffixDataProvider
      * @throws \Exception
      */
-    public function updateNewsWithIdTest($suffix = '')
+    public function updateNewsWithIdShouldFailTest($suffix = '')
     {
         $id = $this->addNewsAndGetId();
         $header = 'Updated Content ' . date('Y-m-d H:i:s');
@@ -156,11 +156,13 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertSame(400, $response->getStatusCode(), $this->getErrorDescription($response));
         $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame($id, $response->getParsedBody()['uid'], $this->getErrorDescription($response));
-        $this->assertSame($header, $response->getParsedBody()['title'], $this->getErrorDescription($response));
+        $this->assertSame(
+            '{"error":"Invalid property \"__identity\""}',
+            $response->getBody(),
+            $this->getErrorDescription($response)
+        );
     }
 
     /**
