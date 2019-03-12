@@ -58,7 +58,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return 'Default Handler for CRUD requests';
     }
 
-    public function getProperty(RestRequestInterface $request, $identifier, $propertyKey)
+    public function getProperty(RestRequestInterface $request, string $identifier, string $propertyKey)
     {
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($resourceType);
@@ -70,7 +70,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $dataProvider->getModelProperty($model, $propertyKey);
     }
 
-    public function show(RestRequestInterface $request, $identifier)
+    public function show(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($resourceType);
@@ -111,7 +111,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    public function update(RestRequestInterface $request, $identifier)
+    public function update(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($resourceType);
@@ -143,7 +143,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->prepareResult($request, $result);
     }
 
-    public function delete(RestRequestInterface $request, $identifier)
+    public function delete(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($resourceType);
