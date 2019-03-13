@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\Router\ResultConverter;
@@ -221,27 +222,12 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     private function addAdditionalHeaders(ResponseInterface $response)
     {
-        $additionalResponseHeaders = $this->objectManager
-            ->getConfigurationProvider()
-            ->getSetting('responseHeaders', null);
+        $configurationProvider = $this->objectManager->getConfigurationProvider();
+        $fixedResponseHeaders = $configurationProvider->getSetting('responseHeaders', null);
+        $defaultResponseHeaders = $configurationProvider->getSetting('defaultResponseHeaders', null);
 
-        if (!is_array($additionalResponseHeaders)) {
-            return $response;
-        }
-
-        foreach ($additionalResponseHeaders as $responseHeaderType => $value) {
-            if (is_string($value)) {
-                $response = $response->withAddedHeader(
-                    $responseHeaderType,
-                    $value
-                );
-            } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
-                $response = $response->withAddedHeader(
-                    rtrim($responseHeaderType, '.'),
-                    GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
-                );
-            }
-        }
+        $response = $this->addHeaders($response, $defaultResponseHeaders, false);
+        $response = $this->addHeaders($response, $fixedResponseHeaders, true);
 
         return $response;
     }
@@ -256,7 +242,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
             foreach ($allowedOrigins as $allowedOrigin) {
                 if ($allowedOrigin === $origin) {
-                    return $response->withHeader('Access-Control-Allow-Origin', $allowedOrigin);
+                    return $response->withHeader(Header::CORS_ORIGIN, $allowedOrigin);
                 }
             }
         }
@@ -299,5 +285,38 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         );
 
         return $newResponse;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @param array|null        $defaultResponseHeaders
+     * @param bool              $overwrite
+     * @return ResponseInterface
+     */
+    private function addHeaders(
+        ResponseInterface $response,
+        ?array $defaultResponseHeaders,
+        bool $overwrite
+    ): ResponseInterface {
+        foreach ((array)$defaultResponseHeaders as $responseHeaderType2 => $value2) {
+            // If the header is already set skip it unless `$overwrite` is TRUE
+            if (!$overwrite && $response->getHeaderLine($responseHeaderType2)) {
+                continue;
+            }
+
+            if (is_string($value2)) {
+                $response = $response->withHeader(
+                    $responseHeaderType2,
+                    $value2
+                );
+            } elseif (is_array($value2) && array_key_exists('userFunc', $value2)) {
+                $response = $response->withHeader(
+                    rtrim($responseHeaderType2, '.'),
+                    GeneralUtility::callUserFunction($value2['userFunc'], $value2, $this)
+                );
+            }
+        }
+
+        return $response;
     }
 }

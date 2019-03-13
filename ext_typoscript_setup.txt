@@ -17,14 +17,24 @@ plugin.tx_rest.settings {
         }
     }
 
-    # You may add custom response headers, see example below
-    #responseHeaders {
-    #    Access-Control-Allow-Origin = example.com
-    #    Access-Control-Allow-Methods = GET, POST, OPTIONS, DELETE
-    #}
-    #cors.allowedOrigins {
-    #    0 = http://localhost:3000
-    #}
+    # Configure a set of default response headers that will be set if the response does **not** already contain them
+    # defaultResponseHeaders {
+    #     Access-Control-Allow-Credentials = true
+    #     Access-Control-Allow-Methods = GET, POST, OPTIONS, DELETE
+    # }
+
+    # Overwrite the response's headers with the following ones
+    # responseHeaders {
+    #     Access-Control-Allow-Credentials = true
+    #     Access-Control-Allow-Methods = GET, POST, OPTIONS, DELETE
+    # }
+
+    # Define a list of allowed origins:
+    # If the request's `Origin`-header matches one of the listed origins, it will be whitelisted in the
+    # `Access-Control-Allow-Origin`-header of the response
+    # cors.allowedOrigins {
+    #     0 = http://localhost:3000
+    # }
 
     # This is not defined here to allow easy customization in third party extensions TypoScript setup
     # cacheLifetime = -1
