@@ -5,6 +5,7 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject\Backend;
 
 use Cundd\Rest\Tests\Functional\VirtualObject\AbstractDatabaseCase;
 use Cundd\Rest\VirtualObject\Persistence\Backend\Constraint;
+use Cundd\Rest\VirtualObject\Persistence\Backend\LogicalAnd;
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 use Cundd\Rest\VirtualObject\Persistence\OperatorInterface;
 use Cundd\Rest\VirtualObject\Persistence\Query;
@@ -46,14 +47,15 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
             self::$testDatabaseTable,
             new Query(
                 array_map(
-                    function ($q) {
+                    function ($q, $property) {
                         if (is_array($q)) {
-                            return new Constraint($q['operator'], $q['value']);
+                            return new Constraint($property, $q['operator'], $q['value']);
                         } else {
-                            return Constraint::equalTo($q);
+                            return Constraint::equalTo($property, $q);
                         }
                     },
-                    $query
+                    $query,
+                    array_keys($query)
                 )
             )
         );
@@ -84,14 +86,44 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
             self::$testDatabaseTable,
             new Query(
                 array_map(
-                    function ($q) {
+                    function ($q, $property) {
                         if (is_array($q)) {
-                            return new Constraint($q['operator'], $q['value']);
+                            return new Constraint($property, $q['operator'], $q['value']);
                         } else {
-                            return Constraint::equalTo($q);
+                            return Constraint::equalTo($property, $q);
                         }
                     },
-                    $query
+                    $query,
+                    array_keys($query)
+                )
+            )
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @test
+     * @dataProvider objectDataByQueryDataProvider
+     * @param array $query
+     * @param array $expected
+     */
+    public function getObjectDataByQueryWithLogicConstraint(array $query, array $expected)
+    {
+        $result = $this->fixture->getObjectDataByQuery(
+            self::$testDatabaseTable,
+            new Query(
+                new LogicalAnd(
+                    array_map(
+                        function ($q, $property) {
+                            if (is_array($q)) {
+                                return new Constraint($property, $q['operator'], $q['value']);
+                            } else {
+                                return Constraint::equalTo($property, $q);
+                            }
+                        },
+                        $query,
+                        array_keys($query)
+                    )
                 )
             )
         );

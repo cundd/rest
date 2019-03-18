@@ -48,7 +48,14 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
         }
 
         $lastExpressionPart = end($this->expressionParts);
-        if ($lastExpressionPart && false === ($lastExpressionPart instanceof Parentheses) && $combinator) {
+        $parenthesesOpen = Parentheses::open();
+        $addCombinator = $combinator && $lastExpressionPart
+            && (
+                $lastExpressionPart !== $parenthesesOpen
+                || (is_string($lastExpressionPart)
+                    && substr((string)$lastExpressionPart, -1) !== (string)$parenthesesOpen)
+            );
+        if ($addCombinator) {
             $this->expressionParts[] = strtoupper($combinator);
         }
         $this->expressionParts[] = $expression;

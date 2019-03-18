@@ -5,8 +5,8 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
 class Parentheses
 {
-    private const OPEN = '(';
-    private const CLOSE = ')';
+    public const OPEN = '(';
+    public const CLOSE = ')';
 
     private $value = '';
 
@@ -25,14 +25,31 @@ class Parentheses
 
     public static function open(): self
     {
-        return new static(self::OPEN);
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new static(self::OPEN);
+        }
+
+        return $instance;
     }
 
     public static function close(): self
     {
-        return new static(self::CLOSE);
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new static(self::CLOSE);
+        }
+
+        return $instance;
     }
 
+    /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
 
     public function __toString()
     {

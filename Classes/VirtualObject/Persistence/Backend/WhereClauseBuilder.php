@@ -91,7 +91,7 @@ class WhereClauseBuilder
         WhereClause::assertCombinator($combinator);
         foreach ($constraints as $property => $value) {
             $this->addConstraint(
-                $property,
+                is_int($property) ? (string)$property : $property,
                 $value,
                 $prepareValue,
                 $escapeColumnName,
@@ -107,13 +107,13 @@ class WhereClauseBuilder
     /**
      * Add a constraint to the WHERE-clause
      *
-     * @param string                                   $property
-     * @param int|float|string|array|Constraint|object $value
-     * @param callable|null                            $prepareValue     `mixed function(mixed $queryValue)`
-     * @param callable|null                            $escapeColumnName `string function(string $propertyName)`
-     * @param string                                   $bindingPrefix
-     * @param string                                   $combinator
-     * @param ConfigurationInterface|null              $configuration
+     * @param string                                            $property
+     * @param int|float|string|array|ConstraintInterface|object $value
+     * @param callable|null                                     $prepareValue     `mixed function(mixed $queryValue)`
+     * @param callable|null                                     $escapeColumnName `string function(string $propertyName)`
+     * @param string                                            $bindingPrefix
+     * @param string                                            $combinator
+     * @param ConfigurationInterface|null                       $configuration
      * @return WhereClauseBuilder
      * @throws InvalidColumnNameException
      * @throws InvalidOperatorException
@@ -128,6 +128,11 @@ class WhereClauseBuilder
         ConfigurationInterface $configuration = null
     ) {
         WhereClause::assertCombinator($combinator);
+
+        if ($value instanceof Constraint) {
+            $property = $value->getProperty();
+        }
+
         if ($configuration) {
             if (!$configuration->hasProperty($property)) {
                 throw new InvalidColumnNameException('The given property is not defined', 1396092229);
@@ -135,6 +140,21 @@ class WhereClauseBuilder
             $column = $configuration->getSourceKeyForProperty($property);
         } else {
             $column = $property;
+        }
+
+        if ($value instanceof LogicalAnd || $value instanceof LogicalOr) {
+            $subCombinator = $value instanceof LogicalAnd ? QueryInterface::COMBINATOR_AND : QueryInterface::COMBINATOR_OR;
+
+            return $this->openParentheses($combinator)
+                ->addConstraints(
+                    $value->getConstraints(),
+                    $prepareValue,
+                    $escapeColumnName,
+                    $bindingPrefix . '_' . uniqid(),
+                    $subCombinator,
+                    $configuration
+                )
+                ->closeParentheses();
         }
 
         InvalidColumnNameException::assertValidColumnName($column);

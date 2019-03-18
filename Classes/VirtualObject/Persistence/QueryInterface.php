@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Persistence\Backend\ConstraintInterface;
 
 /**
  * A persistence query interface
@@ -39,20 +40,20 @@ interface QueryInterface extends OperatorInterface
     public function execute();
 
     /**
-     * Return a copy of the Query with the given constraints
+     * Return a copy of the Query with the given constraint
      *
-     * @param array $constraint
+     * @param ConstraintInterface[]|ConstraintInterface $constraint
      * @return Query
      */
-    public function withConstraints(array $constraint): self;
+    public function withConstraint($constraint): self;
 
     /**
      * Return a copy of the Query with the given property names to order the result by
      *
      * @example
      *  [
-     *      'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
-     *      'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
+     *      'foo' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_ASCENDING,
+     *      'bar' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_DESCENDING
      *  ]
      *
      * @param array $orderings
@@ -87,8 +88,8 @@ interface QueryInterface extends OperatorInterface
     /**
      * Gets the property names to order the result by, like this:
      * array(
-     *  'foo' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING,
-     *  'bar' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING
+     *  'foo' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_ASCENDING,
+     *  'bar' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
      * @return array
@@ -117,7 +118,7 @@ interface QueryInterface extends OperatorInterface
     /**
      * Gets the constraint for this query
      *
-     * @return mixed the constraint, or null if none
+     * @return ConstraintInterface[]
      * @api
      */
     public function getConstraint(): array;

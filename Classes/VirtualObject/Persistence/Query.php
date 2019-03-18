@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Persistence\Backend\ConstraintInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 
 /**
@@ -52,23 +54,23 @@ class Query implements QueryInterface
     /**
      * Query constructor
      *
-     * @param array              $constraint
-     * @param array              $orderings
-     * @param int                $limit
-     * @param int                $offset
-     * @param string             $sourceIdentifier
-     * @param PersistenceManager $persistenceManager
+     * @param ConstraintInterface[]|ConstraintInterface $constraint
+     * @param array                                     $orderings
+     * @param int                                       $limit
+     * @param int                                       $offset
+     * @param string                                    $sourceIdentifier
+     * @param PersistenceManager                        $persistenceManager
      */
     public function __construct(
-        array $constraint = [],
+        $constraint = [],
         array $orderings = [],
         int $limit = 0,
         int $offset = 0,
         string $sourceIdentifier = '',
         PersistenceManager $persistenceManager = null
     ) {
+        $this->setConstraint($constraint);
         $this->persistenceManager = $persistenceManager;
-        $this->constraint = $constraint;
         $this->orderings = $orderings;
         $this->limit = $limit;
         $this->offset = $offset;
@@ -110,10 +112,10 @@ class Query implements QueryInterface
         return $this->sourceIdentifier;
     }
 
-    public function withConstraints(array $constraint): QueryInterface
+    public function withConstraint($constraint): QueryInterface
     {
         $clone = clone $this;
-        $clone->constraint = $constraint;
+        $clone->setConstraint($constraint);
 
         return $clone;
     }
@@ -156,5 +158,20 @@ class Query implements QueryInterface
         }
 
         return $this->persistenceManager->getConfiguration();
+    }
+
+    private function setConstraint($constraint)
+    {
+        if ($constraint instanceof ConstraintInterface) {
+            $this->constraint = [$constraint];
+
+            return;
+        }
+        if (!is_array($constraint)) {
+            throw new InvalidArgumentException(
+                sprintf('Argument "constraint" must be an array of or an instance of "%s"', ConstraintInterface::class)
+            );
+        }
+        $this->constraint = $constraint;
     }
 }
