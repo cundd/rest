@@ -228,6 +228,21 @@ Route::get($request->getResourceType() . '/{boolean}', function(RestRequestInter
 ```
 
 
+### Matching anything aka. `raw`
+
+Extracts the value from segments matching the regular expression `[^/]+`
+
+```php
+Route::get($request->getResourceType() . '/{raw}', function(RestRequestInterface $request, $theParameter) {
+    // Callback will be invoked for
+    # curl -X GET http://localhost:8888/rest/customhandler/Mr Müller
+    // with $theParameter set to 'Mr%20Müller'
+});
+```
+
+> The parameter value will not be decoded before being passed to the route callback
+
+
 Response
 --------
 

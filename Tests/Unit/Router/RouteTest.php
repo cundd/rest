@@ -186,9 +186,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             ['path/{string}/{float}/1', 'path/sub-path/another/1'],
             ['path/sub-path/{string}/1/2/path/item/x', 'path/sub-path/another/1/2/path/item/x'],
             ['path/sub-path/{string}/1/2/path/item/x/y', 'path/sub-path/another/1/2/path/item/x/y'],
+            ['path/sub-path/{raw}/1/2/path/item/x/y', 'path/sub-path/another/1/2/path/item/x/y'],
 
             ['path/sub-path/{string}/{int}/2/path/item/x', 'path/sub-path/{string}/1/2/path/item/x'],
             ['path/sub-path/{string}/{int}/2/path/item/x/y', 'path/sub-path/{string}/1/2/path/item/x/y'],
+
+            ['path/sub-path/{raw}/{int}/2/path/item/x', 'path/sub-path/{string}/1/2/path/item/x'],
+            ['path/sub-path/{raw}/{int}/2/path/item/x/y', 'path/sub-path/{string}/1/2/path/item/x/y'],
         ];
     }
 
@@ -288,6 +292,15 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             [
                 'path/sub-path/{string}/{int}/2/path/item/x/y',
                 [ParameterTypeInterface::SLUG, ParameterTypeInterface::INTEGER],
+            ],
+
+            [
+                'path/sub-path/{string}/{raw}/2/path/item/x',
+                [ParameterTypeInterface::SLUG, ParameterTypeInterface::RAW],
+            ],
+            [
+                'path/sub-path/{string}/{raw}/2/path/item/x/y',
+                [ParameterTypeInterface::SLUG, ParameterTypeInterface::RAW],
             ],
         ];
     }

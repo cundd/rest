@@ -109,6 +109,30 @@ class RouterTest extends AbstractRequestBasedCase
             ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/slug/sub-path/1.0/no/9', [], true],
             ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/', [], true],
             ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '', [], true],
+            [
+                'path/{raw}/?',
+                '/path/here could be änything but a slash',
+                ['here%20could%20be%20änything%20but%20a%20slash'],
+                false,
+            ],
+            [
+                'path/{raw}/?',
+                '/path/here could be änything but a slash/',
+                ['here%20could%20be%20änything%20but%20a%20slash'],
+                false,
+            ],
+            [
+                'path/{raw}/{int}/?',
+                '/path/here could be änything but a slash/1',
+                ['here%20could%20be%20änything%20but%20a%20slash', 1],
+                false,
+            ],
+            [
+                'path/{raw}/?',
+                '/path/Mr Müller/',
+                ['Mr%20Müller'],
+                false,
+            ],
         ];
     }
 

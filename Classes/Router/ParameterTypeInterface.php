@@ -9,4 +9,5 @@ interface ParameterTypeInterface
     const FLOAT = 'float';
     const SLUG = 'slug';
     const BOOLEAN = 'boolean';
+    const RAW = 'raw';
 }

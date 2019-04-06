@@ -41,6 +41,9 @@ abstract class ParameterType
                 case 'string':
                     return ParameterTypeInterface::SLUG;
 
+                case 'raw':
+                    return ParameterTypeInterface::RAW;
+
                 case 'float':
                 case 'double':
                 case 'number':
