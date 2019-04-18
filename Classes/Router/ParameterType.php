@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Cundd\Rest\Router;
 
 
+use InvalidArgumentException;
+
 abstract class ParameterType
 {
     /**
@@ -30,35 +32,36 @@ abstract class ParameterType
             return null;
         }
 
-        if ($startsWithBracket && $endsWithBracket) {
-            $type = substr($input, 1, -1);
-            switch (strtolower($type)) {
-                case 'integer':
-                case 'int':
-                    return ParameterTypeInterface::INTEGER;
+        $bracketsMatch = $startsWithBracket && $endsWithBracket;
+        if (!$bracketsMatch) {
+            throw new InvalidArgumentException(sprintf('Unmatched brackets in path segment "%s"', $input));
+        }
 
-                case 'slug':
-                case 'string':
-                    return ParameterTypeInterface::SLUG;
+        $type = substr($input, 1, -1);
+        switch (strtolower($type)) {
+            case 'integer':
+            case 'int':
+                return ParameterTypeInterface::INTEGER;
+
+            case 'slug':
+            case 'string':
+                return ParameterTypeInterface::SLUG;
 
                 case 'raw':
                     return ParameterTypeInterface::RAW;
 
-                case 'float':
-                case 'double':
-                case 'number':
-                    return ParameterTypeInterface::FLOAT;
+            case 'float':
+            case 'double':
+            case 'number':
+                return ParameterTypeInterface::FLOAT;
 
-                case 'bool':
-                case 'boolean':
-                    return ParameterTypeInterface::BOOLEAN;
+            case 'bool':
+            case 'boolean':
+                return ParameterTypeInterface::BOOLEAN;
 
-                default:
-                    throw new \InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
-            }
+            default:
+                throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
         }
-
-        throw new \InvalidArgumentException(sprintf('Unmatched brackets in path segment "%s"', $input));
     }
 
     /**
