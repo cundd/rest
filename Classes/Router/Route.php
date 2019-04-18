@@ -43,10 +43,9 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param string              $method
      * @param callable            $callback
      */
-    public function __construct($pattern, $method, callable $callback)
+    public function __construct($pattern, string $method, callable $callback)
     {
-        $this->assertString($pattern, 'pattern');
-        $this->assertString($method, 'method');
+        $this->assertStringOrObject($pattern, 'pattern');
 
         $this->pattern = $this->normalizePattern($pattern);
         $this->method = strtoupper($method);
@@ -54,73 +53,31 @@ class Route implements RouteInterface, RouteFactoryInterface
         $this->parameters = ParameterType::extractParameterTypesFromPattern($this->pattern);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method GET
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
-    public static function get($pattern, callable $callback): \Cundd\Rest\Router\Route
+    public static function get($pattern, callable $callback): Route
     {
         return new static($pattern, 'GET', $callback);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method POST
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
     public static function post($pattern, callable $callback): Route
     {
         return new static($pattern, 'POST', $callback);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method PUT
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
     public static function put($pattern, callable $callback): Route
     {
         return new static($pattern, 'PUT', $callback);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method DELETE
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
     public static function delete($pattern, callable $callback): Route
     {
         return new static($pattern, 'DELETE', $callback);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method OPTIONS
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
     public static function options($pattern, callable $callback): Route
     {
         return new static($pattern, 'OPTIONS', $callback);
     }
 
-    /**
-     * Creates a new Route with the given pattern and callback for the method PATCH
-     *
-     * @param string   $pattern
-     * @param callable $callback
-     * @return static
-     */
     public static function patch($pattern, callable $callback): Route
     {
         return new static($pattern, 'PATCH', $callback);
@@ -228,7 +185,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param mixed  $input
      * @param string $argumentName
      */
-    private function assertString($input, $argumentName)
+    private function assertStringOrObject($input, $argumentName)
     {
         if (!is_string($input) && !(is_object($input) && method_exists($input, '__toString'))) {
             throw InvalidArgumentException::buildException($input, 'string', $argumentName);
@@ -238,10 +195,10 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Normalize the path pattern
      *
-     * @param string $inputPattern
+     * @param string|ResourceType $inputPattern
      * @return string
      */
-    private function normalizePattern($inputPattern)
+    private function normalizePattern($inputPattern): string
     {
         $pattern = '/' . ltrim((string)$inputPattern, '/');
         $patternParts = explode('/', $pattern);

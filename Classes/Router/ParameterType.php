@@ -14,7 +14,7 @@ abstract class ParameterType
      * @param string $pattern
      * @return string[]
      */
-    public static function extractParameterTypesFromPattern($pattern)
+    public static function extractParameterTypesFromPattern(string $pattern): array
     {
         return array_filter(array_map([__CLASS__, 'createParameter'], self::splitPattern($pattern)));
     }
@@ -23,7 +23,7 @@ abstract class ParameterType
      * @param string $input
      * @return string
      */
-    private static function createParameter($input)
+    private static function createParameter(string $input)
     {
         $startsWithBracket = substr($input, 0, 1) === '{';
         $endsWithBracket = substr($input, -1) === '}';
@@ -47,8 +47,8 @@ abstract class ParameterType
             case 'string':
                 return ParameterTypeInterface::SLUG;
 
-                case 'raw':
-                    return ParameterTypeInterface::RAW;
+            case 'raw':
+                return ParameterTypeInterface::RAW;
 
             case 'float':
             case 'double':
@@ -68,10 +68,10 @@ abstract class ParameterType
      * @param $pattern
      * @return array
      */
-    private static function splitPattern($pattern)
+    private static function splitPattern(string $pattern)
     {
         return array_reduce(
-            explode('/', (string)$pattern),
+            explode('/', $pattern),
             function ($carry, $item) {
                 return array_merge($carry, explode('.', $item));
             },
