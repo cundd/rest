@@ -43,7 +43,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * The shared instance
      *
-     * @var \Cundd\Rest\Dispatcher
+     * @var Dispatcher
      */
     protected static $sharedDispatcher;
 
@@ -75,10 +75,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Entry point for the PSR 7 middleware
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param ResponseInterface      $response Prepared response @deprecated will be removed in 4.0.0
      * @return ResponseInterface
      */
-    public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function processRequest(ServerRequestInterface $request, ResponseInterface $response = null)
     {
         $this->requestFactory->registerCurrentRequest($request);
         if (method_exists($this->objectManager, 'reassignRequest')) {
@@ -92,10 +92,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Dispatch the REST request
      *
      * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
+     * @param ResponseInterface    $response Prepared response @deprecated will be removed in 4.0.0
      * @return ResponseInterface
      */
-    public function dispatch(RestRequestInterface $request, ResponseInterface $response)
+    public function dispatch(RestRequestInterface $request, ResponseInterface $response = null)
     {
         $requestPath = $request->getPath();
         if (!$requestPath || $requestPath === '/') {
@@ -317,7 +317,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * Returns the shared dispatcher instance
      *
-     * @return \Cundd\Rest\Dispatcher
+     * @return Dispatcher
      */
     public static function getSharedDispatcher()
     {

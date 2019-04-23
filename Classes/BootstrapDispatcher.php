@@ -114,10 +114,10 @@ class BootstrapDispatcher
      * Entry point for the PSR 7 middleware
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param ResponseInterface      $response Prepared response @deprecated will be removed in 4.0.0
      * @return ResponseInterface
      */
-    public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function processRequest(ServerRequestInterface $request, ResponseInterface $response = null)
     {
         return $this->dispatcher->processRequest($request, $response);
     }
