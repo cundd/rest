@@ -18,17 +18,15 @@ interface DispatcherInterface
      * Entry point for the PSR 7 middleware
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
      * @return ResponseInterface
      */
-    public function processRequest(ServerRequestInterface $request, ResponseInterface $response);
+    public function processRequest(ServerRequestInterface $request): ResponseInterface;
 
     /**
      * Dispatch the request
      *
      * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
      * @return ResponseInterface
      */
-    public function dispatch(RestRequestInterface $request, ResponseInterface $response);
+    public function dispatch(RestRequestInterface $request): ResponseInterface;
 }

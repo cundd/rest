@@ -44,7 +44,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * The shared instance
      *
-     * @var \Cundd\Rest\Dispatcher
+     * @var Dispatcher
      */
     protected static $sharedDispatcher;
 
@@ -76,32 +76,30 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Entry point for the PSR 7 middleware
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function processRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
         $this->requestFactory->registerCurrentRequest($request);
         if (method_exists($this->objectManager, 'reassignRequest')) {
             $this->objectManager->reassignRequest();
         }
 
-        return $this->dispatch($this->requestFactory->getRequest(), $response);
+        return $this->dispatch($this->requestFactory->getRequest());
     }
 
     /**
      * Dispatch the REST request
      *
      * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
      * @return ResponseInterface
      */
-    public function dispatch(RestRequestInterface $request, ResponseInterface $response)
+    public function dispatch(RestRequestInterface $request): ResponseInterface
     {
         return $this->addCorsHeaders(
             $request,
-            $this->addAdditionalHeaders($this->dispatchInternal($request, $response))
+            $this->addAdditionalHeaders($this->dispatchInternal($request))
         );
     }
 
@@ -109,14 +107,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Checks the cache for an entry for the current request and returns it, or calls the handler if nothing is found
      *
      * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
      * @return ResponseInterface
      */
-    private function getCachedResponseOrCallHandler(
-        RestRequestInterface $request,
-        /** @noinspection PhpUnusedParameterInspection */
-        ResponseInterface $response
-    ) {
+    private function getCachedResponseOrCallHandler(RestRequestInterface $request)
+    {
         $cache = $this->objectManager->getCache($request->getResourceType());
         $cachedResponse = $cache->getCachedValueForRequest($request);
 
@@ -197,7 +191,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * Returns the shared dispatcher instance
      *
-     * @return \Cundd\Rest\Dispatcher
+     * @return Dispatcher
      */
     public static function getSharedDispatcher()
     {
@@ -252,10 +246,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
     /**
      * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
      * @return ResponseInterface
      */
-    private function dispatchInternal(RestRequestInterface $request, ResponseInterface $response): ResponseInterface
+    private function dispatchInternal(RestRequestInterface $request): ResponseInterface
     {
         $requestPath = $request->getPath();
         if (!$requestPath || $requestPath === '/') {
@@ -277,7 +270,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                 return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
         }
 
-        $newResponse = $this->getCachedResponseOrCallHandler($request, $response);
+        $newResponse = $this->getCachedResponseOrCallHandler($request);
 
         $this->logger->logResponse(
             'response: ' . $newResponse->getStatusCode(),
