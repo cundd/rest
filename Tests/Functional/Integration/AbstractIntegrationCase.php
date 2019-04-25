@@ -13,7 +13,6 @@ use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Http\Response;
 
 class AbstractIntegrationCase extends AbstractCase
 {
@@ -46,7 +45,7 @@ class AbstractIntegrationCase extends AbstractCase
     {
         $this->objectManager->get(RequestFactoryInterface::class)->registerCurrentRequest($request);
 
-        return $this->dispatcher->dispatch($request, new Response());
+        return $this->dispatcher->dispatch($request);
     }
 
     /**
