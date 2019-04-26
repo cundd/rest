@@ -26,23 +26,23 @@ source "$PROJECT_HOME/Build/lib.sh";
 
 # Install the project's dependencies
 function install_dependencies {
-    print_header "Install dependencies";
+    lib::print_header "Install dependencies";
     lib::composer self-update;
     lib::composer install --verbose --ignore-platform-reqs;
 }
 
 # Install the TYPO3
 function install_typo3 {
-    print_header "Get TYPO3 source $TYPO3";
+    lib::print_header "Get TYPO3 source $TYPO3";
 
     local typo3_base_path=$(get_typo3_base_path);
     if [[ "$typo3_base_path" != "" ]]; then
         lib::pushd "$typo3_base_path";
-        print_info "Update TYPO3 source";
+        lib::print_info "Update TYPO3 source";
         git pull;
     else
         lib::pushd ..;
-        print_info "Install TYPO3 source $TYPO3";
+        lib::print_info "Install TYPO3 source $TYPO3";
         if [[ ! -e "TYPO3.CMS" ]]; then
             git clone --single-branch --branch "$TYPO3" --depth 1 git://git.typo3.org/Packages/TYPO3.CMS.git;
             cd TYPO3.CMS;
@@ -75,18 +75,18 @@ function prepare_database {
                 -u${typo3DatabaseUsername} \
                 -p${typo3DatabasePassword} \
                 -e "CREATE DATABASE IF NOT EXISTS $typo3DatabaseName;" || {
-                print_warning "Database $typo3DatabaseName not created";
+                lib::print_warning "Database $typo3DatabaseName not created";
             };
         else
             $(get_mysql_client_path) \
                 -h${typo3DatabaseHost} \
                 -u${typo3DatabaseUsername} \
                 -e "CREATE DATABASE IF NOT EXISTS $typo3DatabaseName;" || {
-                print_warning "Database $typo3DatabaseName not created";
+                lib::print_warning "Database $typo3DatabaseName not created";
             };
         fi
     else
-        print_warning "MySQL client not found";
+        lib::print_warning "MySQL client not found";
     fi
 }
 
@@ -106,7 +106,7 @@ function main {
     if hash "$sub_command" 2>/dev/null; then
         ${sub_command} "$@";
     else
-        print_error "Subcommand '$sub_command' does not exist";
+        lib::print_error "Subcommand '$sub_command' does not exist";
     fi
 }
 
