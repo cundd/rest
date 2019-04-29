@@ -4,10 +4,13 @@ namespace Cundd\Rest;
 
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Routing\SiteMatcher;
+use TYPO3\CMS\Core\Routing\SiteRouteResult;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 use TYPO3\CMS\Lang\LanguageService;
+
 
 /**
  * Class to bootstrap TYPO3 frontend controller
@@ -142,10 +145,31 @@ class Bootstrap
      */
     private function setRequestedLanguage(TypoScriptFrontendController $frontendController)
     {
-        // Set language if defined
-        $requestedLanguageUid = GeneralUtility::_GP('L') !== null
-            ? intval(GeneralUtility::_GP('L'))
-            : $this->getRequestedLanguageUid($frontendController);
+        // support new Typo3 v9.2 Site Handling until middleware concept is implemented
+        // see https://github.com/cundd/rest/issues/59
+        if (isset($GLOBALS['TYPO3_REQUEST']) && class_exists(SiteMatcher::class)) {
+            $request = $GLOBALS['TYPO3_REQUEST'];
+
+            /** @var SiteRouteResult $routeResult */
+            $routeResult = GeneralUtility::makeInstance(SiteMatcher::class)->matchRequest($request);
+
+            $language = $routeResult->getLanguage();
+
+            $request = $request->withAttribute('site', $routeResult->getSite());
+            $request = $request->withAttribute('language', $language);
+            $request = $request->withAttribute('routing', $routeResult);
+
+            $GLOBALS['TYPO3_REQUEST'] = $request;
+
+            // Set language if defined
+            $requestedLanguageUid = ($language && $language->getLanguageId() !== null)
+                ? $language->getLanguageId()
+                : $this->getRequestedLanguageUid($frontendController);
+        } else {
+            $requestedLanguageUid = GeneralUtility::_GP('L') !== null
+                ? intval(GeneralUtility::_GP('L'))
+                : $this->getRequestedLanguageUid($frontendController);
+        }
 
         if (null !== $requestedLanguageUid) {
             $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
