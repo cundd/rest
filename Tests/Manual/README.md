@@ -18,3 +18,5 @@ Installation
 5. Add a Frontend User with name `daniel` and API-key `api-key`
 
 6. Add at least one news entry
+
+7. Configure the alternative language `de-DE`
