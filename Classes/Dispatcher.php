@@ -291,21 +291,21 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         ?array $defaultResponseHeaders,
         bool $overwrite
     ): ResponseInterface {
-        foreach ((array)$defaultResponseHeaders as $responseHeaderType2 => $value2) {
+        foreach ((array)$defaultResponseHeaders as $responseHeaderType => $value) {
             // If the header is already set skip it unless `$overwrite` is TRUE
-            if (!$overwrite && $response->getHeaderLine($responseHeaderType2)) {
+            if (!$overwrite && $response->getHeaderLine($responseHeaderType)) {
                 continue;
             }
 
-            if (is_string($value2)) {
+            if (is_string($value)) {
                 $response = $response->withHeader(
-                    $responseHeaderType2,
-                    $value2
+                    $responseHeaderType,
+                    $value
                 );
-            } elseif (is_array($value2) && array_key_exists('userFunc', $value2)) {
+            } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
                 $response = $response->withHeader(
-                    rtrim($responseHeaderType2, '.'),
-                    GeneralUtility::callUserFunction($value2['userFunc'], $value2, $this)
+                    rtrim($responseHeaderType, '.'),
+                    GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
                 );
             }
         }
