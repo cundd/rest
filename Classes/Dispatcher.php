@@ -303,6 +303,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                     $value
                 );
             } elseif (is_array($value) && array_key_exists('userFunc', $value)) {
+                $value['response'] = $response;
                 $response = $response->withHeader(
                     rtrim($responseHeaderType, '.'),
                     GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
