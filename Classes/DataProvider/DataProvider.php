@@ -20,6 +20,7 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
+use function sprintf;
 
 /**
  * Data Provider implementation for Extbase based Models
@@ -97,19 +98,24 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         if (!$repository) {
             list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
 
+            $triedClasses = sprintf(
+                'Tried the following classes: "%s" and "%s"',
+                ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
+                'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
+            );
             if ($exception) {
                 $message = sprintf(
-                    'Repository for resource type "%s" could not be created: %s',
+                    'Repository for resource type "%s" could not be created: %s %s',
                     $resourceType,
-                    $exception->getMessage()
+                    $exception->getMessage(),
+                    $triedClasses
                 );
                 throw new ClassLoadingException($message, 1542116783, $exception);
             } else {
                 $message = sprintf(
-                    'Repository for resource type "%s" could not be found. Tried "%s" and "%s"',
+                    'Repository for resource type "%s" could not be found. %s',
                     $resourceType,
-                    ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
-                    'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
+                    $triedClasses
                 );
                 throw new ClassLoadingException($message, 1542116782);
             }
