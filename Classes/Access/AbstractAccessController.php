@@ -6,21 +6,22 @@ namespace Cundd\Rest\Access;
 use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
+use Exception;
 
 abstract class AbstractAccessController implements AccessControllerInterface
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * AbstractAccessController constructor
      *
-     * @param ObjectManager $objectManager
+     * @param ObjectManagerInterface $objectManager
      */
-    public function __construct(ObjectManager $objectManager)
+    public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
@@ -30,13 +31,13 @@ abstract class AbstractAccessController implements AccessControllerInterface
      *
      * @param RestRequestInterface $request
      * @return Access
-     * @throws \Exception
+     * @throws Exception
      */
     protected function checkAuthentication(RestRequestInterface $request): Access
     {
         try {
-            $isAuthenticated = $this->objectManager->getAuthenticationProvider()->authenticate($request);
-        } catch (\Exception $exception) {
+            $isAuthenticated = $this->objectManager->getAuthenticationProvider($request)->authenticate($request);
+        } catch (Exception $exception) {
             $this->objectManager->get(LoggerInterface::class)->logException($exception);
             throw $exception;
         }

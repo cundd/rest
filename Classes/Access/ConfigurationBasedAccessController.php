@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Access;
 
+use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
+use OutOfBoundsException;
 
 /**
  * The class determines the access for the current request
@@ -21,7 +23,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     const ACCESS_NOT_REQUIRED = ['OPTIONS'];
 
     /**
-     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     * @var ConfigurationProviderInterface
      */
     protected $configurationProvider;
 
@@ -29,10 +31,12 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * ConfigurationBasedAccessController constructor
      *
      * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManager                  $objectManager
+     * @param ObjectManagerInterface         $objectManager
      */
-    public function __construct(ConfigurationProviderInterface $configurationProvider, ObjectManager $objectManager)
-    {
+    public function __construct(
+        ConfigurationProviderInterface $configurationProvider,
+        ObjectManagerInterface $objectManager
+    ) {
         parent::__construct($objectManager);
         $this->configurationProvider = $configurationProvider;
     }
@@ -40,7 +44,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     /**
      * @param RestRequestInterface $request
      * @return Access
-     * @throws \Exception
+     * @throws InvalidConfigurationException
      */
     public function getAccess(RestRequestInterface $request): Access
     {
@@ -68,7 +72,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      *
      * @param RestRequestInterface $request
      * @return bool
-     * @throws Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function requestNeedsAuthentication(RestRequestInterface $request): bool
     {
@@ -109,7 +113,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
                 return $configuration->getRead();
 
             default:
-                throw new \OutOfBoundsException('Request is neither write, read, nor a preflight request');
+                throw new OutOfBoundsException('Request is neither write, read, nor a preflight request');
         }
     }
 }

@@ -5,13 +5,15 @@ namespace Cundd\Rest\Handler;
 
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
+use Exception;
+use Iterator;
+use IteratorAggregate;
 use LimitIterator;
 
 /**
@@ -22,12 +24,12 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * Object Manager
      *
-     * @var \Cundd\Rest\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \Cundd\Rest\ResponseFactoryInterface
+     * @var ResponseFactoryInterface
      */
     protected $responseFactory;
 
@@ -61,7 +63,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function getProperty(RestRequestInterface $request, string $identifier, string $propertyKey)
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
         $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 404, $request);
@@ -73,7 +75,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function show(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
         $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(null, 404, $request);
@@ -93,7 +95,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         }
 
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
         $model = $dataProvider->createModel($data, $resourceType);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(
@@ -101,7 +103,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
                 400,
                 $request
             );
-        } elseif ($model instanceof \Exception) {
+        } elseif ($model instanceof Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
 
@@ -114,7 +116,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function update(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
 
         $data = $request->getSentData();
         $data['__identity'] = $identifier;
@@ -133,7 +135,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
                 400,
                 $request
             );
-        } elseif ($model instanceof \Exception) {
+        } elseif ($model instanceof Exception) {
             return $this->responseFactory->createErrorResponse($model->getMessage(), 400, $request);
         }
 
@@ -146,7 +148,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function delete(RestRequestInterface $request, string $identifier)
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
         $this->logger->logRequest('delete request', ['identifier' => $identifier]);
         $model = $dataProvider->fetchModel($identifier, $resourceType);
         if (!$model) {
@@ -160,7 +162,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     public function listAll(RestRequestInterface $request)
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getDataProvider($resourceType);
+        $dataProvider = $this->getDataProvider($request);
         $allModels = $dataProvider->fetchAllModels($resourceType);
 
         return $this->prepareResult(
@@ -174,7 +176,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     {
         $resourceType = $request->getResourceType();
 
-        return $this->getDataProvider($resourceType)->countAllModels($resourceType);
+        return $this->getDataProvider($request)->countAllModels($resourceType);
     }
 
     /**
@@ -202,16 +204,14 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     }
 
     /**
-     * Returns the Data Provider
+     * Return the Data Provider
      *
-     * @param ResourceType $resourceType
+     * @param RestRequestInterface $request
      * @return DataProviderInterface
      */
-    protected function getDataProvider(
-        /** @noinspection PhpUnusedParameterInspection */
-        ResourceType $resourceType
-    ) {
-        return $this->objectManager->getDataProvider();
+    protected function getDataProvider(RestRequestInterface $request)
+    {
+        return $this->objectManager->getDataProvider($request);
     }
 
     /**
@@ -253,10 +253,10 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         if (is_array($models)) {
             return array_slice($models, 0, $limit, true);
         }
-        if ($models instanceof \IteratorAggregate) {
+        if ($models instanceof IteratorAggregate) {
             $models = $models->getIterator();
         }
-        if ($models instanceof \Iterator) {
+        if ($models instanceof Iterator) {
             return iterator_to_array(new LimitIterator($models, 0, $limit));
         }
 

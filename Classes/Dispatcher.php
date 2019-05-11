@@ -82,9 +82,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
         $this->requestFactory->registerCurrentRequest($request);
-        if (method_exists($this->objectManager, 'reassignRequest')) {
-            $this->objectManager->reassignRequest();
-        }
 
         return $this->dispatch($this->requestFactory->getRequest());
     }
@@ -155,7 +152,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $this->logger->logRequest(sprintf('path: "%s" method: "%s"', $requestPath, $request->getMethod()));
 
         // If a path is given let the handler build up the routes
-        $this->objectManager->getHandler()->configureRoutes($resultConverter, $request);
+        $this->objectManager->getHandler($request)->configureRoutes($resultConverter, $request);
 
         ErrorHandler::registerHandler();
 
@@ -256,7 +253,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         // Checks if the request needs authentication
-        $access = $this->objectManager->getAccessController()->getAccess($request);
+        $access = $this->objectManager->getAccessController($request)->getAccess($request);
         switch (true) {
             case $access->isAllowed():
             case $access->isAuthorized():

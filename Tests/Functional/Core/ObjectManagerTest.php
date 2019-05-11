@@ -141,7 +141,7 @@ class ObjectManagerTest extends AbstractCase
             $this->buildClass($classToBuild);
         }
 
-        $dataProvider = $this->fixture->getDataProvider();
+        $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
         $this->assertInstanceOf(DataProvider::class, $dataProvider);
@@ -243,7 +243,7 @@ class ObjectManagerTest extends AbstractCase
             $this->buildClass($classToBuild);
         }
 
-        $handler = $this->fixture->getHandler();
+        $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
         $this->assertInstanceOf(CrudHandler::class, $handler);
@@ -337,7 +337,7 @@ class ObjectManagerTest extends AbstractCase
 
         $_GET['u'] = $resourceTypeString;
 
-        $handler = $this->fixture->getHandler();
+        $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString));
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
         $this->assertInstanceOf(CrudHandler::class, $handler);

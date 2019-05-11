@@ -5,15 +5,20 @@ namespace Cundd\Rest\Tests\Functional\Core;
 
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
+use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\Functional\Fixtures\DummyAuthenticationProvider;
 
+/**
+ * Functional tests for ConfigurationBasedAccessController
+ *
+ * @see \Cundd\Rest\Tests\Unit\Core\ConfigurationBasedAccessController for Unit tests
+ */
 class ConfigurationBasedAccessControllerTest extends AbstractCase
 {
     /**
-     * @var \Cundd\Rest\Access\ConfigurationBasedAccessController
+     * @var ConfigurationBasedAccessController
      */
     private $fixture;
 
@@ -26,31 +31,31 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         parent::setUp();
         /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $this->objectManager->get(TypoScriptConfigurationProvider::class);
-        $settings = [
-            'paths' => [
-                'all'             => [
-                    'path'  => 'all',
-                    'read'  => 'allow',
-                    'write' => 'deny',
+        $configurationProvider = new StandaloneConfigurationProvider(
+            [
+                'paths' => [
+                    'all'             => [
+                        'path'  => 'all',
+                        'read'  => 'allow',
+                        'write' => 'deny',
+                    ],
+                    'my_ext-my_model' => [
+                        'path'  => 'my_ext-my_model',
+                        'read'  => 'require',
+                        'write' => 'allow',
+                    ],
+                    'my_secondext-*'  => [
+                        'path'  => 'my_secondext-*',
+                        'read'  => 'deny',
+                        'write' => 'require',
+                    ],
                 ],
-                'my_ext-my_model' => [
-                    'path'  => 'my_ext-my_model',
-                    'read'  => 'require',
-                    'write' => 'allow',
-                ],
-                'my_secondext-*'  => [
-                    'path'  => 'my_secondext-*',
-                    'read'  => 'deny',
-                    'write' => 'require',
-                ],
-            ],
-        ];
-        $configurationProvider->setSettings($settings);
+            ]
+        );
 
         /** @var ObjectManager $restObjectManager */
-        $this->restObjectManager = $this->objectManager->get(ObjectManager::class);
-        $this->fixture = new ConfigurationBasedAccessController($configurationProvider, $this->restObjectManager);
+        $restObjectManager = $this->objectManager->get(ObjectManager::class);
+        $this->fixture = new ConfigurationBasedAccessController($configurationProvider, $restObjectManager);
     }
 
     protected function tearDown()
@@ -65,11 +70,6 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
      */
     public function getConfigurationForPathWithoutWildcardTest()
     {
-        $this->injectPropertyIntoObject(
-            new DummyAuthenticationProvider(true),
-            'authenticationProvider',
-            $this->restObjectManager
-        );
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildRequestWithUri($uri, null, 'GET');
         $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
@@ -79,21 +79,9 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
 
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
-        $this->assertTrue($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
+        $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
 
-        $this->injectPropertyIntoObject(
-            new DummyAuthenticationProvider(true),
-            'authenticationProvider',
-            $this->restObjectManager
-        );
-        $this->assertTrue($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-        $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
 
-        $this->injectPropertyIntoObject(
-            new DummyAuthenticationProvider(false),
-            'authenticationProvider',
-            $this->restObjectManager
-        );
         $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
         $this->assertTrue($this->fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
     }
@@ -113,19 +101,6 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
 
-        $this->injectPropertyIntoObject(
-            new DummyAuthenticationProvider(true),
-            'authenticationProvider',
-            $this->restObjectManager
-        );
-        $this->assertTrue($this->fixture->getAccess($request->withMethod('POST'))->isAuthorized());
-        $this->assertFalse($this->fixture->getAccess($request->withMethod('POST'))->isUnauthorized());
-
-        $this->injectPropertyIntoObject(
-            new DummyAuthenticationProvider(false),
-            'authenticationProvider',
-            $this->restObjectManager
-        );
         $this->assertFalse($this->fixture->getAccess($request->withMethod('POST'))->isAuthorized());
         $this->assertTrue($this->fixture->getAccess($request->withMethod('POST'))->isUnauthorized());
     }

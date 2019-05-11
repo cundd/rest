@@ -242,27 +242,10 @@ class ObjectManagerTest extends TestCase
             $this->buildClassAndRegisterObject($classToBuild);
         }
 
-        $dataProvider = $this->fixture->getDataProvider();
+        $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
 //        $this->assertInstanceOf(DataProvider::class, $dataProvider);
-    }
-
-    /**
-     * @param string[] $classToBuild
-     * @throws Exception
-     */
-    private function buildClassAndRegisterObject(array $classToBuild): void
-    {
-        $this->buildClass($classToBuild, '', '', true);
-        $className = implode('\\', array_reverse(array_slice($classToBuild, 0, 2)));
-
-        $this->container->set(
-            ltrim($className, '\\'),
-            function (...$a) use ($className) {
-                return new $className(...$a);
-            }
-        );
     }
 
     public function dataProviderTestGenerator()
@@ -347,11 +330,14 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
+     * @dataProvider passRequestAsArgumentDataProvider
+     * @param bool $passRequestAsArgument
+     * @throws Exception
      */
-    public function getDataProviderFromResourceTest()
+    public function getDataProviderFromResourceTest(bool $passRequestAsArgument)
     {
         $expectedDataProvider = 'Vendor\\Ext' . time() . '\\Rest\\DataProvider';
-        $this->buildClass([$expectedDataProvider, '', DummyDataProvider::class]);
+        $this->buildClass($expectedDataProvider, '', DummyDataProvider::class, true);
         $this->container->set(
             $expectedDataProvider,
             function () use ($expectedDataProvider) {
@@ -372,9 +358,14 @@ class ObjectManagerTest extends TestCase
             ]
         );
         $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory((string)$resourceTypeString));
 
-        $dataProvider = $this->fixture->getDataProvider();
+        // Modern way
+        if ($passRequestAsArgument) {
+            $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($resourceTypeString));
+        } else {
+            $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($resourceTypeString));
+            $dataProvider = $this->fixture->getDataProvider();
+        }
         $this->assertInstanceOf($expectedDataProvider, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
     }
@@ -406,10 +397,9 @@ class ObjectManagerTest extends TestCase
             $this->buildClassAndRegisterObject($classToBuild);
         }
 
-        $handler = $this->fixture->getHandler();
+        $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
-//        $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
     public function handlerTestGenerator()
@@ -478,11 +468,14 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
+     * @dataProvider passRequestAsArgumentDataProvider
+     * @param bool $passRequestAsArgument
+     * @throws Exception
      */
-    public function getHandlerFromResourceTest()
+    public function getHandlerFromResourceTest(bool $passRequestAsArgument)
     {
         $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
-        $this->buildClass([$expectedHandler, '', DummyHandler::class]);
+        $this->buildClass($expectedHandler, '', DummyHandler::class, true);
         $this->container->set(
             $expectedHandler,
             function () use ($expectedHandler) {
@@ -504,10 +497,39 @@ class ObjectManagerTest extends TestCase
         );
         $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
 
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory((string)$resourceTypeString));
-
-        $handler = $this->fixture->getHandler();
+        // Modern way
+        if ($passRequestAsArgument) {
+            $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString));
+        } else {
+            $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($resourceTypeString));
+            $handler = $this->fixture->getHandler();
+        }
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
+    }
+
+    public function passRequestAsArgumentDataProvider()
+    {
+        return [
+            'Pass Request as argument yes' => [true],
+            'Pass Request as argument no'  => [false],
+        ];
+    }
+
+    /**
+     * @param string[] $classToBuild
+     * @throws Exception
+     */
+    private function buildClassAndRegisterObject(array $classToBuild): void
+    {
+        $this->buildClass($classToBuild, '', '', true);
+        $className = implode('\\', array_reverse(array_slice($classToBuild, 0, 2)));
+
+        $this->container->set(
+            ltrim($className, '\\'),
+            function (...$a) use ($className) {
+                return new $className(...$a);
+            }
+        );
     }
 }

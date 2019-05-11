@@ -146,7 +146,7 @@ trait ClassBuilderTrait
      * @param string       $extends
      * @return string[]
      */
-    protected static function buildClassSignature($className, $namespace = '', $extends = '')
+    protected static function buildClassSignature($className, string $namespace = '', string $extends = '')
     {
         if (is_array($className)) {
             return static::buildClassSignature(...$className);
