@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
-use TYPO3\CMS\Core\TimeTracker\TimeTracker;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Locale;
+use Psr\Http\Message\ServerRequestInterface;
+use stdClass;
 use TYPO3\CMS\Core\Routing\SiteMatcher;
 use TYPO3\CMS\Core\Routing\SiteRouteResult;
+use TYPO3\CMS\Core\TimeTracker\TimeTracker;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
@@ -48,7 +51,7 @@ class Bootstrap
     public function initializeLanguageObject()
     {
         if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
-            /** @var \TYPO3\CMS\Lang\LanguageService $GLOBALS ['LANG'] */
+            /** @var LanguageService $GLOBALS ['LANG'] */
             $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
             $GLOBALS['LANG']->init($this->getRequestedLanguageCode());
         }
@@ -71,7 +74,7 @@ class Bootstrap
      * @param int $pageUid
      * @return TypoScriptFrontendController
      */
-    private function buildFrontendController($pageUid)
+    private function buildFrontendController(int $pageUid): TypoScriptFrontendController
     {
         $cHash = GeneralUtility::_GP('cHash') ?: 'cunddRestFakeHash';
 
@@ -93,23 +96,21 @@ class Bootstrap
     /**
      * @return int
      */
-    private function getPageUid()
+    private function getPageUid(): int
     {
-        $pageUid = GeneralUtility::_GP('pid') !== null
+        return GeneralUtility::_GP('pid') !== null
             ? intval(GeneralUtility::_GP('pid'))
             : 0;
-
-        return $pageUid;
     }
 
     /**
      * @return bool
      */
-    private function getFrontendControllerIsInitialized()
+    private function getFrontendControllerIsInitialized(): bool
     {
         return isset($GLOBALS['TSFE'])
             && is_object($GLOBALS['TSFE'])
-            && !($GLOBALS['TSFE'] instanceof \stdClass);
+            && !($GLOBALS['TSFE'] instanceof stdClass);
     }
 
     /**
@@ -117,7 +118,7 @@ class Bootstrap
      *
      * @param TypoScriptFrontendController $frontendController
      */
-    private function configureFrontendController($frontendController)
+    private function configureFrontendController(TypoScriptFrontendController $frontendController)
     {
         $frontendController->initTemplate();
 
@@ -146,9 +147,10 @@ class Bootstrap
      */
     private function setRequestedLanguage(TypoScriptFrontendController $frontendController)
     {
-        // support new Typo3 v9.2 Site Handling until middleware concept is implemented
+        // support new TYPO3 v9.2 Site Handling until middleware concept is implemented
         // see https://github.com/cundd/rest/issues/59
         if (isset($GLOBALS['TYPO3_REQUEST']) && class_exists(SiteMatcher::class)) {
+            /** @var ServerRequestInterface $request */
             $request = $GLOBALS['TYPO3_REQUEST'];
 
             /** @var SiteRouteResult $routeResult */
@@ -181,12 +183,12 @@ class Bootstrap
     }
 
     /**
-     * Detects the language UID for the requested language
+     * Detect the language UID for the requested language
      *
      * @param TypoScriptFrontendController $frontendController
      * @return int|null
      */
-    private function getRequestedLanguageUid(TypoScriptFrontendController $frontendController)
+    private function getRequestedLanguageUid(TypoScriptFrontendController $frontendController): ?int
     {
         // Test the full HTTP_ACCEPT_LANGUAGE header
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
@@ -218,14 +220,16 @@ class Bootstrap
     }
 
     /**
-     * Retrieves the TypoScript configuration for the given key path
+     * Retrieve the TypoScript configuration for the given key path
      *
      * @param string                       $keyPath
      * @param TypoScriptFrontendController $typoScriptFrontendController
      * @return mixed
      */
-    private function readConfigurationFromTyposcript($keyPath, $typoScriptFrontendController)
-    {
+    private function readConfigurationFromTyposcript(
+        string $keyPath,
+        TypoScriptFrontendController $typoScriptFrontendController
+    ) {
         $keyPathParts = explode('.', (string)$keyPath);
         $currentValue = $typoScriptFrontendController->tmpl->setup;
 
@@ -243,15 +247,15 @@ class Bootstrap
     }
 
     /**
-     * Detects the requested language
+     * Detect the requested language
      *
      * @return null|string
      */
-    private function getRequestedLanguageCode()
+    private function getRequestedLanguageCode(): ?string
     {
         if (class_exists('Locale') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             /** @noinspection PhpComposerExtensionStubsInspection */
-            return \Locale::getPrimaryLanguage(\Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']));
+            return Locale::getPrimaryLanguage(Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']));
         }
 
         return null;

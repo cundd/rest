@@ -32,10 +32,10 @@ class BootstrapDispatcher
     /**
      * Initialize
      *
-     * @param ObjectManager $objectManager
-     * @param array         $configuration
+     * @param ObjectManagerInterface $objectManager
+     * @param array                  $configuration
      */
-    public function __construct(ObjectManager $objectManager = null, array $configuration = [])
+    public function __construct(ObjectManagerInterface $objectManager = null, array $configuration = [])
     {
         (new Bootstrap())->init();
 
@@ -51,7 +51,7 @@ class BootstrapDispatcher
     }
 
     /**
-     * Initializes the Object framework
+     * Initializes the Configuration Manager
      *
      * @param array $configuration
      */
@@ -103,7 +103,6 @@ class BootstrapDispatcher
     {
         $requestFactory = $objectManager->getRequestFactory();
         $responseFactory = $objectManager->getResponseFactory();
-        /** @var LoggerInterface $logger */
         $logger = $objectManager->get(LoggerInterface::class);
 
         $this->dispatcher = new Dispatcher($objectManager, $requestFactory, $responseFactory, $logger);
