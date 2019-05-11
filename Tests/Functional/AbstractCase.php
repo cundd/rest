@@ -15,6 +15,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
+use Cundd\Rest\Tests\InjectPropertyTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
@@ -22,7 +23,10 @@ use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
+use Exception;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use SimpleXMLElement;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -35,7 +39,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Webmozart\Assert\Assert;
 
 /**
- * @method \Prophecy\Prophecy\ObjectProphecy prophesize($classOrInterface = null);
+ * @method ObjectProphecy prophesize($classOrInterface = null);
  * @method void assertInternalType($expected, $actual, $message = '')
  * @method void assertEquals($expected, $actual, $message = '', ...$args)
  * @method void assertSame($expected, $actual, $message = '')
@@ -56,6 +60,7 @@ class AbstractCase extends FunctionalTestCase
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
+    use InjectPropertyTrait;
 
     /**
      * @var ObjectManager
@@ -109,7 +114,7 @@ class AbstractCase extends FunctionalTestCase
      *
      * @param string $path Absolute path to the XML file containing the data set to load
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function importDataSet($path)
     {
@@ -120,7 +125,7 @@ class AbstractCase extends FunctionalTestCase
         }
 
         if (!is_file($path)) {
-            throw new \Exception(
+            throw new Exception(
                 'Fixture file ' . $path . ' not found',
                 1376746261
             );
@@ -130,11 +135,11 @@ class AbstractCase extends FunctionalTestCase
         $xml = simplexml_load_file($path);
         $foreignKeys = [];
 
-        /** @var \SimpleXMLElement $table */
+        /** @var SimpleXMLElement $table */
         foreach ($xml->children() as $table) {
             $insertArray = [];
 
-            /** @var \SimpleXMLElement $column */
+            /** @var SimpleXMLElement $column */
             foreach ($table->children() as $column) {
                 $columnName = $column->getName();
                 $columnValue = null;
@@ -178,21 +183,6 @@ class AbstractCase extends FunctionalTestCase
     protected function getDatabaseBackend()
     {
         return BackendFactory::getBackend();
-    }
-
-    /**
-     * @param mixed  $propertyValue
-     * @param string $propertyKey
-     * @param object $object
-     * @return object
-     */
-    public function injectPropertyIntoObject($propertyValue, $propertyKey, $object)
-    {
-        $reflectionMethod = new \ReflectionProperty(get_class($object), $propertyKey);
-        $reflectionMethod->setAccessible(true);
-        $reflectionMethod->setValue($object, $propertyValue);
-
-        return $object;
     }
 
     /**
@@ -330,7 +320,7 @@ class AbstractCase extends FunctionalTestCase
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         try {
             $cacheManager->getCache('assets');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $cache = new VariableFrontend('assets', new NullBackend('unused'));
             $cacheManager->registerCache($cache);
         }

@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 class CacheTest extends AbstractCase
 {
     /**
-     * @var \Cundd\Rest\Cache\Cache
+     * @var Cache
      */
     protected $fixture;
 
@@ -180,8 +180,10 @@ class CacheTest extends AbstractCase
 
         $cacheProphecy = $this->getFrontendCacheProphecy();
 
+        /** @var array $remaining */
+        $remaining = Argument::cetera();
         /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
+        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), $remaining);
         $methodProphecy->shouldBeCalled();
         $methodProphecy->willReturn('');
 
@@ -203,8 +205,10 @@ class CacheTest extends AbstractCase
 
         $cacheProphecy = $this->getFrontendCacheProphecy();
 
+        /** @var array $remaining */
+        $remaining = Argument::cetera();
         /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), Argument::cetera());
+        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), $remaining);
         $methodProphecy->shouldNotBeCalled();
 
         /** @var VariableFrontend $cacheInstance */
@@ -271,6 +275,7 @@ class CacheTest extends AbstractCase
             Access::allowed(),
             Access::allowed(),
             $cacheLifetime,
+            '',
             '',
             []
         );

@@ -39,6 +39,10 @@ class ResourceConfiguration
      * @var string[]
      */
     private $aliases;
+    /**
+     * @var string
+     */
+    private $dataProviderClass;
 
     /**
      * ResourceConfiguration constructor
@@ -48,23 +52,26 @@ class ResourceConfiguration
      * @param Access       $write
      * @param int          $cacheLifetime
      * @param string       $handlerClass
+     * @param string       $dataProviderClass
      * @param string[]     $aliases
      */
     public function __construct(
         ResourceType $resourceType,
         Access $read,
         Access $write,
-        $cacheLifetime,
-        $handlerClass,
+        int $cacheLifetime,
+        string $handlerClass,
+        string $dataProviderClass,
         array $aliases
     ) {
         $this->resourceType = $resourceType;
         $this->read = $read;
         $this->write = $write;
-        $this->cacheLifetime = (int)$cacheLifetime;
-        $this->handlerClass = (string)$handlerClass;
+        $this->cacheLifetime = $cacheLifetime;
+        $this->handlerClass = $handlerClass;
         $this->assertStringArray($aliases);
         $this->aliases = $aliases;
+        $this->dataProviderClass = $dataProviderClass;
     }
 
     /**
@@ -115,6 +122,14 @@ class ResourceConfiguration
     public function getHandlerClass()
     {
         return $this->handlerClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDataProviderClass(): string
+    {
+        return $this->dataProviderClass;
     }
 
     /**

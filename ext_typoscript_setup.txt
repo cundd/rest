@@ -6,6 +6,7 @@ plugin.tx_rest.settings {
             write = deny
             cacheLifetime = -1
             handlerClass = \Cundd\Rest\Handler\CrudHandler
+            dataProviderClass = \Cundd\Rest\DataProvider\DataProviderInterface
         }
 
         auth {

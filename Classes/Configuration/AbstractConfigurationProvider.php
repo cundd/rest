@@ -8,6 +8,7 @@ use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\SingletonInterface;
+use RuntimeException;
 
 /**
  * Abstract Configuration Provider
@@ -91,7 +92,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
 
         if (!$resourceTypeString) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Invalid normalized Resource Type "%s"',
                     is_null($resourceTypeString) ? 'null' : $resourceTypeString
@@ -148,6 +149,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
                 $writeAccess,
                 $cacheLifetime,
                 isset($configuration['handlerClass']) ? $configuration['handlerClass'] : '',
+                isset($configuration['dataProviderClass']) ? $configuration['dataProviderClass'] : '',
                 $this->getAliasesForResourceType($resourceType)
             );
         }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests;
 
 
+use Exception;
+use InvalidArgumentException;
+
 trait ClassBuilderTrait
 {
     /**
@@ -12,9 +15,10 @@ trait ClassBuilderTrait
      * @param string|array $className
      * @param string       $namespace
      * @param string       $extends
-     * @throws \Exception
+     * @param bool         $silent
+     * @throws Exception
      */
-    public static function buildClass($className, $namespace = '', $extends = '')
+    public static function buildClass($className, string $namespace = '', string $extends = '', bool $silent = false)
     {
         list($preparedClassName, $preparedNamespace, $preparedExtends) = self::buildClassSignature(
             $className,
@@ -23,7 +27,9 @@ trait ClassBuilderTrait
         );
 
         if (class_exists("$preparedNamespace\\$preparedClassName")) {
-            printf('Class %s already exists' . PHP_EOL, "$preparedNamespace\\$preparedClassName");
+            if (!$silent) {
+                printf('Class %s already exists' . PHP_EOL, "$preparedNamespace\\$preparedClassName");
+            }
 
             return;
         }
@@ -31,7 +37,7 @@ trait ClassBuilderTrait
         static::buildCode('class', $preparedClassName, $preparedNamespace, $preparedExtends);
 
         if (!class_exists("$preparedNamespace\\$preparedClassName")) {
-            throw new \Exception(sprintf('Could not create class %s', "$preparedNamespace\\$preparedClassName"));
+            throw new Exception(sprintf('Could not create class %s', "$preparedNamespace\\$preparedClassName"));
         }
     }
 
@@ -41,7 +47,7 @@ trait ClassBuilderTrait
      * @param string $className
      * @param string $namespace
      * @param string $extends
-     * @throws \Exception
+     * @throws Exception
      */
     public static function buildClassIfNotExists($className, $namespace = '', $extends = '')
     {
@@ -62,7 +68,7 @@ trait ClassBuilderTrait
      * @param string $interfaceName
      * @param string $namespace
      * @param string $extends
-     * @throws \Exception
+     * @throws Exception
      */
     public static function buildInterface($interfaceName, $namespace = '', $extends = '')
     {
@@ -81,7 +87,7 @@ trait ClassBuilderTrait
         static::buildCode('interface', $preparedClassName, $preparedNamespace, $preparedExtends);
 
         if (!interface_exists("$preparedNamespace\\$preparedClassName")) {
-            throw new \Exception(sprintf('Could not create interface %s', "$preparedNamespace\\$preparedClassName"));
+            throw new Exception(sprintf('Could not create interface %s', "$preparedNamespace\\$preparedClassName"));
         }
     }
 
@@ -91,7 +97,7 @@ trait ClassBuilderTrait
      * @param string $className
      * @param string $namespace
      * @param string $extends
-     * @throws \Exception
+     * @throws Exception
      */
     public static function buildInterfaceIfNotExists($className, $namespace = '', $extends = '')
     {
@@ -113,7 +119,7 @@ trait ClassBuilderTrait
      * @param string $preparedClassName
      * @param string $preparedNamespace
      * @param string $preparedExtends
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function buildCode($type, $preparedClassName, $preparedNamespace, $preparedExtends)
     {
@@ -147,13 +153,13 @@ trait ClassBuilderTrait
         }
 
         if (!is_string($className)) {
-            throw new \InvalidArgumentException('$className must be a string');
+            throw new InvalidArgumentException('$className must be a string');
         }
         if (!is_string($namespace)) {
-            throw new \InvalidArgumentException('$namespace must be a string');
+            throw new InvalidArgumentException('$namespace must be a string');
         }
         if (!is_string($extends)) {
-            throw new \InvalidArgumentException('$extends must be a string');
+            throw new InvalidArgumentException('$extends must be a string');
         }
 
         $preparedClassName = $className;
