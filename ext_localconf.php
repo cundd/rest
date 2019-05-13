@@ -1,4 +1,7 @@
 <?php
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
@@ -30,15 +33,14 @@ call_user_func(
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'] = [];
         }
 
-        // Register implementation classes
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\Cundd\Rest\Configuration\ConfigurationProviderInterface::class] = [
-            'className' => \Cundd\Rest\Configuration\TypoScriptConfigurationProvider::class,
+        $implementationsMap = [
+            \Cundd\Rest\Configuration\ConfigurationProviderInterface::class => \Cundd\Rest\Configuration\TypoScriptConfigurationProvider::class,
+            \Cundd\Rest\Authentication\UserProviderInterface::class         => \Cundd\Rest\Authentication\UserProvider\FeUserProvider::class,
+            \Cundd\Rest\Handler\HandlerInterface::class                     => \Cundd\Rest\Handler\CrudHandler::class,
         ];
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\Cundd\Rest\Authentication\UserProviderInterface::class] = [
-            'className' => \Cundd\Rest\Authentication\UserProvider\FeUserProvider::class,
-        ];
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][Cundd\Rest\Handler\HandlerInterface::class] = [
-            'className' => \Cundd\Rest\Handler\CrudHandler::class,
-        ];
+        $objectContainer = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\Container\Container::class);
+        foreach ($implementationsMap as $interface => $impl) {
+            $objectContainer->registerImplementation($interface, $impl);
+        }
     }
 );

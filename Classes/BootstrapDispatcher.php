@@ -64,6 +64,8 @@ class BootstrapDispatcher
     /**
      * Configures the object manager object configuration from
      * config.tx_extbase.objects and plugin.tx_foo.objects
+     *
+     * @deprecated will be removed in 5.0
      */
     private function configureObjectManager()
     {

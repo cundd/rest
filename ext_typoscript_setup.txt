@@ -63,19 +63,3 @@ plugin.tx_rest.settings {
         # 30 = Cundd\Rest\Authentication\RequestAuthenticationProvider
     }
 }
-
-config.tx_extbase {
-    objects {
-        Cundd\Rest\Authentication\UserProviderInterface {
-            className = Cundd\Rest\Authentication\UserProvider\FeUserProvider
-        }
-
-        Cundd\Rest\Configuration\ConfigurationProviderInterface {
-            className = Cundd\Rest\Configuration\TypoScriptConfigurationProvider
-        }
-
-        Cundd\Rest\Handler\HandlerInterface {
-            className = Cundd\Rest\Handler\CrudHandler
-        }
-    }
-}
