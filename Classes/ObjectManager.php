@@ -22,6 +22,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager as TYPO3ObjectManager;
+use function interface_exists;
 
 /**
  * Specialized Object Manager
@@ -247,7 +248,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return null;
         }
 
-        if (!class_exists($implementation)) {
+        if (!class_exists($implementation) && !interface_exists($implementation)) {
             throw new InvalidConfigurationException(
                 sprintf('Configured %s "%s" does not exist', $type, $implementation)
             );
