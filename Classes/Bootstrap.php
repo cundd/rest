@@ -14,6 +14,10 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 use TYPO3\CMS\Lang\LanguageService;
+use function class_exists;
+use function intval;
+use function is_int;
+use function is_string;
 
 
 /**
@@ -26,6 +30,8 @@ class Bootstrap
      *
      * @param TypoScriptFrontendController|null $frontendController
      * @return TypoScriptFrontendController
+     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
+     * @throws \TYPO3\CMS\Core\Http\ImmediateResponseException
      */
     public function init(TypoScriptFrontendController $frontendController = null)
     {
@@ -57,9 +63,6 @@ class Bootstrap
         }
     }
 
-    /**
-     *
-     */
     private function initializeTimeTracker()
     {
         if (!isset($GLOBALS['TT']) || !is_object($GLOBALS['TT'])) {
@@ -82,7 +85,7 @@ class Bootstrap
 
         return $objectManager->get(
             TypoScriptFrontendController::class,
-            $GLOBALS['TYPO3_CONF_VARS'], // can be removed in TYPO3 v8
+            null, // previously TYPO3_CONF_VARS
             $pageUid,
             0,  // Type
             0,  // no_cache
@@ -117,6 +120,8 @@ class Bootstrap
      * Configure the given frontend controller
      *
      * @param TypoScriptFrontendController $frontendController
+     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
+     * @throws \TYPO3\CMS\Core\Http\ImmediateResponseException
      */
     private function configureFrontendController(TypoScriptFrontendController $frontendController)
     {
@@ -135,8 +140,11 @@ class Bootstrap
         $frontendController->determineId();
         $frontendController->getConfigArray();
 
-        $this->setRequestedLanguage($frontendController);
-        $frontendController->settingLanguage();
+        $this->detectAndSetRequestedLanguage($frontendController);
+        //try {
+        //    $frontendController->settingLanguage();
+        //} catch (\RuntimeException $exception) {
+        //}
         $frontendController->settingLocale();
     }
 
@@ -145,40 +153,57 @@ class Bootstrap
      *
      * @param TypoScriptFrontendController $frontendController
      */
-    private function setRequestedLanguage(TypoScriptFrontendController $frontendController)
+    private function detectAndSetRequestedLanguage(TypoScriptFrontendController $frontendController)
     {
-        // support new TYPO3 v9.2 Site Handling until middleware concept is implemented
-        // see https://github.com/cundd/rest/issues/59
-        if (isset($GLOBALS['TYPO3_REQUEST']) && class_exists(SiteMatcher::class)) {
-            /** @var ServerRequestInterface $request */
-            $request = $GLOBALS['TYPO3_REQUEST'];
+        if (!isset($GLOBALS['TYPO3_REQUEST']) || !class_exists(SiteMatcher::class)) {
+            $this->setRequestedLanguage($frontendController, $this->getRequestedLanguageUid($frontendController));
 
-            /** @var SiteRouteResult $routeResult */
-            $routeResult = GeneralUtility::makeInstance(SiteMatcher::class)->matchRequest($request);
-
-            $language = $routeResult->getLanguage();
-
-            $request = $request->withAttribute('site', $routeResult->getSite());
-            $request = $request->withAttribute('language', $language);
-            $request = $request->withAttribute('routing', $routeResult);
-
-            $GLOBALS['TYPO3_REQUEST'] = $request;
-
-            // Set language if defined
-            $requestedLanguageUid = ($language && $language->getLanguageId() !== null)
-                ? $language->getLanguageId()
-                : $this->getRequestedLanguageUid($frontendController);
-        } else {
-            $requestedLanguageUid = GeneralUtility::_GP('L') !== null
-                ? intval(GeneralUtility::_GP('L'))
-                : $this->getRequestedLanguageUid($frontendController);
+            return;
         }
 
-        if (null !== $requestedLanguageUid) {
-            $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
-            // Add LinkVars and language to work with correct localized labels
-            $frontendController->config['config']['linkVars'] = 'L(int)';
-            $frontendController->config['config']['language'] = $this->getRequestedLanguageCode();
+        // support new TYPO3 v9.2 Site Handling until middleware concept is implemented
+        // see https://github.com/cundd/rest/issues/59
+        /** @var ServerRequestInterface $request */
+        $request = $GLOBALS['TYPO3_REQUEST'];
+
+        /**
+         * Try to detect the language ID from request parameters or headers. If the SiteMatcher detects a language this
+         * fallback will **not** be used
+         *
+         * @var int|null $fallbackLanguageId
+         */
+        $fallbackLanguageId = (int)($request->getQueryParams()['L']
+            ?? $request->getParsedBody()['L']
+            ?? $this->getRequestedLanguageUid($frontendController));
+
+
+        /** @var SiteRouteResult $routeResult */
+        $routeResult = GeneralUtility::makeInstance(SiteMatcher::class)->matchRequest($request);
+
+
+        $site = $routeResult->getSite();
+        $language = $routeResult->getLanguage();
+
+        // If TYPO3 could not determine the language for the request use the detected fallback
+        if (!$language && $fallbackLanguageId !== null) {
+            $language = $site->getLanguageById($fallbackLanguageId);
+        }
+
+        $request = $request->withAttribute('site', $site);
+        $request = $request->withAttribute('language', $language);
+        $request = $request->withAttribute('routing', $routeResult);
+
+        // Patch the original Request so that at least `site` and `routing` are defined
+        $GLOBALS['TYPO3_REQUEST'] = $request
+            ->withAttribute('site', $site)
+            ->withAttribute('language', $language)
+            ->withAttribute('routing', $routeResult);
+
+        // Set language if defined
+        if ($language && $language->getLanguageId() !== null) {
+            $this->setRequestedLanguage($frontendController, $language->getLanguageId());
+        } else {
+            $this->setRequestedLanguage($frontendController, $fallbackLanguageId);
         }
     }
 
@@ -190,33 +215,38 @@ class Bootstrap
      */
     private function getRequestedLanguageUid(TypoScriptFrontendController $frontendController): ?int
     {
+        if (GeneralUtility::_GP('L') !== null) {
+            return (int)GeneralUtility::_GP('L');
+        }
+        if (GeneralUtility::_GP('locale') !== null) {
+            $languageId = $this->getLanguageIdForCode($frontendController, GeneralUtility::_GP('locale'));
+            if ($languageId !== null) {
+                return $languageId;
+            }
+        }
+
         // Test the full HTTP_ACCEPT_LANGUAGE header
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $typoscriptValue = $this->readConfigurationFromTyposcript(
-                'plugin.tx_rest.settings.languages.' . $_SERVER['HTTP_ACCEPT_LANGUAGE'],
-                $frontendController
+            $languageId = $this->getLanguageIdForCode(
+                $frontendController,
+                (string)$_SERVER['HTTP_ACCEPT_LANGUAGE']
             );
 
-            if ($typoscriptValue !== null) {
-                return intval($typoscriptValue);
+            if ($languageId !== null) {
+                return $languageId;
             }
         }
 
         // Retrieve and test the parsed header
         $languageCode = $this->getRequestedLanguageCode();
-        if ($languageCode === null) {
-            return null;
-        }
-        $typoscriptValue = $this->readConfigurationFromTyposcript(
-            'plugin.tx_rest.settings.languages.' . $languageCode,
-            $frontendController
-        );
-
-        if ($typoscriptValue === null) {
-            return null;
+        if ($languageCode !== null) {
+            $languageId = $this->getLanguageIdForCode($frontendController, $languageCode);
+            if ($languageId !== null) {
+                return $languageId;
+            }
         }
 
-        return intval($typoscriptValue);
+        return null;
     }
 
     /**
@@ -259,5 +289,41 @@ class Bootstrap
         }
 
         return null;
+    }
+
+    /**
+     * @param TypoScriptFrontendController $frontendController
+     * @param string                       $languageCode
+     * @return int
+     */
+    private function getLanguageIdForCode(TypoScriptFrontendController $frontendController, string $languageCode): ?int
+    {
+        $value = $this->readConfigurationFromTyposcript(
+            'plugin.tx_rest.settings.languages.' . $languageCode,
+            $frontendController
+        );
+        if (is_int($value)) {
+            return $value;
+        } elseif (is_string($value)) {
+            return trim($value) === '' ? null : (int)$value;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param TypoScriptFrontendController $frontendController
+     * @param int|null                     $requestedLanguageUid
+     */
+    private function setRequestedLanguage(
+        TypoScriptFrontendController $frontendController,
+        ?int $requestedLanguageUid
+    ): void {
+        if (null !== $requestedLanguageUid) {
+            $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
+            // Add LinkVars and language to work with correct localized labels
+            $frontendController->config['config']['linkVars'] = 'L(int)';
+            $frontendController->config['config']['language'] = $this->getRequestedLanguageCode();
+        }
     }
 }
