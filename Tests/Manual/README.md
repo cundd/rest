@@ -8,7 +8,7 @@ Installation
 
 2. Include the testing TypoScript configuration 
     ```TypoScript
-    <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.ts">
+    <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.typoscript">
     ```
 
 3. Install [news extension](https://typo3.org/extensions/repository/view/news)

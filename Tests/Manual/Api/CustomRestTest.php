@@ -362,10 +362,12 @@ class CustomRestTest extends AbstractApiCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider getCorrectTranslationDataProvider
-     */
+  /**
+   * @test
+   * @dataProvider getCorrectTranslationDataProvider
+   * @param $language
+   * @param $expected
+   */
     public function getCorrectTranslationTest($language, $expected)
     {
         $response = $this->requestJson(

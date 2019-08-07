@@ -1,5 +1,5 @@
 ### Include this file to configure TYPO3 for the manual tests and the correct Virtual Object Page setup
-# <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.ts">
+# <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.typoscript">
 #
 # Virtual Object Page setup for TYPO3 < 9
 # <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Configuration/TypoScript/Page/TYPO3-8/setup.txt">
