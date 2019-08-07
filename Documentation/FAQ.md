@@ -244,7 +244,7 @@ The extension supports different types to handle localized requests.
 
 - Since version `3.6.0` TYPO3's site handling is supported
 - Specify the `L` `GET`-parameter
-- Specify a `Accept-Language` header
+- Specify a `Accept-Language` header and define a mapping from the header value to the sys-language UID in TypoScript
     ```typo3_typoscript
     plugin.tx_rest.settings {
         languages {
