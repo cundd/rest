@@ -51,6 +51,7 @@ before_script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     sleep 10;
+    if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE ${typo3DatabaseName}; GRANT ALL PRIVILEGES ON ${typo3DatabaseName}.* to travis@'%'"; fi
     bash Build/install.sh;
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
   - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
