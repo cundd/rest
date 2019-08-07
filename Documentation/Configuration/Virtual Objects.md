@@ -8,32 +8,32 @@ IMPORTANT: Please be aware that changes (including but not limited to update and
 Example configuration
 ---------------------
 
-```typoscript
+```typo3_typoscript
 plugin.tx_rest.settings.virtualObjects {
-	
+
     # Name of this Virtual Object resource 
     # which will be used in the URL rest/VirtualObject-MyResourceName/
     # or in the URL rest/virtual_object-my_resource_name/
     MyResourceName {
-    
+
         mapping {
             # Name of the table to map to
             tableName = my_resource_table
-            
+
             # A property to use as identifer
             identifier = property1
-            
+
             # If FALSE and a property is encountered that is NOT defined in 
             # the mapping an exception will be thrown
             skipUnknownProperties = true
-            
+
             properties {
                 # Define the property name
                 property1 {
                     # Define one of the types: 
                     # string, float, int(eger), bool(ean), email, slug, url, trim
                     type = string
-                    
+
                     # Define the column name to map to
                     column = property_one
                 }

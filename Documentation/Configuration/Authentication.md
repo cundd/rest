@@ -29,7 +29,7 @@ Enable Authentication
 
 To require a user to be authenticated to access a path set the `read` and/or `write` configuration in TypoScript to `require`:
 
-```
+```typo3_typoscript
 plugin.tx_rest.settings.paths {
     my_protectedext {
         path = my_protectedext-*

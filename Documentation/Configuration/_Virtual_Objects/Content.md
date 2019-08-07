@@ -6,16 +6,17 @@ Setup
 
 Include the static TypoScript file `Virtual Object - Content (rest)` through the Template editor and configure the access.
 
-	plugin.tx_rest.settings {
-		paths {
-			virtualobject-content {
-				path = VirtualObject-Content
-				read = allow
-				write = allow
-			}
-		}
-	}
-
+```typo3_typoscript
+plugin.tx_rest.settings {
+    paths {
+        virtualobject-content {
+            path = VirtualObject-Content
+            read = allow
+            write = allow
+        }
+    }
+}
+```
 
 Retrieving content
 ------------------
@@ -28,17 +29,19 @@ Creating a new content
 
 The following displays the request body to create a new content element with `header` and `bodytext` on the page with UID `pageIdentifer`.
 
-	{
-		"VirtualObject-Content": {
-			"pageIdentifer": 251,
-			"creationUserId": 2,
-			"hidden": false,
-			"type": "text",
-			"header": "A title for the new content element",
-			"bodytext": "<p>Can you see this <strong>new</strong> content?</p>",
-			"layout": 0,
-			"deleted": false,
-			"columns": 0,
-			"colPos": 0
-		}
-	}
+```json
+{
+    "VirtualObject-Content": {
+        "pageIdentifer": 251,
+        "creationUserId": 2,
+        "hidden": false,
+        "type": "text",
+        "header": "A title for the new content element",
+        "bodytext": "<p>Can you see this <strong>new</strong> content?</p>",
+        "layout": 0,
+        "deleted": false,
+        "columns": 0,
+        "colPos": 0
+    }
+}
+```

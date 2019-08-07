@@ -20,18 +20,20 @@ The following example will allow the local development site on port `3000` and
 The `Access-Control-Allow-Origin` header will be set to the first 
 `cors.allowedOrigins` value that matches the sent `origin` header.
 
-	plugin.tx_rest.settings {
-        cors.allowedOrigins {
-            0 = http://localhost:3000
-            1 = https://production.com
-        }
-		responseHeaders {
-			Access-Control-Allow-Methods = POST, GET, OPTIONS
-			
-			# Inform the client that credentials may be used
-			Access-Control-Allow-Credentials = true
-			
-			# Allow the client to send a `Content-Type` header for POST requests 
-            Access-Control-Allow-Headers = Content-Type
-		}
-	}
+```typo3_typoscript
+plugin.tx_rest.settings {
+    cors.allowedOrigins {
+        0 = http://localhost:3000
+        1 = https://production.com
+    }
+    responseHeaders {
+        Access-Control-Allow-Methods = POST, GET, OPTIONS
+
+        # Inform the client that credentials may be used
+        Access-Control-Allow-Credentials = true
+
+        # Allow the client to send a `Content-Type` header for POST requests 
+        Access-Control-Allow-Headers = Content-Type
+    }
+}
+```

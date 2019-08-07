@@ -72,7 +72,7 @@ implements JsonSerializable {
 
 The extension can add a property to the JSON output that provides the object's class name. This can easily be enabled with TypoScript:
 
-```typoscript
+```typo3_typoscript
 plugin.tx_rest.settings {
     addClass = 1
 }
@@ -81,7 +81,7 @@ plugin.tx_rest.settings {
 
 ### Add additional headers
 
-```typoscript
+```typo3_typoscript
 plugin.tx_rest.settings {
 	responseHeaders {
 		Access-Control-Allow-Origin = example.com
@@ -122,17 +122,17 @@ How do paths and classes work together?
 
 Below you find examples of the URL paths (the part after `rest/`) and the matching class names that will be used:
 
-| Path              | Resource Type | Class                                | Repository                                        | Data Provider                                   | Conf |
-| ----------------- | ------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ---- |
-| /pix-gallery      | pix-gallery   | Tx_Pix_Domain_Model_Gallery[]        | Tx_Pix_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*  |
-| /pix-gallery/2    | pix-gallery   | Tx_Pix_Domain_Model_Gallery          | Tx_Pix_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | *a*  |
-| /cundd-foo-bar    | cundd-foo-bar | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*  |
-| /cundd-foo-bar/34 | cundd-foo-bar | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | *b*  |
-| /Document/db      | Document-db   | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
-| /Document/db/9    | Document-db   | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
-| /Document/db/a3b  | Document-db   | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | *c*  |
-| /cundd-daa-bar    | cundd-daa-bar | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*  |
-| /cundd-daa-bar/34 | cundd-daa-bar | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | *d*  |
+| Path              | Resource Type | Class                                | Repository                                        | Data Provider                                   | Conf                    |
+| ----------------- | ------------- | ------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ----------------------- |
+| /pix-gallery      | pix-gallery   | Tx_Pix_Domain_Model_Gallery[]        | Tx_Pix_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | [*a*](#configuration-a) |
+| /pix-gallery/2    | pix-gallery   | Tx_Pix_Domain_Model_Gallery          | Tx_Pix_Domain_Repository_GalleryRepository        | \Cundd\Rest\DataProvider\DataProvider           | [*a*](#configuration-a) |
+| /cundd-foo-bar    | cundd-foo-bar | \Cundd\Foo\Domain\Model\Bar[]        | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | [*b*](#configuration-b) |
+| /cundd-foo-bar/34 | cundd-foo-bar | \Cundd\Foo\Domain\Model\Bar          | \Cundd\Foo\Domain\Repository\BarRepository        | \Cundd\Rest\DataProvider\DataProvider           | [*b*](#configuration-b) |
+| /Document/db      | Document-db   | \Cundd\Rest\Domain\Model\Document[]  | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | [*c*](#configuration-c) |
+| /Document/db/9    | Document-db   | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | [*c*](#configuration-c) |
+| /Document/db/a3b  | Document-db   | \Cundd\Rest\Domain\Model\Document    | \Cundd\Rest\Domain\Repository\DocumentRepository  | \Cundd\Rest\DataProvider\DocumentDataProvider   | [*c*](#configuration-c) |
+| /cundd-daa-bar    | cundd-daa-bar | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | [*d*](#configuration-d) |
+| /cundd-daa-bar/34 | cundd-daa-bar | *                                    | *                                                 | \Cundd\Daa\Rest\DataProvider                    | [*d*](#configuration-d) |
 
 *) These classes are not fixed and depend on the custom `\Cundd\Daa\Rest\DataProvider`.
 
@@ -141,76 +141,86 @@ Below you find examples of the URL paths (the part after `rest/`) and the matchi
 
 Example: Gallery
 
-| Path              | Method | Class                                | Action                           | Conf |
-| ----------------- | ------ | ------------------------------------ | -------------------------------- | ---- |
-| /pix-gallery      | GET    | Tx_Pix_Domain_Model_Gallery[]        | List all galleries               | *a*  |
-| /pix-gallery      | POST   | Tx_Pix_Domain_Model_Gallery          | Create a new gallery             | *a*  |
-| /pix-gallery      | DELETE |                                      | 405 Method Not Allowed           | *a*  |
-| /pix-gallery/2    | GET    | Tx_Pix_Domain_Model_Gallery          | Return  the gallery with UID 2   | *a*  |
-| /pix-gallery/2    | POST   | Tx_Pix_Domain_Model_Gallery          | Replace  the gallery with UID 2  | *a*  |
-| /pix-gallery/2    | DELETE | Tx_Pix_Domain_Model_Gallery          | Delete  the gallery with UID 2   | *a*  |
-| /pix-gallery/2    | PATCH  | Tx_Pix_Domain_Model_Gallery          | Update  the gallery with UID 2   | *a*  |
+| Path              | Method | Class                                | Action                           | Conf                     |
+| ----------------- | ------ | ------------------------------------ | -------------------------------- | ------------------------ |
+| /pix-gallery      | GET    | Tx_Pix_Domain_Model_Gallery[]        | List all galleries               | [*a*](#configuration-a)  |
+| /pix-gallery      | POST   | Tx_Pix_Domain_Model_Gallery          | Create a new gallery             | [*a*](#configuration-a)  |
+| /pix-gallery      | DELETE |                                      | 405 Method Not Allowed           | [*a*](#configuration-a)  |
+| /pix-gallery/2    | GET    | Tx_Pix_Domain_Model_Gallery          | Return  the gallery with UID 2   | [*a*](#configuration-a)  |
+| /pix-gallery/2    | POST   | Tx_Pix_Domain_Model_Gallery          | Replace  the gallery with UID 2  | [*a*](#configuration-a)  |
+| /pix-gallery/2    | DELETE | Tx_Pix_Domain_Model_Gallery          | Delete  the gallery with UID 2   | [*a*](#configuration-a)  |
+| /pix-gallery/2    | PATCH  | Tx_Pix_Domain_Model_Gallery          | Update  the gallery with UID 2   | [*a*](#configuration-a)  |
 
 
 Example: Document Storage
 
-| Path              | Method | Class                                | Action                                                  | Conf |
-| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------- | ---- |
-| /Document/db      | GET    | \Cundd\Rest\Domain\Model\Document[]  | List all Documents in database 'db'                     | *c*  |
-| /Document/db      | POST   | \Cundd\Rest\Domain\Model\Document    | Create a new Document in database 'db'                  | *c*  |
-| /Document/db      | DELETE |                                      | 405 Method Not Allowed                                  | *c*  |
-| /Document/db/9    | GET    | \Cundd\Rest\Domain\Model\Document    | Return  the Document with UID or ID 2 in database 'db'  | *c*  |
-| /Document/db/9    | POST   | \Cundd\Rest\Domain\Model\Document    | Replace the Document with UID or ID 2 in database 'db'  | *c*  |
-| /Document/db/9    | DELETE | \Cundd\Rest\Domain\Model\Document    | Delete  the Document with UID or ID 2 in database 'db'  | *c*  |
-| /Document/db/9    | PATCH  | \Cundd\Rest\Domain\Model\Document    | Update  the Document with UID or ID 2 in database 'db'  | *c*  |
+| Path              | Method | Class                                | Action                                                  | Conf                    |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------- | ----------------------- |
+| /Document/db      | GET    | \Cundd\Rest\Domain\Model\Document[]  | List all Documents in database 'db'                     | [*c*](#configuration-c) |
+| /Document/db      | POST   | \Cundd\Rest\Domain\Model\Document    | Create a new Document in database 'db'                  | [*c*](#configuration-c) |
+| /Document/db      | DELETE |                                      | 405 Method Not Allowed                                  | [*c*](#configuration-c) |
+| /Document/db/9    | GET    | \Cundd\Rest\Domain\Model\Document    | Return  the Document with UID or ID 2 in database 'db'  | [*c*](#configuration-c) |
+| /Document/db/9    | POST   | \Cundd\Rest\Domain\Model\Document    | Replace the Document with UID or ID 2 in database 'db'  | [*c*](#configuration-c) |
+| /Document/db/9    | DELETE | \Cundd\Rest\Domain\Model\Document    | Delete  the Document with UID or ID 2 in database 'db'  | [*c*](#configuration-c) |
+| /Document/db/9    | PATCH  | \Cundd\Rest\Domain\Model\Document    | Update  the Document with UID or ID 2 in database 'db'  | [*c*](#configuration-c) |
 
 
 ### Configuration
 
 *a)*
+<a id="configuration-a"></a>
 
-	plugin.tx_rest.settings.paths {
-		path {
-			path = pix-gallery
-			read = allow
-			write = allow
-		}
-	}
-
+```typo3_typoscript
+plugin.tx_rest.settings.paths {
+    path {
+        path = pix-gallery
+        read = allow
+        write = allow
+    }
+}
+```
 
 *b)*
+<a id="configuration-b"></a>
 
-	plugin.tx_rest.settings.paths {
-		path {
-			path = cundd-foo-bar
-			read = allow
-			write = allow
-		}
-	}
-
+```typo3_typoscript
+plugin.tx_rest.settings.paths {
+    path {
+        path = cundd-foo-bar
+        read = allow
+        write = allow
+    }
+}
+```
 
 *c)*
+<a id="configuration-c"></a>
 
-	plugin.tx_rest.settings.paths {
-		path {
-			path = Document-db
-			read = allow
-			write = allow
-		}
-	}
+```typo3_typoscript
+plugin.tx_rest.settings.paths {
+    path {
+        path = Document-db
+        read = allow
+        write = allow
+    }
+}
+```
 
 
 *d)*
+<a id="configuration-c"></a>
 
 Assume the class `\Cundd\Daa\Rest\DataProvider` exists.
 
-	plugin.tx_rest.settings.paths {
-		path {
-			path = Cundd-Daa-Bar
-			read = allow
-			write = allow
-		}
-	}
+```typo3_typoscript
+plugin.tx_rest.settings.paths {
+    path {
+        path = Cundd-Daa-Bar
+        read = allow
+        write = allow
+    }
+}
+```
 
 
 Caching
@@ -218,13 +228,13 @@ Caching
 
 To enable caching set the cache life time:
 
-```typoscript
+```typo3_typoscript
 plugin.tx_rest.settings.cacheLifetime = 3600
 ```
 
 Additionally a separate life time for the expires header can be defined:
 
-```typoscript
+```typo3_typoscript
 plugin.tx_rest.settings.expiresHeaderLifetime = 300
 ```
 
