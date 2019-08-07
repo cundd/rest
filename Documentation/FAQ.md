@@ -236,3 +236,19 @@ If the TYPO3 installation is inside a subdirectory the environment variable `TYP
 
 E.g.: TYPO3 is installed in `$DOC_ROOT/dev_install/` and accessed through `http://your-domain.com/dev_install/rest/` set `TYPO3_REST_REQUEST_BASE_PATH` to `dev_install`.
 
+
+Internationalization and localization
+-------------------------------------
+
+The extension supports different types to handle localized requests.
+
+- Since version `3.6.0` TYPO3's site handling is supported
+- Specify the `L` `GET`-parameter
+- Specify a `Accept-Language` header
+    ```typo3_typoscript
+    plugin.tx_rest.settings {
+        languages {
+            de-DE = 1
+        }
+    }
+    ```
