@@ -32,7 +32,7 @@ The following displays the request body to create a new page element with `title
 ```json
 {
     "virtual_object-page": {
-        "pageIdentifer": 1,
+        "pageIdentifier": 1,
         "sorting": 32,
         "deleted": false,
         "editLock": 0,

@@ -9,8 +9,8 @@ Include the static TypoScript file `Virtual Object - Content (rest)` through the
 ```typo3_typoscript
 plugin.tx_rest.settings {
     paths {
-        virtualobject-content {
-            path = VirtualObject-Content
+        virtual_object-content {
+            path = virtual_object-content
             read = allow
             write = allow
         }
@@ -31,8 +31,8 @@ The following displays the request body to create a new content element with `he
 
 ```json
 {
-    "VirtualObject-Content": {
-        "pageIdentifer": 251,
+    "virtual_object-content": {
+        "pageIdentifier": 251,
         "creationUserId": 2,
         "hidden": false,
         "type": "text",
