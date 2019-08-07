@@ -1,10 +1,10 @@
 language: php
 php:
-    - 7.1
-    - 7.2
-    - 7.3
-    - nightly
-    - hhvm
+  - "7.1"
+  - "7.2"
+  - "7.3"
+  - "nightly"
+  - "hhvm"
 
 env:
     - TYPO3=TYPO3_8-7 DB=mysql
@@ -20,11 +20,11 @@ matrix:
 
     exclude:
         # TYPO3 9 LTS with PHP 7.1
-        -   php: 7.1
+      - php: "7.1"
             env: TYPO3=9.5 DB=mysql
 
         # TYPO3 8 LTS with PHP 7.3
-        -   php: 7.3
+      - php: "7.3"
             env: TYPO3=TYPO3_8-7 DB=mysql
 
 sudo: false
@@ -47,7 +47,7 @@ before_script:
     - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
     - >
         export typo3DatabaseName="typo3";
-        export typo3DatabaseHost="localhost";
+      export typo3DatabaseHost="127.0.0.1";
         export typo3DatabaseUsername="root";
         export typo3DatabasePassword="";
         export CHECK_MYSQL_CREDENTIALS="no";
@@ -58,7 +58,7 @@ before_script:
 script:
     - >
         export typo3DatabaseName="typo3";
-        export typo3DatabaseHost="localhost";
+      export typo3DatabaseHost="127.0.0.1";
         export typo3DatabaseUsername="root";
         export typo3DatabasePassword="";
         export CHECK_MYSQL_CREDENTIALS="no";
