@@ -29,6 +29,9 @@ matrix:
 
 sudo: false
 
+services:
+  - mysql
+
 ## Cache composer bits
 cache:
   directories:
@@ -45,8 +48,8 @@ notifications:
 before_script:
   # We don't need xdebug right now
   - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
-  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3;"; fi
-  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "GRANT ALL PRIVILEGES ON typo3.* to travis@'%';"; fi
+  #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3;"; fi
+  #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "GRANT ALL PRIVILEGES ON typo3.* to travis@'%';"; fi
   - >
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="127.0.0.1";
