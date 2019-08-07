@@ -50,7 +50,7 @@ before_script:
     export typo3DatabaseHost="127.0.0.1";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    export CHECK_MYSQL_CREDENTIALS="no";
+    sleep 10;
     bash Build/install.sh;
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
   - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
