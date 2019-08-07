@@ -45,7 +45,6 @@ notifications:
 before_script:
   # We don't need xdebug right now
   - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
-  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3; GRANT ALL PRIVILEGES ON typo3.* to travis@'%'"; fi
   - >
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="127.0.0.1";
@@ -57,6 +56,7 @@ before_script:
   - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
 
 script:
+  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3; GRANT ALL PRIVILEGES ON typo3.* to travis@'%'"; fi
   - >
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="127.0.0.1";
