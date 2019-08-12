@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Configuration;
-
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidArgumentException;
@@ -105,16 +103,6 @@ class ResourceConfiguration
     {
         return $this->cacheLifetime;
     }
-
-    /**
-     * @return int
-     * @deprecated will be removed in 4.0. Use getCacheLifetime() instead
-     */
-    public function getCacheLiveTime()
-    {
-        return $this->cacheLifetime;
-    }
-
 
     /**
      * @return string
