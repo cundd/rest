@@ -362,12 +362,12 @@ class CustomRestTest extends AbstractApiCase
         ];
     }
 
-  /**
-   * @test
-   * @dataProvider getCorrectTranslationDataProvider
-   * @param $language
-   * @param $expected
-   */
+    /**
+     * @test
+     * @dataProvider getCorrectTranslationDataProvider
+     * @param $language
+     * @param $expected
+     */
     public function getCorrectTranslationTest($language, $expected)
     {
         $response = $this->requestJson(
@@ -382,6 +382,16 @@ class CustomRestTest extends AbstractApiCase
         $this->assertArrayHasKey('original', $parsedBody, $errorDescription);
         $this->assertSame('tx_customrest_domain_model_person.first_name', $parsedBody['original'], $errorDescription);
         $this->assertSame($expected, $parsedBody['translated'], $errorDescription);
+        $this->assertArrayHasKey('locale', $parsedBody, $errorDescription);
+        if ($parsedBody['locale'] === '') {
+            // TYPO3 8
+        } else {
+            $this->assertSame(
+                $language,
+                str_replace('_', '-', substr($parsedBody['locale'], 0, strlen($language))),
+                $errorDescription
+            );
+        }
     }
 
     public function getCorrectTranslationDataProvider(): array
@@ -391,5 +401,4 @@ class CustomRestTest extends AbstractApiCase
             ['de-DE', 'Vorname'],
         ];
     }
-
 }
