@@ -11,10 +11,14 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 class TypoScriptConfigurationProvider extends AbstractConfigurationProvider
 {
     /**
-     * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManager
-     * @inject
+     * @var ConfigurationManager
      */
     protected $configurationManager;
+
+    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    {
+        $this->configurationManager = $configurationManager;
+    }
 
     /**
      * Returns the settings read from the TypoScript

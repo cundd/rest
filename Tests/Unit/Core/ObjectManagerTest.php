@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
+use Cundd\Rest\Configuration\ConfigurationProvider;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
@@ -25,12 +26,15 @@ use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\SessionManager;
 use Cundd\Rest\Tests\ClassBuilderTrait;
+use Cundd\Rest\Tests\Fixtures\UserProvider;
 use Cundd\Rest\Tests\InjectPropertyTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\Unit\Fixtures\Container;
 use Cundd\Rest\Tests\Unit\Fixtures\DummyDataProvider;
 use Cundd\Rest\Tests\Unit\Fixtures\DummyHandler;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -185,10 +189,12 @@ class ObjectManagerTest extends TestCase
      */
     public function getAuthenticationProviderFromConfigurationTest()
     {
+        $userProvider = new UserProvider();
+        $sessM = new SessionManager();
         $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory());
-        $this->container->set(BasicAuthenticationProvider::class, new BasicAuthenticationProvider());
+        $this->container->set(BasicAuthenticationProvider::class, new BasicAuthenticationProvider($userProvider));
         $this->container->set(RequestAuthenticationProvider::class, new RequestAuthenticationProvider());
-        $this->container->set(CredentialsAuthenticationProvider::class, new CredentialsAuthenticationProvider());
+        $this->container->set(CredentialsAuthenticationProvider::class, new CredentialsAuthenticationProvider($sessM));
         $this->container->set(
             AuthenticationProviderCollection::class,
             function ($a) {
@@ -233,7 +239,12 @@ class ObjectManagerTest extends TestCase
         $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($url));
         $this->container->set(
             VirtualObjectDataProvider::class,
-            new VirtualObjectDataProvider($this->fixture, $extractor, $identityProvider)
+            new VirtualObjectDataProvider(
+                new ConfigurationFactory(new ConfigurationProvider()),
+                $this->fixture,
+                $extractor,
+                $identityProvider
+            )
         );
         $this->container->set(DataProvider::class, new DataProvider($this->fixture, $extractor, $identityProvider));
         $this->container->set(DataProviderInterface::class, new DummyDataProvider());
@@ -245,7 +256,7 @@ class ObjectManagerTest extends TestCase
         $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
-//        $this->assertInstanceOf(DataProvider::class, $dataProvider);
+        //        $this->assertInstanceOf(DataProvider::class, $dataProvider);
     }
 
     public function dataProviderTestGenerator()

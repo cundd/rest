@@ -13,10 +13,19 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * Provider that will check the user credentials
      *
-     * @var \Cundd\Rest\Authentication\UserProviderInterface
-     * @inject
+     * @var UserProviderInterface
      */
     protected $userProvider;
+
+    /**
+     * BasicAuth Provider constructor
+     *
+     * @param UserProviderInterface $userProvider
+     */
+    public function __construct(UserProviderInterface $userProvider)
+    {
+        $this->userProvider = $userProvider;
+    }
 
     /**
      * Tries to authenticate the current request

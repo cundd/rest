@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\ObjectManagerInterface;
+use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
@@ -12,6 +13,7 @@ use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\Persistence\Repository;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
+use Psr\Log\LoggerInterface;
 
 /**
  * Data Provider for Virtual Objects
@@ -24,10 +26,29 @@ class VirtualObjectDataProvider extends DataProvider
     protected $objectConverterMap = [];
 
     /**
-     * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
-     * @inject
+     * @var ConfigurationFactory
      */
     protected $configurationFactory;
+
+    /**
+     * VirtualObjectDataProvider constructor.
+     *
+     * @param ConfigurationFactory      $configurationFactory
+     * @param ObjectManagerInterface    $objectManager
+     * @param ExtractorInterface        $extractor
+     * @param IdentityProviderInterface $identityProvider
+     * @param LoggerInterface|null      $logger
+     */
+    public function __construct(
+        ConfigurationFactory $configurationFactory,
+        ObjectManagerInterface $objectManager,
+        ExtractorInterface $extractor,
+        IdentityProviderInterface $identityProvider,
+        LoggerInterface $logger = null
+    ) {
+        parent::__construct($objectManager, $extractor, $identityProvider, $logger);
+        $this->configurationFactory = $configurationFactory;
+    }
 
     /**
      * Return the Object Converter with the matching configuration
@@ -54,10 +75,10 @@ class VirtualObjectDataProvider extends DataProvider
      * Return the Configuration for the given resource type
      *
      * @param ResourceType $resourceType
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
      * @return ConfigurationInterface
+     * @throws MissingConfigurationException
      */
-    public function getConfigurationForResourceType(ResourceType $resourceType)
+    public function getConfigurationForResourceType(ResourceType $resourceType): ?ConfigurationInterface
     {
         $resourceTypeString = (string)$resourceType;
         $virtualResourceTypeString = substr(
@@ -68,13 +89,9 @@ class VirtualObjectDataProvider extends DataProvider
             throw new MissingConfigurationException('Could not get configuration for empty resource type', 1395932408);
         }
 
-        try {
-            return $this->configurationFactory->createFromTypoScriptForResourceType(
-                new ResourceType($virtualResourceTypeString)
-            );
-        } catch (MissingConfigurationException $exception) {
-            return null;
-        }
+        return $this->configurationFactory->createFromTypoScriptForResourceType(
+            new ResourceType($virtualResourceTypeString)
+        );
     }
 
     public function createModel(array $data, ResourceType $resourceType)
@@ -95,7 +112,7 @@ class VirtualObjectDataProvider extends DataProvider
     public function getRepositoryForResourceType(ResourceType $resourceType)
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
-        /** @var \Cundd\Rest\VirtualObject\Persistence\RepositoryInterface|\TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
+        /** @var RepositoryInterface|\TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
         $repository = $this->objectManager->get($repositoryClass);
         $repository->setConfiguration($this->getConfigurationForResourceType($resourceType));
 

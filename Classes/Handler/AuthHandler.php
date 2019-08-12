@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Handler;
 
+use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Router\RouterInterface;
+use Cundd\Rest\SessionManager;
 
 /**
  * Handler for the credentials authorization
@@ -27,31 +30,47 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     const STATUS_FAILURE = 'login failure';
 
     /**
-     * Current request
-     *
-     * @var RestRequestInterface
-     */
-    protected $request;
-
-    /**
-     * @var \Cundd\Rest\SessionManager
-     * @inject
+     * @var SessionManager
      */
     protected $sessionManager;
 
     /**
      * Provider that will check the user credentials
      *
-     * @var \Cundd\Rest\Authentication\UserProviderInterface
-     * @inject
+     * @var UserProviderInterface
      */
     protected $userProvider;
 
     /**
-     * @var \Cundd\Rest\RequestFactoryInterface
-     * @inject
+     * Current request
+     *
+     * @var RestRequestInterface
+     * @deprecated will be removed in 5.0
+     */
+    protected $request;
+
+    /**
+     * @var RequestFactoryInterface
+     * @deprecated will be removed in 5.0
      */
     protected $requestFactory;
+
+    /**
+     * AuthHandler constructor.
+     *
+     * @param SessionManager          $sessionManager
+     * @param UserProviderInterface   $userProvider
+     * @param RequestFactoryInterface $requestFactory
+     */
+    public function __construct(
+        SessionManager $sessionManager,
+        UserProviderInterface $userProvider,
+        ?RequestFactoryInterface $requestFactory = null
+    ) {
+        $this->sessionManager = $sessionManager;
+        $this->userProvider = $userProvider;
+        $this->requestFactory = $requestFactory;
+    }
 
     /**
      * Return the description of the handler
@@ -62,7 +81,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     {
         return 'Handler for separate authorization requests';
     }
-
 
     /**
      * Returns the current status

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\ObjectManager;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\VirtualObject;
@@ -14,8 +15,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 class Repository implements RepositoryInterface
 {
     /**
-     * @var \Cundd\Rest\ObjectManager
-     * @inject
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -27,10 +27,26 @@ class Repository implements RepositoryInterface
     protected $configuration;
 
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManager
-     * @inject
+     * @var PersistenceManager
      */
     protected $persistenceManager;
+
+    /**
+     * Repository constructor.
+     *
+     * @param ObjectManager          $objectManager
+     * @param PersistenceManager     $persistenceManager
+     * @param ConfigurationInterface $configuration
+     */
+    public function __construct(
+        ObjectManager $objectManager,
+        PersistenceManager $persistenceManager,
+        ?ConfigurationInterface $configuration = null
+    ) {
+        $this->objectManager = $objectManager;
+        $this->configuration = $configuration;
+        $this->persistenceManager = $persistenceManager;
+    }
 
     public function registerObject(VirtualObject $object): VirtualObject
     {

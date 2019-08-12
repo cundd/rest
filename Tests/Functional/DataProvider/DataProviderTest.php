@@ -17,6 +17,7 @@ use Cundd\Rest\Tests\MyModelRepository;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
 use Cundd\Rest\Tests\MyNestedModel;
 use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use DateTime;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -216,7 +217,7 @@ class DataProviderTest extends AbstractCase
         $data = [];
         $resourceType = 'MyExt-MyModel';
 
-        /** @var \Cundd\Rest\Tests\MyModel $model */
+        /** @var MyModel $model */
         $model = $this->fixture->createModel($data, new ResourceType($resourceType));
         $this->assertEquals('Initial value', $model->getName());
     }
@@ -243,7 +244,7 @@ class DataProviderTest extends AbstractCase
      */
     public function getModelDataRecursiveTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -257,10 +258,10 @@ class DataProviderTest extends AbstractCase
 
         $expectedOutput = [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => [
                 'base'  => 'Base',
-                'date'  => $testDate->format(\DateTime::ATOM),
+                'date'  => $testDate->format(DateTime::ATOM),
                 'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
@@ -281,7 +282,7 @@ class DataProviderTest extends AbstractCase
      */
     public function getModelDataRecursiveWithObjectStorageTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -297,7 +298,7 @@ class DataProviderTest extends AbstractCase
 
         $expectedOutput = [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => [
                 'uid'  => null,
                 'pid'  => null,
@@ -311,7 +312,7 @@ class DataProviderTest extends AbstractCase
                 // <- This is $model
                 1 => [ // <- This is $childModel
                     'base'  => 'Base',
-                    'date'  => $testDate->format(\DateTime::ATOM),
+                    'date'  => $testDate->format(DateTime::ATOM),
                     'uid'   => 2,
                     'pid'   => null,
                     'child' => [
@@ -335,7 +336,7 @@ class DataProviderTest extends AbstractCase
      */
     public function getNestedModelDataTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
 
@@ -343,7 +344,7 @@ class DataProviderTest extends AbstractCase
         $this->assertEquals(
             [
                 'base'  => 'Base',
-                'date'  => $testDate->format(\DateTime::ATOM),
+                'date'  => $testDate->format(DateTime::ATOM),
                 'uid'   => null,
                 'pid'   => null,
                 'child' => [

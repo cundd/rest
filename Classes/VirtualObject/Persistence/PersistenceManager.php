@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence;
 
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
@@ -11,14 +12,12 @@ use Cundd\Rest\VirtualObject\VirtualObject;
 class PersistenceManager implements PersistenceManagerInterface
 {
     /**
-     * @var \Cundd\Rest\ObjectManager
-     * @inject
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\BackendInterface
-     * @inject
+     * @var BackendInterface
      */
     protected $backend;
 
@@ -33,6 +32,25 @@ class PersistenceManager implements PersistenceManagerInterface
      * @var ConfigurationInterface
      */
     protected $configuration;
+
+    /**
+     * Persistence Manager constructor
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @param BackendInterface       $backend
+     * @param ConfigurationInterface $configuration
+     */
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        BackendInterface $backend,
+        ?ConfigurationInterface $configuration = null
+    ) {
+        $this->objectManager = $objectManager;
+        $this->backend = $backend;
+        if ($configuration) {
+            $this->setConfiguration($configuration);
+        }
+    }
 
     public function registerObject(VirtualObject $object): VirtualObject
     {
@@ -110,7 +128,6 @@ class PersistenceManager implements PersistenceManagerInterface
 
         $identifierProperty = $configuration->getIdentifier();
         $identifierKey = $configuration->getSourceKeyForProperty($identifierProperty);
-
 
         $objectConverter = $this->getObjectConverter();
         $query = new Query([$identifierKey => $identifier]);
