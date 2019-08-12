@@ -69,7 +69,6 @@ class AbstractCase extends FunctionalTestCase
 
     public function setUp()
     {
-        $this->registerAssetCache();
         try {
             parent::setUp();
         } catch (\TYPO3\CMS\Core\Exception $exception) {
@@ -78,6 +77,7 @@ class AbstractCase extends FunctionalTestCase
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
+        $this->registerAssetCache();
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
         $this->configureConfigurationProvider();
