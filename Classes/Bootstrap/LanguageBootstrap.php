@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap;
 
+use Cundd\Rest\Bootstrap\Language\LanguageInformation;
 use Cundd\Rest\Exception\InvalidLanguageException;
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,6 +31,20 @@ class LanguageBootstrap
     }
 
     /**
+     * Initialize language object
+     *
+     * @param ServerRequestInterface $request
+     */
+    public function initializeLanguageObject(ServerRequestInterface $request)
+    {
+        if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
+            /** @var LanguageService $GLOBALS ['LANG'] */
+            $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
+            $GLOBALS['LANG']->init($this->getRequestedPrimaryLanguageCode($request));
+        }
+    }
+
+    /**
      * Initialize the language settings
      *
      * @param TypoScriptFrontendController $frontendController
@@ -40,30 +55,36 @@ class LanguageBootstrap
         TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request
     ) {
-        $this->detectAndSetRequestedLanguage($frontendController, $request);
+        $requestedLanguage = $this->detectRequestedLanguage($frontendController, $request);
+
+        $this->setRequestedLanguage($frontendController, $requestedLanguage);
 
         return $frontendController;
     }
 
     /**
-     * Configure the system to use the requested language
+     * Detect the requested language
      *
      * @param TypoScriptFrontendController $frontendController
      * @param ServerRequestInterface       $request
+     * @return LanguageInformation
      */
-    private function detectAndSetRequestedLanguage(
+    private function detectRequestedLanguage(
         TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request
-    ) {
+    ): ?LanguageInformation {
         $requestedLanguageUid = $this->getRequestedLanguageUid($frontendController, $request);
-        if (!class_exists(SiteMatcher::class)) {
-            $this->setRequestedLanguage(
-                $frontendController,
-                $requestedLanguageUid,
-                null
-            );
 
-            return;
+        // TYPO3 v8
+        if (!class_exists(SiteMatcher::class)) {
+            if ($requestedLanguageUid) {
+                return new LanguageInformation(
+                    $requestedLanguageUid,
+                    $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)
+                );
+            } else {
+                return null;
+            }
         }
 
         // support new TYPO3 v9.2 Site Handling until middleware concept is implemented
@@ -89,17 +110,14 @@ class LanguageBootstrap
 
         // Set language if defined
         if ($language && $language->getLanguageId() !== null) {
-            $this->setRequestedLanguage(
-                $frontendController,
-                $language->getLanguageId(),
-                $language->getTwoLetterIsoCode()
+            return LanguageInformation::fromSiteLanguage($language);
+        } elseif ($requestedLanguageUid) {
+            return new LanguageInformation(
+                $requestedLanguageUid,
+                $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)
             );
         } else {
-            $this->setRequestedLanguage(
-                $frontendController,
-                $requestedLanguageUid,
-                $this->getRequestedPrimaryLanguageCode($patchedRequest)
-            );
+            return null;
         }
     }
 
@@ -171,6 +189,8 @@ class LanguageBootstrap
     }
 
     /**
+     * Look up the TypoScript configuration for the language UID for the given language code
+     *
      * @param TypoScriptFrontendController $frontendController
      * @param string                       $languageCode
      * @return int
@@ -191,6 +211,31 @@ class LanguageBootstrap
         } else {
             return null;
         }
+    }
+
+    /**
+     * Look up the TypoScript configuration for the language code matching the given language UID
+     *
+     * Reverse lookup for `getLanguageIdForCode()`
+     *
+     * @param TypoScriptFrontendController $frontendController
+     * @param int                          $languageUid
+     * @return string|null
+     */
+    private function getLanguageCodeForId(TypoScriptFrontendController $frontendController, int $languageUid): ?string
+    {
+        $languages = $this->readConfigurationFromTyposcript(
+            'plugin.tx_rest.settings.languages',
+            $frontendController
+        );
+
+        foreach ($languages as $code => $uid) {
+            if (is_numeric($uid) && (int)$uid === $languageUid) {
+                return $code;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -235,7 +280,7 @@ class LanguageBootstrap
 
         if (class_exists('Locale')) {
             /** @noinspection PhpComposerExtensionStubsInspection PhpFullyQualifiedNameUsageInspection */
-            return \Locale::getPrimaryLanguage(\Locale::acceptFromHttp($headerValue));
+            return \Locale::getPrimaryLanguage((string)\Locale::acceptFromHttp($headerValue));
         }
 
         if (preg_match('/^[a-z]{2}/', $headerValue, $matches)) {
@@ -247,35 +292,23 @@ class LanguageBootstrap
 
     /**
      * @param TypoScriptFrontendController $frontendController
-     * @param int|null                     $requestedLanguageUid
-     * @param string|null                  $requestedLanguageCode
+     * @param LanguageInformation|null     $languageInformation
      */
     private function setRequestedLanguage(
         TypoScriptFrontendController $frontendController,
-        ?int $requestedLanguageUid,
-        ?string $requestedLanguageCode
+        ?LanguageInformation $languageInformation
     ): void {
-        if (null !== $requestedLanguageUid) {
-            $frontendController->config['config']['sys_language_uid'] = $requestedLanguageUid;
+        if (null !== $languageInformation) {
+            $frontendController->config['config']['sys_language_uid'] = $languageInformation->getUid();
             // Add LinkVars and language to work with correct localized labels
             $frontendController->config['config']['linkVars'] = 'L(int)';
-            $frontendController->config['config']['language'] = $requestedLanguageCode;
+            $frontendController->config['config']['language'] = $languageInformation->getCode();
         }
 
+        // Invoke the internal method to initialize the language system
+        if (is_callable([$frontendController, 'settingLanguage'])) {
+            $frontendController->settingLanguage();
+        }
         $frontendController->settingLocale();
-    }
-
-    /**
-     * Initialize language object
-     *
-     * @param ServerRequestInterface $request
-     */
-    public function initializeLanguageObject(ServerRequestInterface $request)
-    {
-        if (!isset($GLOBALS['LANG']) || !is_object($GLOBALS['LANG'])) {
-            /** @var LanguageService $GLOBALS ['LANG'] */
-            $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-            $GLOBALS['LANG']->init($this->getRequestedPrimaryLanguageCode($request));
-        }
     }
 }
