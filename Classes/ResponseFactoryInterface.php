@@ -23,8 +23,7 @@ interface ResponseFactoryInterface
     /**
      * Returns a response with the given message and status code
      *
-     * Some data (e.g. the format) will be read from the request. If no explicit request is given, the Request Factory
-     * will be queried
+     * Some data (e.g. the format) will be read from the request.
      *
      * @param string|array         $data
      * @param int                  $status
@@ -36,8 +35,7 @@ interface ResponseFactoryInterface
     /**
      * Returns a response with the given message and status code
      *
-     * Some data (e.g. the format) will be read from the request. If no explicit request is given, the Request Factory
-     * will be queried
+     * Some data (e.g. the format) will be read from the request.
      *
      * @param string|array         $data
      * @param int                  $status
