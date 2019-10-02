@@ -75,9 +75,10 @@ class HandlerDescriptorTest extends AbstractCase
         $this->assertArrayHasKey('auth', $result);
         $authHandler = $result['auth'];
         $this->assertInstanceOf(AuthHandler::class, $authHandler['handler']);
-        $this->assertCount(2, $authHandler['routes']);
+        $this->assertCount(3, $authHandler['routes']);
         $this->assertArrayHasKey('GET', $authHandler['routes']);
         $this->assertArrayHasKey('POST', $authHandler['routes']);
+        $this->assertArrayHasKey('OPTIONS', $authHandler['routes']);
         /** @var ResourceConfiguration $configuration */
         $configuration = $authHandler['configuration'];
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
