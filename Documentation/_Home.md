@@ -15,7 +15,12 @@ Features
 - Mapping for any [database table](/Configuration/Virtual+Objects/)
 - [Custom web services](/Tutorial/)
 - JSON formatted output
-- Support for TYPO3 7.6-8.x
+- Support for TYPO3 7.6-9.x
+
+Initiatives
+-----------
+
+{Cundd\RestWebsite\InitiativesWidget}
 
 
 Get in touch!

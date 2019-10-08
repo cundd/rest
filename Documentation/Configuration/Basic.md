@@ -89,7 +89,7 @@ plugin.tx_rest.settings.aliases {
 
 Some clients expect a returned data collection to have a root object, others don't. If an array output like the one below meets your demands no further configuration is required.
 
-```json
+```json5
 [
     {
         "uid": 9,
@@ -99,7 +99,7 @@ Some clients expect a returned data collection to have a root object, others don
         "uid": 10,
         "name": "Paul"
     }
-    ...
+    /* ... */
 ]
 ```
 
