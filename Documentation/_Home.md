@@ -3,10 +3,6 @@ REST for TYPO3 CMS
 
 A [REST API (Representational State Transfer)](http://en.wikipedia.org/wiki/Representational_state_transfer) allows the exchange of data between different applications over the internet. Restful web services are provided by some of the web's biggest players. Unfortunately TYPO3 CMS doesn't offer such services on it's own. This is why the REST extension has been created. It opens up TYPO3 projects to communicate with all different kinds of applications - whether for communication with other websites, JavaScript apps, mobile or desktop programs.
 
-The REST extension is currently used in production in projects in Germany, Austria and Liechtenstein.
-
-![image](Resources/Public/Images/rest-usage-map.png)
-
 Features
 --------
 
