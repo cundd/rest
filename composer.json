@@ -46,8 +46,5 @@
     },
     "replace": {
         "typo3-ter/rest": "self.version"
-    },
-    "conflict": {
-        "slim_typo3": "*"
     }
 }
