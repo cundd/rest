@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="77px" height="18px" viewBox="0 0 77 18" version="1.1"
+     xmlns="http://www.w3.org/2000/svg">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>Brand</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M-9.23705556e-14,18.0000004 L-9.23705556e-14,3.55271368e-15 L18.0000004,3.55271368e-15 L18.0000004,9.81000019 L9.81000019,9.81000019 L9.81000019,16.3620003 L18.0000004,16.3620003 L18.0000004,18.0000004 L8.19000016,18.0000004 L8.19000016,8.19000016 L16.3620003,8.19000016 L16.3620003,1.63800003 L1.63800003,1.63800003 L1.63800003,18.0000004 L-9.23705556e-14,18.0000004 Z M37.8000007,1.63800003 L21.4380004,1.63800003 L21.4380004,8.19000016 L37.8000007,8.19000016 L37.8000007,9.81000019 L21.4380004,9.81000019 L21.4380004,16.3620003 L37.8000007,16.3620003 L37.8000007,18.0000004 L19.8000004,18.0000004 L19.8000004,3.55271368e-15 L37.8000007,3.55271368e-15 L37.8000007,1.63800003 Z M39.6000008,16.3620003 L55.9620011,16.3620003 L55.9620011,9.81000019 L39.6000008,9.81000019 L39.6000008,3.55271368e-15 L57.6000011,3.55271368e-15 L57.6000011,1.63800003 L41.2380008,1.63800003 L41.2380008,8.19000016 L57.6000011,8.19000016 L57.6000011,18.0000004 L39.6000008,18.0000004 L39.6000008,16.3620003 Z M77.4000015,3.55271368e-15 L77.4000015,1.63800003 L69.2100014,1.63800003 L69.2100014,18.0000004 L67.5900013,18.0000004 L67.5900013,1.63800003 L59.4000012,1.63800003 L59.4000012,3.55271368e-15 L77.4000015,3.55271368e-15 Z"
+              id="path-1"></path>
+        <filter x="-2.6%" y="-11.1%" width="105.2%" height="122.2%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1"
+                         result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix"
+                           in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Brand">
+            <g id="REST">
+                <use fill="#3E719A" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>
