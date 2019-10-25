@@ -263,6 +263,9 @@ plugin.tx_rest.settings {
 }
 ```
 
+The start page of your site should be translated. The extension will 
+use it as the context for handling the request.
+
 - Since version `3.6.0` TYPO3's site handling is supported
 - Specify the `GET`-parameter `L` with the language UID
 - Specify a `Accept-Language` header
