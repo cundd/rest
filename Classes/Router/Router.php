@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -30,7 +30,11 @@ class Router implements RouterInterface
     {
         $route = $this->getMatchingRoute($request);
         if (!$route) {
-            return new NotFoundException();
+            return NotFoundException::exceptionWithAlternatives(
+                $request->getPath(),
+                $request->getMethod(),
+                $this->getRoutesForMethod($request)
+            );
         }
 
         $parameters = $this->getPreparedParametersForRoute($request, $route);
@@ -118,14 +122,14 @@ class Router implements RouterInterface
      */
     public function getMatchingRoutes(RestRequestInterface $request)
     {
-        $method = $request->getMethod();
-        if (!isset($this->registeredRoutes[$method])) {
+        $registeredRoutes = $this->getRoutesForMethod($request);
+        if (empty($registeredRoutes)) {
             return [];
         }
 
         $path = $request->getPath();
         $matchingRoutes = [];
-        foreach ($this->registeredRoutes[$method] as $pattern => $route) {
+        foreach ($registeredRoutes as $pattern => $route) {
             $regularExpression = $this->patternToRegularExpression($pattern);
             if (preg_match($regularExpression, $path)) {
                 $matchingRoutes[$pattern] = $route;
@@ -189,7 +193,7 @@ class Router implements RouterInterface
             case ParameterTypeInterface::FLOAT:
                 return filter_var($segment, FILTER_VALIDATE_FLOAT);
             default:
-                throw new \InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
+                throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
         }
     }
 
@@ -246,5 +250,14 @@ class Router implements RouterInterface
         );
 
         return $matchingRoutes;
+    }
+
+    /**
+     * @param RestRequestInterface $request
+     * @return array
+     */
+    private function getRoutesForMethod(RestRequestInterface $request): array
+    {
+        return $this->registeredRoutes[$request->getMethod()] ?? [];
     }
 }

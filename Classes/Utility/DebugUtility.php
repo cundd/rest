@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Utility;
 
+use function explode;
+use function getenv;
+use function in_array;
+use function php_sapi_name;
+
 /**
  * Debug utility
  */
@@ -19,8 +24,8 @@ class DebugUtility
     }
 
     /**
-     * @see debug()
      * @param array $variables
+     * @see debug()
      */
     public static function var_dump(...$variables)
     {
@@ -37,6 +42,28 @@ class DebugUtility
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
 
         return $backtrace[2];
+    }
+
+    /**
+     * Return if the output of debugging information is allowed
+     *
+     * @return bool
+     */
+    public static function allowDebugInformation(): bool
+    {
+        if ('' !== (string)getenv('TEST_MODE')) {
+            return false;
+        }
+        if (php_sapi_name() === 'cli') {
+            return true;
+        }
+        $clientAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        $devIpMask = static::getDevIpMask();
+        if (in_array('*', $devIpMask)) {
+            return true;
+        }
+
+        return in_array($clientAddress, $devIpMask);
     }
 
     /**
@@ -76,5 +103,20 @@ class DebugUtility
         echo PHP_EOL;
         echo PHP_EOL;
         echo PHP_EOL;
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function getDevIpMask()
+    {
+        if (isset($GLOBALS['TYPO3_CONF_VARS'])
+            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS'])
+            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])
+        ) {
+            return explode(',', $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
+        }
+
+        return [];
     }
 }

@@ -9,6 +9,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
+use Cundd\Rest\Utility\DebugUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -94,9 +95,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     public function dispatch(RestRequestInterface $request): ResponseInterface
     {
+        $response = $this->dispatchInternal($request);
+
         return $this->addCorsHeaders(
             $request,
-            $this->addAdditionalHeaders($this->dispatchInternal($request))
+            $this->addAdditionalHeaders($this->addDebugHeaders($request, $response))
         );
     }
 
@@ -307,5 +310,16 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         return $response;
+    }
+
+    private function addDebugHeaders(RestRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        if (!DebugUtility::allowDebugInformation()) {
+            return $response;
+        }
+
+        return $response
+            ->withAddedHeader(Header::CUNDD_REST_RESOURCE_TYPE, (string)$request->getResourceType())
+            ->withAddedHeader(Header::CUNDD_REST_PATH, (string)$request->getPath());
     }
 }

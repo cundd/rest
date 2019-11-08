@@ -4,11 +4,18 @@ declare(strict_types=1);
 namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\ErrorHandler;
+use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
+use Cundd\Rest\Utility\DebugUtility;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
+use function array_map;
+use function implode;
+use function preg_replace;
+use function str_replace;
+use function substr;
 
 /**
  * Class to convert simple Router results into Response instances and handle exceptions
@@ -57,7 +64,7 @@ class ResultConverter implements RouterInterface
     {
         try {
             $result = $this->router->dispatch($request);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $result = $exception;
         }
         if ($result instanceof ResponseInterface) {
@@ -65,9 +72,9 @@ class ResultConverter implements RouterInterface
         }
 
         if ($result instanceof NotFoundException) {
-            return $this->responseFactory->createErrorResponse($result->getMessage() ?: null, 404, $request);
+            return $this->notFoundToResponse($result, $request);
         }
-        if ($result instanceof \Exception) {
+        if ($result instanceof Exception) {
             return $this->exceptionToResponse($result, $request);
         }
 
@@ -143,20 +150,19 @@ class ResultConverter implements RouterInterface
         return $this;
     }
 
-
     /**
      * Convert exceptions that occurred during the dispatching
      *
-     * @param \Exception           $exception
+     * @param Exception            $exception
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function exceptionToResponse(\Exception $exception, RestRequestInterface $request)
+    private function exceptionToResponse(Exception $exception, RestRequestInterface $request)
     {
         try {
             $exceptionHandler = $this->exceptionHandler;
             $exceptionHandler($exception, $request);
-        } catch (\Exception $handlerError) {
+        } catch (Exception $handlerError) {
         }
 
         if ($this->getShowDebugInformation()) {
@@ -172,7 +178,7 @@ class ResultConverter implements RouterInterface
      * @param $exception
      * @return array
      */
-    private function getDebugTrace(\Exception $exception)
+    private function getDebugTrace(Exception $exception)
     {
         return array_map(
             function ($step) {
@@ -181,7 +187,6 @@ class ResultConverter implements RouterInterface
                     return $step['class'] . $step['type'] . $step['function'] . $arguments;
                 }
                 if (isset($step['function'])) {
-
                     return $step['function'] . $arguments;
                 }
 
@@ -195,7 +200,7 @@ class ResultConverter implements RouterInterface
      * @param $exception
      * @return array
      */
-    private function getDebugDetails(\Exception $exception)
+    private function getDebugDetails(Exception $exception)
     {
         return [
             'error' => sprintf(
@@ -209,10 +214,59 @@ class ResultConverter implements RouterInterface
     }
 
     /**
+     * Handle cases where no matching Route was found
+     *
+     * If debugging information is allowed for the client and alternative Route suggestions where provided by the
+     * Router, they will be sent as additional header
+     *
+     * @param NotFoundException    $result
+     * @param RestRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function notFoundToResponse(NotFoundException $result, RestRequestInterface $request): ResponseInterface
+    {
+        $response = $this->responseFactory->createErrorResponse(
+            $result->getMessage() ?: null,
+            404,
+            $request
+        );
+        if (!$this->getShowDebugInformation()) {
+            return $response;
+        }
+
+        if (!$result->getAlternativeRoutes()) {
+            return $response->withHeader(Header::CUNDD_REST_ROUTER_ALTERNATIVE_ROUTES, 'no suggestions');
+        }
+
+        $alternativePatterns = implode(
+            ', ',
+            array_map(
+                function (RouteInterface $r) {
+                    return $r->getPattern();
+                },
+                $result->getAlternativeRoutes()
+            )
+        );
+
+        $alternativePatterns = str_replace(["\r", "\n"], '', $alternativePatterns);
+        $alternativePatterns = (string)preg_replace('/[^\x20-\x7e]/', '', $alternativePatterns);
+
+        $maxByteLength = 1024;
+        if (strlen($alternativePatterns) > $maxByteLength) {
+            $alternativePatterns = substr($alternativePatterns, 0, $maxByteLength - 3) . '...';
+        }
+
+        return $response->withHeader(
+            Header::CUNDD_REST_ROUTER_ALTERNATIVE_ROUTES,
+            $alternativePatterns
+        );
+    }
+
+    /**
      * @return bool
      */
     private function getShowDebugInformation()
     {
-        return ErrorHandler::getShowDebugInformation();
+        return DebugUtility::allowDebugInformation();
     }
 }
