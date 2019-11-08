@@ -257,7 +257,14 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         switch (true) {
             case $access->isAllowed():
             case $access->isAuthorized():
-                break;
+                $newResponse = $this->getCachedResponseOrCallHandler($request);
+
+                $this->logger->logResponse(
+                    'response: ' . $newResponse->getStatusCode(),
+                    ['response' => (string)$newResponse->getBody()]
+                );
+
+                return $newResponse;
 
             case $access->isUnauthorized():
                 return $this->responseFactory->createErrorResponse('Unauthorized', 401, $request);
@@ -266,15 +273,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             default:
                 return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
         }
-
-        $newResponse = $this->getCachedResponseOrCallHandler($request);
-
-        $this->logger->logResponse(
-            'response: ' . $newResponse->getStatusCode(),
-            ['response' => (string)$newResponse->getBody()]
-        );
-
-        return $newResponse;
     }
 
     /**
