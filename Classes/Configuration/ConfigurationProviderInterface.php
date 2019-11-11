@@ -48,5 +48,5 @@ interface ConfigurationProviderInterface
      * @param ResourceType $resourceType
      * @return ResourceConfiguration|null
      */
-    public function getResourceConfiguration(ResourceType $resourceType): ?\Cundd\Rest\Configuration\ResourceConfiguration;
+    public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration;
 }

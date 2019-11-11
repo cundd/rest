@@ -318,8 +318,14 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             return $response;
         }
 
+        $resourceConfiguration = $this->objectManager->getConfigurationProvider()
+            ->getResourceConfiguration($request->getResourceType());
+
         return $response
             ->withAddedHeader(Header::CUNDD_REST_RESOURCE_TYPE, (string)$request->getResourceType())
-            ->withAddedHeader(Header::CUNDD_REST_PATH, (string)$request->getPath());
+            ->withAddedHeader(Header::CUNDD_REST_PATH, (string)$request->getPath())
+            ->withAddedHeader(Header::CUNDD_REST_HANDLER, $resourceConfiguration->getHandlerClass())
+            ->withAddedHeader(Header::CUNDD_REST_DATA_PROVIDER, $resourceConfiguration->getDataProviderClass())
+            ->withAddedHeader(Header::CUNDD_REST_ALIASES, $resourceConfiguration->getAliases());
     }
 }

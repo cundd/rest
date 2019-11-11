@@ -44,4 +44,19 @@ abstract class Header
      * Header to send debug information about suggested routes
      */
     public const CUNDD_REST_ROUTER_ALTERNATIVE_ROUTES = 'X-Cundd-Rest-Router-Alternative-Routes';
+
+    /**
+     * Header to send debug information about the used Handler class
+     */
+    public const CUNDD_REST_HANDLER = 'X-Cundd-Rest-Router-Handler';
+
+    /**
+     * Header to send debug information about the used DataProvider class
+     */
+    public const CUNDD_REST_DATA_PROVIDER = 'X-Cundd-Rest-Router-DataProvider';
+
+    /**
+     * Header to send debug information about allowed aliases
+     */
+    public const CUNDD_REST_ALIASES = 'X-Cundd-Rest-Router-Aliases';
 }
