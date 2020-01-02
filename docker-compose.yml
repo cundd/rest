@@ -1,10 +1,9 @@
 version: "3"
 services:
   test:
-    image: cundd/rest-9.5-7.3
+    build: ./
     volumes:
       - .:/app
-      # - /tmp/:/tmp/ # linking /tmp/ folder because PHPStorm stores its stuff there
     depends_on:
       - db
     links:
