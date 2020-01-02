@@ -41,7 +41,11 @@ class CustomRestTest extends AbstractApiCase
 
         $this->assertSame(404, $response->getStatusCode(), $this->getErrorDescription($response));
         $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Not Found"}', $response->getBody(), $this->getErrorDescription($response));
+        $this->assertSame(
+            '{"error":"Route \"\/cundd-custom_rest-route\/\" not found for method \"GET\""}',
+            $response->getBody(),
+            $this->getErrorDescription($response)
+        );
     }
 
     /**
