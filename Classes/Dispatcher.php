@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
@@ -318,8 +319,12 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             return $response;
         }
 
-        $resourceConfiguration = $this->objectManager->getConfigurationProvider()
-            ->getResourceConfiguration($request->getResourceType());
+        try {
+            $resourceConfiguration = $this->objectManager->getConfigurationProvider()
+                ->getResourceConfiguration($request->getResourceType());
+        } catch (InvalidResourceTypeException $exception) {
+            return $response;
+        }
 
         return $response
             ->withAddedHeader(Header::CUNDD_REST_RESOURCE_TYPE, (string)$request->getResourceType())

@@ -7,8 +7,8 @@ use Cundd\Rest\Access\Exception\InvalidConfigurationException as InvalidAccessCo
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
+use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\SingletonInterface;
-use RuntimeException;
 
 /**
  * Abstract Configuration Provider
@@ -92,7 +92,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
 
         if (!$resourceTypeString) {
-            throw new RuntimeException(
+            throw new InvalidResourceTypeException(
                 sprintf(
                     'Invalid normalized Resource Type "%s"',
                     is_null($resourceTypeString) ? 'null' : $resourceTypeString
@@ -127,7 +127,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     {
         $configurationCollection = [];
         foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
-            list($configuration, $normalizeResourceType) = $this->preparePath($configuration, $path);
+            [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
 
             $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
                 ? new Access($configuration[self::ACCESS_METHOD_READ])
@@ -156,7 +156,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
         return $configurationCollection;
     }
-
 
     /**
      * Check if the given pattern matches the resource type
