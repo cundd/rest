@@ -3,9 +3,8 @@ php:
   - "7.1"
   - "7.2"
   - "7.3"
-  - "7.4snapshot"
+  - "7.4"
   - "nightly"
-  - "hhvm"
 
 env:
   - TYPO3=TYPO3_8-7 DB=mysql
@@ -29,10 +28,10 @@ matrix:
     - php: "7.3"
       env: TYPO3=TYPO3_8-7 DB=mysql
 
-sudo: false
-
 services:
   - mysql
+
+os: linux
 
 ## Cache composer bits
 cache:
@@ -59,7 +58,7 @@ before_script:
     export typo3DatabasePassword="";
     bash Build/install.sh;
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
-  - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
+  - composer remove phpunit/phpunit --dev && composer update
 
 script:
   - >
