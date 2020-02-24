@@ -28,7 +28,11 @@ source "$PROJECT_HOME/Build/lib.sh";
 function install_dependencies {
     lib::print_header "Install dependencies";
     lib::composer self-update;
-    lib::composer install --verbose --ignore-platform-reqs;
+    if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then
+        lib::composer install --verbose --ignore-platform-reqs;
+    else
+        lib::composer install --verbose;
+    fi
 }
 
 # Install the TYPO3
@@ -53,8 +57,10 @@ function install_typo3 {
 
     if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then
         lib::composer remove --ignore-platform-reqs --dev friendsofphp/php-cs-fixer;
+        lib::composer install --ignore-platform-reqs --prefer-dist;
+    else
+        lib::composer install --prefer-dist;
     fi
-    lib::composer install --ignore-platform-reqs --prefer-dist;
 
     rm -rf typo3/sysext/compatibility6;
 
