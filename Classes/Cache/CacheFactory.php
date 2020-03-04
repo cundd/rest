@@ -86,6 +86,12 @@ class CacheFactory
         ConfigurationProviderInterface $configurationProvider,
         ResourceType $resourceType
     ) {
+        $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
+        $expiresHeaderLifetime = $resourceConfiguration->getExpiresHeaderLifetime();
+        if ($expiresHeaderLifetime > -1) {
+            return $expiresHeaderLifetime;
+        }
+
         $expiresHeaderLifetime = $configurationProvider->getSetting('expiresHeaderLifetime');
         if ($expiresHeaderLifetime !== null) {
             return (int)$expiresHeaderLifetime;
