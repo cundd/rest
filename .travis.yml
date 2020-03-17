@@ -1,17 +1,15 @@
 language: php
 php:
-  - "7.0"
   - "7.1"
+  - "7.2"
+  - "7.3"
+  - "7.4snapshot"
+  - "nightly"
+  - "hhvm"
 
 env:
-  - TYPO3=TYPO3_8-0 DB=mysql
-  - TYPO3=TYPO3_8-1 DB=mysql
-  - TYPO3=TYPO3_8-2 DB=mysql
-  - TYPO3=TYPO3_8-3 DB=mysql
-  - TYPO3=TYPO3_8-4 DB=mysql
-  - TYPO3=TYPO3_8-5 DB=mysql
-  - TYPO3=TYPO3_8-6 DB=mysql
   - TYPO3=TYPO3_8-7 DB=mysql
+  - TYPO3=9.5 DB=mysql
   - TYPO3=master DB=mysql
 
 matrix:
@@ -19,34 +17,17 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
-    - php: "5.6"
-    - php: "7.0"
+    - php: 7.4snapshot
     - env: TYPO3=master DB=mysql
 
-  include:
-    # Nightly PHP and HHVM
-    - php: nightly
-      env: TYPO3=master DB=mysql
-    - php: hhvm
-      env: TYPO3=master DB=mysql
-
-    # TYPO3 9 branch
-    - php: "7.2"
-      env: TYPO3=9.2 DB=mysql
-    - php: "7.2"
-      env: TYPO3=9.3 DB=mysql
-
-    # TYPO3 7.6
-    - php: "5.6"
-      env: TYPO3=TYPO3_7-6 DB=mysql
-    - php: "7.0"
-      env: TYPO3=TYPO3_7-6 DB=mysql
+  exclude:
+    # TYPO3 9 LTS with PHP 7.1
     - php: "7.1"
-      env: TYPO3=TYPO3_7-6 DB=mysql
-    - php: nightly
-      env: TYPO3=TYPO3_7-6 DB=mysql
-    - php: hhvm
-      env: TYPO3=TYPO3_7-6 DB=mysql
+      env: TYPO3=9.5 DB=mysql
+
+      # TYPO3 8 LTS with PHP 7.3
+    - php: "7.3"
+      env: TYPO3=TYPO3_8-7 DB=mysql
 
 sudo: false
 
@@ -69,22 +50,21 @@ notifications:
 before_script:
   # We don't need xdebug right now
   - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
+  #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3;"; fi
+  #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "GRANT ALL PRIVILEGES ON typo3.* to travis@'%';"; fi
   - >
     export typo3DatabaseName="typo3";
-    export typo3DatabaseHost="localhost";
+    export typo3DatabaseHost="127.0.0.1";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    export CHECK_MYSQL_CREDENTIALS="no";
     bash Build/install.sh;
-  # Pin the version of phpdocumentor/reflection-common to 1.x for old PHP versions
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]] || [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then composer require phpdocumentor/reflection-common "^1.0"; fi
   # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
-  - composer remove phpunit/phpunit --dev && composer update
+  - composer remove phpunit/phpunit --dev --ignore-platform-reqs && composer update --ignore-platform-reqs
 
 script:
   - >
     export typo3DatabaseName="typo3";
-    export typo3DatabaseHost="localhost";
+    export typo3DatabaseHost="127.0.0.1";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
     export CHECK_MYSQL_CREDENTIALS="no";
