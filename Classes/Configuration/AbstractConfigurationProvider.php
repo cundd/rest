@@ -246,8 +246,8 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
     private function detectExpiresHeaderLifetimeConfiguration(array $configuration)
     {
-        if (isset($configuration['cacheLifetime']) && is_numeric($configuration['cacheLifetime'])) {
-            return (int)$configuration['cacheLifetime'];
+        if (isset($configuration['expiresHeaderLifetime']) && is_numeric($configuration['expiresHeaderLifetime'])) {
+            return (int)$configuration['expiresHeaderLifetime'];
         }
 
         return -1;
