@@ -9,6 +9,7 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\SingletonInterface;
+use function is_numeric;
 
 /**
  * Abstract Configuration Provider
@@ -142,6 +143,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
             $resourceType = new ResourceType($normalizeResourceType);
             $cacheLifetime = $this->detectCacheLifetimeConfiguration($configuration);
+            $expiresHeaderLifetime = $this->detectExpiresHeaderLifetimeConfiguration($configuration);
 
             $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
                 $resourceType,
@@ -150,7 +152,8 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
                 $cacheLifetime,
                 isset($configuration['handlerClass']) ? $configuration['handlerClass'] : '',
                 isset($configuration['dataProviderClass']) ? $configuration['dataProviderClass'] : '',
-                $this->getAliasesForResourceType($resourceType)
+                $this->getAliasesForResourceType($resourceType),
+                $expiresHeaderLifetime
             );
         }
 
@@ -236,6 +239,15 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         }
         if (isset($configuration['cacheLifetime']) && is_numeric($configuration['cacheLifetime'])) {
             return (int)$configuration['cacheLifetime'];
+        }
+
+        return -1;
+    }
+
+    private function detectExpiresHeaderLifetimeConfiguration(array $configuration)
+    {
+        if (isset($configuration['expiresHeaderLifetime']) && is_numeric($configuration['expiresHeaderLifetime'])) {
+            return (int)$configuration['expiresHeaderLifetime'];
         }
 
         return -1;

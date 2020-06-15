@@ -96,23 +96,23 @@ function init_database {
         check_mysql_credentials;
     fi
     lib::print_info "Connect to database '$typo3DatabaseName' at '$typo3DatabaseHost:$typo3DatabasePort' using '$typo3DatabaseUsername' '$typo3DatabasePassword'";
-}
+}   
 
 # Prepare the TYPO3 system
 function init_typo3 {
-	local baseDir=`pwd`;
+   local baseDir=`pwd`;
     lib::print_debug "Check for phpunit at ${TYPO3_PATH_WEB}/bin/phpunit";
-	if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
+    if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
         lib::print_debug "Check for composer.json in '$TYPO3_PATH_WEB'";
-		if [[ -f "$TYPO3_PATH_WEB/composer.json" ]]; then
-		    cd ${TYPO3_PATH_WEB};
+        if [[ -f "$TYPO3_PATH_WEB/composer.json" ]]; then
+            cd ${TYPO3_PATH_WEB};
             lib::print_debug "Run composer install in '$TYPO3_PATH_WEB'";
             lib::composer install;
 
             lib::print_debug "Go back into '$baseDir'";
             cd ${baseDir};
-		fi
-	fi
+        fi
+    fi
 }
 
 # Test the TYPO3_PATH_WEB environment
@@ -134,8 +134,8 @@ function init_typo3_path_web {
 # Check the system environment
 function init {
     init_typo3_path_web;
-	init_typo3;
-	init_database;
+    init_typo3;
+    init_database;
 }
 
 # Run Unit Tests
@@ -255,8 +255,8 @@ function main {
     : ${MANUAL_TESTS="$_manual_tests"}
     : ${DOCUMENTATION_TESTS="$_documentation_tests"}
 
-	export TYPO3_PATH_WEB="$TYPO3_PATH_WEB";
-	export CUNDD_TEST="yes";
+    export TYPO3_PATH_WEB="$TYPO3_PATH_WEB";
+    export CUNDD_TEST="yes";
 
     if [[ "$UNIT_TESTS" == "yes" ]]; then
         check_phpunit_path_for_unit_tests;

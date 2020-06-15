@@ -277,7 +277,8 @@ class CacheTest extends AbstractCase
             $cacheLifetime,
             '',
             '',
-            []
+            [],
+            $cacheLifetime
         );
     }
 }
