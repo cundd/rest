@@ -8,6 +8,7 @@ use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use function getenv;
 
 /**
  * Factory class to get the current Request
@@ -182,7 +183,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      */
     private function removePathPrefixes($path)
     {
-        $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH');
+        $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH') ?: getenv('REDIRECT_TYPO3_REST_REQUEST_BASE_PATH');
         if ($pathPrefix === false) {
             $pathPrefix = $this->configurationProvider->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
         }

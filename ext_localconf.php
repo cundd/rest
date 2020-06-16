@@ -13,7 +13,11 @@ call_user_func(
 
         // Detect and "hijack" REST requests
         if (isset($_SERVER['REQUEST_URI'])) {
-            $restRequestBasePath = (string)getenv('TYPO3_REST_REQUEST_BASE_PATH');
+            $restRequestBasePath = (string)(getenv(
+                'TYPO3_REST_REQUEST_BASE_PATH'
+            ) ?: getenv(
+                'REDIRECT_TYPO3_REST_REQUEST_BASE_PATH'
+            ));
 
             if ($restRequestBasePath) {
                 $restRequestBasePath = '/' . trim($restRequestBasePath, '/');
