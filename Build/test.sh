@@ -23,19 +23,20 @@ source "$PROJECT_HOME/Build/lib.sh"
 
 # Detect the phpunit path to use for Functional Tests
 function get_phpunit_path_for_functional_tests() {
-    init_typo3_path_web
-    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit"
-    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
-        echo "$TYPO3_PATH_WEB/bin/phpunit"
-        return
-    fi
-
-    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit"
-    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
-        echo "$TYPO3_PATH_WEB/vendor/bin/phpunit"
-    else
-        return 1
-    fi
+    get_phpunit_path_for_unit_tests
+#    init_typo3_path_web
+#    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit"
+#    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
+#        echo "$TYPO3_PATH_WEB/bin/phpunit"
+#        return
+#    fi
+#
+#    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit"
+#    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
+#        echo "$TYPO3_PATH_WEB/vendor/bin/phpunit"
+#    else
+#        return 1
+#    fi
 }
 
 # Check the phpunit path to use for Functional Tests
