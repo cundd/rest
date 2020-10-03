@@ -18,13 +18,17 @@ matrix:
     - php: nightly
     - php: hhvm
     - php: 7.4snapshot
-    - env: TYPO3=10.4 DB=mysql
+    - env: TYPO3=^10.4 DB=mysql
     - env: TYPO3=master DB=mysql
 
   exclude:
     # TYPO3 9 LTS with PHP 7.1
     - php: "7.1"
       env: TYPO3=^9.5 DB=mysql
+
+    # TYPO3 10 LTS with PHP 7.1
+    - php: "7.1"
+      env: TYPO3=^10.4 DB=mysql
 
       # TYPO3 8 LTS with PHP 7.3
     - php: "7.3"
@@ -61,8 +65,8 @@ before_script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
 
-    composer require typo3/minimal=$TYPO3 --no-update
-    composer update
+    composer require typo3/minimal=$TYPO3 --no-update;
+    composer update;
 
   #    bash Build/install.sh;
   ## Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
