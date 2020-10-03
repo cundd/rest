@@ -104,7 +104,6 @@ function main() {
     cd ${PROJECT_HOME}
 
     if [[ "$#" -eq "0" ]]; then
-        install_dependencies
         install_typo3
         prepare_database
         return

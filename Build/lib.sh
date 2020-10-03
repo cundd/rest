@@ -71,7 +71,7 @@ lib::popd() {
 
 # Detects the path to the TYPO3 base
 get_typo3_base_path() {
-    if [[ -d "$PROJECT_HOME/public" ]] && [[ -d "$PROJECT_HOME/typo3conf" ]]; then
+    if [[ -d "$PROJECT_HOME/public/typo3" ]]; then
         echo "$PROJECT_HOME/"
     elif [[ -d "$PROJECT_HOME/../TYPO3.CMS" ]]; then
         echo "$PROJECT_HOME/../TYPO3.CMS"
