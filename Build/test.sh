@@ -24,19 +24,19 @@ source "$PROJECT_HOME/Build/lib.sh"
 # Detect the phpunit path to use for Functional Tests
 function get_phpunit_path_for_functional_tests() {
     get_phpunit_path_for_unit_tests
-#    init_typo3_path_web
-#    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit"
-#    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
-#        echo "$TYPO3_PATH_WEB/bin/phpunit"
-#        return
-#    fi
-#
-#    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit"
-#    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
-#        echo "$TYPO3_PATH_WEB/vendor/bin/phpunit"
-#    else
-#        return 1
-#    fi
+    #    init_typo3_path_web
+    #    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit"
+    #    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
+    #        echo "$TYPO3_PATH_WEB/bin/phpunit"
+    #        return
+    #    fi
+    #
+    #    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit"
+    #    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
+    #        echo "$TYPO3_PATH_WEB/vendor/bin/phpunit"
+    #    else
+    #        return 1
+    #    fi
 }
 
 # Check the phpunit path to use for Functional Tests
@@ -121,12 +121,12 @@ function init_typo3_path_web() {
     if [[ "${TYPO3_PATH_WEB}" == "" ]]; then
         TYPO3_PATH_WEB=$(get_typo3_base_path)
         if [[ "${TYPO3_PATH_WEB}" == "" ]]; then
-            lib::print_error "Please set the TYPO3_PATH_WEB environment variable"
-            exit 1
+            lib::print_warning "Please set the TYPO3_PATH_WEB environment variable"
+            #exit 1
         fi
     elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
-        lib::print_error "The defined TYPO3_PATH_WEB '$TYPO3_PATH_WEB' does not seem to be a directory"
-        exit 1
+        lib::print_warning "The defined TYPO3_PATH_WEB '$TYPO3_PATH_WEB' does not seem to be a directory"
+        #exit 1
     else
         lib::print_debug "TYPO3_PATH_WEB is '$TYPO3_PATH_WEB'"
     fi
