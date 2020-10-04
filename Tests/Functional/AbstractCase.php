@@ -24,6 +24,7 @@ use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
 use Exception;
+use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use SimpleXMLElement;
@@ -35,7 +36,6 @@ use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use Webmozart\Assert\Assert;
 
 /**
@@ -91,16 +91,16 @@ class AbstractCase extends FunctionalTestCase
     /**
      * Build a new request with the given URI
      *
-     * @param string $uri
-     * @param string $format
-     * @param string $method
+     * @param string      $uri
+     * @param string|null $format
+     * @param string|null $method
      * @return RestRequestInterface
      */
     public function buildRequestWithUri($uri, $format = null, $method = null)
     {
         return RequestBuilderTrait::buildTestRequest(
             $uri,
-            $method,   // $method
+            $method,
             [],     // $params
             [],     // $headers
             null,   // $rawBody
@@ -118,7 +118,7 @@ class AbstractCase extends FunctionalTestCase
      */
     protected function importDataSet($path)
     {
-        if (method_exists('\TYPO3\CMS\Core\Tests\FunctionalTestCase', 'importDataSet')) {
+        if (method_exists(get_parent_class($this), 'importDataSet')) {
             parent::importDataSet($path);
 
             return;
@@ -145,7 +145,7 @@ class AbstractCase extends FunctionalTestCase
                 $columnValue = null;
 
                 if (isset($column['ref'])) {
-                    list($tableName, $elementId) = explode('#', $column['ref']);
+                    [$tableName, $elementId] = explode('#', $column['ref']);
                     $columnValue = $foreignKeys[$tableName][$elementId];
                 } elseif (isset($column['is-NULL']) && ($column['is-NULL'] === 'yes')) {
                     $columnValue = null;

@@ -62,3 +62,10 @@ results
 
 npm-debug.log
 node_modules
+
+# TYPO3
+/typo3conf
+/typo3temp
+/public
+/uploads
+/config

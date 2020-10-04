@@ -24,7 +24,8 @@
         "phpspec/prophecy": "*",
         "ext-simplexml": "*",
         "ext-curl": "*",
-        "psr/container": "^1.0"
+        "psr/container": "^1.0",
+        "nimut/testing-framework": "^5.1"
     },
     "homepage": "https://rest.corn.rest/",
     "authors": [

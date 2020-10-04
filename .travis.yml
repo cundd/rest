@@ -7,8 +7,9 @@ php:
   - "nightly"
 
 env:
-  - TYPO3=TYPO3_8-7 DB=mysql
-  - TYPO3=9.5 DB=mysql
+  - TYPO3=^8.7 DB=mysql
+  - TYPO3=^9.5 DB=mysql
+  - TYPO3=^10.4 DB=mysql
   - TYPO3=master DB=mysql
 
 matrix:
@@ -17,16 +18,21 @@ matrix:
     - php: nightly
     - php: hhvm
     - php: 7.4snapshot
+    - env: TYPO3=^10.4 DB=mysql
     - env: TYPO3=master DB=mysql
 
   exclude:
     # TYPO3 9 LTS with PHP 7.1
     - php: "7.1"
-      env: TYPO3=9.5 DB=mysql
+      env: TYPO3=^9.5 DB=mysql
+
+    # TYPO3 10 LTS with PHP 7.1
+    - php: "7.1"
+      env: TYPO3=^10.4 DB=mysql
 
       # TYPO3 8 LTS with PHP 7.3
     - php: "7.3"
-      env: TYPO3=TYPO3_8-7 DB=mysql
+      env: TYPO3=^8.7 DB=mysql
 
 services:
   - mysql
@@ -46,9 +52,11 @@ notifications:
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: always
 
-before_script:
+before_install:
   # We don't need xdebug right now
   - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
+
+before_script:
   #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3;"; fi
   #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "GRANT ALL PRIVILEGES ON typo3.* to travis@'%';"; fi
   - >
@@ -56,9 +64,13 @@ before_script:
     export typo3DatabaseHost="127.0.0.1";
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
-    bash Build/install.sh;
-  # Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
-  - composer remove phpunit/phpunit --dev && composer update
+
+    composer require typo3/minimal=$TYPO3 --no-update;
+    composer update;
+
+  #    bash Build/install.sh;
+  ## Remove the local PHPUnit so it doesn't get mixed up with the one from TYPO3 core
+  #- composer remove phpunit/phpunit --dev && composer update
 
 script:
   - >
