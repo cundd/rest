@@ -19,29 +19,17 @@ PROJECT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 : ${typo3DatabasePassword="root"}
 
 if [[ -e "lib.sh" ]]; then source "lib.sh"; fi
+# shellcheck source=lib.sh
 source "$PROJECT_HOME/Build/lib.sh"
 
 # Detect the phpunit path to use for Functional Tests
 function get_phpunit_path_for_functional_tests() {
     get_phpunit_path_for_unit_tests
-    #    init_typo3_path_web
-    #    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/bin/phpunit"
-    #    if [[ -e "$TYPO3_PATH_WEB/bin/phpunit" ]]; then
-    #        echo "$TYPO3_PATH_WEB/bin/phpunit"
-    #        return
-    #    fi
-    #
-    #    lib::print_debug "Check phpunit at $TYPO3_PATH_WEB/vendor/bin/phpunit"
-    #    if [[ -e "$TYPO3_PATH_WEB/vendor/bin/phpunit" ]]; then
-    #        echo "$TYPO3_PATH_WEB/vendor/bin/phpunit"
-    #    else
-    #        return 1
-    #    fi
 }
 
 # Check the phpunit path to use for Functional Tests
 function check_phpunit_path_for_functional_tests() {
-    $(get_phpunit_path_for_functional_tests >/dev/null) || {
+    get_phpunit_path_for_functional_tests >/dev/null || {
         lib::print_error "Could not find phpunit to run functional tests"
         exit 1
     }
@@ -71,7 +59,7 @@ function get_phpunit_path_for_unit_tests() {
 
 # Check the phpunit path to use for Unit Tests
 function check_phpunit_path_for_unit_tests() {
-    $(get_phpunit_path_for_unit_tests &>/dev/null) || {
+    get_phpunit_path_for_unit_tests &>/dev/null || {
         lib::print_error "Could not find phpunit to run unit tests"
         exit 1
     }
@@ -80,7 +68,7 @@ function check_phpunit_path_for_unit_tests() {
 # Check the provided MySQL credentials
 function check_mysql_credentials() {
     lib::print_debug "Check MySQL credentials"
-    php -r '@mysqli_connect("'${typo3DatabaseHost}'", "'${typo3DatabaseUsername}'", "'${typo3DatabasePassword}'", "'${typo3DatabaseName}'", "'${typo3DatabasePort}'") or exit(1);' || {
+    php -r '@mysqli_connect("'"${typo3DatabaseHost}"'", "'"${typo3DatabaseUsername}"'", "'"${typo3DatabasePassword}"'", "'"${typo3DatabaseName}"'", "'"${typo3DatabasePort}"'") or exit(1);' || {
         lib::print_error "Could not connect to MySQL ($typo3DatabaseUsername:$typo3DatabasePassword@$typo3DatabaseHost:$typo3DatabasePort / $typo3DatabaseName)"
     }
 }
@@ -101,17 +89,18 @@ function init_database() {
 
 # Prepare the TYPO3 system
 function init_typo3() {
-    local baseDir=$(pwd)
+    local baseDir
+    baseDir=$(pwd)
     lib::print_debug "Check for phpunit at ${TYPO3_PATH_WEB}/bin/phpunit"
     if [[ ! -x ${TYPO3_PATH_WEB}/bin/phpunit ]]; then
         lib::print_debug "Check for composer.json in '$TYPO3_PATH_WEB'"
         if [[ -f "$TYPO3_PATH_WEB/composer.json" ]]; then
-            cd ${TYPO3_PATH_WEB}
+            cd "$TYPO3_PATH_WEB"
             lib::print_debug "Run composer install in '$TYPO3_PATH_WEB'"
             lib::composer install
 
             lib::print_debug "Go back into '$baseDir'"
-            cd ${baseDir}
+            cd "$baseDir"
         fi
     fi
 }
@@ -122,11 +111,9 @@ function init_typo3_path_web() {
         TYPO3_PATH_WEB=$(get_typo3_base_path)
         if [[ "${TYPO3_PATH_WEB}" == "" ]]; then
             lib::print_warning "Please set the TYPO3_PATH_WEB environment variable"
-            #exit 1
         fi
     elif [[ ! -d ${TYPO3_PATH_WEB} ]]; then
         lib::print_warning "The defined TYPO3_PATH_WEB '$TYPO3_PATH_WEB' does not seem to be a directory"
-        #exit 1
     else
         lib::print_debug "TYPO3_PATH_WEB is '$TYPO3_PATH_WEB'"
     fi
@@ -141,30 +128,28 @@ function init() {
 
 # Run Unit Tests
 function unit_tests() {
-    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$@"
+    if [[ -n ${1+x} ]] && [[ -e "$1" ]]; then
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_unit_tests)" -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$@"
     else
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$PROJECT_HOME/Tests/Unit" "$@"
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_unit_tests)" -c "$PROJECT_HOME/Tests/Unit/phpunit.xml" "$PROJECT_HOME/Tests/Unit" "$@"
     fi
 }
 
 # Run Manual Tests
 function manual_tests() {
-    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$@"
+    if [[ -n ${1+x} ]] && [[ -e "$1" ]]; then
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_unit_tests)" -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$@"
     else
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_unit_tests) -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$PROJECT_HOME/Tests/Manual" "$@"
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_unit_tests)" -c "$PROJECT_HOME/Tests/Manual/phpunit.xml" "$PROJECT_HOME/Tests/Manual" "$@"
     fi
 }
 
 # Run Functional Tests
 function functional_tests() {
-    if [[ ! -z ${1+x} ]] && [[ -e "$1" ]]; then
-        #        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$@";
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml" "$@"
+    if [[ -n ${1+x} ]] && [[ -e "$1" ]]; then
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_functional_tests)" -c "$PROJECT_HOME/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml" "$@"
     else
-        #        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/Tests/Functional/phpunit.xml" "$PROJECT_HOME/Tests/Functional" "$@";
-        TEST_MODE="$TEST_MODE" ${PHP_BINARY} $(get_phpunit_path_for_functional_tests) -c "$PROJECT_HOME/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml" "$PROJECT_HOME/Tests/Functional" "$@"
+        TEST_MODE="$TEST_MODE" ${PHP_BINARY} "$(get_phpunit_path_for_functional_tests)" -c "$PROJECT_HOME/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml" "$PROJECT_HOME/Tests/Functional" "$@"
     fi
 }
 
@@ -253,10 +238,10 @@ function main() {
     fi
 
     # Environmental variables will override the value
-    : ${FUNCTIONAL_TESTS="$_functional_tests"}
-    : ${UNIT_TESTS="$_unit_tests"}
-    : ${MANUAL_TESTS="$_manual_tests"}
-    : ${DOCUMENTATION_TESTS="$_documentation_tests"}
+    : "${FUNCTIONAL_TESTS=$_functional_tests}"
+    : "${UNIT_TESTS=$_unit_tests}"
+    : "${MANUAL_TESTS=$_manual_tests}"
+    : "${DOCUMENTATION_TESTS=$_documentation_tests}"
 
     export TYPO3_PATH_WEB="$TYPO3_PATH_WEB"
     export CUNDD_TEST="yes"
@@ -285,6 +270,13 @@ function main() {
         lib::print_header "Run Documentation Tests"
         documentation_tests "$@"
     fi
+
+    if [[ "$UNIT_TESTS" != "yes" ]] && [[ "$FUNCTIONAL_TESTS" != "yes" ]] && [[ "$MANUAL_TESTS" != "yes" ]] && [[ "$DOCUMENTATION_TESTS" != "yes" ]]; then
+        lib::print_error "No tests selected"
+        echo
+        show_help
+        exit 1
+    fi
 }
 
-main $@
+main "$@"

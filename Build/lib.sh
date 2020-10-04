@@ -7,42 +7,42 @@ PROJECT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 lib::_tput() {
     : ${TERM="dumb"}
     if [[ "$TERM" != "dumb" ]] && hash tput &>/dev/null; then
-        tput $*
+        tput "$@"
     fi
 }
 
 # Print a error message
 lib::print_error() {
     lib::_tput >&2 setaf 1
-    echo >&2 "[ERROR] $@"
+    echo >&2 "[ERROR] $*"
     lib::_tput >&2 sgr0
 }
 
 # Print a header message
 lib::print_header() {
     lib::_tput setaf 2
-    echo "[TASK] $@"
+    echo "[TASK] $*"
     lib::_tput sgr0
 }
 
 # Print a info message
 lib::print_info() {
     lib::_tput setaf 4
-    echo "[INFO] $@"
+    echo "[INFO] $*"
     lib::_tput sgr0
 }
 
 # Print a debug message
 lib::print_debug() {
     if [[ "$DEBUG" == "yes" ]] || [[ "$DEBUG" == "true" ]]; then
-        echo >&2 "[DEBUG] $@"
+        echo >&2 "[DEBUG] $*"
     fi
 }
 
 # Print a warning
 lib::print_warning() {
     lib::_tput setaf 3
-    echo "[WARNING] $@"
+    echo "[WARNING] $*"
     lib::_tput sgr0
 }
 
