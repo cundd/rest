@@ -6,6 +6,7 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use Doctrine\DBAL\DBALException;
+use LogicException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class DoctrineBackend extends AbstractBackend
@@ -96,7 +97,7 @@ class DoctrineBackend extends AbstractBackend
             throw SqlErrorException::fromException($exception);
         }
 
-        return $result['count'];
+        return (int)$result['count'];
     }
 
     public function getObjectDataByQuery(string $tableName, QueryInterface $query): array
@@ -108,7 +109,7 @@ class DoctrineBackend extends AbstractBackend
             // TODO: Add support for ordering and pagination for Query objects without constraints
             if ($query instanceof QueryInterface
                 && ($query->getLimit() || $query->getOffset() || $query->getOrderings())) {
-                throw new \LogicException(
+                throw new LogicException(
                     'Queries without constraints but pagination or orderings are not implemented'
                 );
             }
