@@ -309,7 +309,7 @@ class Extractor implements ExtractorInterface
             . Utility::getResourceTypeForClassName(get_class($model))
             . '/';
 
-        $methodGetUidExists = method_exists($model, 'getUid');
+        $methodGetUidExists = method_exists($model, 'getUid') || is_callable([$model, 'getUid']);
         assert($methodGetUidExists, 'The URI to a resource without an UID is requested. This URI can not be generated');
 
         if ($methodGetUidExists) {
