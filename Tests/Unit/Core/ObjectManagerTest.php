@@ -161,27 +161,11 @@ class ObjectManagerTest extends TestCase
      */
     public function getAuthenticationProviderTest()
     {
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory());
         $this->container->set(AuthenticationProviderCollection::class, new AuthenticationProviderCollection([]));
 
         $this->injectConfigurationProvider(['authenticationProvider' => []], '', '');
-        $object = $this->fixture->getAuthenticationProvider();
+        $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
-    }
-
-    /**
-     * @param string $url
-     * @return RequestFactoryInterface
-     */
-    private function buildRequestFactory(string $url = 'something')
-    {
-        /** @var ObjectProphecy|RequestFactoryInterface $requestFactoryProphecy */
-        $requestFactoryProphecy = $this->prophesize(RequestFactoryInterface::class);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $requestFactoryProphecy->getRequest()->willReturn($this->buildTestRequest($url));
-        $requestFactory = $requestFactoryProphecy->reveal();
-
-        return $requestFactory;
     }
 
     /**
@@ -191,13 +175,12 @@ class ObjectManagerTest extends TestCase
     {
         $userProvider = new UserProvider();
         $sessM = new SessionManager();
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory());
         $this->container->set(BasicAuthenticationProvider::class, new BasicAuthenticationProvider($userProvider));
         $this->container->set(RequestAuthenticationProvider::class, new RequestAuthenticationProvider());
         $this->container->set(CredentialsAuthenticationProvider::class, new CredentialsAuthenticationProvider($sessM));
         $this->container->set(
             AuthenticationProviderCollection::class,
-            function ($a) {
+            function ($a): AuthenticationProviderCollection {
                 return new AuthenticationProviderCollection($a);
             }
         );
@@ -213,7 +196,7 @@ class ObjectManagerTest extends TestCase
             ''
         );
         /** @var AuthenticationProviderCollection $object */
-        $object = $this->fixture->getAuthenticationProvider();
+        $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
         $this->assertCount(3, $object->getProviders());
         $providers = array_values(iterator_to_array($object->getProviders()));
@@ -230,13 +213,12 @@ class ObjectManagerTest extends TestCase
      * @param array  $classToBuild
      * @throws Exception
      */
-    public function getDataProviderTest($url, $expectedClass, $classToBuild = [])
+    public function getDataProviderTest(string $url, string $expectedClass, $classToBuild = [])
     {
         /** @var ExtractorInterface $extractor */
         $extractor = $this->prophesize(ExtractorInterface::class)->reveal();
         /** @var IdentityProviderInterface $identityProvider */
         $identityProvider = $this->prophesize(IdentityProviderInterface::class)->reveal();
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($url));
         $this->container->set(
             VirtualObjectDataProvider::class,
             new VirtualObjectDataProvider(
@@ -253,13 +235,12 @@ class ObjectManagerTest extends TestCase
             $this->buildClassAndRegisterObject($classToBuild);
         }
 
-        $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
+        $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url, 'something'));
         $this->assertInstanceOf($expectedClass, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
-        //        $this->assertInstanceOf(DataProvider::class, $dataProvider);
     }
 
-    public function dataProviderTestGenerator()
+    public function dataProviderTestGenerator(): array
     {
         $dummyDataProvider = DummyDataProvider::class;
 
@@ -341,11 +322,9 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
-     * @dataProvider passRequestAsArgumentDataProvider
-     * @param bool $passRequestAsArgument
      * @throws Exception
      */
-    public function getDataProviderFromResourceTest(bool $passRequestAsArgument)
+    public function getDataProviderFromResourceTest()
     {
         $expectedDataProvider = 'Vendor\\Ext' . time() . '\\Rest\\DataProvider';
         $this->buildClass($expectedDataProvider, '', DummyDataProvider::class, true);
@@ -370,13 +349,7 @@ class ObjectManagerTest extends TestCase
         );
         $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
 
-        // Modern way
-        if ($passRequestAsArgument) {
-            $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($resourceTypeString));
-        } else {
-            $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($resourceTypeString));
-            $dataProvider = $this->fixture->getDataProvider();
-        }
+        $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($resourceTypeString, 'something'));
         $this->assertInstanceOf($expectedDataProvider, $dataProvider);
         $this->assertInstanceOf(DataProviderInterface::class, $dataProvider);
     }
@@ -390,12 +363,11 @@ class ObjectManagerTest extends TestCase
      * @param array  $classToBuild
      * @throws Exception
      */
-    public function getHandlerTest($url, $expectedClass, $classToBuild = [])
+    public function getHandlerTest(string $url, string $expectedClass, $classToBuild = [])
     {
-        $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($url));
         $this->container->set(
             CrudHandler::class,
-            function () {
+            function (): CrudHandler {
                 /** @var ResponseFactory $responseFactory */
                 $responseFactory = $this->prophesize(ResponseFactoryInterface::class)->reveal();
                 /** @var LoggerInterface $logger */
@@ -408,12 +380,12 @@ class ObjectManagerTest extends TestCase
             $this->buildClassAndRegisterObject($classToBuild);
         }
 
-        $handler = $this->fixture->getHandler($this->buildTestRequest($url));
+        $handler = $this->fixture->getHandler($this->buildTestRequest($url, 'something'));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
     }
 
-    public function handlerTestGenerator()
+    public function handlerTestGenerator(): array
     {
         $dummyHandler = DummyHandler::class;
 
@@ -479,11 +451,8 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
-     * @dataProvider passRequestAsArgumentDataProvider
-     * @param bool $passRequestAsArgument
-     * @throws Exception
      */
-    public function getHandlerFromResourceTest(bool $passRequestAsArgument)
+    public function getHandlerFromResourceTest()
     {
         $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
         $this->buildClass($expectedHandler, '', DummyHandler::class, true);
@@ -508,23 +477,9 @@ class ObjectManagerTest extends TestCase
         );
         $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
 
-        // Modern way
-        if ($passRequestAsArgument) {
-            $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString));
-        } else {
-            $this->container->set(RequestFactoryInterface::class, $this->buildRequestFactory($resourceTypeString));
-            $handler = $this->fixture->getHandler();
-        }
+        $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString, 'something'));
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
-    }
-
-    public function passRequestAsArgumentDataProvider()
-    {
-        return [
-            'Pass Request as argument yes' => [true],
-            'Pass Request as argument no'  => [false],
-        ];
     }
 
     /**

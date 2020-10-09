@@ -22,6 +22,7 @@ use LogicException;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager as TYPO3ObjectManager;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 use function interface_exists;
 
 /**
@@ -39,14 +40,14 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     protected $configurationProvider;
 
     /**
-     * @var ContainerInterface|\TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @var ContainerInterface|TYPO3ObjectManagerInterface
      */
     protected $container;
 
     /**
      * Object Manager constructor
      *
-     * @param ContainerInterface|\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $container
+     * @param ContainerInterface|TYPO3ObjectManagerInterface|null $container
      */
     public function __construct($container = null)
     {
@@ -63,15 +64,15 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->get(ResponseFactoryInterface::class);
     }
 
-    public function getDataProvider(RestRequestInterface $request = null): DataProviderInterface
+    public function getDataProvider(RestRequestInterface $request): DataProviderInterface
     {
-        $resourceType = $request ? $request->getResourceType() : $this->getCurrentResourceType();
+        $resourceType = $request->getResourceType();
         $dataProvider = $this->getImplementationFromResourceConfiguration($resourceType, 'DataProvider');
         if ($dataProvider) {
             return $dataProvider;
         }
 
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
 
         $classes = [
             // @deprecated register a `dataProviderClass` instead. Will be remove in 5.0
@@ -95,10 +96,10 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->get(RequestFactoryInterface::class);
     }
 
-    public function getAuthenticationProvider(RestRequestInterface $request = null): AuthenticationProviderInterface
+    public function getAuthenticationProvider(RestRequestInterface $request): AuthenticationProviderInterface
     {
-        $resourceType = $request ? $request->getResourceType() : $this->getCurrentResourceType();
-        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
+        $resourceType = $request->getResourceType();
+        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides a Authentication Provider
         $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
@@ -128,10 +129,10 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         );
     }
 
-    public function getAccessController(RestRequestInterface $request = null): AccessControllerInterface
+    public function getAccessController(RestRequestInterface $request): AccessControllerInterface
     {
-        $resourceType = $request ? $request->getResourceType() : $this->getCurrentResourceType();
-        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
+        $resourceType = $request->getResourceType();
+        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides a Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
@@ -147,15 +148,15 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->get($accessControllerClass);
     }
 
-    public function getHandler(RestRequestInterface $request = null): HandlerInterface
+    public function getHandler(RestRequestInterface $request): HandlerInterface
     {
-        $resourceType = $request ? $request->getResourceType() : $this->getCurrentResourceType();
+        $resourceType = $request->getResourceType();
         $handler = $this->getImplementationFromResourceConfiguration($resourceType, 'Handler');
         if ($handler) {
             return $handler;
         }
 
-        list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
         $classes = [
             // Check if an extension provides a Handler
@@ -194,17 +195,6 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     }
 
     /**
-     * Returns the current request
-     *
-     * @return RestRequestInterface
-     * @deprecated
-     */
-    protected function getRequest()
-    {
-        return $this->getRequestFactory()->getRequest();
-    }
-
-    /**
      * Returns the first of the classes that exists
      *
      * @param string[] $classes
@@ -212,7 +202,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
      * @return string
      * @throws LogicException
      */
-    private function getFirstExistingClass(array $classes, $default = '')
+    private function getFirstExistingClass(array $classes, string $default = ''): string
     {
         foreach ($classes as $class) {
             if (class_exists($class)) {
@@ -259,13 +249,5 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         }
 
         return $this->get($implementation);
-    }
-
-    /**
-     * @return ResourceType
-     */
-    private function getCurrentResourceType(): ResourceType
-    {
-        return $this->getRequestFactory()->getRequest()->getResourceType();
     }
 }

@@ -54,9 +54,6 @@ class ObjectManagerTest extends AbstractCase
     public function tearDown()
     {
         // Reset the last request
-        if ($this->fixture) {
-            $this->fixture->getRequestFactory()->resetRequest();
-        }
         unset($this->fixture);
         parent::tearDown();
     }
@@ -97,7 +94,7 @@ class ObjectManagerTest extends AbstractCase
     public function getAuthenticationProviderTest()
     {
         $this->injectConfigurationProviderUsingHandlerClass(['authenticationProvider' => []], '');
-        $object = $this->fixture->getAuthenticationProvider();
+        $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
     }
 
@@ -117,7 +114,7 @@ class ObjectManagerTest extends AbstractCase
             ''
         );
         /** @var AuthenticationProviderCollection $object */
-        $object = $this->fixture->getAuthenticationProvider();
+        $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
         $this->assertCount(3, $object->getProviders());
         $providers = array_values(iterator_to_array($object->getProviders()));
@@ -134,7 +131,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array  $classToBuild
      * @throws Exception
      */
-    public function getDataProviderTest($url, $expectedClass, $classToBuild = [])
+    public function getDataProviderTest(string $url, string $expectedClass, $classToBuild = [])
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
@@ -147,7 +144,7 @@ class ObjectManagerTest extends AbstractCase
         $this->assertInstanceOf(DataProvider::class, $dataProvider);
     }
 
-    public function dataProviderTestGenerator()
+    public function dataProviderTestGenerator(): array
     {
         $defaultDataProvider = DataProvider::class;
 
@@ -236,7 +233,7 @@ class ObjectManagerTest extends AbstractCase
      * @param array  $classToBuild
      * @throws Exception
      */
-    public function getHandlerTest($url, $expectedClass, $classToBuild = [])
+    public function getHandlerTest(string $url, string $expectedClass, $classToBuild = [])
     {
         $_GET['u'] = $url;
         if ($classToBuild) {
@@ -249,7 +246,7 @@ class ObjectManagerTest extends AbstractCase
         $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
-    public function handlerTestGenerator()
+    public function handlerTestGenerator(): array
     {
         $defaultHandler = CrudHandler::class;
 

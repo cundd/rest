@@ -27,60 +27,60 @@ interface ObjectManagerInterface
     public function get($class, ...$arguments);
 
     /**
-     * Returns the configuration provider
+     * Return the configuration provider
      *
      * @return ConfigurationProviderInterface
      */
     public function getConfigurationProvider(): ConfigurationProviderInterface;
 
     /**
-     * Returns the configuration provider
+     * Return the configuration provider
      *
      * @return RequestFactoryInterface
      */
     public function getRequestFactory(): RequestFactoryInterface;
 
     /**
-     * Returns the Response Factory
+     * Return the Response Factory
      *
      * @return ResponseFactoryInterface
      */
     public function getResponseFactory(): ResponseFactoryInterface;
 
     /**
-     * Returns the data provider
+     * Return the data provider
      *
-     * @param RestRequestInterface|null $request Argument will be mandatory from version 5.0
+     * @param RestRequestInterface $request
      * @return DataProviderInterface
      */
-    public function getDataProvider(RestRequestInterface $request = null): DataProviderInterface;
+    public function getDataProvider(RestRequestInterface $request): DataProviderInterface;
 
     /**
-     * Returns the Authentication Provider
+     * Return the Authentication Provider
      *
-     * @param RestRequestInterface|null $request Argument will be mandatory from version 5.0
+     * @param RestRequestInterface $request
      * @return AuthenticationProviderInterface
      */
-    public function getAuthenticationProvider(RestRequestInterface $request = null): AuthenticationProviderInterface;
+    public function getAuthenticationProvider(RestRequestInterface $request): AuthenticationProviderInterface;
 
     /**
-     * Returns the Access Controller
+     * Return the Access Controller
      *
-     * @param RestRequestInterface|null $request Argument will be mandatory from version 5.0
+     * @param RestRequestInterface $request
      * @return AccessControllerInterface
      */
-    public function getAccessController(RestRequestInterface $request = null): AccessControllerInterface;
+    public function getAccessController(RestRequestInterface $request): AccessControllerInterface;
 
     /**
-     * Returns the Handler which is responsible for handling the current request
+     * Return the Handler which is responsible for handling the current request
      *
-     * @param RestRequestInterface|null $request Argument will be mandatory from version 5.0
+     * @param RestRequestInterface $request
      * @return HandlerInterface
      */
-    public function getHandler(RestRequestInterface $request = null): HandlerInterface;
+    public function getHandler(RestRequestInterface $request): HandlerInterface;
 
     /**
-     * Returns the Cache instance for the given Resource Type
+     * Return the Cache instance for the given Resource Type
      *
      * @param ResourceType $resourceType
      * @return CacheInterface
