@@ -7,8 +7,14 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Utility\SiteLanguageUtility;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
+use stdClass;
+use function call_user_func;
+use function class_exists;
 use function getenv;
+use function sprintf;
 
 /**
  * Factory class to get the current Request
@@ -21,17 +27,19 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     private $request;
 
     /**
-     * @var ServerRequestInterface
-     */
-    private $originalRequest;
-
-    /**
-     * @var \Cundd\Rest\Configuration\ConfigurationProviderInterface
+     * @var ConfigurationProviderInterface
      */
     private $configurationProvider;
 
     /**
+     * @var ServerRequestInterface
+     * @deprecated
+     */
+    private $originalRequest;
+
+    /**
      * @var string
+     * @deprecated
      */
     private $factoryClass;
 
@@ -39,14 +47,29 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * Request Factory constructor
      *
      * @param ConfigurationProviderInterface $configurationProvider
-     * @param string                         $factoryClass Class name of the factory for the original request
+     * @param string                         $factoryClass deprecated
      */
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
-        $factoryClass = '\TYPO3\CMS\Core\Http\ServerRequestFactory'
+        string $factoryClass = '\TYPO3\CMS\Core\Http\ServerRequestFactory'
     ) {
         $this->configurationProvider = $configurationProvider;
         $this->factoryClass = $factoryClass;
+    }
+
+    public function buildRequest(ServerRequestInterface $request): RestRequestInterface
+    {
+        $pathInfo = $this->determineAndAnalyseInputPath($request);
+        $originalRequest = $request;
+        $internalUri = $request->getUri()->withPath($pathInfo->path);
+
+        return new Request(
+            $originalRequest,
+            $internalUri,
+            $pathInfo->originalPath,
+            new ResourceType($pathInfo->resourceType),
+            new Format($pathInfo->format)
+        );
     }
 
     /**
@@ -57,7 +80,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     public function getRequest()
     {
         if (!$this->request) {
-            $this->request = $this->buildRequest();
+            $this->request = $this->constructRequest();
         }
 
         return $this->request;
@@ -98,9 +121,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * Check for an alias for the given path
      *
      * @param string $path
-     * @return string
+     * @return string|null
      */
-    protected function getAliasForPath($path)
+    protected function getAliasForPath(string $path): ?string
     {
         return $this->configurationProvider->getSetting('aliases.' . $path);
     }
@@ -108,11 +131,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     /**
      * Returns the path and original path for the given input path respecting configured aliases
      *
-     * @return \stdClass
+     * @param ServerRequestInterface $request
+     * @return stdClass
      */
-    protected function determineAndAnalyseInputPath()
+    protected function determineAndAnalyseInputPath(ServerRequestInterface $request): stdClass
     {
-        $pathAndFormat = $this->determinePathAndFormat();
+        $pathAndFormat = $this->determinePathAndFormat($request);
         $inputPath = $pathAndFormat->path;
 
         $pathInfo = (object)[
@@ -163,25 +187,11 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     }
 
     /**
-     * @return ServerRequestInterface
-     */
-    private function getOriginalRequest()
-    {
-        if ($this->originalRequest) {
-            return $this->originalRequest;
-        }
-        if (!class_exists($this->factoryClass)) {
-            throw new \LogicException(sprintf('PSR7 factory class "%s" not found', $this->factoryClass));
-        }
-
-        return call_user_func($this->factoryClass . '::fromGlobals');
-    }
-
-    /**
-     * @param string $path
+     * @param ServerRequestInterface $request
+     * @param string                 $path
      * @return string
      */
-    private function removePathPrefixes($path)
+    private function removePathPrefixes(ServerRequestInterface $request, string $path): string
     {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH') ?: getenv('REDIRECT_TYPO3_REST_REQUEST_BASE_PATH');
         if ($pathPrefix === false) {
@@ -192,9 +202,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         }
 
         $path = $this->removePathPrefix($path, '/' . trim((string)$pathPrefix, '/'));
-        $path = $this->removePathPrefix($path, '/rest/');
+        $siteLanguagePrefix = SiteLanguageUtility::detectSiteLanguagePrefix($request);
 
-        return $path;
+        return $this->removePathPrefix($path, $siteLanguagePrefix . 'rest/');
     }
 
     /**
@@ -202,7 +212,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param string $pathPrefix
      * @return string
      */
-    private function removePathPrefix($path, $pathPrefix)
+    private function removePathPrefix(string $path, string $pathPrefix): string
     {
         if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
             if ($this->stringHasPrefix($path, $pathPrefix)) {
@@ -218,7 +228,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param string $prefix
      * @return bool
      */
-    private function stringHasPrefix($input, $prefix)
+    private function stringHasPrefix(string $input, string $prefix): bool
     {
         return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
     }
@@ -229,7 +239,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param string $path
      * @return object
      */
-    private function splitPathAndFormat($path)
+    private function splitPathAndFormat(string $path)
     {
         $format = '';
 
@@ -263,11 +273,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
      * @return object
      */
-    private function determinePathAndFormat()
+    private function determinePathAndFormat(ServerRequestInterface $request)
     {
-        $path = $this->getRawPath();
+        $path = $this->getRawPath($request);
 
         // Make sure the path starts with a slash
         if ($path) {
@@ -290,10 +301,14 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     /**
      * @return RestRequestInterface
      */
-    private function buildRequest()
+    private function constructRequest()
     {
-        $pathInfo = $this->determineAndAnalyseInputPath();
-        $originalRequest = $this->getOriginalRequest();
+        if (!class_exists($this->factoryClass)) {
+            throw new LogicException(sprintf('PSR7 factory class "%s" not found', $this->factoryClass));
+        }
+
+        $originalRequest = $this->originalRequest ?? call_user_func($this->factoryClass . '::fromGlobals');
+        $pathInfo = $this->determineAndAnalyseInputPath($originalRequest);
         $internalUri = $originalRequest->getUri()->withPath($pathInfo->path);
 
         return new Request(
@@ -311,7 +326,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param $format
      * @return boolean
      */
-    public static function isValidFormat($format)
+    public static function isValidFormat($format): bool
     {
         if (!$format) {
             return false;
@@ -322,19 +337,20 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
      * @return string
      */
-    private function getRawPath()
+    private function getRawPath(ServerRequestInterface $request): string
     {
         $path = '';
         if (isset($_GET['u'])) {
-            $path = filter_var($this->removePathPrefixes($_GET['u']), FILTER_SANITIZE_URL);
+            $path = filter_var($this->removePathPrefixes($request, $_GET['u']), FILTER_SANITIZE_URL);
         }
 
-        if (!$path && isset($_SERVER['REQUEST_URI'])) {
-            $path = filter_var($this->removePathPrefixes($_SERVER['REQUEST_URI']), FILTER_SANITIZE_URL);
+        if (!$path) {
+            $path = filter_var($this->removePathPrefixes($request, $request->getUri()->getPath()), FILTER_SANITIZE_URL);
         }
 
-        return $path;
+        return (string)$path;
     }
 }

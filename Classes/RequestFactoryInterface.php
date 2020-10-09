@@ -12,9 +12,18 @@ use Psr\Http\Message\ServerRequestInterface;
 interface RequestFactoryInterface
 {
     /**
+     * Build the prepared REST Request for the given Server Request
+     *
+     * @param ServerRequestInterface $request
+     * @return RestRequestInterface
+     */
+    public function buildRequest(ServerRequestInterface $request): RestRequestInterface;
+
+    /**
      * Returns the request
      *
      * @return RestRequestInterface
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function getRequest();
 
@@ -22,6 +31,7 @@ interface RequestFactoryInterface
      * Resets the current request
      *
      * @return $this
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function resetRequest();
 
@@ -30,6 +40,7 @@ interface RequestFactoryInterface
      *
      * @param ServerRequestInterface $request
      * @return $this
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function registerCurrentRequest($request);
 }

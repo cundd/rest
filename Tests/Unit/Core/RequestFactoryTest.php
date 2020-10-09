@@ -9,15 +9,16 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Request;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
-
 
 /**
  * Test case for class new \Cundd\Rest\RequestFactory
  */
-class RequestFactoryTest extends \PHPUnit\Framework\TestCase
+class RequestFactoryTest extends TestCase
 {
     /**
      * @var RequestFactoryInterface
@@ -44,7 +45,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
@@ -55,7 +56,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
@@ -66,7 +67,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithHtmlFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/2.html';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('html', $request->getFormat());
     }
@@ -77,7 +78,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getAliasUriTest()
     {
         $_GET['u'] = 'myAlias/1';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
@@ -88,7 +89,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getAliasUriWithFormatTest()
     {
         $_GET['u'] = 'myAlias/2.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
@@ -99,7 +100,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getAliasUriWithHtmlFormatTest()
     {
         $_GET['u'] = 'myAlias/2.html';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('html', $request->getFormat());
     }
@@ -111,7 +112,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $_GET['u'] = 'MyExt-MyModel/1';
         /** @var Request $request */
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
@@ -122,7 +123,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
         /** @var Request $request */
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
@@ -132,7 +133,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getRootObjectKeyTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
     }
 
@@ -142,7 +143,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getRootObjectKeyWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/2.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
     }
 
@@ -152,7 +153,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getPathTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $path = $this->fixture->getRequest()->getResourceType();
+        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -162,7 +163,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getPathWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $path = $this->fixture->getRequest()->getResourceType();
+        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
@@ -172,7 +173,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUnderscoredPathWithFormatAndIdTest()
     {
         $_GET['u'] = 'my_ext-my_model/1.json';
-        $path = $this->fixture->getRequest()->getResourceType();
+        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
@@ -182,7 +183,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUnderscoredPathWithFormatTest2()
     {
         $_GET['u'] = 'my_ext-my_model.json';
-        $path = $this->fixture->getRequest()->getResourceType();
+        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
@@ -192,7 +193,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithoutFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -202,7 +203,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -212,7 +213,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithoutPathTest()
     {
         $_GET['u'] = '.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -222,7 +223,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithHtmlFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.html';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('html', $request->getFormat());
     }
 
@@ -232,7 +233,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithDecimalSegmentJsonFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.0.json';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -242,7 +243,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithDecimalSegmentHtmlFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.0.html';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('html', $request->getFormat());
     }
 
@@ -252,7 +253,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithDecimalSegmentTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.0';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -262,7 +263,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getFormatWithNotExistingFormatTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1.blur';
-        $request = $this->fixture->getRequest();
+        $request = $this->fixture->buildRequest($this->buildServerRequest());
         $this->assertEquals('json', $request->getFormat());
     }
 
@@ -272,7 +273,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithAbsRefPrefixInSubDirectoryTest()
     {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory/'])->getRequest();
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory/'])->buildRequest(
+            $this->buildServerRequest()
+        );
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
@@ -282,7 +285,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest()
     {
         $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory'])->getRequest();
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory'])->buildRequest(
+            $this->buildServerRequest()
+        );
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
@@ -292,7 +297,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithAbsRefPrefixSlashTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/'])->getRequest();
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/'])->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
@@ -302,7 +307,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithAbsRefPrefixDomainTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => 'http://example.com/'])->getRequest();
+        $request = $this->buildRequestFactory(['absRefPrefix' => 'http://example.com/'])->buildRequest(
+            $this->buildServerRequest()
+        );
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
@@ -312,7 +319,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function getUriWithAbsRefPrefixAutoTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => 'auto'])->getRequest();
+        $request = $this->buildRequestFactory(['absRefPrefix' => 'auto'])->buildRequest($this->buildServerRequest());
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
     }
 
@@ -322,17 +329,17 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function pathShouldNotIncludeQueryDataTest()
     {
         $_GET['u'] = 'MyExt-MyModel/1?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('json', $request->getFormat());
 
         $_GET['u'] = 'MyExt-MyModel/?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('json', $request->getFormat());
 
         $_GET['u'] = 'MyExt-MyModel?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('json', $request->getFormat());
     }
@@ -343,19 +350,19 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
     public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest()
     {
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
 
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('/MyExt-MyModel/', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
 
         $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel?query=string';
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertEquals('MyExt-MyModel', $request->getResourceType());
         $this->assertEquals('/MyExt-MyModel', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
@@ -369,10 +376,10 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
      * @param $path
      * @param $format
      */
-    public function createRequestTest($input, $resourceType, $path, $format)
+    public function createRequestTest(string $input, string $resourceType, string $path, string $format)
     {
         $_SERVER['REQUEST_URI'] = $input;
-        $request = $this->buildRequestFactory()->getRequest();
+        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertInstanceOf(ResourceType::class, $request->getResourceType());
         $this->assertSame($resourceType, (string)$request->getResourceType());
         $this->assertSame($path, $request->getPath());
@@ -397,9 +404,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param array $configurationProviderSetting
-     * @return RequestFactory
+     * @return RequestFactoryInterface
      */
-    private function buildRequestFactory($configurationProviderSetting = [])
+    private function buildRequestFactory(array $configurationProviderSetting = []): RequestFactoryInterface
     {
         /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProviderMock */
         $configurationProviderMock = $this->prophesize(ConfigurationProviderInterface::class);
@@ -428,6 +435,11 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
         /** @var ConfigurationProviderInterface $configurationProvider */
         $configurationProvider = $configurationProviderMock->reveal();
 
-        return new RequestFactory($configurationProvider, ServerRequestFactory::class);
+        return new RequestFactory($configurationProvider);
+    }
+
+    private function buildServerRequest(): ServerRequestInterface
+    {
+        return ServerRequestFactory::fromGlobals();
     }
 }
