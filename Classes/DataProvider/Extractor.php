@@ -7,16 +7,23 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeInterface;
+use Prophecy\Exception\Call\UnexpectedCallException as ProphecyUnexpectedCallException;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
+use Traversable;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Resource\ResourceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyLoadingProxy;
+use function is_callable;
 
 /**
  * Class to prepare/extract the data to be sent from objects
@@ -60,7 +67,7 @@ class Extractor implements ExtractorInterface
      * Extractor constructor
      *
      * @param ConfigurationProviderInterface $configurationProvider
-     * @param LoggerInterface                $logger
+     * @param LoggerInterface|null           $logger
      * @param int                            $maxDepthOfObjectTreeTraversal
      */
     public function __construct(
@@ -89,8 +96,7 @@ class Extractor implements ExtractorInterface
     private function extractData(
         $input,
         $key,
-        /*(?object)*/
-        $owner
+        ?object $owner
     ) {
         InvalidArgumentException::assertObjectOrNull($owner);
         $this->assertValidKey($key);
@@ -111,7 +117,7 @@ class Extractor implements ExtractorInterface
         }
 
         // Traversable
-        if ($input instanceof \Traversable && !method_exists($input, 'jsonSerialize')) {
+        if ($input instanceof Traversable && !method_exists($input, 'jsonSerialize')) {
             return $this->transformCollection(array_values(iterator_to_array($input)));
         }
 
@@ -140,11 +146,9 @@ class Extractor implements ExtractorInterface
      * @return array|string
      */
     private function extractObjectDataIfNotRecursion(
-        /*(object)*/
-        $input,
+        object $input,
         $key,
-        /*(?object)*/
-        $owner
+        ?object $owner
     ) {
         InvalidArgumentException::assertObject($input);
         InvalidArgumentException::assertObjectOrNull($owner);
@@ -178,11 +182,8 @@ class Extractor implements ExtractorInterface
      * @param string|int|null $key
      * @return mixed
      */
-    private function extractObjectData(
-        /*(object)*/
-        $input,
-        $key
-    ): array {
+    private function extractObjectData(object $input, $key): array
+    {
         InvalidArgumentException::assertObject($input);
         $this->assertValidKey($key);
         if (method_exists($input, 'jsonSerialize')) {
@@ -211,8 +212,7 @@ class Extractor implements ExtractorInterface
      * @return array
      */
     private function transformObjectProperties(
-        /*(object)*/
-        $model,
+        object $model,
         array $properties
     ): array {
         assert(is_object($model), sprintf('Input must be an object %s given', gettype($model)));
@@ -263,7 +263,6 @@ class Extractor implements ExtractorInterface
         return $properties;
     }
 
-
     /**
      * Returns the URI of a nested resource
      *
@@ -273,8 +272,7 @@ class Extractor implements ExtractorInterface
      */
     private function getUriToNestedResource(
         string $resourceKey,
-        /*(object)*/
-        $model
+        object $model
     ): string {
         return $this->getUriToResource($model) . $resourceKey;
     }
@@ -300,10 +298,8 @@ class Extractor implements ExtractorInterface
      * @param object|DomainObjectInterface $model
      * @return string
      */
-    private function getUriToResource(
-        /*(object)*/
-        $model
-    ): string {
+    private function getUriToResource(object $model): string
+    {
         $modelListingUri = $this->getUriRequestBase()
             . 'rest/'
             . Utility::getResourceTypeForClassName(get_class($model))
@@ -322,7 +318,7 @@ class Extractor implements ExtractorInterface
     /**
      * Retrieve data from a file reference
      *
-     * @param \TYPO3\CMS\Core\Resource\ResourceInterface|Folder|\TYPO3\CMS\Core\Resource\AbstractFile $originalResource
+     * @param ResourceInterface|Folder|AbstractFile $originalResource
      * @return array
      */
     protected function transformFileReference($originalResource): array
@@ -331,7 +327,7 @@ class Extractor implements ExtractorInterface
         if ($originalResource instanceof AbstractFileFolder) {
             $depth += 1;
             if ($depth > 10) {
-                throw new \RuntimeException('Max nesting level');
+                throw new RuntimeException('Max nesting level');
             }
             $result = $this->transformFileReference($originalResource->getOriginalResource());
             $depth -= 1;
@@ -353,7 +349,7 @@ class Extractor implements ExtractorInterface
                 // This would expose all data
                 // return $originalResource->getProperties();
 
-                list($title, $description) = $this->getTitleAndDescription($originalResource);
+                [$title, $description] = $this->getTitleAndDescription($originalResource);
 
                 return [
                     'uid'          => intval($originalResource->getReferenceProperty('uid_local')),
@@ -379,9 +375,9 @@ class Extractor implements ExtractorInterface
             return [
                 'name' => $originalResource->getName(),
             ];
-        } catch (\Prophecy\Exception\Call\UnexpectedCallException $exception) {
+        } catch (ProphecyUnexpectedCallException $exception) {
             throw $exception;
-        } catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             return [];
         }
     }
@@ -415,12 +411,12 @@ class Extractor implements ExtractorInterface
     /**
      * Returns the logger
      *
-     * @return Logger
+     * @return LoggerInterface
      */
-    protected function getLogger()
+    protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
-            $this->logger = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
 
         return $this->logger;
@@ -432,10 +428,8 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int Returns 0 if the object has not been processed before
      */
-    private function getObjectRecursionValue(
-        /*(object)*/
-        $object
-    ) {
+    private function getObjectRecursionValue(object $object): int
+    {
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
@@ -450,10 +444,8 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int
      */
-    private function increaseObjectRecursionValue(
-        /*(object)*/
-        $object
-    ) {
+    private function increaseObjectRecursionValue(object $object): int
+    {
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
@@ -470,10 +462,8 @@ class Extractor implements ExtractorInterface
      * @param object $object
      * @return int
      */
-    private function decreaseObjectRecursionValue(
-        /*(object)*/
-        $object
-    ) {
+    private function decreaseObjectRecursionValue(object $object): int
+    {
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 

@@ -5,10 +5,6 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 /**
  * Test case for class file related Data Provider functions
@@ -17,8 +13,9 @@ class ExtractorFileTest extends AbstractCase
 {
     use FileBuilderTrait;
     use DomainModelProphetTrait;
+
     /**
-     * @var \Cundd\Rest\DataProvider\ExtractorInterface
+     * @var ExtractorInterface
      */
     protected $fixture;
 
@@ -33,32 +30,6 @@ class ExtractorFileTest extends AbstractCase
     {
         unset($this->fixture);
         parent::tearDown();
-    }
-
-    /**
-     * @param array $fileReferenceProperties
-     * @return FileReference
-     */
-    protected function createFileReferenceMock(array $fileReferenceProperties = [])
-    {
-        $fileReferenceProperties = array_merge(
-            [
-                'uid_local'   => '1467702760',
-                'name'        => 'Test name',
-                'title'       => 'Test title',
-                'description' => 'The original files description',
-            ],
-            $fileReferenceProperties
-        );
-        $originalFileMock = $this->createFileMock();
-
-        /** @var ResourceFactory|ObjectProphecy $factoryProphecy */
-        $factoryProphecy = $this->prophesize(ResourceFactory::class);
-        /** @var string|Argument $stringArg */
-        $stringArg = Argument::type('string');
-        $factoryProphecy->getFileObject($stringArg, Argument::cetera())->willReturn($originalFileMock);
-
-        return new FileReference($fileReferenceProperties, $factoryProphecy->reveal());
     }
 
     /**
