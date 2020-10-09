@@ -14,8 +14,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Qom\Statement;
 class Query implements QueryInterface
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManager
-     * @inject
+     * @var PersistenceManager
      */
     protected $persistenceManager;
 
@@ -59,7 +58,7 @@ class Query implements QueryInterface
      * @param int                                       $limit
      * @param int                                       $offset
      * @param string                                    $sourceIdentifier
-     * @param PersistenceManager                        $persistenceManager
+     * @param PersistenceManager|null                   $persistenceManager
      */
     public function __construct(
         $constraint = [],
@@ -67,7 +66,7 @@ class Query implements QueryInterface
         int $limit = 0,
         int $offset = 0,
         string $sourceIdentifier = '',
-        PersistenceManager $persistenceManager = null
+        ?PersistenceManager $persistenceManager = null
     ) {
         $this->setConstraint($constraint);
         $this->persistenceManager = $persistenceManager;
@@ -75,6 +74,11 @@ class Query implements QueryInterface
         $this->limit = $limit;
         $this->offset = $offset;
         $this->sourceIdentifier = $sourceIdentifier;
+    }
+
+    public function injectPersistenceManager(PersistenceManager $persistenceManager)
+    {
+        $this->persistenceManager = $persistenceManager;
     }
 
     public function execute()
