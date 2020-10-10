@@ -16,6 +16,7 @@ use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManager;
@@ -146,64 +147,20 @@ class ObjectManagerTest extends AbstractCase
 
     public function dataProviderTestGenerator(): array
     {
-        $defaultDataProvider = DataProvider::class;
-
         return [
             // URL,
             // Expected result class,
-            // Class to Build
             [
                 '',
                 DataProvider::class,
-                [],
-            ],
-            [
-                'my_ext-my_model/1',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
-            ],
-            [
-                'my_ext-my_model/1.json',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
-            ],
-            [
-                'MyExt-MyModel/1',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
-            ],
-            [
-                'MyExt-MyModel/1.json',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $defaultDataProvider],
-            ],
-            [
-                'vendor-my_second_ext-my_model/1',
-                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1',
-                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
             ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
-                $defaultDataProvider,
+                DataProvider::class,
             ],
             [
                 'Vendor-NotExistingExt-MyModel/1.json',
-                $defaultDataProvider,
-            ],
-            [
-                'MyThirdExt-MyModel/1.json',
-                'Tx_MyThirdExt_Rest_MyModelDataProvider',
-                ['Tx_MyThirdExt_Rest_MyModelDataProvider', '', $defaultDataProvider],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1.json',
-                '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider',
-                ['MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $defaultDataProvider],
+                DataProvider::class,
             ],
             [
                 'virtual_object-page',
@@ -243,69 +200,24 @@ class ObjectManagerTest extends AbstractCase
         $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
-        $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
     public function handlerTestGenerator(): array
     {
-        $defaultHandler = CrudHandler::class;
-
         return [
             // URL,
             // Expected result class,
-            // Class to Build
-            [
-                'my_ext-my_model/1',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
-            ],
-            [
-                'my_ext-my_model/1.json',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
-            ],
-            [
-                'MyExt-MyModel/1',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
-            ],
-            [
-                'MyExt-MyModel/1.json',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $defaultHandler],
-            ],
-            [
-                'vendor-my_second_ext-my_model/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver/',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest\\', $defaultHandler],
-            ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
-                $defaultHandler,
+                CrudHandler::class,
             ],
             [
                 'Vendor-NotExistingExt-MyModel/1.json',
-                $defaultHandler,
+                CrudHandler::class,
+            ],
+            [
+                'auth/1.json',
+                AuthHandler::class,
             ],
         ];
     }

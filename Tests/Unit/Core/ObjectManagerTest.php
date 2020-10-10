@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
+use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Configuration\ConfigurationProvider;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -18,6 +19,7 @@ use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\DataProvider\IdentityProviderInterface;
 use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Log\LoggerInterface;
@@ -210,10 +212,9 @@ class ObjectManagerTest extends TestCase
      * @dataProvider dataProviderTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array  $classToBuild
      * @throws Exception
      */
-    public function getDataProviderTest(string $url, string $expectedClass, $classToBuild = [])
+    public function getDataProviderTest(string $url, string $expectedClass)
     {
         /** @var ExtractorInterface $extractor */
         $extractor = $this->prophesize(ExtractorInterface::class)->reveal();
@@ -228,12 +229,9 @@ class ObjectManagerTest extends TestCase
                 $identityProvider
             )
         );
-        $this->container->set(DataProvider::class, new DataProvider($this->fixture, $extractor, $identityProvider));
-        $this->container->set(DataProviderInterface::class, new DummyDataProvider());
-
-        if ($classToBuild) {
-            $this->buildClassAndRegisterObject($classToBuild);
-        }
+        $dataProviderFixture = new DataProvider($this->fixture, $extractor, $identityProvider);
+        $this->container->set(DataProvider::class, $dataProviderFixture);
+        $this->container->set(DataProviderInterface::class, $dataProviderFixture);
 
         $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url, 'something'));
         $this->assertInstanceOf($expectedClass, $dataProvider);
@@ -242,64 +240,20 @@ class ObjectManagerTest extends TestCase
 
     public function dataProviderTestGenerator(): array
     {
-        $dummyDataProvider = DummyDataProvider::class;
-
         return [
             // URL,
             // Expected result class,
-            // Class to Build
             [
                 '',
                 DataProvider::class,
-                [],
-            ],
-            [
-                'my_ext-my_model/1',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $dummyDataProvider],
-            ],
-            [
-                'my_ext-my_model/1.json',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $dummyDataProvider],
-            ],
-            [
-                'MyExt-MyModel/1',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $dummyDataProvider],
-            ],
-            [
-                'MyExt-MyModel/1.json',
-                'Tx_MyExt_Rest_DataProvider',
-                ['Tx_MyExt_Rest_DataProvider', '', $dummyDataProvider],
-            ],
-            [
-                'vendor-my_second_ext-my_model/1',
-                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $dummyDataProvider],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1',
-                '\\Vendor\\MySecondExt\\Rest\\DataProvider',
-                ['DataProvider', 'Vendor\\MySecondExt\\Rest', $dummyDataProvider],
             ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
-                $dummyDataProvider,
+                DataProvider::class,
             ],
             [
                 'Vendor-NotExistingExt-MyModel/1.json',
-                $dummyDataProvider,
-            ],
-            [
-                'MyThirdExt-MyModel/1.json',
-                'Tx_MyThirdExt_Rest_MyModelDataProvider',
-                ['Tx_MyThirdExt_Rest_MyModelDataProvider', '', $dummyDataProvider],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1.json',
-                '\\Vendor\\MySecondExt\\Rest\\MyModelDataProvider',
-                ['MyModelDataProvider', 'Vendor\\MySecondExt\\Rest', $dummyDataProvider],
+                DataProvider::class,
             ],
             [
                 'virtual_object-page',
@@ -360,10 +314,9 @@ class ObjectManagerTest extends TestCase
      * @dataProvider handlerTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array  $classToBuild
      * @throws Exception
      */
-    public function getHandlerTest(string $url, string $expectedClass, $classToBuild = [])
+    public function getHandlerTest(string $url, string $expectedClass)
     {
         $this->container->set(
             CrudHandler::class,
@@ -376,9 +329,18 @@ class ObjectManagerTest extends TestCase
                 return new CrudHandler($this->fixture, $responseFactory, $logger);
             }
         );
-        if ($classToBuild) {
-            $this->buildClassAndRegisterObject($classToBuild);
-        }
+
+        $this->container->set(
+            AuthHandler::class,
+            function (): AuthHandler {
+                /** @var SessionManager $sessionManager */
+                $sessionManager = $this->prophesize(SessionManager::class)->reveal();
+                /** @var UserProviderInterface $userProvider */
+                $userProvider = $this->prophesize(UserProviderInterface::class)->reveal();
+
+                return new AuthHandler($sessionManager, $userProvider);
+            }
+        );
 
         $handler = $this->fixture->getHandler($this->buildTestRequest($url, 'something'));
         $this->assertInstanceOf($expectedClass, $handler);
@@ -387,57 +349,9 @@ class ObjectManagerTest extends TestCase
 
     public function handlerTestGenerator(): array
     {
-        $dummyHandler = DummyHandler::class;
-
         return [
             // URL,
             // Expected result class,
-            // Class to Build
-            [
-                'my_ext-my_model/1',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $dummyHandler],
-            ],
-            [
-                'my_ext-my_model/1.json',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $dummyHandler],
-            ],
-            [
-                'MyExt-MyModel/1',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $dummyHandler],
-            ],
-            [
-                'MyExt-MyModel/1.json',
-                'Tx_MyExt_Rest_Handler',
-                ['Tx_MyExt_Rest_Handler', '', $dummyHandler],
-            ],
-            [
-                'vendor-my_second_ext-my_model/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest', $dummyHandler],
-            ],
-            [
-                'Vendor-MySecondExt-MyModel/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest', $dummyHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver/1',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest', $dummyHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver/',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest', $dummyHandler],
-            ],
-            [
-                'Vendor-MySecondExt-WhatEver',
-                '\\Vendor\\MySecondExt\\Rest\\Handler',
-                ['Handler', 'Vendor\\MySecondExt\\Rest', $dummyHandler],
-            ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
                 CrudHandler::class,
@@ -445,6 +359,10 @@ class ObjectManagerTest extends TestCase
             [
                 'Vendor-NotExistingExt-MyModel/1.json',
                 CrudHandler::class,
+            ],
+            [
+                'auth/1.json',
+                AuthHandler::class,
             ],
         ];
     }
@@ -480,22 +398,5 @@ class ObjectManagerTest extends TestCase
         $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString, 'something'));
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
-    }
-
-    /**
-     * @param string[] $classToBuild
-     * @throws Exception
-     */
-    private function buildClassAndRegisterObject(array $classToBuild): void
-    {
-        $this->buildClass($classToBuild, '', '', true);
-        $className = implode('\\', array_reverse(array_slice($classToBuild, 0, 2)));
-
-        $this->container->set(
-            ltrim($className, '\\'),
-            function (...$a) use ($className) {
-                return new $className(...$a);
-            }
-        );
     }
 }

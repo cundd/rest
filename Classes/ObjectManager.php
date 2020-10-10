@@ -18,12 +18,13 @@ use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
-use LogicException;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager as TYPO3ObjectManager;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
+use function class_exists;
 use function interface_exists;
+use function sprintf;
 
 /**
  * Specialized Object Manager
@@ -72,23 +73,15 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return $dataProvider;
         }
 
-        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
+        [, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        $classes = [
-            // @deprecated register a `dataProviderClass` instead. Will be remove in 5.0
-            // Check if an extension provides a Data Provider for the domain model
-            sprintf('Tx_%s_Rest_%sDataProvider', $extension, $model),
-            sprintf('%s%s\\Rest\\%sDataProvider', ($vendor ? $vendor . '\\' : ''), $extension, $model),
-
-            // Check if an extension provides a Data Provider
-            sprintf('Tx_%s_Rest_DataProvider', $extension),
-            sprintf('%s%s\\Rest\\DataProvider', ($vendor ? $vendor . '\\' : ''), $extension),
-
-            // Check for a specific builtin Data Provider
-            sprintf('Cundd\\Rest\\DataProvider\\%sDataProvider', $extension),
-        ];
-
-        return $this->get($this->getFirstExistingClass($classes, DataProviderInterface::class));
+        // Check for a specific builtin Data Provider
+        $specialDataProvider = sprintf('Cundd\\Rest\\DataProvider\\%sDataProvider', $extension);
+        if (class_exists($specialDataProvider)) {
+            return $this->get($specialDataProvider);
+        } else {
+            return $this->get(DataProviderInterface::class);
+        }
     }
 
     public function getRequestFactory(): RequestFactoryInterface
@@ -102,10 +95,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides a Authentication Provider
-        $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
-        if (!class_exists($authenticationProviderClass)) {
-            $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
-        }
+        $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
 
         // Use the found Authentication Provider
         if (class_exists($authenticationProviderClass)) {
@@ -136,16 +126,12 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
 
         // Check if an extension provides a Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
-        if (!class_exists($accessControllerClass)) {
-            $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
+        if (class_exists($accessControllerClass)) {
+            return $this->get($accessControllerClass);
+        } else {
+            // Use the configuration based Authentication Provider
+            return $this->get(ConfigurationBasedAccessController::class);
         }
-
-        // Use the configuration based Authentication Provider
-        if (!class_exists($accessControllerClass)) {
-            $accessControllerClass = ConfigurationBasedAccessController::class;
-        }
-
-        return $this->get($accessControllerClass);
     }
 
     public function getHandler(RestRequestInterface $request): HandlerInterface
@@ -156,20 +142,15 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return $handler;
         }
 
-        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
+        [, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        $classes = [
-            // Check if an extension provides a Handler
-            // @deprecated register a `handlerClass` instead. Will be remove in 5.0
-            sprintf('%s%s\\Rest\\Handler', ($vendor ? $vendor . '\\' : ''), $extension),
-            sprintf('Tx_' . $extension . '_Rest_Handler'),
-
-            // Check for a specific builtin Handler
-            'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
-            CrudHandler::class,
-        ];
-
-        return $this->get($this->getFirstExistingClass($classes, HandlerInterface::class));
+        // Check for a specific builtin Handler
+        $specialHandler = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
+        if (class_exists($specialHandler)) {
+            return $this->get($specialHandler);
+        } else {
+            return $this->get(CrudHandler::class);
+        }
     }
 
     public function getCache(ResourceType $resourceType): CacheInterface
@@ -195,32 +176,9 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     }
 
     /**
-     * Returns the first of the classes that exists
-     *
-     * @param string[] $classes
-     * @param string   $default
-     * @return string
-     * @throws LogicException
-     */
-    private function getFirstExistingClass(array $classes, string $default = ''): string
-    {
-        foreach ($classes as $class) {
-            if (class_exists($class)) {
-                return $class;
-            }
-        }
-
-        if ($default === '') {
-            throw new LogicException('No existing class found');
-        }
-
-        return $default;
-    }
-
-    /**
      * @param ResourceType $resourceType
      * @param string       $type
-     * @return object|null|mixed
+     * @return mixed
      */
     private function getImplementationFromResourceConfiguration(ResourceType $resourceType, string $type)
     {
