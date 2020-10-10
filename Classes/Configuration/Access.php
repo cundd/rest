@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\Exception\InvalidArgumentException;
@@ -16,27 +15,27 @@ class Access
     /**
      * Access identifier to signal denied requests
      */
-    const ACCESS_DENY = 'deny';
+    private const ACCESS_DENY = 'deny';
 
     /**
      * Access identifier to signal allowed requests
      */
-    const ACCESS_ALLOW = 'allow';
+    private const ACCESS_ALLOW = 'allow';
 
     /**
      * Access identifier to signal requests that require a valid login
      */
-    const ACCESS_REQUIRE_LOGIN = 'require';
+    private const ACCESS_REQUIRE_LOGIN = 'require';
 
     /**
      * Access identifier to signal a successful login
      */
-    const ACCESS_AUTHORIZED = self::ACCESS_ALLOW;
+    private const ACCESS_AUTHORIZED = self::ACCESS_ALLOW;
 
     /**
      * Access identifier to signal a missing or failed login
      */
-    const ACCESS_UNAUTHORIZED = 'unauthorized';
+    private const ACCESS_UNAUTHORIZED = 'unauthorized';
 
     /**
      * @var string
@@ -46,7 +45,7 @@ class Access
     /**
      * Access constructor.
      *
-     * @param string $value
+     * @param string|Access $value
      */
     public function __construct($value)
     {
@@ -71,7 +70,7 @@ class Access
      *
      * @return Access
      */
-    public static function denied()
+    public static function denied(): self
     {
         return new static(self::ACCESS_DENY);
     }
@@ -81,7 +80,7 @@ class Access
      *
      * @return Access
      */
-    public static function allowed()
+    public static function allowed(): self
     {
         return new static(self::ACCESS_ALLOW);
     }
@@ -91,7 +90,7 @@ class Access
      *
      * @return Access
      */
-    public static function requiresLogin()
+    public static function requiresLogin(): self
     {
         return new static(self::ACCESS_REQUIRE_LOGIN);
     }
@@ -101,7 +100,7 @@ class Access
      *
      * @return Access
      */
-    public static function authorized()
+    public static function authorized(): self
     {
         return new static(self::ACCESS_AUTHORIZED);
     }
@@ -111,33 +110,32 @@ class Access
      *
      * @return Access
      */
-    public static function unauthorized()
+    public static function unauthorized(): self
     {
         return new static(self::ACCESS_UNAUTHORIZED);
     }
 
-
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         return $this->value === self::ACCESS_ALLOW;
     }
 
-    public function isDenied()
+    public function isDenied(): bool
     {
         return $this->value === self::ACCESS_DENY;
     }
 
-    public function isRequireLogin()
+    public function isRequireLogin(): bool
     {
         return $this->value === self::ACCESS_REQUIRE_LOGIN;
     }
 
-    public function isAuthorized()
+    public function isAuthorized(): bool
     {
         return $this->value === self::ACCESS_AUTHORIZED;
     }
 
-    public function isUnauthorized()
+    public function isUnauthorized(): bool
     {
         return $this->value === self::ACCESS_UNAUTHORIZED;
     }
