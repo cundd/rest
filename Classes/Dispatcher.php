@@ -193,6 +193,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Returns the shared dispatcher instance
      *
      * @return Dispatcher
+     * @deprecated utilize dependency injection instead
      */
     public static function getSharedDispatcher()
     {
