@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\Exception\InvalidArgumentException;
@@ -15,26 +14,36 @@ class Access
 {
     /**
      * Access identifier to signal denied requests
+     *
+     * @internal will be declared private in v5.0
      */
     const ACCESS_DENY = 'deny';
 
     /**
      * Access identifier to signal allowed requests
+     *
+     * @internal will be declared private in v5.0
      */
     const ACCESS_ALLOW = 'allow';
 
     /**
      * Access identifier to signal requests that require a valid login
+     *
+     * @internal will be declared private in v5.0
      */
     const ACCESS_REQUIRE_LOGIN = 'require';
 
     /**
      * Access identifier to signal a successful login
+     *
+     * @internal will be declared private in v5.0
      */
     const ACCESS_AUTHORIZED = self::ACCESS_ALLOW;
 
     /**
      * Access identifier to signal a missing or failed login
+     *
+     * @internal will be declared private in v5.0
      */
     const ACCESS_UNAUTHORIZED = 'unauthorized';
 
@@ -115,7 +124,6 @@ class Access
     {
         return new static(self::ACCESS_UNAUTHORIZED);
     }
-
 
     public function isAllowed()
     {
