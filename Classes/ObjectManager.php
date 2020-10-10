@@ -101,6 +101,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         list($vendor, $extension,) = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides a Authentication Provider
+        /** @deprecated Class overrides without namespaces are deprecated. Will be removed in 5.0 */
         $authenticationProviderClass = 'Tx_' . $extension . '_Rest_AuthenticationProvider';
         if (!class_exists($authenticationProviderClass)) {
             $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
@@ -136,6 +137,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         // Check if an extension provides a Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
         if (!class_exists($accessControllerClass)) {
+            /** @deprecated Class overrides without namespaces are deprecated. Will be removed in 5.0 */
             $accessControllerClass = 'Tx_' . $extension . '_Rest_AccessController';
         }
 
@@ -161,7 +163,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             // Check if an extension provides a Handler
             // @deprecated register a `handlerClass` instead. Will be remove in 5.0
             sprintf('%s%s\\Rest\\Handler', ($vendor ? $vendor . '\\' : ''), $extension),
-            sprintf('Tx_' . $extension . '_Rest_Handler'),
+           sprintf('Tx_' . $extension . '_Rest_Handler'),
 
             // Check for a specific builtin Handler
             'Cundd\\Rest\\Handler\\' . $extension . 'Handler',
