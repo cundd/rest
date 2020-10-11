@@ -214,7 +214,7 @@ class AbstractCase extends FunctionalTestCase
             Dispatcher::class
         );
 
-        return new ObjectManager();
+        return GeneralUtility::makeInstance(ObjectManager::class);
     }
 
     protected function configureConfigurationProvider()
