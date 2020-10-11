@@ -63,7 +63,7 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
      *
      * @return array
      */
-    protected function getTestConfigurationData()
+    protected function getTestConfigurationData(): array
     {
         if ($this->testConfiguration) {
             return $this->testConfiguration;
