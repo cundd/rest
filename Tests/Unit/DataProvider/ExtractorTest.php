@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\DataProvider;
 
+use ArrayIterator;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
@@ -14,18 +15,23 @@ use Cundd\Rest\Tests\MyNestedModel;
 use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
 use Cundd\Rest\Tests\SimpleClass;
 use Cundd\Rest\Tests\SimpleClassJsonSerializable;
+use DateTime;
+use DateTimeInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
+use SplObjectStorage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
-
+use function class_exists;
 
 /**
  * Test case for class new \Cundd\Rest\App
  */
-class ExtractorTest extends \PHPUnit\Framework\TestCase
+class ExtractorTest extends TestCase
 {
     use ClassBuilderTrait;
 
@@ -39,6 +45,9 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         parent::setUpBeforeClass();
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
+        if (class_exists(GeneralUtility::class)) {
+            GeneralUtility::setIndpEnv('TYPO3_SITE_URL', 'http://rest.cundd.net/');
+        }
     }
 
     public function setUp()
@@ -115,11 +124,11 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
             $testSets[] = [[$input], $expected,];
 
-            $testSets[] = [new \ArrayIterator([$input]), $expected,];
+            $testSets[] = [new ArrayIterator([$input]), $expected,];
 
             // Use the Object Storage only if the input is an object
             if (is_object($input)) {
-                $os = new \SplObjectStorage();
+                $os = new SplObjectStorage();
                 $os->attach($input);
                 $testSets[] = [$os, $expected,];
 
@@ -154,7 +163,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function extractRecursiveTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -168,10 +177,10 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
         $expectedOutput = [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => [
                 'base'  => 'Base',
-                'date'  => $testDate->format(\DateTime::ATOM),
+                'date'  => $testDate->format(DateTime::ATOM),
                 'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
@@ -190,7 +199,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
     /**
      * @param int       $currentDepth
      * @param int       $maxDepth
-     * @param \DateTime $testDate
+     * @param DateTime $testDate
      * @return MyNestedModel
      */
     protected function buildNestedModels($currentDepth, $maxDepth, $testDate)
@@ -213,19 +222,19 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
     {
         $maxDepth = 20;
         $currentDepth = 0;
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
 
         $model = $this->buildNestedModels($currentDepth, $maxDepth, $testDate);
 
         $expectedOutput = [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => [
                 'base'  => 'Base',
-                'date'  => $testDate->format(\DateTime::ATOM),
+                'date'  => $testDate->format(DateTime::ATOM),
                 'child' => [
                     'base'  => 'Base',
-                    'date'  => $testDate->format(\DateTime::ATOM),
+                    'date'  => $testDate->format(DateTime::ATOM),
                     'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/3/child',
                     'uid'   => 3,
                     'pid'   => null,
@@ -237,7 +246,6 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
             'uid' => 1,
             'pid' => null,
         ];
-
 
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
         $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
@@ -259,7 +267,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function extractSelfReferencingRecursiveTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -267,7 +275,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
         $expectedOutput = [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
             'uid'   => 1,
             'pid'   => null,
@@ -284,7 +292,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function extractRecursiveWithObjectStorageTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -310,7 +318,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function extractRecursiveWithArrayTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -334,7 +342,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function extractRecursiveWithArrayIteratorTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModelWithObjectStorage();
         $model->setDate($testDate);
         $model->_setProperty('uid', 1);
@@ -343,7 +351,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $childModel->setDate($testDate);
         $childModel->_setProperty('uid', 2);
 
-        $model->setChildren(new \ArrayIterator([$model, $childModel]));
+        $model->setChildren(new ArrayIterator([$model, $childModel]));
 
         $expectedOutput = $this->getExpectedOutputForRecursion($testDate);
 
@@ -358,7 +366,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      */
     public function getNestedModelDataTest()
     {
-        $testDate = new \DateTime();
+        $testDate = new DateTime();
         $model = new MyNestedModel();
         $model->setDate($testDate);
 
@@ -366,7 +374,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 'base'  => 'Base',
-                'date'  => $testDate->format(\DateTime::ATOM),
+                'date'  => $testDate->format(DateTime::ATOM),
                 'uid'   => null,
                 'pid'   => null,
                 'child' => [
@@ -403,11 +411,11 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
      * @param $testDate
      * @return array
      */
-    protected function getExpectedOutputForRecursion(\DateTimeInterface $testDate)
+    protected function getExpectedOutputForRecursion(DateTimeInterface $testDate)
     {
         return [
             'base'  => 'Base',
-            'date'  => $testDate->format(\DateTime::ATOM),
+            'date'  => $testDate->format(DateTime::ATOM),
             'child' => [
                 'uid'  => null,
                 'pid'  => null,
@@ -420,11 +428,11 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
-                    'base'  => 'Base',
-                    'date'  => $testDate->format(\DateTime::ATOM),
-                    'uid'   => 2,
-                    'pid'   => null,
-                    'child' => [
+                       'base'  => 'Base',
+                       'date'  => $testDate->format(DateTime::ATOM),
+                       'uid'   => 2,
+                       'pid'   => null,
+                       'child' => [
                         'name' => 'Initial value',
                         'uid'  => null,
                         'pid'  => null,
@@ -438,7 +446,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
     {
         self::buildClassIfNotExists(AbstractDomainObject::class);
         self::buildClassIfNotExists(Repository::class);
-        self::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+        self::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
         self::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
         require_once __DIR__ . '/../../FixtureClasses.php';
