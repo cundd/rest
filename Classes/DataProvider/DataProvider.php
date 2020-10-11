@@ -80,12 +80,8 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     public function getRepositoryClassForResourceType(ResourceType $resourceType): string
     {
         [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
-        $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
-        if (!class_exists($repositoryClass)) {
-            $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
-        }
 
-        return $repositoryClass;
+        return ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
     }
 
     public function getRepositoryForResourceType(ResourceType $resourceType)
@@ -99,13 +95,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         } catch (Exception $exception) {
         }
         if (!$repository) {
-            [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
-
-            $triedClasses = sprintf(
-                'Tried the following classes: "%s" and "%s"',
-                ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository',
-                'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository'
-            );
+            $triedClasses = sprintf('Tried the following classes: "%s"', $repositoryClass);
             if ($exception) {
                 $message = sprintf(
                     'Repository for resource type "%s" could not be created: %s %s',
@@ -216,7 +206,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     }
 
     /**
-     * @param object  $updatedModel
+     * @param object       $updatedModel
      * @param ResourceType $resourceType
      */
     public function updateModel(
