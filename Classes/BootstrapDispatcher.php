@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\Container\Container;
 
 /**
  * Main entry point into the REST application
@@ -84,7 +83,6 @@ class BootstrapDispatcher
             $coreBootstrap->initialize($request);
 
             $this->initializeConfiguration($this->configuration);
-            $this->configureObjectManager();
             $this->registerSingularToPlural($this->objectManager);
             $this->dispatcher = $this->buildDispatcher($this->objectManager);
 
@@ -109,29 +107,7 @@ class BootstrapDispatcher
     private function initializeObjectManager()
     {
         if (!$this->objectManager) {
-            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);;
-        }
-    }
-
-    /**
-     * Configures the object manager object configuration from
-     * config.tx_extbase.objects and plugin.tx_foo.objects
-     *
-     * @deprecated will be removed in 5.0
-     */
-    private function configureObjectManager()
-    {
-        $frameworkSetup = $this->configurationManager
-            ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-        if (!is_array($frameworkSetup['objects'])) {
-            return;
-        }
-        $objectContainer = GeneralUtility::makeInstance(Container::class);
-        foreach ($frameworkSetup['objects'] as $classNameWithDot => $classConfiguration) {
-            if (isset($classConfiguration['className'])) {
-                $originalClassName = rtrim($classNameWithDot, '.');
-                $objectContainer->registerImplementation($originalClassName, $classConfiguration['className']);
-            }
+            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         }
     }
 
