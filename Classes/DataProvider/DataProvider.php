@@ -79,6 +79,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
         $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
+            /** @deprecated Class overrides without namespaces are deprecated. Will be removed in 5.0 */
             $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
         }
 
