@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Log;
 
-
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
