@@ -76,6 +76,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * Returns the request
      *
      * @return RestRequestInterface
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function getRequest()
     {
@@ -90,6 +91,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * Resets the current request
      *
      * @return $this
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function resetRequest()
     {
@@ -104,6 +106,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      *
      * @param RestRequestInterface $request
      * @return $this
+     * @deprecated use buildRequest() instead. Will be removed in 6.0
      */
     public function registerCurrentRequest($request)
     {

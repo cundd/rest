@@ -85,7 +85,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $this->requestFactory->registerCurrentRequest($request);
 
-        return $this->dispatch($this->requestFactory->getRequest());
+        return $this->dispatch($this->requestFactory->buildRequest($request));
     }
 
     /**
