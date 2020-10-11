@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Domain\Model;
 
+use InvalidArgumentException;
+
 /**
  * The resource type is a identifier for a model class.
  * It is the first segment of the request path, after alias mapping has been applied.
@@ -34,12 +36,12 @@ class ResourceType
     }
 
     /**
-     * @param string $resourceType
+     * @param string|ResourceType $resourceType
      */
     public static function assertValidResourceType($resourceType)
     {
         if (!$resourceType instanceof self && !is_string($resourceType)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Resource Type must be of type string "%s" given',
                     is_object($resourceType) ? get_class($resourceType) : gettype($resourceType)
@@ -48,7 +50,7 @@ class ResourceType
         }
 
         if (false !== strpos((string)$resourceType, '/')) {
-            throw new \InvalidArgumentException('Resource Type must not contain a slash');
+            throw new InvalidArgumentException('Resource Type must not contain a slash');
         }
     }
 }

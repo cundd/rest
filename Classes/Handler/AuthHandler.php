@@ -59,9 +59,9 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     /**
      * AuthHandler constructor.
      *
-     * @param SessionManager          $sessionManager
-     * @param UserProviderInterface   $userProvider
-     * @param RequestFactoryInterface $requestFactory
+     * @param SessionManager               $sessionManager
+     * @param UserProviderInterface        $userProvider
+     * @param RequestFactoryInterface|null $requestFactory
      */
     public function __construct(
         SessionManager $sessionManager,
@@ -78,7 +78,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Handler for separate authorization requests';
     }
@@ -88,7 +88,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
      *
      * @return array
      */
-    public function getStatus()
+    public function getStatus(): array
     {
         $loginStatus = $this->sessionManager->valueForKey('loginStatus');
         if ($loginStatus === null) {
@@ -107,7 +107,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
      * @return array
      * @internal param array $sentData
      */
-    public function checkLogin(RestRequestInterface $request)
+    public function checkLogin(RestRequestInterface $request): array
     {
         $sentData = $request->getSentData();
         $loginStatus = self::STATUS_LOGGED_OUT;
@@ -133,7 +133,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
      *
      * @return array
      */
-    public function logout()
+    public function logout(): array
     {
         $this->sessionManager->setValueForKey('loginStatus', self::STATUS_LOGGED_OUT);
 
@@ -145,7 +145,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     /**
      * @return bool
      */
-    public function options()
+    public function options(): bool
     {
         // TODO: Respond with the correct preflight headers
         return true;

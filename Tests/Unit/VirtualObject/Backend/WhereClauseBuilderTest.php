@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class WhereClauseBuilderTest extends TestCase
 {
@@ -214,7 +216,7 @@ class WhereClauseBuilderTest extends TestCase
      * @param $expected
      * @dataProvider resolveOperatorDataProvider
      */
-    public function testResolveOperator($input, $expected)
+    public function testResolveOperator(string $input, string $expected)
     {
         $this->assertEquals($expected, WhereClauseBuilder::resolveOperator($input));
     }
@@ -248,19 +250,19 @@ class WhereClauseBuilderTest extends TestCase
     /**
      * @param $input
      * @dataProvider resolveOperatorWithInvalidValuesDataProvider
-     * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidOperatorException
+     * @expectedException InvalidOperatorException
      */
     public function testResolveOperatorWithInvalidValues($input)
     {
         echo WhereClauseBuilder::resolveOperator($input);
     }
 
-    public function resolveOperatorWithInvalidValuesDataProvider()
+    public function resolveOperatorWithInvalidValuesDataProvider(): array
     {
         return [
             ['something else'],
             [[]],
-            [new \stdClass()],
+            [new stdClass()],
         ];
     }
 

@@ -36,7 +36,10 @@ use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use Webmozart\Assert\Assert;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use function get_parent_class;
+use function method_exists;
+use function simplexml_load_file;
 
 /**
  * @method ObjectProphecy prophesize($classOrInterface = null);
@@ -96,8 +99,11 @@ class AbstractCase extends FunctionalTestCase
      * @param string|null $method
      * @return RestRequestInterface
      */
-    public function buildRequestWithUri($uri, $format = null, $method = null)
-    {
+    public function buildRequestWithUri(
+        string $uri,
+        ?string $format = null,
+        ?string $method = null
+    ): RestRequestInterface {
         return RequestBuilderTrait::buildTestRequest(
             $uri,
             $method,
@@ -186,9 +192,9 @@ class AbstractCase extends FunctionalTestCase
     }
 
     /**
-     * @return ObjectManager
+     * @return ObjectManagerInterface
      */
-    private function buildConfiguredObjectManager()
+    private function buildConfiguredObjectManager(): ObjectManagerInterface
     {
         $this->initializeIconRegistry();
 
@@ -284,9 +290,8 @@ class AbstractCase extends FunctionalTestCase
         );
     }
 
-    protected function configurePath($path, array $pathConfiguration)
+    protected function configurePath(string $path, array $pathConfiguration)
     {
-        Assert::string($path);
         /** @var TypoScriptConfigurationProvider $configurationProvider */
         $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
         $configuration = $configurationProvider->getSettings();

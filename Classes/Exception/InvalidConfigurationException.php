@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Exception;
 
-class InvalidConfigurationException extends \LogicException
+use LogicException;
+
+class InvalidConfigurationException extends LogicException
 {
 }

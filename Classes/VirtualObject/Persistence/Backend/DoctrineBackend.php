@@ -150,14 +150,14 @@ class DoctrineBackend extends AbstractBackend
         }
     }
 
-    private function getConnection($table)
+    private function getConnection($table): object
     {
         $this->assertValidTableName($table);
 
         return $this->connectionPool->getConnectionForTable($table);
     }
 
-    private function addOrderingAndLimit($sql, QueryInterface $query)
+    private function addOrderingAndLimit(string $sql, QueryInterface $query): string
     {
         $ordering = $this->createOrderingStatementFromQuery($query);
         if ($ordering) {

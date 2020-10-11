@@ -12,7 +12,11 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
      * @var string[]
      */
     private $expressionParts = [];
-    private $boundVariables = [];
+
+    /**
+     * @var mixed[]
+     */
+    private $boundVariables;
 
     /**
      * Expression constructor
@@ -116,9 +120,7 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
      */
     private function assertExpression($expression)
     {
-        if (is_string($expression) || $expression instanceof Parentheses) {
-            return;
-        } else {
+        if (!is_string($expression) && !($expression instanceof Parentheses)) {
             throw new WhereClauseException(
                 sprintf(
                     'Argument "expression" must be of type string, or %s, \'%s\' given',

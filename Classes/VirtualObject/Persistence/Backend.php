@@ -13,7 +13,7 @@ class Backend implements BackendInterface, RawQueryBackendInterface
     /**
      * Backend constructor.
      *
-     * @param BackendInterface $concreteBackend
+     * @param BackendInterface|null $concreteBackend
      */
     public function __construct(BackendInterface $concreteBackend = null)
     {

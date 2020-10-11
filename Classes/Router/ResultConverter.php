@@ -84,10 +84,10 @@ class ResultConverter implements RouterInterface
     /**
      * Add the given Route
      *
-     * @param Route $route
+     * @param RouteInterface $route
      * @return RouterInterface
      */
-    public function add(Route $route)
+    public function add(RouteInterface $route): RouterInterface
     {
         $this->router->add($route);
 
@@ -101,7 +101,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeGet($pattern, callable $callback)
+    public function routeGet($pattern, callable $callback): RouterInterface
     {
         $this->router->routeGet($pattern, $callback);
 
@@ -115,7 +115,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePost($pattern, callable $callback)
+    public function routePost($pattern, callable $callback): RouterInterface
     {
         $this->router->routePost($pattern, $callback);
 
@@ -129,7 +129,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePut($pattern, callable $callback)
+    public function routePut($pattern, callable $callback): RouterInterface
     {
         $this->router->routePut($pattern, $callback);
 
@@ -143,7 +143,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeDelete($pattern, callable $callback)
+    public function routeDelete($pattern, callable $callback): RouterInterface
     {
         $this->router->routeDelete($pattern, $callback);
 
@@ -157,7 +157,7 @@ class ResultConverter implements RouterInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function exceptionToResponse(Exception $exception, RestRequestInterface $request)
+    private function exceptionToResponse(Exception $exception, RestRequestInterface $request): ResponseInterface
     {
         try {
             $exceptionHandler = $this->exceptionHandler;
@@ -178,10 +178,10 @@ class ResultConverter implements RouterInterface
      * @param $exception
      * @return array
      */
-    private function getDebugTrace(Exception $exception)
+    private function getDebugTrace(Exception $exception): array
     {
         return array_map(
-            function ($step) {
+            function ($step): string {
                 $arguments = count($step['args']) > 0 ? sprintf('(%d Arguments)', count($step['args'])) : '()';
                 if (isset($step['class'])) {
                     return $step['class'] . $step['type'] . $step['function'] . $arguments;
@@ -200,7 +200,7 @@ class ResultConverter implements RouterInterface
      * @param $exception
      * @return array
      */
-    private function getDebugDetails(Exception $exception)
+    private function getDebugDetails(Exception $exception): array
     {
         return [
             'error' => sprintf(
@@ -241,7 +241,7 @@ class ResultConverter implements RouterInterface
         $alternativePatterns = implode(
             ', ',
             array_map(
-                function (RouteInterface $r) {
+                function (RouteInterface $r): string {
                     return $r->getPattern();
                 },
                 $result->getAlternativeRoutes()
@@ -265,7 +265,7 @@ class ResultConverter implements RouterInterface
     /**
      * @return bool
      */
-    private function getShowDebugInformation()
+    private function getShowDebugInformation(): bool
     {
         return DebugUtility::allowDebugInformation();
     }

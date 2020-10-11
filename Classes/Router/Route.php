@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -24,7 +23,7 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * @var array
      */
-    private $parameters = [];
+    private $parameters;
 
     /**
      * @var string
@@ -53,32 +52,32 @@ class Route implements RouteInterface, RouteFactoryInterface
         $this->parameters = ParameterType::extractParameterTypesFromPattern($this->pattern);
     }
 
-    public static function get($pattern, callable $callback): Route
+    public static function get($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'GET', $callback);
     }
 
-    public static function post($pattern, callable $callback): Route
+    public static function post($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'POST', $callback);
     }
 
-    public static function put($pattern, callable $callback): Route
+    public static function put($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'PUT', $callback);
     }
 
-    public static function delete($pattern, callable $callback): Route
+    public static function delete($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'DELETE', $callback);
     }
 
-    public static function options($pattern, callable $callback): Route
+    public static function options($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'OPTIONS', $callback);
     }
 
-    public static function patch($pattern, callable $callback): Route
+    public static function patch($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'PATCH', $callback);
     }
@@ -86,11 +85,11 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Creates a new Route with the given pattern and callback for the method GET
      *
-     * @param string   $pattern
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param callable            $callback
      * @return static
      */
-    public static function routeWithPattern($pattern, callable $callback)
+    public static function routeWithPattern($pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'GET', $callback);
     }
@@ -98,12 +97,12 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Creates a new Route with the given pattern, method and callback
      *
-     * @param string   $pattern
-     * @param string   $method
-     * @param callable $callback
+     * @param string|ResourceType $pattern
+     * @param string              $method
+     * @param callable            $callback
      * @return static
      */
-    public static function routeWithPatternAndMethod($pattern, $method, callable $callback)
+    public static function routeWithPatternAndMethod($pattern, string $method, callable $callback): RouteInterface
     {
         return new static($pattern, $method, $callback);
     }
@@ -113,7 +112,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      *
      * @return string
      */
-    public function getPattern()
+    public function getPattern(): string
     {
         return $this->pattern;
     }
@@ -123,7 +122,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      *
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -133,7 +132,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      *
      * @return string[]
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -143,7 +142,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      *
      * @param RestRequestInterface $request
      * @param array                $parameters
-     * @return ResponseInterface
+     * @return ResponseInterface|mixed
      */
     public function process(RestRequestInterface $request, ...$parameters)
     {
@@ -172,7 +171,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      *
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         if (!$this->priority) {
             $this->priority = $this->determinePriority();
@@ -185,7 +184,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param mixed  $input
      * @param string $argumentName
      */
-    private function assertStringOrObject($input, $argumentName)
+    private function assertStringOrObject($input, string $argumentName)
     {
         if (!is_string($input) && !(is_object($input) && method_exists($input, '__toString'))) {
             throw InvalidArgumentException::buildException($input, 'string', $argumentName);
@@ -211,10 +210,7 @@ class Route implements RouteInterface, RouteFactoryInterface
         return implode('/', $patternParts);
     }
 
-    /**
-     * @return int
-     */
-    private function determinePriority()
+    private function determinePriority(): int
     {
         if ('/' === $this->pattern) {
             return 0;

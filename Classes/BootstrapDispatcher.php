@@ -45,8 +45,8 @@ class BootstrapDispatcher
     private $isInitialized = false;
 
     /**
-     * @param ObjectManagerInterface $objectManager
-     * @param array                  $configuration
+     * @param ObjectManagerInterface|null $objectManager
+     * @param array                       $configuration
      */
     public function __construct(ObjectManagerInterface $objectManager = null, array $configuration = [])
     {
@@ -79,13 +79,14 @@ class BootstrapDispatcher
     {
         if (!$this->isInitialized) {
             $this->initializeObjectManager();
+
             $coreBootstrap = $this->objectManager->get(Core::class);
             $coreBootstrap->initialize($request);
 
             $this->initializeConfiguration($this->configuration);
             $this->configureObjectManager();
             $this->registerSingularToPlural($this->objectManager);
-            $this->configureDispatcher($this->objectManager);
+            $this->dispatcher = $this->buildDispatcher($this->objectManager);
 
             $this->isInitialized = true;
         }
@@ -151,13 +152,14 @@ class BootstrapDispatcher
 
     /**
      * @param ObjectManagerInterface $objectManager
+     * @return DispatcherInterface
      */
-    private function configureDispatcher(ObjectManagerInterface $objectManager)
+    private function buildDispatcher(ObjectManagerInterface $objectManager): DispatcherInterface
     {
         $requestFactory = $objectManager->getRequestFactory();
         $responseFactory = $objectManager->getResponseFactory();
         $logger = $objectManager->get(LoggerInterface::class);
 
-        $this->dispatcher = new Dispatcher($objectManager, $requestFactory, $responseFactory, $logger);
+        return new Dispatcher($objectManager, $requestFactory, $responseFactory, $logger);
     }
 }

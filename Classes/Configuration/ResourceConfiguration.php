@@ -26,7 +26,7 @@ class ResourceConfiguration
     /**
      * @var int
      */
-    private $cacheLifetime = 0;
+    private $cacheLifetime;
 
     /**
      * @var string
@@ -84,7 +84,7 @@ class ResourceConfiguration
     /**
      * @return ResourceType
      */
-    public function getResourceType()
+    public function getResourceType(): ResourceType
     {
         return $this->resourceType;
     }
@@ -92,7 +92,7 @@ class ResourceConfiguration
     /**
      * @return Access
      */
-    public function getRead()
+    public function getRead(): Access
     {
         return $this->read;
     }
@@ -100,7 +100,7 @@ class ResourceConfiguration
     /**
      * @return Access
      */
-    public function getWrite()
+    public function getWrite(): Access
     {
         return $this->write;
     }
@@ -108,7 +108,7 @@ class ResourceConfiguration
     /**
      * @return int
      */
-    public function getCacheLifetime()
+    public function getCacheLifetime(): int
     {
         return $this->cacheLifetime;
     }
@@ -116,7 +116,7 @@ class ResourceConfiguration
     /**
      * @return string
      */
-    public function getHandlerClass()
+    public function getHandlerClass(): string
     {
         return $this->handlerClass;
     }
@@ -140,7 +140,7 @@ class ResourceConfiguration
     /**
      * @return string[]
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         return $this->aliases;
     }

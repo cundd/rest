@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 /**
@@ -17,7 +18,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function add(VirtualObject $object);
+    public function add(VirtualObject $object): void;
 
     /**
      * Removes the given object from the database
@@ -25,7 +26,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function remove(VirtualObject $object);
+    public function remove(VirtualObject $object): void;
 
     /**
      * Updates the given object in the database
@@ -33,7 +34,7 @@ interface PersistenceManagerInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function update(VirtualObject $object);
+    public function update(VirtualObject $object): void;
 
     /**
      * Returns the array of identifier properties of the object
@@ -56,7 +57,7 @@ interface PersistenceManagerInterface
      *
      * @return string|null
      */
-    public function getSourceIdentifier();
+    public function getSourceIdentifier(): ?string;
 
     /**
      * Sets the configuration to use when converting
@@ -70,7 +71,7 @@ interface PersistenceManagerInterface
      * Returns the configuration to use when converting
      *
      * @return ConfigurationInterface
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+     * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ConfigurationInterface;
 
@@ -111,5 +112,5 @@ interface PersistenceManagerInterface
      * @param string|int $identifier
      * @return VirtualObject|null
      */
-    public function getObjectByIdentifier($identifier);
+    public function getObjectByIdentifier($identifier): ?VirtualObject;
 }

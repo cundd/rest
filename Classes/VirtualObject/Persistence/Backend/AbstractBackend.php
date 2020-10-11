@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
-
 
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
@@ -11,13 +9,14 @@ use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidOrderingException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidTableNameException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
+use LogicException;
 
 abstract class AbstractBackend implements BackendInterface, RawQueryBackendInterface
 {
     /**
      * Checks if the given table name is valid
      *
-     * @param string $tableName
+     * @param mixed|string $tableName
      * @throws InvalidTableNameException
      */
     protected function assertValidTableName($tableName)
@@ -42,7 +41,7 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
      * @param QueryInterface $query
      * @return string
      */
-    protected function createLimitStatementFromQuery(QueryInterface $query)
+    protected function createLimitStatementFromQuery(QueryInterface $query): string
     {
         $offset = (int)$query->getOffset();
         $limit = (int)$query->getLimit();
@@ -51,7 +50,7 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
         }
 
         if ($offset > 0) {
-            throw new \LogicException(
+            throw new LogicException(
                 'Queries with offset but without limit are not implemented'
             );
         }
@@ -65,14 +64,14 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
      * @param QueryInterface $query
      * @return string
      */
-    protected function createOrderingStatementFromQuery(QueryInterface $query)
+    protected function createOrderingStatementFromQuery(QueryInterface $query): string
     {
         $orderings = $query->getOrderings();
         if (!$orderings) {
             return '';
         }
         $orderArray = array_map(
-            function ($property, $direction) {
+            function ($property, $direction): string {
                 InvalidColumnNameException::assertValidColumnName($property);
                 InvalidOrderingException::assertValidOrdering($direction);
 
@@ -91,7 +90,7 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
      * @param array|QueryInterface $query
      * @return bool
      */
-    protected function isQueryEmpty($query)
+    protected function isQueryEmpty($query): bool
     {
         if ($query instanceof QueryInterface) {
             return empty($query->getConstraint());

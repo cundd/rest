@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use Closure;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
 use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
@@ -10,6 +11,7 @@ use Cundd\Rest\VirtualObject\Persistence\Exception\InvalidColumnNameException;
 use Cundd\Rest\VirtualObject\Persistence\Exception\WhereClauseException;
 use Cundd\Rest\VirtualObject\Persistence\OperatorInterface;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
+use OutOfRangeException;
 
 /**
  * Class to build WHERE-clauses
@@ -54,7 +56,7 @@ class WhereClauseBuilder
         callable $prepareValue = null,
         callable $escapeColumnName = null,
         string $bindingPrefix = ''
-    ) {
+    ): self {
         $this->reset();
 
         return $this->addConstraints(
@@ -87,7 +89,7 @@ class WhereClauseBuilder
         string $bindingPrefix = '',
         string $combinator = QueryInterface::COMBINATOR_AND,
         ConfigurationInterface $configuration = null
-    ) {
+    ): self {
         WhereClause::assertCombinator($combinator);
         foreach ($constraints as $property => $value) {
             $this->addConstraint(
@@ -126,7 +128,7 @@ class WhereClauseBuilder
         string $bindingPrefix = '',
         string $combinator = QueryInterface::COMBINATOR_AND,
         ConfigurationInterface $configuration = null
-    ) {
+    ): self {
         WhereClause::assertCombinator($combinator);
 
         if ($value instanceof Constraint) {
@@ -158,7 +160,7 @@ class WhereClauseBuilder
         }
 
         InvalidColumnNameException::assertValidColumnName($column);
-        list('operator' => $operator, 'value' => $comparisonValue) = $this->extractOperatorAndValue($value);
+        ['operator' => $operator, 'value' => $comparisonValue] = $this->extractOperatorAndValue($value);
 
         if ($prepareValue === null) {
             $prepareValue = $this->getDefaultPrepareValueCallback();
@@ -198,7 +200,7 @@ class WhereClauseBuilder
      * @param string $combinator
      * @return $this
      */
-    public function openParentheses(string $combinator = QueryInterface::COMBINATOR_AND)
+    public function openParentheses(string $combinator = QueryInterface::COMBINATOR_AND): self
     {
         $this->openedParenthesesLevel += 1;
         $this->where->appendSql(Parentheses::open(), $combinator);
@@ -211,7 +213,7 @@ class WhereClauseBuilder
      *
      * @return $this
      */
-    public function closeParentheses()
+    public function closeParentheses(): self
     {
         $this->openedParenthesesLevel -= 1;
         $this->where->appendSql(Parentheses::close(), null);
@@ -224,7 +226,7 @@ class WhereClauseBuilder
      *
      * @return self
      */
-    public function reset()
+    public function reset(): self
     {
         $this->where = new WhereClause();
 
@@ -237,7 +239,7 @@ class WhereClauseBuilder
      * @return WhereClause
      * @throws WhereClauseException if parentheses are opened that are not closed
      */
-    public function getWhere()
+    public function getWhere(): WhereClause
     {
         if ($this->openedParenthesesLevel > 0) {
             throw new WhereClauseException(sprintf('Detected %d unclosed parentheses', $this->openedParenthesesLevel));
@@ -249,11 +251,11 @@ class WhereClauseBuilder
     /**
      * Returns the SQL operator for the given operator
      *
-     * @param string $operator One of the OPERATOR_* constants
-     * @throws InvalidOperatorException
+     * @param string|int $operator One of the OPERATOR_* constants
      * @return string an SQL operator
+     * @throws InvalidOperatorException
      */
-    public static function resolveOperator($operator)
+    public static function resolveOperator($operator): string
     {
         switch (static::normalizeOperator($operator)) {
             case QueryInterface::OPERATOR_IN:
@@ -273,16 +275,16 @@ class WhereClauseBuilder
             case QueryInterface::OPERATOR_LIKE:
                 return 'LIKE';
             default:
-                throw new \OutOfRangeException('Unsupported operator encountered. Normalization failed', 1242816074);
+                throw new OutOfRangeException('Unsupported operator encountered. Normalization failed', 1242816074);
         }
     }
 
     /**
      * Returns the SQL operator constant for the given operator
      *
-     * @param string $operator One of the OPERATOR_* constants
-     * @throws InvalidOperatorException
+     * @param string|int $operator One of the OPERATOR_* constants
      * @return int One of the OPERATOR_* constants
+     * @throws InvalidOperatorException
      */
     public static function normalizeOperator($operator): int
     {
@@ -336,7 +338,7 @@ class WhereClauseBuilder
      * @param string $combinator
      * @return $this
      */
-    protected function appendSql($clause, $combinator = QueryInterface::COMBINATOR_AND)
+    protected function appendSql(string $clause, $combinator = QueryInterface::COMBINATOR_AND): self
     {
         $this->where->appendSql($clause, $combinator);
 
@@ -350,17 +352,14 @@ class WhereClauseBuilder
      * @param string|int|float $value
      * @return $this
      */
-    protected function bindVariable($key, $value)
+    protected function bindVariable(string $key, $value): self
     {
         $this->where->bindVariable($key, $value);
 
         return $this;
     }
 
-    /**
-     * @return \Closure
-     */
-    protected function getDefaultPrepareValueCallback()
+    protected function getDefaultPrepareValueCallback(): Closure
     {
         return function ($queryValue) {
             return $queryValue;
@@ -368,11 +367,11 @@ class WhereClauseBuilder
     }
 
     /**
-     * @return \Closure
+     * @return Closure
      */
-    protected function getDefaultEscapeColumnNameCallback()
+    protected function getDefaultEscapeColumnNameCallback(): Closure
     {
-        return function ($propertyName) {
+        return function ($propertyName): string {
             return '`' . $propertyName . '`';
         };
     }

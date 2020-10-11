@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Documentation;
-
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -14,6 +12,7 @@ use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Router\RouteInterface;
+use Exception;
 
 class HandlerDescriptor
 {
@@ -46,7 +45,7 @@ class HandlerDescriptor
      *
      * @return array
      */
-    public function getInformation()
+    public function getInformation(): array
     {
         $handlerConfigurations = $this->configurationProvider->getConfiguredResources();
 
@@ -62,7 +61,7 @@ class HandlerDescriptor
      * @param ResourceConfiguration $configuration
      * @return array
      */
-    private function fetchInformationForHandler(ResourceConfiguration $configuration)
+    private function fetchInformationForHandler(ResourceConfiguration $configuration): array
     {
         $className = $configuration->getHandlerClass();
         if (!$className) {
@@ -79,7 +78,7 @@ class HandlerDescriptor
 
         try {
             $handler = $this->objectManager->get($className);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->buildError($exception, $className, $configuration);
         }
         if (!($handler instanceof HandlerInterface)) {
@@ -96,7 +95,7 @@ class HandlerDescriptor
         $request = new DummyRequest($configuration->getResourceType());
         try {
             $handler->configureRoutes($router, $request);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->buildError($exception, $className, $configuration);
         }
 
@@ -107,7 +106,7 @@ class HandlerDescriptor
         ];
     }
 
-    private function buildError(\Exception $exception, string $handlerClass, $configuration)
+    private function buildError(Exception $exception, string $handlerClass, $configuration): array
     {
         return [
             'handlerClass'  => $handlerClass,
@@ -118,7 +117,7 @@ class HandlerDescriptor
         ];
     }
 
-    private function buildException($message, ...$arguments)
+    private function buildException(string $message, ...$arguments): InvalidConfigurationException
     {
         return new InvalidConfigurationException(vsprintf($message, $arguments));
     }
@@ -127,7 +126,7 @@ class HandlerDescriptor
      * @param $router
      * @return RouteInterface[][]
      */
-    private function filterEmptyMethods(DescriptiveRouter $router)
+    private function filterEmptyMethods(DescriptiveRouter $router): array
     {
         return array_filter($router->getRegisteredRoutes());
     }

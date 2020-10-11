@@ -23,10 +23,10 @@ interface RouterInterface
     /**
      * Add the given Route
      *
-     * @param Route $route
+     * @param RouteInterface $route
      * @return RouterInterface
      */
-    public function add(Route $route);
+    public function add(RouteInterface $route): RouterInterface;
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method GET
@@ -35,7 +35,7 @@ interface RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeGet($pattern, callable $callback);
+    public function routeGet($pattern, callable $callback): RouterInterface;
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method POST
@@ -44,7 +44,7 @@ interface RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePost($pattern, callable $callback);
+    public function routePost($pattern, callable $callback): RouterInterface;
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method PUT
@@ -53,7 +53,7 @@ interface RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePut($pattern, callable $callback);
+    public function routePut($pattern, callable $callback): RouterInterface;
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method DELETE
@@ -62,5 +62,5 @@ interface RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeDelete($pattern, callable $callback);
+    public function routeDelete($pattern, callable $callback): RouterInterface;
 }

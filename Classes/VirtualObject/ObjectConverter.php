@@ -27,13 +27,14 @@ class ObjectConverter
     /**
      * Converts the given Virtual Object's data into it's source representation
      *
-     * @param array $virtualObjectData Raw data in the schema defined by the current mapping
-     * @param bool  $replace           If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
-     * @throws InvalidPropertyException if a property is not defined in the mapping
-     * @throws Exception\MissingConfigurationException if the configuration is not set
+     * @param array|null $virtualObjectData Raw data in the schema defined by the current mapping
+     * @param bool       $replace           If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
      * @return array
+     * @throws InvalidConverterTypeException
+     * @throws InvalidPropertyException if a property is not defined in the mapping
+     * @throws MissingConfigurationException if the configuration is not set
      */
-    public function prepareDataFromVirtualObjectData($virtualObjectData, bool $replace = true)
+    public function prepareDataFromVirtualObjectData(?array $virtualObjectData, bool $replace = true): array
     {
         $configuration = $this->getConfiguration();
         $convertedData = [];
@@ -68,11 +69,11 @@ class ObjectConverter
      * Converts the given Virtual Object into it's source representation
      *
      * @param VirtualObject|array $virtualObject Either a Virtual Object instance or raw data in the schema defined by the current mapping
-     * @throws InvalidPropertyException if a property is not defined in the mapping
-     * @throws Exception\MissingConfigurationException if the configuration is not set
      * @return array
+     * @throws Exception\MissingConfigurationException if the configuration is not set
+     * @throws InvalidPropertyException if a property is not defined in the mapping
      */
-    public function convertFromVirtualObject($virtualObject)
+    public function convertFromVirtualObject($virtualObject): array
     {
         $virtualObjectData = null;
         if (is_array($virtualObject)) {
@@ -89,11 +90,11 @@ class ObjectConverter
      *
      * @param array $source
      * @param bool  $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
-     * @throws InvalidPropertyException if a property is not defined in the mapping
-     * @throws MissingConfigurationException if the configuration is not set
      * @return array
+     * @throws MissingConfigurationException if the configuration is not set
+     * @throws InvalidPropertyException if a property is not defined in the mapping
      */
-    public function prepareForVirtualObjectData($source, bool $replace = true)
+    public function prepareForVirtualObjectData(array $source, bool $replace = true): array
     {
         $configuration = $this->getConfiguration();
         $convertedData = [];
@@ -124,11 +125,11 @@ class ObjectConverter
      * Converts the given source array into a Virtual Object
      *
      * @param array $source
-     * @throws InvalidPropertyException if a property is not defined in the mapping
-     * @throws MissingConfigurationException if the configuration is not set
      * @return VirtualObject
+     * @throws MissingConfigurationException if the configuration is not set
+     * @throws InvalidPropertyException if a property is not defined in the mapping
      */
-    public function convertToVirtualObject($source): VirtualObject
+    public function convertToVirtualObject(array $source): VirtualObject
     {
         return new VirtualObject($this->prepareForVirtualObjectData($source));
     }
@@ -138,8 +139,8 @@ class ObjectConverter
      *
      * @param mixed  $value
      * @param string $type
-     * @throws Exception\InvalidConverterTypeException if the given type is not valid
      * @return mixed Returns the converted value
+     * @throws Exception\InvalidConverterTypeException if the given type is not valid
      */
     public function convertToType($value, string $type)
     {
@@ -160,7 +161,6 @@ class ObjectConverter
             case 'string':
                 return (string)$value;
 
-
             // Special types
             case 'slug':
                 return (preg_match('/^[a-zA-Z0-9-_]+$/', (string)$value) > 0 ? (string)$value : null);
@@ -173,7 +173,6 @@ class ObjectConverter
 
             case 'trim':
                 return trim((string)$value);
-
 
             default:
                 throw new InvalidConverterTypeException('Can not convert to type ' . $type, 1395661844);

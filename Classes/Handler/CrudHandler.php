@@ -55,7 +55,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $this->logger = $logger;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Default Handler for CRUD requests';
     }
@@ -159,7 +159,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->responseFactory->createSuccessResponse('Deleted', 200, $request);
     }
 
-    public function listAll(RestRequestInterface $request)
+    public function listAll(RestRequestInterface $request): iterable
     {
         $resourceType = $request->getResourceType();
         $dataProvider = $this->getDataProvider($request);
@@ -172,7 +172,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         );
     }
 
-    public function countAll(RestRequestInterface $request)
+    public function countAll(RestRequestInterface $request): int
     {
         $resourceType = $request->getResourceType();
 
@@ -182,7 +182,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * @return bool
      */
-    public function options()
+    public function options(): bool
     {
         // TODO: Respond with the correct preflight headers
         return true;
@@ -209,7 +209,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      * @param RestRequestInterface $request
      * @return DataProviderInterface
      */
-    protected function getDataProvider(RestRequestInterface $request)
+    protected function getDataProvider(RestRequestInterface $request): DataProviderInterface
     {
         return $this->objectManager->getDataProvider($request);
     }
@@ -238,7 +238,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
      *
      * @return bool
      */
-    protected function getAddRootObjectForCollection()
+    protected function getAddRootObjectForCollection(): bool
     {
         return (bool)$this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
     }

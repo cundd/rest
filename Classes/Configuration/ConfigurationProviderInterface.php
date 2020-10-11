@@ -13,11 +13,11 @@ interface ConfigurationProviderInterface
     /**
      * The request want's to write data
      */
-    const ACCESS_METHOD_WRITE = 'write';
+    public const ACCESS_METHOD_WRITE = 'write';
     /**
      * The request want's to read data
      */
-    const ACCESS_METHOD_READ = 'read';
+    public const ACCESS_METHOD_READ = 'read';
 
     /**
      * Returns the setting with the given key

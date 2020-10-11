@@ -19,7 +19,7 @@ interface SqlExpressionInterface
      * Append the string to the SQL expression
      *
      * @param string|Parentheses $expression
-     * @param string             $combinator
+     * @param string|null        $combinator
      * @return self
      */
     public function appendSql($expression, ?string $combinator = QueryInterface::COMBINATOR_AND): self;

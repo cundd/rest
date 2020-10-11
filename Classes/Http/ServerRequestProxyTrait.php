@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Http;
 
-
+use Cundd\Rest\Request;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -15,19 +16,18 @@ trait ServerRequestProxyTrait
      *
      * @return ServerRequestInterface
      */
-    abstract public function getOriginalRequest();
+    abstract public function getOriginalRequest(): ServerRequestInterface;
 
     /**
      * @param ServerRequestInterface $request
-     *
-     * @return ServerRequestInterface
+     * @return Request
      */
-    abstract protected function setOriginalRequest(ServerRequestInterface $request);
+    abstract protected function setOriginalRequest(ServerRequestInterface $request): Request;
 
     /**
      * @return ServerRequestProxyTrait
      */
-    protected function copy()
+    protected function copy(): self
     {
         return clone $this;
     }
@@ -43,7 +43,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getProtocolVersion();
     }
-
 
     /**
      * Retrieves all message header values.
@@ -131,7 +130,6 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getHeaderLine($name);
     }
 
-
     /**
      * Gets the body of the message.
      *
@@ -141,7 +139,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getBody();
     }
-
 
     /**
      * Retrieves the message's request target.
@@ -164,7 +161,6 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getRequestTarget();
     }
 
-
     /**
      * Retrieves the HTTP method of the request.
      *
@@ -174,7 +170,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getMethod();
     }
-
 
     /**
      * Retrieves the URI instance.
@@ -189,7 +184,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getUri();
     }
-
 
     /**
      * Retrieve server parameters.
@@ -220,7 +214,6 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getCookieParams();
     }
 
-
     /**
      * Retrieve query string arguments.
      *
@@ -238,7 +231,6 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getQueryParams();
     }
 
-
     /**
      * Retrieve normalized file upload data.
      *
@@ -255,7 +247,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getUploadedFiles();
     }
-
 
     /**
      * Retrieve any parameters provided in the request body.
@@ -276,7 +267,6 @@ trait ServerRequestProxyTrait
     {
         return $this->getOriginalRequest()->getParsedBody();
     }
-
 
     /**
      * Retrieve attributes derived from the request.
@@ -304,10 +294,10 @@ trait ServerRequestProxyTrait
      * This method obviates the need for a hasAttribute() method, as it allows
      * specifying a default value to return if the attribute is not found.
      *
-     * @see getAttributes()
      * @param string $name    The attribute name.
      * @param mixed  $default Default value to return if the attribute does not exist.
      * @return mixed
+     * @see getAttributes()
      */
     public function getAttribute($name, $default = null)
     {
@@ -345,7 +335,7 @@ trait ServerRequestProxyTrait
      * @param string          $name  Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws InvalidArgumentException for invalid header names or values.
      */
     public function withHeader($name, $value)
     {
@@ -366,7 +356,7 @@ trait ServerRequestProxyTrait
      * @param string          $name  Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws InvalidArgumentException for invalid header names or values.
      */
     public function withAddedHeader($name, $value)
     {
@@ -388,7 +378,6 @@ trait ServerRequestProxyTrait
     public function withoutHeader($name)
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutHeader($name));
-
     }
 
     /**
@@ -402,7 +391,7 @@ trait ServerRequestProxyTrait
      *
      * @param StreamInterface $body Body.
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException When the body is not valid.
+     * @throws InvalidArgumentException When the body is not valid.
      */
     public function withBody(StreamInterface $body)
     {
@@ -444,7 +433,7 @@ trait ServerRequestProxyTrait
      *
      * @param string $method Case-sensitive method.
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException for invalid HTTP methods.
+     * @throws InvalidArgumentException for invalid HTTP methods.
      */
     public function withMethod($method)
     {
@@ -544,7 +533,7 @@ trait ServerRequestProxyTrait
      *
      * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException if an invalid structure is provided.
+     * @throws InvalidArgumentException if an invalid structure is provided.
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -576,7 +565,7 @@ trait ServerRequestProxyTrait
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
      * @return ServerRequestInterface
-     * @throws \InvalidArgumentException if an unsupported argument type is
+     * @throws InvalidArgumentException if an unsupported argument type is
      *                                provided.
      */
     public function withParsedBody($data)
@@ -594,10 +583,10 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated attribute.
      *
-     * @see getAttributes()
      * @param string $name  The attribute name.
      * @param mixed  $value The value of the attribute.
      * @return ServerRequestInterface
+     * @see getAttributes()
      */
     public function withAttribute($name, $value)
     {
@@ -614,9 +603,9 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that removes
      * the attribute.
      *
-     * @see getAttributes()
      * @param string $name The attribute name.
      * @return ServerRequestInterface
+     * @see getAttributes()
      */
     public function withoutAttribute($name)
     {

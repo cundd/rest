@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\Persistence\Backend\ConstraintInterface;
 
 /**
@@ -37,7 +38,7 @@ interface QueryInterface extends OperatorInterface
      * @return array Return the result
      * @api
      */
-    public function execute();
+    public function execute(): iterable;
 
     /**
      * Return a copy of the Query with the given constraint
@@ -50,11 +51,12 @@ interface QueryInterface extends OperatorInterface
     /**
      * Return a copy of the Query with the given property names to order the result by
      *
-     * @example
+     * ```
      *  [
      *      'foo' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_ASCENDING,
      *      'bar' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_DESCENDING
      *  ]
+     * ```
      *
      * @param array $orderings
      * @return Query
@@ -87,10 +89,13 @@ interface QueryInterface extends OperatorInterface
 
     /**
      * Gets the property names to order the result by, like this:
-     * array(
-     *  'foo' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_ASCENDING,
-     *  'bar' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_DESCENDING
-     * )
+     *
+     * ```
+     *  [
+     *      'foo' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_ASCENDING,
+     *      'bar' => \Cundd\Rest\VirtualObject\Persistence\QueryInterface::ORDER_DESCENDING
+     *  ]
+     * ```
      *
      * @return array
      * @api
@@ -142,8 +147,7 @@ interface QueryInterface extends OperatorInterface
      * Return the configuration to use when converting
      *
      * @return ConfigurationInterface|null
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
-     * @return \Cundd\Rest\VirtualObject\ConfigurationInterface|null
+     * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ?ConfigurationInterface;
 }

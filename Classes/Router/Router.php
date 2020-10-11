@@ -45,10 +45,10 @@ class Router implements RouterInterface
     /**
      * Add the given Route
      *
-     * @param Route $route
+     * @param RouteInterface $route
      * @return RouterInterface
      */
-    public function add(Route $route)
+    public function add(RouteInterface $route): RouterInterface
     {
         $method = $route->getMethod();
         if (!isset($this->registeredRoutes[$method])) {
@@ -67,7 +67,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeGet($pattern, callable $callback)
+    public function routeGet($pattern, callable $callback): RouterInterface
     {
         $this->add(Route::get($pattern, $callback));
 
@@ -81,7 +81,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePost($pattern, callable $callback)
+    public function routePost($pattern, callable $callback): RouterInterface
     {
         $this->add(Route::post($pattern, $callback));
 
@@ -95,7 +95,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePut($pattern, callable $callback)
+    public function routePut($pattern, callable $callback): RouterInterface
     {
         $this->add(Route::put($pattern, $callback));
 
@@ -109,7 +109,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeDelete($pattern, callable $callback)
+    public function routeDelete($pattern, callable $callback): RouterInterface
     {
         $this->add(Route::delete($pattern, $callback));
 
@@ -120,7 +120,7 @@ class Router implements RouterInterface
      * @param RestRequestInterface $request
      * @return Route[]
      */
-    public function getMatchingRoutes(RestRequestInterface $request)
+    public function getMatchingRoutes(RestRequestInterface $request): array
     {
         $registeredRoutes = $this->getRoutesForMethod($request);
         if (empty($registeredRoutes)) {
@@ -145,7 +145,7 @@ class Router implements RouterInterface
      * @param RestRequestInterface $request
      * @return array
      */
-    public function getPreparedParameters(RestRequestInterface $request)
+    public function getPreparedParameters(RestRequestInterface $request): array
     {
         $route = $this->getMatchingRoute($request);
         if (!$route) {
@@ -162,7 +162,7 @@ class Router implements RouterInterface
      * @param RouteInterface       $route
      * @return array
      */
-    private function getPreparedParametersForRoute(RestRequestInterface $request, RouteInterface $route)
+    private function getPreparedParametersForRoute(RestRequestInterface $request, RouteInterface $route): array
     {
         $segments = explode('/', $request->getPath());
         $parameters = [];
@@ -180,7 +180,7 @@ class Router implements RouterInterface
      * @param string $segment
      * @return mixed
      */
-    private function getPreparedParameter($type, $segment)
+    private function getPreparedParameter(string $type, string $segment)
     {
         switch ($type) {
             case ParameterTypeInterface::RAW:
@@ -201,7 +201,7 @@ class Router implements RouterInterface
      * @param string $pattern
      * @return string
      */
-    private function patternToRegularExpression($pattern)
+    private function patternToRegularExpression(string $pattern): string
     {
         $outputPattern = $pattern;
         $parameterTypeToRegex = [
@@ -223,22 +223,22 @@ class Router implements RouterInterface
      * @param RestRequestInterface $request
      * @return Route
      */
-    private function getMatchingRoute(RestRequestInterface $request)
+    private function getMatchingRoute(RestRequestInterface $request): ?Route
     {
         $matchingRoutes = $this->getMatchingRoutes($request);
 
-        return reset($matchingRoutes);
+        return reset($matchingRoutes) ?: null;
     }
 
     /**
      * @param $matchingRoutes
      * @return array
      */
-    private function sortRoutesByPriority(array $matchingRoutes)
+    private function sortRoutesByPriority(array $matchingRoutes): array
     {
         uasort(
             $matchingRoutes,
-            function (Route $a, Route $b) {
+            function (Route $a, Route $b): int {
                 $priorityA = $a->getPriority();
                 $priorityB = $b->getPriority();
                 if ($priorityA === $priorityB) {

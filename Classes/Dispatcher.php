@@ -110,7 +110,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function getCachedResponseOrCallHandler(RestRequestInterface $request)
+    private function getCachedResponseOrCallHandler(RestRequestInterface $request): ResponseInterface
     {
         $cache = $this->objectManager->getCache($request->getResourceType());
         $cachedResponse = $cache->getCachedValueForRequest($request);
@@ -134,7 +134,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * @return ResultConverter
      */
-    private function getResultConverter()
+    private function getResultConverter(): ResultConverter
     {
         $router = $this->objectManager->get(RouterInterface::class);
 
@@ -147,7 +147,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    private function callHandler(RestRequestInterface $request)
+    private function callHandler(RestRequestInterface $request): ResponseInterface
     {
         $requestPath = $request->getPath();
 
@@ -169,7 +169,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function greet(RestRequestInterface $request)
+    public function greet(RestRequestInterface $request): ResponseInterface
     {
         $greeting = 'What\'s up?';
         $hour = date('H');
@@ -216,7 +216,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    private function addAdditionalHeaders(ResponseInterface $response)
+    private function addAdditionalHeaders(ResponseInterface $response): ResponseInterface
     {
         $configurationProvider = $this->objectManager->getConfigurationProvider();
         $fixedResponseHeaders = $configurationProvider->getSetting('responseHeaders', null);
@@ -228,7 +228,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         return $response;
     }
 
-    private function addCorsHeaders(RestRequestInterface $request, ResponseInterface $response)
+    private function addCorsHeaders(RestRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $origin = $request->getHeaderLine('origin');
         if ($origin) {

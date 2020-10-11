@@ -37,7 +37,7 @@ class DebugUtility
      *
      * @return array
      */
-    public static function getCaller()
+    public static function getCaller(): array
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
 
@@ -108,7 +108,7 @@ class DebugUtility
     /**
      * @return string[]
      */
-    private static function getDevIpMask()
+    private static function getDevIpMask(): array
     {
         if (isset($GLOBALS['TYPO3_CONF_VARS'])
             && isset($GLOBALS['TYPO3_CONF_VARS']['SYS'])

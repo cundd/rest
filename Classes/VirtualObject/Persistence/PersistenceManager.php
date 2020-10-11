@@ -36,9 +36,9 @@ class PersistenceManager implements PersistenceManagerInterface
     /**
      * Persistence Manager constructor
      *
-     * @param ObjectManagerInterface $objectManager
-     * @param BackendInterface       $backend
-     * @param ConfigurationInterface $configuration
+     * @param ObjectManagerInterface      $objectManager
+     * @param BackendInterface            $backend
+     * @param ConfigurationInterface|null $configuration
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -67,17 +67,19 @@ class PersistenceManager implements PersistenceManagerInterface
         return $object;
     }
 
-    public function add(VirtualObject $object)
+    public function add(VirtualObject $object): void
     {
         $identifierValue = $this->backend->addRow(
             $this->getSourceIdentifier(),
             $this->getObjectConverter()->convertFromVirtualObject($object)
         );
         $identifierKey = $this->getConfiguration()->getIdentifier();
-        $object->setValueForKey($identifierKey, $identifierValue);
+        if ($identifierKey) {
+            $object->setValueForKey($identifierKey, $identifierValue);
+        }
     }
 
-    public function update(VirtualObject $object)
+    public function update(VirtualObject $object): void
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
@@ -91,7 +93,7 @@ class PersistenceManager implements PersistenceManagerInterface
         }
     }
 
-    public function remove(VirtualObject $object)
+    public function remove(VirtualObject $object): void
     {
         $identifierQuery = $this->getIdentifierColumnsOfObject($object);
         $sourceIdentifier = $this->getSourceIdentifier();
@@ -122,7 +124,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return $objectCollection;
     }
 
-    public function getObjectByIdentifier($identifier)
+    public function getObjectByIdentifier($identifier): ?VirtualObject
     {
         $configuration = $this->getConfiguration();
 
@@ -158,7 +160,7 @@ class PersistenceManager implements PersistenceManagerInterface
         return isset($objectData[$identifier]) ? [$identifierColumn => $objectData[$identifier]] : [];
     }
 
-    public function getSourceIdentifier()
+    public function getSourceIdentifier(): ?string
     {
         return $this->getConfiguration()->getSourceIdentifier();
     }
@@ -185,7 +187,7 @@ class PersistenceManager implements PersistenceManagerInterface
      *
      * @return ObjectConverter
      */
-    protected function getObjectConverter()
+    protected function getObjectConverter(): ObjectConverter
     {
         if (!$this->objectConverter) {
             $this->objectConverter = new ObjectConverter($this->getConfiguration());

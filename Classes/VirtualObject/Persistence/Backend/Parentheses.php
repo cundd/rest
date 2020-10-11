@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 
+use InvalidArgumentException;
+
 class Parentheses
 {
     public const OPEN = '(';
@@ -18,7 +20,7 @@ class Parentheses
     private function __construct(string $value)
     {
         if ($value !== self::OPEN && $value !== self::CLOSE) {
-            throw new \InvalidArgumentException(sprintf('Invalid parentheses "%s"', $value));
+            throw new InvalidArgumentException(sprintf('Invalid parentheses "%s"', $value));
         }
         $this->value = $value;
     }

@@ -17,7 +17,7 @@ class NotFoundException extends RuntimeException
     /**
      * @var RouteInterface[]
      */
-    private $alternativeRoutes = [];
+    private $alternativeRoutes;
 
     /**
      * NotFoundException constructor
@@ -41,7 +41,7 @@ class NotFoundException extends RuntimeException
      * @param array  $alternativeRoutes
      * @return static
      */
-    public static function exceptionWithAlternatives(string $route, string $method, array $alternativeRoutes)
+    public static function exceptionWithAlternatives(string $route, string $method, array $alternativeRoutes): self
     {
         $message = DebugUtility::allowDebugInformation()
             ? sprintf('Route "%s" not found for method "%s"', $route, $method)

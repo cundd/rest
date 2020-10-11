@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Documentation\Handler;
 
 use Cundd\Rest\Http\RestRequestInterface;
@@ -24,7 +23,7 @@ class DescriptiveRouter extends Router
      *
      * @return RouteInterface[][]
      */
-    public function getRegisteredRoutes()
+    public function getRegisteredRoutes(): array
     {
         return $this->registeredRoutes;
     }

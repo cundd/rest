@@ -75,7 +75,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param array $settings
      * @internal
      */
-    public function setSettings($settings)
+    public function setSettings(array $settings)
     {
         $this->settings = $settings;
     }
@@ -167,7 +167,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param string $resourceTypeString
      * @return bool
      */
-    private function checkIfPatternMatchesResourceType($pattern, $resourceTypeString)
+    private function checkIfPatternMatchesResourceType(string $pattern, string $resourceTypeString): bool
     {
         $currentPathPattern = str_replace(
             '*',
@@ -175,7 +175,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             str_replace('?', '\w', (string)$pattern)
         );
 
-        return preg_match("!^$currentPathPattern$!", (string)$resourceTypeString);
+        return 0 !== preg_match("!^$currentPathPattern$!", (string)$resourceTypeString);
     }
 
     /**
@@ -184,7 +184,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param ResourceType $resourceType
      * @return string[]
      */
-    private function getAliasesForResourceType(ResourceType $resourceType)
+    private function getAliasesForResourceType(ResourceType $resourceType): array
     {
         $resourceTypeString = (string)$resourceType;
 
@@ -202,7 +202,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * @return array
      */
-    private function getRawConfiguredResourceTypes()
+    private function getRawConfiguredResourceTypes(): array
     {
         $settings = $this->getSettings();
         if (isset($settings['paths']) && is_array($settings['paths'])) {
@@ -219,7 +219,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param string $path
      * @return array
      */
-    private function preparePath(array $configuration, $path)
+    private function preparePath(array $configuration, string $path): array
     {
         $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
         $normalizeResourceType = Utility::normalizeResourceType($resourceType);
@@ -244,7 +244,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         return -1;
     }
 
-    private function detectExpiresHeaderLifetimeConfiguration(array $configuration)
+    private function detectExpiresHeaderLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['expiresHeaderLifetime']) && is_numeric($configuration['expiresHeaderLifetime'])) {
             return (int)$configuration['expiresHeaderLifetime'];

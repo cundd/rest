@@ -12,9 +12,9 @@ class CacheFactory
     /**
      * Return a Cache instance for the Resource Type
      *
-     * @param ResourceType                   $resourceType
+     * @param ResourceType $resourceType
      * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManager                  $objectManager
+     * @param ObjectManager $objectManager
      * @return CacheInterface
      */
     public function buildCache(
@@ -56,8 +56,10 @@ class CacheFactory
      * @param ResourceType                   $resourceType
      * @return int
      */
-    private function getCacheLifetime(ConfigurationProviderInterface $configurationProvider, ResourceType $resourceType)
-    {
+    private function getCacheLifetime(
+        ConfigurationProviderInterface $configurationProvider,
+        ResourceType $resourceType
+    ): int {
         $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
         $cacheLifetime = $resourceConfiguration->getCacheLifetime();
         if ($cacheLifetime > -1) {
@@ -85,7 +87,7 @@ class CacheFactory
     private function getExpiresHeaderLifetime(
         ConfigurationProviderInterface $configurationProvider,
         ResourceType $resourceType
-    ) {
+    ): int {
         $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
         $expiresHeaderLifetime = $resourceConfiguration->getExpiresHeaderLifetime();
         if ($expiresHeaderLifetime > -1) {

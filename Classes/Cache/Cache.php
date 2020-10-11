@@ -11,6 +11,8 @@ use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -21,7 +23,7 @@ class Cache implements CacheInterface
     /**
      * Concrete cache instance
      *
-     * @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @var VariableFrontend
      */
     private $cacheInstance;
 
@@ -109,7 +111,7 @@ class Cache implements CacheInterface
             return;
         }
 
-        /** @var \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance */
+        /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $this->getCacheInstance();
         $cacheInstance->set(
             $this->getCacheKeyForRequest($request),
@@ -190,10 +192,10 @@ class Cache implements CacheInterface
     /**
      * Sets the concrete Cache instance
      *
-     * @param \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cacheInstance
+     * @param FrontendInterface $cacheInstance
      * @internal
      */
-    public function setCacheInstance($cacheInstance)
+    public function setCacheInstance(FrontendInterface $cacheInstance)
     {
         $this->cacheInstance = $cacheInstance;
     }
@@ -204,7 +206,7 @@ class Cache implements CacheInterface
      * @param int $date
      * @return string
      */
-    private function getHttpDate($date)
+    private function getHttpDate(int $date): string
     {
         return gmdate('D, d M Y H:i:s \G\M\T', $date);
     }
@@ -212,7 +214,7 @@ class Cache implements CacheInterface
     /**
      * Returns the cache instance
      *
-     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface|\TYPO3\CMS\Core\Cache\Frontend\VariableFrontend
+     * @return FrontendInterface|VariableFrontend
      */
     private function getCacheInstance()
     {
@@ -241,13 +243,13 @@ class Cache implements CacheInterface
      * Returns the tags for the current request
      *
      * @param RestRequestInterface $request
-     * @return array [string]
+     * @return string[]
      */
-    private function getTags(RestRequestInterface $request)
+    private function getTags(RestRequestInterface $request): array
     {
         $currentPath = $request->getPath();
         $resourceType = $request->getResourceType();
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
 
         return array_filter(
             array_map(
@@ -271,7 +273,7 @@ class Cache implements CacheInterface
      * @param ResponseInterface    $response
      * @return bool
      */
-    public function canBeCached(RestRequestInterface $request, ResponseInterface $response)
+    public function canBeCached(RestRequestInterface $request, ResponseInterface $response): bool
     {
         // Don't cache write requests
         if ($request->isWrite()) {
@@ -293,7 +295,7 @@ class Cache implements CacheInterface
      * @param ResponseInterface $response
      * @return bool
      */
-    protected function cacheControlPreventsCaching(ResponseInterface $response)
+    protected function cacheControlPreventsCaching(ResponseInterface $response): bool
     {
         $cacheControlHeaders = $response->getHeader(Header::CACHE_CONTROL);
         $noCacheValues = [

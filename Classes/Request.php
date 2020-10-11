@@ -49,7 +49,6 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     private $sentData;
 
-
     /**
      * Constructor for a new request with the given Server Request, resource type and format
      *
@@ -62,12 +61,10 @@ class Request implements ServerRequestInterface, RestRequestInterface
     public function __construct(
         ServerRequestInterface $originalRequest,
         UriInterface $internalUri,
-        $originalPath,
+        string $originalPath,
         ResourceType $resourceType,
         Format $format
     ) {
-        $this->assertStringArgument($originalPath, 'originalPath');
-
         $this->originalRequest = $originalRequest;
         $this->originalPath = $originalPath;
         $this->resourceType = $resourceType;
@@ -80,22 +77,22 @@ class Request implements ServerRequestInterface, RestRequestInterface
      *
      * @return ServerRequestInterface
      */
-    public function getOriginalRequest()
+    public function getOriginalRequest(): ServerRequestInterface
     {
         return $this->originalRequest;
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return $this->internalUri->getPath();
     }
 
-    public function getResourceType()
+    public function getResourceType(): ResourceType
     {
         return $this->resourceType;
     }
 
-    public function withResourceType(ResourceType $resourceType)
+    public function withResourceType(ResourceType $resourceType): RestRequestInterface
     {
         $clone = clone $this;
         $clone->resourceType = $resourceType;
@@ -111,7 +108,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
         $contentTypes = $this->getHeader('content-type');
         $isFormEncoded = array_reduce(
             $contentTypes,
-            function ($isFormEncoded, $contentType) {
+            function ($isFormEncoded, $contentType): bool {
                 if ($isFormEncoded) {
                     return true;
                 }
@@ -130,32 +127,32 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return $this->sentData;
     }
 
-    public function getFormat()
+    public function getFormat(): Format
     {
         return $this->format;
     }
 
-    public function isPreflight()
+    public function isPreflight(): bool
     {
         return strtoupper($this->getMethod()) === 'OPTIONS';
     }
 
-    public function isWrite()
+    public function isWrite(): bool
     {
         return !$this->isRead() && !$this->isPreflight();
     }
 
-    public function isRead()
+    public function isRead(): bool
     {
         return in_array(strtoupper($this->getMethod()), ['GET', 'HEAD']);
     }
 
-    public function getRootObjectKey()
+    public function getRootObjectKey(): string
     {
         return $this->getOriginalResourceType();
     }
 
-    public function withFormat(Format $format)
+    public function withFormat(Format $format): RestRequestInterface
     {
         return new static(
             $this->originalRequest,
@@ -171,7 +168,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
      *
      * @return string
      */
-    public function getOriginalResourceType()
+    public function getOriginalResourceType(): string
     {
         return (string)strtok(strtok($this->originalPath, '?'), '/');
     }
@@ -180,27 +177,10 @@ class Request implements ServerRequestInterface, RestRequestInterface
      * @param ServerRequestInterface $request
      * @return $this
      */
-    protected function setOriginalRequest(ServerRequestInterface $request)
+    protected function setOriginalRequest(ServerRequestInterface $request): self
     {
         $this->originalRequest = $request;
 
         return $this;
-    }
-
-    /**
-     * @param string|mixed $input
-     * @param string       $argumentName
-     */
-    private function assertStringArgument($input, $argumentName)
-    {
-        if (!is_string($input)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Argument "%s" passed must be a string, %s given',
-                    $argumentName,
-                    gettype($input)
-                )
-            );
-        }
     }
 }

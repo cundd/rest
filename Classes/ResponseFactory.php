@@ -5,6 +5,7 @@ namespace Cundd\Rest;
 
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response as TYPO3Response;
 use Zend\Diactoros\Response as ZendResponse;
@@ -111,7 +112,7 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
     /**
      * @return string
      */
-    private function getResponseImplementationClass()
+    private function getResponseImplementationClass(): string
     {
         if (class_exists(TYPO3Response::class)) {
             return TYPO3Response::class;
@@ -119,6 +120,6 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
         if (class_exists(ZendResponse::class)) {
             return ZendResponse::class;
         }
-        throw new \LogicException('No response implementation found');
+        throw new LogicException('No response implementation found');
     }
 }

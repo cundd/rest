@@ -56,7 +56,7 @@ class VirtualObjectDataProvider extends DataProvider
      * @param ResourceType|string $resourceType
      * @return ObjectConverter
      */
-    public function getObjectConverterForResourceType(ResourceType $resourceType)
+    public function getObjectConverterForResourceType(ResourceType $resourceType): ObjectConverter
     {
         $resourceTypeString = (string)$resourceType;
         if (!isset($this->objectConverterMap[$resourceTypeString])) {
@@ -134,7 +134,7 @@ class VirtualObjectDataProvider extends DataProvider
         return $properties;
     }
 
-    public function getModelProperty($model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter)
     {
         /** @var VirtualObject $model */
         $modelData = $model->getData();
@@ -149,7 +149,7 @@ class VirtualObjectDataProvider extends DataProvider
         return null;
     }
 
-    public function saveModel($model, ResourceType $resourceType): void
+    public function saveModel(object $model, ResourceType $resourceType): void
     {
         /** @var VirtualObject $model */
         /** @var RepositoryInterface $repository */
@@ -160,7 +160,7 @@ class VirtualObjectDataProvider extends DataProvider
         }
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType)
+    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
     {
         try {
             $objectConverter = $this->getObjectConverterForResourceType($resourceType);

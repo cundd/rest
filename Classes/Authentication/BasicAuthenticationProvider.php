@@ -42,11 +42,11 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
             $username = $_SERVER['PHP_AUTH_USER'];
             $password = $_SERVER['PHP_AUTH_PW'];
         } elseif ($tuple = $this->checkServerData('HTTP_AUTHENTICATION')) {
-            list($username, $password) = $tuple;
+            [$username, $password] = $tuple;
         } elseif ($tuple = $this->checkServerData('HTTP_AUTHORIZATION')) {
-            list($username, $password) = $tuple;
+            [$username, $password] = $tuple;
         } elseif ($tuple = $this->checkServerData('REDIRECT_HTTP_AUTHORIZATION')) {
-            list($username, $password) = $tuple;
+            [$username, $password] = $tuple;
         }
 
         if (!is_string($username) || !is_string($password)) {

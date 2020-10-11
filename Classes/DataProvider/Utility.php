@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-
+use InvalidArgumentException;
 
 /**
  * A utility class with static methods for Data Providers
@@ -37,8 +37,10 @@ class Utility
      * @param bool         $convertPlural Indicates if plural resource names should be converted
      * @return array
      */
-    public static function getClassNamePartsForResourceType(ResourceType $resourceType, $convertPlural = true)
-    {
+    public static function getClassNamePartsForResourceType(
+        ResourceType $resourceType,
+        bool $convertPlural = true
+    ): array {
         $resourceTypeString = (string)$resourceType;
         if ('' === $resourceTypeString) {
             return ['', '', ''];
@@ -72,9 +74,11 @@ class Utility
      * @param bool         $convertPlural
      * @return string|null
      */
-    public static function getModelEntityForResourceType(ResourceType $resourceType, $convertPlural = true): ?string
-    {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType, $convertPlural);
+    public static function getModelEntityForResourceType(
+        ResourceType $resourceType,
+        bool $convertPlural = true
+    ): ?string {
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType, $convertPlural);
         $namespaceVersion = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
         $underscoreVersion = 'Tx_' . $extension . '_Domain_Model_' . $model;
 
@@ -97,7 +101,7 @@ class Utility
      * @param string $className
      * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
      */
-    public static function getResourceTypeForClassName($className)
+    public static function getResourceTypeForClassName(string $className)
     {
         if (strpos($className, '\\') === false) {
             if (substr($className, 0, 3) === 'Tx_') {
@@ -114,7 +118,7 @@ class Utility
 
         try {
             return new ResourceType(implode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts));
-        } catch (\InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException $exception) {
             return false;
         }
     }
@@ -125,7 +129,7 @@ class Utility
      * @param string $word
      * @return string
      */
-    public static function singularize($word)
+    public static function singularize(string $word): string
     {
         $customMapping = array_search($word, static::$singularToPlural, true);
         if ($customMapping !== false) {
@@ -195,14 +199,14 @@ class Utility
      * @param string|ResourceType $resourceType
      * @return string
      */
-    public static function normalizeResourceType($resourceType)
+    public static function normalizeResourceType($resourceType): string
     {
         $resourceTypeString = trim((string)$resourceType, '.');
 
         return implode(
             '-',
             array_map(
-                function ($part) {
+                function (string $part): string {
                     if ($part === '*') {
                         return '*';
                     }
@@ -218,7 +222,7 @@ class Utility
      * @param string $string
      * @return string
      */
-    private static function underscoredToUpperCamelCase($string)
+    private static function underscoredToUpperCamelCase(string $string): string
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
@@ -229,11 +233,10 @@ class Utility
      * @param string $input
      * @return string
      */
-    private static function camelCaseToLowerCaseUnderscored($input)
+    private static function camelCaseToLowerCaseUnderscored(string $input): string
     {
         $value = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $input);
 
-        /** @noinspection PhpComposerExtensionStubsInspection */
         return is_callable('mb_strtolower') ? mb_strtolower($value, 'utf-8') : strtolower($value);
     }
 }

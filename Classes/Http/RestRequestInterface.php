@@ -7,7 +7,6 @@ use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Psr\Http\Message\ServerRequestInterface;
 
-
 /**
  * Specialized Request
  */
@@ -18,14 +17,14 @@ interface RestRequestInterface extends ServerRequestInterface
      *
      * @return ServerRequestInterface
      */
-    public function getOriginalRequest();
+    public function getOriginalRequest(): ServerRequestInterface;
 
     /**
      * Return the request path (eventually aliases have been mapped)
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): string;
 
     /**
      * Return the requested resource type
@@ -34,7 +33,7 @@ interface RestRequestInterface extends ServerRequestInterface
      *
      * @return ResourceType
      */
-    public function getResourceType();
+    public function getResourceType(): ResourceType;
 
     /**
      * Return the sent data
@@ -48,35 +47,35 @@ interface RestRequestInterface extends ServerRequestInterface
      *
      * @return Format
      */
-    public function getFormat();
+    public function getFormat(): Format;
 
     /**
      * Return if the request is a preflight request
      *
      * @return bool
      */
-    public function isPreflight();
+    public function isPreflight(): bool;
 
     /**
      * Return if the request wants to write data
      *
      * @return bool
      */
-    public function isWrite();
+    public function isWrite(): bool;
 
     /**
      * Return if the request wants to read data
      *
      * @return bool
      */
-    public function isRead();
+    public function isRead(): bool;
 
     /**
      * Return the key to use for the root object if addRootObjectForCollection is enabled
      *
      * @return string
      */
-    public function getRootObjectKey();
+    public function getRootObjectKey(): string;
 
     /**
      * Return an instance with the given format
@@ -87,7 +86,7 @@ interface RestRequestInterface extends ServerRequestInterface
      * @param Format $format
      * @return static
      */
-    public function withFormat(Format $format);
+    public function withFormat(Format $format): RestRequestInterface;
 
     /**
      * Return an instance with the given Resource Type
@@ -98,5 +97,5 @@ interface RestRequestInterface extends ServerRequestInterface
      * @param ResourceType $resourceType
      * @return static
      */
-    public function withResourceType(ResourceType $resourceType);
+    public function withResourceType(ResourceType $resourceType): RestRequestInterface;
 }

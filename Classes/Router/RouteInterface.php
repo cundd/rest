@@ -16,21 +16,21 @@ interface RouteInterface
      *
      * @return string
      */
-    public function getPattern();
+    public function getPattern(): string;
 
     /**
      * Returns the request method for this route
      *
      * @return string
      */
-    public function getMethod();
+    public function getMethod(): string;
 
     /**
      * Returns the requested parameters
      *
      * @return string[]
      */
-    public function getParameters();
+    public function getParameters(): array;
 
     /**
      * Returns the priority of this route
@@ -39,14 +39,14 @@ interface RouteInterface
      *
      * @return int
      */
-    public function getPriority();
+    public function getPriority(): int;
 
     /**
      * Process the route
      *
      * @param RestRequestInterface $request
      * @param array                $parameters
-     * @return ResponseInterface
+     * @return ResponseInterface|mixed
      */
     public function process(RestRequestInterface $request, ...$parameters);
 }

@@ -33,7 +33,7 @@ class VirtualObject
      * @param array $data
      * @return $this
      */
-    public function setData($data)
+    public function setData(array $data): self
     {
         $this->data = $data;
 
@@ -45,7 +45,7 @@ class VirtualObject
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -56,7 +56,7 @@ class VirtualObject
      * @param string $key
      * @return mixed
      */
-    public function valueForKey($key)
+    public function valueForKey(string $key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
@@ -68,7 +68,7 @@ class VirtualObject
      * @param mixed  $value
      * @return $this
      */
-    public function setValueForKey($key, $value)
+    public function setValueForKey(string $key, $value): self
     {
         $this->data[$key] = $value;
 
@@ -80,7 +80,7 @@ class VirtualObject
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->getData();
     }

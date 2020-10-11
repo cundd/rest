@@ -21,8 +21,8 @@ class LanguageInformation
     /**
      * LanguageInformation constructor.
      *
-     * @param int    $uid
-     * @param string $code
+     * @param int         $uid
+     * @param string|null $code
      */
     public function __construct(int $uid, ?string $code)
     {

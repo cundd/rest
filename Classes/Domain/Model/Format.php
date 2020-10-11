@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Domain\Model;
 
+use InvalidArgumentException;
 
 class Format
 {
-    const DEFAULT_FORMAT = 'json';
-    const MIME_TYPES = [
+    public const DEFAULT_FORMAT = 'json';
+    public const MIME_TYPES = [
         'txt'   => 'text/plain',
         'html'  => 'text/html',
         'xhtml' => 'application/xhtml+xml',
@@ -56,7 +57,7 @@ class Format
      *
      * @return Format
      */
-    public static function defaultFormat()
+    public static function defaultFormat(): Format
     {
         return new static(static::DEFAULT_FORMAT);
     }
@@ -66,7 +67,7 @@ class Format
      *
      * @return Format
      */
-    public static function formatHtml()
+    public static function formatHtml(): Format
     {
         return new static('html');
     }
@@ -76,7 +77,7 @@ class Format
      *
      * @return Format
      */
-    public static function formatJson()
+    public static function formatJson(): Format
     {
         return new static('json');
     }
@@ -92,7 +93,7 @@ class Format
      * @param $format
      * @return boolean
      */
-    public static function isValidFormat($format)
+    public static function isValidFormat($format): bool
     {
         if (!$format) {
             return false;
@@ -104,12 +105,12 @@ class Format
     }
 
     /**
-     * @param string $format
+     * @param mixed $format
      */
     private static function assertValidFormat($format)
     {
         if (!is_string($format)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Format must be of type string "%s" given',
                     is_object($format) ? get_class($format) : gettype($format)
@@ -118,7 +119,7 @@ class Format
         }
 
         if (!static::isValidFormat($format)) {
-            throw new \InvalidArgumentException(sprintf('Invalid format "%s"', $format));
+            throw new InvalidArgumentException(sprintf('Invalid format "%s"', $format));
         }
     }
 }

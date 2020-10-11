@@ -16,7 +16,7 @@ class FeUserProvider implements UserProviderInterface
     /**
      * Name of the password column
      */
-    const PASSWORD_COLUMN_NAME = 'tx_rest_apikey';
+    public const PASSWORD_COLUMN_NAME = 'tx_rest_apikey';
 
     /**
      * Returns if the user with the given credentials is valid

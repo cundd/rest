@@ -54,7 +54,7 @@ class LanguageBootstrap
     public function initializeFrontendController(
         TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request
-    ) {
+    ): TypoScriptFrontendController {
         $requestedLanguage = $this->detectRequestedLanguage($frontendController, $request);
 
         $this->setRequestedLanguage($frontendController, $requestedLanguage);

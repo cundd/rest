@@ -138,7 +138,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    public function getSourceKeyToPropertyMap()
+    public function getSourceKeyToPropertyMap(): array
     {
         if (!$this->sourceKeyToPropertyMap) {
             foreach ($this->configurationData['properties'] as $propertyName => $propertyMapping) {

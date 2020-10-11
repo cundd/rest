@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\VirtualObject\Persistence;
 
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 /**
@@ -17,7 +18,7 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function add(VirtualObject $object);
+    public function add(VirtualObject $object): void;
 
     /**
      * Removes the given object from the database
@@ -25,7 +26,7 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function remove(VirtualObject $object);
+    public function remove(VirtualObject $object): void;
 
     /**
      * Updates the given object in the database
@@ -33,14 +34,14 @@ interface RepositoryInterface
      * @param VirtualObject $object
      * @return void
      */
-    public function update(VirtualObject $object);
+    public function update(VirtualObject $object): void;
 
     /**
      * Returns all objects from the database
      *
      * @return array
      */
-    public function findAll();
+    public function findAll(): iterable;
 
     /**
      * Returns the total number objects of this repository.
@@ -57,7 +58,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function removeAll();
+    public function removeAll(): void;
 
     /**
      * Returns the object with the given identifier
@@ -65,7 +66,7 @@ interface RepositoryInterface
      * @param string|int $identifier
      * @return VirtualObject|null
      */
-    public function findByIdentifier($identifier);
+    public function findByIdentifier($identifier): ?VirtualObject;
 
     /**
      * Sets the configuration to use when converting
@@ -79,7 +80,7 @@ interface RepositoryInterface
      * Returns the configuration to use when converting
      *
      * @return ConfigurationInterface
-     * @throws \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException if the configuration is not set
+     * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ConfigurationInterface;
 

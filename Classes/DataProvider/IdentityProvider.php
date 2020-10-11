@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
 
+use Exception;
+use InvalidArgumentException;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 
 class IdentityProvider implements IdentityProviderInterface
@@ -10,7 +12,7 @@ class IdentityProvider implements IdentityProviderInterface
     /**
      * The reflection service
      *
-     * @var \TYPO3\CMS\Extbase\Reflection\ReflectionService
+     * @var ReflectionService
      */
     protected $reflectionService;
 
@@ -24,10 +26,10 @@ class IdentityProvider implements IdentityProviderInterface
         $this->reflectionService = $reflectionService;
     }
 
-    public function getIdentityProperty($modelClass)
+    public function getIdentityProperty(string $modelClass): array
     {
         if (!is_string($modelClass)) {
-            throw new \InvalidArgumentException('Expected argument "modelClass" to be of type string');
+            throw new InvalidArgumentException('Expected argument "modelClass" to be of type string');
         }
 
         // Fetch the first identity property and search the repository for it
@@ -41,7 +43,7 @@ class IdentityProvider implements IdentityProviderInterface
             $property = key($identityProperties);
 
             return [$property, $type];
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return [null, null];
         }
     }

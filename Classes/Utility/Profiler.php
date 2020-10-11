@@ -4,15 +4,16 @@ declare(strict_types=1);
 namespace Cundd\Rest\Utility;
 
 use Cundd\Rest\Utility\Profiler\Run;
+use Psr\Log\LogLevel;
 
 /**
  * A simple profiling utility
  */
 class Profiler
 {
-    const OUTPUT_ECHO = 'echo';
-    const OUTPUT_STDOUT = STDOUT;
-    const OUTPUT_STDERR = STDERR;
+    public const OUTPUT_ECHO = 'echo';
+    public const OUTPUT_STDOUT = STDOUT;
+    public const OUTPUT_STDERR = STDERR;
 
     /**
      * Start time
@@ -64,7 +65,7 @@ class Profiler
      * @param array|string $options Additional options to pass to the profiler. If a string is given it will be used as name
      * @return $this
      */
-    public function start($options = [])
+    public function start($options = []): self
     {
         if (is_string($options)) {
             $this->defaultLabel = $options;
@@ -90,7 +91,7 @@ class Profiler
      * @param string|null $label Optional label for the run
      * @return Run
      */
-    public function collect(string $label = null)
+    public function collect(string $label = null): Run
     {
         $runEndTime = microtime(true);
         $runId = count($this->profilingData);
@@ -130,7 +131,7 @@ class Profiler
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @return string Returns the message
      */
-    public function output($outputHandler = null)
+    public function output($outputHandler = null): string
     {
         return $this->outputProfilingData(
             $this->profilingData,
@@ -144,7 +145,7 @@ class Profiler
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @return string Returns the message
      */
-    public function outputLast($outputHandler = null)
+    public function outputLast($outputHandler = null): string
     {
         $profilingData = $this->profilingData;
 
@@ -169,7 +170,7 @@ class Profiler
      * @param string|null                 $label         Optional label for the run
      * @return Run Returns data of the last run
      */
-    public function collectAndOutput($outputHandler = null, string $label = null)
+    public function collectAndOutput($outputHandler = null, string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->output($outputHandler);
@@ -184,7 +185,7 @@ class Profiler
      * @param string|null                 $label         Optional label for the run
      * @return Run Returns data of the last run
      */
-    public function collectAndOutputLast($outputHandler = null, string $label = null)
+    public function collectAndOutputLast($outputHandler = null, string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->outputLast($outputHandler);
@@ -199,7 +200,7 @@ class Profiler
      * @param string|null                 $label         Optional label for the run
      * @return Run Returns data of the last run
      */
-    public function collectClearAndOutput($outputHandler = null, string $label = null)
+    public function collectClearAndOutput($outputHandler = null, string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->output($outputHandler);
@@ -211,9 +212,9 @@ class Profiler
     /**
      * Return the data of the last profiling run
      *
-     * @return array
+     * @return Run[]
      */
-    public function getProfilingData()
+    public function getProfilingData(): array
     {
         return $this->profilingData;
     }
@@ -245,10 +246,10 @@ class Profiler
     /**
      * Formats the given memory size
      *
-     * @param integer $size
+     * @param float|int $size
      * @return string
      */
-    protected function formatMemory($size)
+    protected function formatMemory($size): string
     {
         $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
@@ -260,7 +261,7 @@ class Profiler
      *
      * @return array
      */
-    protected function getCaller()
+    protected function getCaller(): array
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
         array_shift($backtrace);
@@ -281,9 +282,8 @@ class Profiler
      * @param resource|object|bool $defaultOutputHandler
      * @return Profiler
      */
-    public static function create($defaultOutputHandler = STDOUT)
+    public static function create($defaultOutputHandler = STDOUT): self
     {
-        /** @var Profiler $instance */
         $instance = new static($defaultOutputHandler);
         $instance->start();
 
@@ -296,11 +296,10 @@ class Profiler
      * @param resource|object|bool $defaultOutputHandler
      * @return Profiler
      */
-    public static function sharedInstance($defaultOutputHandler = STDOUT)
+    public static function sharedInstance($defaultOutputHandler = STDOUT): self
     {
         static $instance = null;
         if (!$instance) {
-            /** @var Profiler $instance */
             $instance = new static($defaultOutputHandler);
             $instance->start();
         }
@@ -313,7 +312,7 @@ class Profiler
      * @param resource|object|string|null $outputHandler
      * @return string
      */
-    private function outputProfilingData(array $profilingData, $outputHandler)
+    private function outputProfilingData(array $profilingData, $outputHandler): string
     {
         if (empty($profilingData)) {
             return '';
@@ -323,7 +322,6 @@ class Profiler
 
         $messageParts = [];
         foreach ($profilingData as $index => $currentRunData) {
-            /** @var Run $currentRunData */
             $runDurationMs = $currentRunData->runDuration * 1000;
             $requestDurationMs = $currentRunData->requestDuration * 1000;
 
@@ -359,7 +357,7 @@ class Profiler
         } elseif (self::OUTPUT_ECHO === $effectiveOutputHandler) {
             echo $message;
         } elseif (is_object($effectiveOutputHandler) && method_exists($effectiveOutputHandler, 'log')) {
-            $effectiveOutputHandler->log(\Psr\Log\LogLevel::DEBUG, $message);
+            $effectiveOutputHandler->log(LogLevel::DEBUG, $message);
         }
 
         return $message;
@@ -369,7 +367,7 @@ class Profiler
     {
         return array_reduce(
             $this->profilingData,
-            function ($carry, Run $item) {
+            function ($carry, Run $item): int {
                 $labelLength = strlen($item->label);
 
                 return $labelLength > $carry ? $labelLength : $carry;

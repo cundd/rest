@@ -20,7 +20,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     /**
      * Access identifier to specify which methods DO NOT require authorization
      */
-    const ACCESS_NOT_REQUIRED = ['OPTIONS'];
+    public const ACCESS_NOT_REQUIRED = ['OPTIONS'];
 
     /**
      * @var ConfigurationProviderInterface
@@ -62,7 +62,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @param ResourceType $resourceType
      * @return ResourceConfiguration
      */
-    public function getConfigurationForResourceType(ResourceType $resourceType)
+    public function getConfigurationForResourceType(ResourceType $resourceType): ResourceConfiguration
     {
         return $this->configurationProvider->getResourceConfiguration($resourceType);
     }
@@ -85,7 +85,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      * @param RestRequestInterface $request
      * @return bool
      */
-    protected function requiresAuthorization($request): bool
+    protected function requiresAuthorization(RestRequestInterface $request): bool
     {
         return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
     }

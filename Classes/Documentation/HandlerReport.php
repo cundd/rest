@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Documentation;
-
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -30,9 +28,9 @@ class HandlerReport implements ReportInterface
     /**
      * HandlerReport constructor
      *
-     * @param ReportController  $reportController
-     * @param ViewInterface     $view
-     * @param HandlerDescriptor $handlerDescriptor
+     * @param ReportController       $reportController
+     * @param ViewInterface|null     $view
+     * @param HandlerDescriptor|null $handlerDescriptor
      */
     public function __construct(
         /** @noinspection PhpUnusedParameterInspection */
@@ -50,7 +48,7 @@ class HandlerReport implements ReportInterface
      *
      * @return string A reports rendered HTML
      */
-    public function getReport()
+    public function getReport(): string
     {
         $this->view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('rest') . 'Resources/Private/Templates/HandlerReport.html'

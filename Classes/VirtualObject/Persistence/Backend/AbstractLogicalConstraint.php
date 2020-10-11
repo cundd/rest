@@ -20,7 +20,7 @@ abstract class AbstractLogicalConstraint implements ConstraintInterface
         $this->constraints = $constraints;
     }
 
-    public static function build(ConstraintInterface ...$constraints)
+    public static function build(ConstraintInterface ...$constraints): self
     {
         return new static($constraints);
     }

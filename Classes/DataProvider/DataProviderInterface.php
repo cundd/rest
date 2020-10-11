@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Exception;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
@@ -15,7 +16,7 @@ interface DataProviderInterface
      * @param ResourceType $resourceType API resource type to get the repository for
      * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
-    public function fetchAllModels(ResourceType $resourceType);
+    public function fetchAllModels(ResourceType $resourceType): iterable;
 
     /**
      * Return the number of all Domain Models for the given API resource type
@@ -34,7 +35,7 @@ interface DataProviderInterface
      * @param ResourceType     $resourceType API resource type to get the repository for
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
-    public function fetchModel($identifier, ResourceType $resourceType);
+    public function fetchModel($identifier, ResourceType $resourceType): ?object;
 
     /**
      * Create a new Domain Model with the given data
@@ -45,7 +46,7 @@ interface DataProviderInterface
      *
      * @param array        $data         Data of the new model
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return object|DomainObjectInterface|\Exception Return the created Model on success otherwise an Exception
+     * @return object|DomainObjectInterface|Exception Return the created Model on success otherwise an Exception
      */
     public function createModel(array $data, ResourceType $resourceType);
 
@@ -54,20 +55,17 @@ interface DataProviderInterface
      *
      * @param array        $data
      * @param ResourceType $resourceType
-     * @return object|DomainObjectInterface
+     * @return object|DomainObjectInterface|null
      */
-    public function convertIntoModel(array $data, ResourceType $resourceType);
+    public function convertIntoModel(array $data, ResourceType $resourceType): ?object;
 
     /**
-     * Extract the data from the given Model
+     * Extract the data from the given Model or one of it's properties
      *
-     * @param object|DomainObjectInterface $model
+     * @param mixed $model
      * @return array|null|int|bool|string|float
      */
-    public function getModelData(
-        /*(?object)*/
-        $model
-    );
+    public function getModelData($model);
 
     /**
      * Return the property data from the given Model
@@ -77,8 +75,7 @@ interface DataProviderInterface
      * @return mixed
      */
     public function getModelProperty(
-        /*(object)*/
-        $model,
+        object $model,
         string $propertyParameter
     );
 
@@ -90,8 +87,7 @@ interface DataProviderInterface
      * @return void
      */
     public function saveModel(
-        /*(?object)*/
-        $model,
+        object $model,
         ResourceType $resourceType
     ): void;
 
@@ -103,8 +99,7 @@ interface DataProviderInterface
      * @return void
      */
     public function removeModel(
-        /*(?object)*/
-        $model,
+        object $model,
         ResourceType $resourceType
     ): void;
 }

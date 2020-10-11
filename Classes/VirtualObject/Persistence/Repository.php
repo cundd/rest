@@ -34,9 +34,9 @@ class Repository implements RepositoryInterface
     /**
      * Repository constructor.
      *
-     * @param ObjectManager          $objectManager
-     * @param PersistenceManager     $persistenceManager
-     * @param ConfigurationInterface $configuration
+     * @param ObjectManager               $objectManager
+     * @param PersistenceManager          $persistenceManager
+     * @param ConfigurationInterface|null $configuration
      */
     public function __construct(
         ObjectManager $objectManager,
@@ -53,22 +53,22 @@ class Repository implements RepositoryInterface
         return $this->persistenceManager->registerObject($object);
     }
 
-    public function add(VirtualObject $object)
+    public function add(VirtualObject $object): void
     {
         $this->persistenceManager->add($object);
     }
 
-    public function update(VirtualObject $object)
+    public function update(VirtualObject $object): void
     {
         $this->persistenceManager->update($object);
     }
 
-    public function remove(VirtualObject $object)
+    public function remove(VirtualObject $object): void
     {
         $this->persistenceManager->remove($object);
     }
 
-    public function findAll()
+    public function findAll(): iterable
     {
         return $this->createQuery()->execute();
     }
@@ -78,14 +78,14 @@ class Repository implements RepositoryInterface
         return $this->createQuery()->count();
     }
 
-    public function removeAll()
+    public function removeAll(): void
     {
         foreach ($this->findAll() as $object) {
             $this->remove($object);
         }
     }
 
-    public function findByIdentifier($identifier)
+    public function findByIdentifier($identifier): ?VirtualObject
     {
         return $this->persistenceManager->getObjectByIdentifier($identifier);
     }

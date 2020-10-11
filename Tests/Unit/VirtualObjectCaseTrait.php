@@ -34,7 +34,7 @@ trait VirtualObjectCaseTrait
      *
      * @return array
      */
-    protected function getTestConfigurationData()
+    protected function getTestConfigurationData(): array
     {
         if ($this->testConfiguration) {
             return $this->testConfiguration;
@@ -47,7 +47,7 @@ trait VirtualObjectCaseTrait
     /**
      * @return string
      */
-    protected function getTestConfigurationJSONString()
+    protected function getTestConfigurationJSONString(): string
     {
         return <<<CONFIGURATION
 {

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
  * Session Manager
@@ -37,7 +38,7 @@ class SessionManager implements SingletonInterface
      * @param string $key
      * @return mixed
      */
-    public function valueForKey($key)
+    public function valueForKey(string $key)
     {
         $this->initialize();
 
@@ -51,7 +52,7 @@ class SessionManager implements SingletonInterface
      * @param mixed  $value
      * @return $this
      */
-    public function setValueForKey($key, $value)
+    public function setValueForKey(string $key, $value): self
     {
         $frontendUserAuthentication = $this->getFrontendUserAuthentication();
         $frontendUserAuthentication->setKey('ses', self::KEY_PREFIX . $key, $value);
@@ -61,9 +62,9 @@ class SessionManager implements SingletonInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     * @return FrontendUserAuthentication
      */
-    private function getFrontendUserAuthentication()
+    private function getFrontendUserAuthentication(): object
     {
         return $GLOBALS['TSFE']->fe_user;
     }

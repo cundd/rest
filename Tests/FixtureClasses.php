@@ -135,7 +135,6 @@ class MyNestedModel extends BaseModel
         $this->date = new \DateTime();
     }
 
-
     /**
      * @param string $base
      */
@@ -223,8 +222,11 @@ class MyNestedJsonSerializeModel extends MyNestedModel
 class SimpleClass
 {
     public $firstName;
+
     public $lastName;
+
     protected $uid;
+
     protected $pid;
 
     public function __construct(array $properties = [])

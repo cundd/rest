@@ -66,7 +66,7 @@ interface CrudHandlerInterface extends HandlerInterface
      * @param RestRequestInterface $request
      * @return array Returns all Models
      */
-    public function listAll(RestRequestInterface $request);
+    public function listAll(RestRequestInterface $request): iterable;
 
     /**
      * Count all Models
@@ -74,5 +74,5 @@ interface CrudHandlerInterface extends HandlerInterface
      * @param RestRequestInterface $request
      * @return int Returns the number of models
      */
-    public function countAll(RestRequestInterface $request);
+    public function countAll(RestRequestInterface $request): int;
 }

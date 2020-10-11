@@ -11,5 +11,5 @@ interface IdentityProviderInterface
      * @param string $modelClass
      * @return array Returns `[string $name, string $type]` on success, `[null, null]` otherwise
      */
-    public function getIdentityProperty($modelClass);
+    public function getIdentityProperty(string $modelClass): array;
 }

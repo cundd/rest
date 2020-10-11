@@ -15,7 +15,7 @@ use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 class ConfigurationFactory implements SingletonInterface
 {
     /**
-     * @var \Cundd\Rest\Configuration\TypoScriptConfigurationProvider
+     * @var ConfigurationProviderInterface
      */
     protected $configurationProvider;
 
@@ -46,8 +46,10 @@ class ConfigurationFactory implements SingletonInterface
      * @param ResourceType $resourceType
      * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromArrayForResourceType($configurationArray, ResourceType $resourceType)
-    {
+    public function createFromArrayForResourceType(
+        array $configurationArray,
+        ResourceType $resourceType
+    ): ?ConfigurationInterface {
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
         if (
             isset($configurationArray[$resourceTypeString])
@@ -116,8 +118,10 @@ class ConfigurationFactory implements SingletonInterface
      * @param        $resourceType
      * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createFromJsonForResourceType($jsonString, ResourceType $resourceType)
-    {
+    public function createFromJsonForResourceType(
+        string $jsonString,
+        ResourceType $resourceType
+    ): ?ConfigurationInterface {
         $configurationData = json_decode($jsonString, true);
         if ($configurationData) {
             return $this->createFromArrayForResourceType(
@@ -135,7 +139,7 @@ class ConfigurationFactory implements SingletonInterface
      * @param array $configurationData
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
-    public function createWithConfigurationData($configurationData): ConfigurationInterface
+    public function createWithConfigurationData(array $configurationData): ConfigurationInterface
     {
         $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
@@ -152,7 +156,7 @@ class ConfigurationFactory implements SingletonInterface
      * @param array $rawConfiguration
      * @return array
      */
-    private function normalizedVirtualObjectConfigurations(array $rawConfiguration)
+    private function normalizedVirtualObjectConfigurations(array $rawConfiguration): array
     {
         $normalizedConfiguration = [];
         foreach ($rawConfiguration as $resourceType => $configuration) {
@@ -168,7 +172,7 @@ class ConfigurationFactory implements SingletonInterface
      * @param array $mapping
      * @return array
      */
-    public static function preparePropertyMapping($mapping)
+    public static function preparePropertyMapping(array $mapping): array
     {
         /**
          * Remove the last character form the property key (used when imported from TypoScript)

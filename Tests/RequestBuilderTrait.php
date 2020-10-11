@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests;
 
-
 use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -14,24 +13,24 @@ use Zend\Diactoros\Uri;
 trait RequestBuilderTrait
 {
     /**
-     * @param string $url
-     * @param string $method
-     * @param array  $params
-     * @param array  $headers
-     * @param mixed  $rawBody
-     * @param array  $parsedBody
-     * @param string $format
+     * @param string      $url
+     * @param string|null $method
+     * @param array       $params
+     * @param array       $headers
+     * @param mixed       $rawBody
+     * @param array|null  $parsedBody
+     * @param string|null $format
      * @return RestRequestInterface
      */
     public static function buildTestRequest(
-        $url,
-        $method = null,
+        string $url,
+        ?string $method = null,
         array $params = [],
         array $headers = [],
         $rawBody = null,
-        $parsedBody = null,
-        $format = null
-    ) {
+        ?array $parsedBody = null,
+        ?string $format = null
+    ): RestRequestInterface {
         $path = self::getPathFromUri($url);
         $resourceType = new ResourceType((string)strtok($path, '/'));
 
@@ -62,18 +61,12 @@ trait RequestBuilderTrait
         return new Request($originalRequest, $uri->withPath($path), $path, $resourceType, new Format($format));
     }
 
-    /**
-     * @param $url
-     * @return bool|string
-     */
-    private static function getPathFromUri($url)
+    private static function getPathFromUri(string $url): string
     {
         if ('http://' === substr($url, 0, 7) || 'https://' === substr($url, 0, 8)) {
-            $path = substr(strstr(substr($url, 8), '/'), 0);
+            return (string)substr(strstr(substr($url, 8), '/'), 0);
         } else {
-            $path = $url;
+            return $url;
         }
-
-        return $path;
     }
 }

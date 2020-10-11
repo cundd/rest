@@ -19,7 +19,7 @@ class CustHandler implements HandlerInterface, HandlerDescriptionInterface
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription():string
     {
         return 'Example Custom Handler';
     }

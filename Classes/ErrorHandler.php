@@ -23,7 +23,7 @@ class ErrorHandler
      *
      * @return bool
      */
-    public static function getShowDebugInformation()
+    public static function getShowDebugInformation(): bool
     {
         return DebugUtility::allowDebugInformation();
     }

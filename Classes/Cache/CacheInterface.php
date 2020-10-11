@@ -7,7 +7,6 @@ use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-
 /**
  * The class caches responses of requests
  */
@@ -56,7 +55,7 @@ interface CacheInterface
      *
      * @return int
      */
-    public function getCacheLifetime();
+    public function getCacheLifetime(): int;
 
     /**
      * Set the lifetime defined in the expires header
@@ -71,5 +70,5 @@ interface CacheInterface
      *
      * @return int
      */
-    public function getExpiresHeaderLifetime();
+    public function getExpiresHeaderLifetime(): int;
 }

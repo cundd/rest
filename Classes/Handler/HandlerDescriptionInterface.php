@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Handler;
-
 
 interface HandlerDescriptionInterface
 {
@@ -12,5 +10,5 @@ interface HandlerDescriptionInterface
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 }

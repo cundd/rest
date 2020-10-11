@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Http\RestRequestInterface;
+use SplObjectStorage;
 
 /**
  * Authentication Provider that tests a collection of Authentication Providers
@@ -13,24 +14,26 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Collection of Authentication Providers
      *
-     * @var \SplObjectStorage<AuthenticationProviderInterface>
+     * @var SplObjectStorage<AuthenticationProviderInterface>
      */
     protected $providers;
 
     /**
      * Create a new Authentication Provider collection with the given providers
      *
-     * @param AuthenticationProviderInterface[]|\SplObjectStorage<AuthenticationProviderInterface> $providers
+     * @param AuthenticationProviderInterface[]|SplObjectStorage<AuthenticationProviderInterface> $providers
      */
     public function __construct($providers)
     {
-        $this->providers = new \SplObjectStorage();
         if (is_array($providers)) {
+            $this->providers = new SplObjectStorage();
             foreach ($providers as $provider) {
                 $this->addProvider($provider);
             }
-        } elseif ($providers instanceof \SplObjectStorage) {
+        } elseif ($providers instanceof SplObjectStorage) {
             $this->providers = $providers;
+        } else {
+            $this->providers = new SplObjectStorage();
         }
     }
 
@@ -55,10 +58,10 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Sets the used Authentication Providers
      *
-     * @param \SplObjectStorage $providers
+     * @param SplObjectStorage $providers
      * @return $this
      */
-    public function setProviders($providers)
+    public function setProviders(SplObjectStorage $providers): self
     {
         $this->providers = $providers;
 
@@ -68,9 +71,9 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Returns the used Authentication Providers
      *
-     * @return \SplObjectStorage
+     * @return SplObjectStorage
      */
-    public function getProviders()
+    public function getProviders(): SplObjectStorage
     {
         return $this->providers;
     }
@@ -81,7 +84,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param AuthenticationProviderInterface $provider
      * @return $this
      */
-    public function addProvider(AuthenticationProviderInterface $provider)
+    public function addProvider(AuthenticationProviderInterface $provider): self
     {
         $this->providers->attach($provider);
 
@@ -94,7 +97,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      * @param AuthenticationProviderInterface $provider
      * @return $this
      */
-    public function removeProvider(AuthenticationProviderInterface $provider)
+    public function removeProvider(AuthenticationProviderInterface $provider): self
     {
         $this->providers->detach($provider);
 

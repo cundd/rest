@@ -1,13 +1,12 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Documentation\Handler;
-
 
 use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Http\Stream;
@@ -25,22 +24,22 @@ class DummyRequest implements RestRequestInterface
         $this->resourceType = $resourceType;
     }
 
-    public function getOriginalRequest()
+    public function getOriginalRequest(): ServerRequestInterface
     {
         return $this;
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return (string)$this->resourceType;
     }
 
-    public function getResourceType()
+    public function getResourceType(): ResourceType
     {
         return $this->resourceType;
     }
 
-    public function withResourceType(ResourceType $resourceType)
+    public function withResourceType(ResourceType $resourceType): RestRequestInterface
     {
         return clone $this;
     }
@@ -50,32 +49,32 @@ class DummyRequest implements RestRequestInterface
         return null;
     }
 
-    public function getFormat()
+    public function getFormat(): Format
     {
         return Format::defaultFormat();
     }
 
-    public function isPreflight()
+    public function isPreflight(): bool
     {
         return false;
     }
 
-    public function isWrite()
+    public function isWrite(): bool
     {
         return false;
     }
 
-    public function isRead()
+    public function isRead(): bool
     {
         return false;
     }
 
-    public function getRootObjectKey()
+    public function getRootObjectKey(): string
     {
         return '';
     }
 
-    public function withFormat(Format $format)
+    public function withFormat(Format $format): RestRequestInterface
     {
         return clone $this;
     }

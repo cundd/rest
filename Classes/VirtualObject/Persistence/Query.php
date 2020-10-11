@@ -81,7 +81,7 @@ class Query implements QueryInterface
         $this->persistenceManager = $persistenceManager;
     }
 
-    public function execute()
+    public function execute(): iterable
     {
         return $this->persistenceManager->getObjectDataByQuery($this);
     }

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-
 use InvalidArgumentException;
 
 abstract class ParameterType
@@ -21,9 +20,9 @@ abstract class ParameterType
 
     /**
      * @param string $input
-     * @return string
+     * @return string|null
      */
-    private static function createParameter(string $input)
+    private static function createParameter(string $input): ?string
     {
         $startsWithBracket = substr($input, 0, 1) === '{';
         $endsWithBracket = substr($input, -1) === '}';
@@ -68,11 +67,11 @@ abstract class ParameterType
      * @param $pattern
      * @return array
      */
-    private static function splitPattern(string $pattern)
+    private static function splitPattern(string $pattern): array
     {
         return array_reduce(
             explode('/', $pattern),
-            function ($carry, $item) {
+            function (array $carry, string $item): array {
                 return array_merge($carry, explode('.', $item));
             },
             []

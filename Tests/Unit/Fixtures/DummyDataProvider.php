@@ -9,7 +9,7 @@ use RuntimeException;
 
 class DummyDataProvider implements DataProviderInterface
 {
-    public function fetchAllModels(ResourceType $resourceType)
+    public function fetchAllModels(ResourceType $resourceType):iterable
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
@@ -19,7 +19,7 @@ class DummyDataProvider implements DataProviderInterface
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType)
+    public function fetchModel($identifier, ResourceType $resourceType):object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
@@ -29,7 +29,7 @@ class DummyDataProvider implements DataProviderInterface
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType)
+    public function convertIntoModel(array $data, ResourceType $resourceType):?object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }

@@ -5,9 +5,9 @@ namespace Cundd\Rest\Router;
 
 interface ParameterTypeInterface
 {
-    const INTEGER = 'integer';
-    const FLOAT = 'float';
-    const SLUG = 'slug';
-    const BOOLEAN = 'boolean';
-    const RAW = 'raw';
+    public const INTEGER = 'integer';
+    public const FLOAT = 'float';
+    public const SLUG = 'slug';
+    public const BOOLEAN = 'boolean';
+    public const RAW = 'raw';
 }

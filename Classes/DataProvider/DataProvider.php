@@ -10,6 +10,7 @@ use Cundd\Rest\Exception\InvalidPropertyException;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use Cundd\Rest\SingletonInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -17,8 +18,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
+use TYPO3\CMS\Extbase\Persistence\RepositoryInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
+use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 use function sprintf;
 
@@ -28,12 +31,12 @@ use function sprintf;
 class DataProvider implements DataProviderInterface, ClassLoadingInterface, SingletonInterface
 {
     /**
-     * @var \Cundd\Rest\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var \Cundd\Rest\DataProvider\ExtractorInterface
+     * @var ExtractorInterface
      */
     protected $extractor;
 
@@ -55,7 +58,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param ObjectManagerInterface    $objectManager
      * @param ExtractorInterface        $extractor
      * @param IdentityProviderInterface $identityProvider
-     * @param LoggerInterface           $logger
+     * @param LoggerInterface|null      $logger
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -76,7 +79,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     public function getRepositoryClassForResourceType(ResourceType $resourceType): string
     {
-        list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
         $repositoryClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
         if (!class_exists($repositoryClass)) {
             $repositoryClass = 'Tx_' . $extension . '_Domain_Repository_' . $model . 'Repository';
@@ -90,13 +93,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         $repository = null;
         $exception = null;
-        /** @var \TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
+        /** @var RepositoryInterface|null $repository */
         try {
             $repository = $this->objectManager->get($repositoryClass);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
         }
         if (!$repository) {
-            list($vendor, $extension, $model) = Utility::getClassNamePartsForResourceType($resourceType);
+            [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
 
             $triedClasses = sprintf(
                 'Tried the following classes: "%s" and "%s"',
@@ -137,7 +140,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return '';
     }
 
-    public function fetchAllModels(ResourceType $resourceType)
+    public function fetchAllModels(ResourceType $resourceType): iterable
     {
         return $this->getRepositoryForResourceType($resourceType)->findAll();
     }
@@ -147,7 +150,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->getRepositoryForResourceType($resourceType)->countAll();
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType)
+    public function fetchModel($identifier, ResourceType $resourceType): ?object
     {
         if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
@@ -174,7 +177,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->convertIntoModel($data, $resourceType);
     }
 
-    public function getModelProperty($model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter)
     {
         InvalidArgumentException::assertObject($model);
         $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
@@ -201,9 +204,8 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function saveModel($model, ResourceType $resourceType): void
+    public function saveModel(object $model, ResourceType $resourceType): void
     {
-        InvalidArgumentException::assertObjectOrNull($model);
         $repository = $this->getRepositoryForResourceType($resourceType);
         if ($this->isModelNew($model)) {
             $repository->add($model);
@@ -214,21 +216,19 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     }
 
     /**
-     * @param object|null  $updatedModel
+     * @param object  $updatedModel
      * @param ResourceType $resourceType
      */
     public function updateModel(
-        /*(?object)*/
-        $updatedModel,
+        object $updatedModel,
         ResourceType $resourceType
     ): void {
-        InvalidArgumentException::assertObjectOrNull($updatedModel);
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->update($updatedModel);
         $this->persistAllChanges();
     }
 
-    public function removeModel($model, ResourceType $resourceType): void
+    public function removeModel(object $model, ResourceType $resourceType): void
     {
         InvalidArgumentException::assertObjectOrNull($model);
         $repository = $this->getRepositoryForResourceType($resourceType);
@@ -236,7 +236,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType)
+    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
     {
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         try {
@@ -271,7 +271,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * @param mixed        $identifier   The identifier
      * @param ResourceType $resourceType The resource type
-     * @return int|null Returns the UID or NULL if the object couldn't be found
+     * @return int|string|null Returns the UID or NULL if the object couldn't be found
      */
     protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
     {
@@ -298,12 +298,12 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * Return the configuration for property mapping
      *
      * @param ResourceType|string $resourceType
-     * @return \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration
+     * @return PropertyMappingConfiguration
      */
     protected function getPropertyMappingConfigurationForResourceType(
         /** @noinspection PhpUnusedParameterInspection */
         ResourceType $resourceType
-    ) {
+    ): object {
         return $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
     }
 
@@ -314,7 +314,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param ResourceType|string $resourceType
      * @return null|object
      */
-    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
+    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType): ?object
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
 
@@ -324,7 +324,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             return $object;
         }
 
-        list($property, $type) = $this->identityProvider->getIdentityProperty(
+        [$property, $type] = $this->identityProvider->getIdentityProperty(
             $this->getModelClassForResourceType($resourceType)
         );
 
@@ -375,7 +375,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * @return LoggerInterface
      */
-    protected function getLogger()
+    protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
             $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
@@ -387,7 +387,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * @param $exception
      */
-    protected function logException(\Exception $exception)
+    protected function logException(Exception $exception)
     {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
         $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
@@ -399,10 +399,8 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * @param object|DomainObjectInterface $model
      * @return bool
      */
-    protected function isModelNew(
-        /*(object)*/
-        $model
-    ): bool {
+    protected function isModelNew(object $model): bool
+    {
         if ($model instanceof DomainObjectInterface) {
             return $model->_isNew();
         }
