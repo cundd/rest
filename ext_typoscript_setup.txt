@@ -1,5 +1,14 @@
 plugin.tx_rest.settings {
     paths {
+        greeting {
+            path = greeting
+            read = allow
+            write = deny
+            cacheLifetime = -1
+            handlerClass = \Cundd\Rest\Handler\GreetingHandler
+            dataProviderClass = \Cundd\Rest\DataProvider\DataProviderInterface
+        }
+
         all {
             path = all
             read = deny
