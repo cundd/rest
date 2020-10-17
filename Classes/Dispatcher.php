@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -168,6 +169,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @param RestRequestInterface $request
      * @return ResponseInterface
+     * @deprecated will be removed in 6.0
      */
     public function greet(RestRequestInterface $request): ResponseInterface
     {
@@ -193,7 +195,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * Returns the shared dispatcher instance
      *
      * @return Dispatcher
-     * @deprecated utilize dependency injection instead
+     * @deprecated utilize dependency injection instead. Will be removed in 6.0
      */
     public static function getSharedDispatcher()
     {
@@ -254,7 +256,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $requestPath = $request->getPath();
         if (!$requestPath || $requestPath === '/') {
-            return $this->greet($request);
+            $request = $request->withResourceType(new ResourceType('greeting'));
         }
 
         // Checks if the request needs authentication
