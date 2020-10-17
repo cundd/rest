@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
-use Cundd\Rest\Bootstrap\Core;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Log\LoggerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
@@ -72,14 +70,15 @@ class BootstrapDispatcher
      * Bootstrap the TYPO3 environment
      *
      * @param ServerRequestInterface $request
-     * @throws ServiceUnavailableException
      */
     private function bootstrap(ServerRequestInterface $request)
     {
         if (!$this->isInitialized) {
             $this->initializeObjectManager();
 
-            $coreBootstrap = $this->objectManager->get(Core::class);
+            $coreBootstrapFactory = $this->objectManager->get(Bootstrap\CoreBootstrapFactory::class);
+
+            $coreBootstrap = $coreBootstrapFactory->build();
             $coreBootstrap->initialize($request);
 
             $this->initializeConfiguration($this->configuration);
