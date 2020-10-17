@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2013-11-28T11:34:19Z" product-name="rest">
+    <file source-language="en" target-language="da" datatype="plaintext" original="messages" date="2013-11-28T11:34:19Z"
+          product-name="rest">
         <header/>
         <body>
             <trans-unit id="message.greeting">
                 <source>What's up?</source>
+                <target>Hvad så?</target>
             </trans-unit>
         </body>
     </file>
