@@ -40,11 +40,11 @@ class DataProviderTest extends AbstractCase
         parent::setUp();
 
         require_once __DIR__ . '/../../FixtureClasses.php';
-        if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
-            class_alias(MyModel::class, 'Tx_MyExt_Domain_Model_MyModel');
+        if (!class_exists('MyExt\\Domain\\Model\\MyModel', false)) {
+            class_alias(MyModel::class, 'MyExt\\Domain\\Model\\MyModel');
         }
-        if (!class_exists('Tx_MyExt_Domain_Repository_MyModelRepository', false)) {
-            class_alias(MyModelRepository::class, 'Tx_MyExt_Domain_Repository_MyModelRepository');
+        if (!class_exists('MyExt\\Domain\\Repository\\MyModelRepository', false)) {
+            class_alias(MyModelRepository::class, 'MyExt\\Domain\\Repository\\MyModelRepository');
         }
 
         if (!class_exists('MyExt\\Domain\\Model\\MySecondModel', false)) {
