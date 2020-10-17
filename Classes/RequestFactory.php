@@ -205,9 +205,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         }
 
         $path = $this->removePathPrefix($path, '/' . trim((string)$pathPrefix, '/'));
-        $siteLanguagePrefix = SiteLanguageUtility::detectSiteLanguagePrefix($request);
+        $path = $this->removePathPrefix($path, '/rest/');
 
-        return $this->removePathPrefix($path, $siteLanguagePrefix . 'rest/');
+        $siteLanguagePrefix = SiteLanguageUtility::detectSiteLanguagePrefix($request);
+        $path = $this->removePathPrefix($path, $siteLanguagePrefix . 'rest/');
+
+        return $path;
     }
 
     /**
