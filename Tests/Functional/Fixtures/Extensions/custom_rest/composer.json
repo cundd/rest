@@ -1,0 +1,17 @@
+{
+  "name": "cundd/custom-rest",
+  "type": "typo3-cms-extension",
+  "description": "Extension to show how to use the REST extension as Boilerplate",
+  "require": {
+    "typo3/cms-core": ">=6.0.0"
+  },
+  "replace": {
+    "custom_rest": "self.version",
+    "typo3-ter/custom-rest": "self.version"
+  },
+  "autoload": {
+    "psr-4": {
+      "Cundd\\CustomRest\\": "Classes/"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2014-05-24T12:43:48Z"
+          product-name="custom_rest">
+        <header/>
+        <body>
+            <trans-unit id="tx_customrest_domain_model_person">
+                <source>Person</source>
+                <target>Person</target>
+            </trans-unit>
+            <trans-unit id="tx_customrest_domain_model_person.first_name">
+                <source>First Name</source>
+                <target>Vorname</target>
+            </trans-unit>
+            <trans-unit id="tx_customrest_domain_model_person.last_name">
+                <source>Last Name</source>
+                <target>Nachname</target>
+            </trans-unit>
+            <trans-unit id="tx_customrest_domain_model_person.birthday">
+                <source>Birthday</source>
+                <target>Geburtdatum</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
