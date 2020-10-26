@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual;
 
+use InvalidArgumentException;
+use RuntimeException;
+use stdClass;
+use UnexpectedValueException;
+
 class HttpClient
 {
     private $verbose;
@@ -29,10 +34,10 @@ class HttpClient
     public function __construct($verbose = false, $baseUrl = '')
     {
         if (!is_bool($verbose)) {
-            throw new \InvalidArgumentException('Expected argument "verbose" to be of type boolean');
+            throw new InvalidArgumentException('Expected argument "verbose" to be of type boolean');
         }
         if (!is_string($baseUrl) && !(is_object($baseUrl) && method_exists($baseUrl, '__toString'))) {
-            throw new \InvalidArgumentException('Expected argument "baseUrl" to be of type string');
+            throw new InvalidArgumentException('Expected argument "baseUrl" to be of type string');
         }
         $this->verbose = (bool)$verbose;
         $this->baseUrl = (string)$baseUrl;
@@ -63,10 +68,10 @@ class HttpClient
         $response = $response->withParsedBody(json_decode($response->getBody(), true));
         if ($response->getParsedBody() === null) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-                . substr($response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+                . substr($response->getBody(), 0, (int)getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
                 . '------------------------------------' . PHP_EOL
                 . $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
-            throw new \UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);
+            throw new UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);
         }
 
         return $response;
@@ -103,7 +108,7 @@ class HttpClient
             if (is_string($basicAuth)) {
                 $options[CURLOPT_USERPWD] = $basicAuth;
             } else {
-                throw new \InvalidArgumentException('Expected argument "basicAuth" to be of type string');
+                throw new InvalidArgumentException('Expected argument "basicAuth" to be of type string');
             }
         }
 
@@ -217,13 +222,13 @@ class HttpClient
 
         foreach ($headerLines as $i => $line) {
             if ($i === 0) {
-                list($httpCode, $rawStatusCode, $statusPhrase) = explode(' ', $line, 3);
+                [$httpCode, $rawStatusCode, $statusPhrase] = explode(' ', $line, 3);
                 $statusCode = intval($rawStatusCode);
                 $headers['status_code'] = [$statusCode];
                 $headers['http_code'] = [$httpCode];
                 $headers['status_phrase'] = [$statusPhrase];
             } else {
-                list($key, $value) = explode(': ', $line);
+                [$key, $value] = explode(': ', $line);
 
                 if (!isset($headers[$key])) {
                     $headers[$key] = [$value];
@@ -265,10 +270,10 @@ class HttpClient
     }
 
     /**
-     * @param resource        $curlClient
-     * @param array|\stdClass $requestData
+     * @param resource       $curlClient
+     * @param array|stdClass $requestData
      * @return HttpResponse
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private function send($curlClient, $requestData)
     {
@@ -290,7 +295,7 @@ class HttpClient
         curl_close($curlClient);
 
         if ($error) {
-            throw new \RuntimeException($error);
+            throw new RuntimeException($error);
         }
 
         return new HttpResponse(

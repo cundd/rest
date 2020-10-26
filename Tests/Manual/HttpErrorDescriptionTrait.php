@@ -14,7 +14,7 @@ trait HttpErrorDescriptionTrait
     public static function getErrorDescription(HttpResponse $response)
     {
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr($response->getBody(), 0, getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+            . substr($response->getBody(), 0, (int)getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
             . '------------------------------------';
 
         return sprintf(
