@@ -34,7 +34,6 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
 
     public function show(RestRequestInterface $request): ResponseInterface
     {
-//        var_dump($request->getAttribute('language'));
         if (class_exists(LocalizationUtility::class)) {
             return $this->showTYPO3Greeting($request);
         } else {
@@ -63,6 +62,15 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
      */
     protected function showTYPO3Greeting(RestRequestInterface $request): ResponseInterface
     {
+        // A cleaner way would be to pass the language as argument to the LocalizationUtility, but that may
+        // not be the best for developer experience
+        // $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
+        // $greeting = LocalizationUtility::translate(
+        //     'message.greeting',
+        //     'rest',
+        //     null,
+        //     $siteLanguage ? $siteLanguage->getTypo3Language() : null
+        // );
         $greeting = LocalizationUtility::translate('message.greeting', 'rest');
 
         return $this->responseFactory->createSuccessResponse($greeting, 200, $request);
