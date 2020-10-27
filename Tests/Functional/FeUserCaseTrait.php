@@ -1,13 +1,12 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Tests\Functional;
-
 
 use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Doctrine\DBAL\Exception\NonUniqueFieldNameException;
+use function strpos;
 
 trait FeUserCaseTrait
 {
@@ -27,6 +26,13 @@ trait FeUserCaseTrait
             }
             $duplicateColumnErrorCode = 1060;
             if ($exception->getCode() == $duplicateColumnErrorCode) {
+                return;
+            }
+            $containsDuplicateColumnErrorMessage = false !== strpos(
+                    $exception->getMessage(),
+                    'SQLSTATE[HY000]: General error: 1 duplicate column name: tx_rest_apikey'
+                );
+            if ($containsDuplicateColumnErrorMessage) {
                 return;
             }
             throw $exception;
