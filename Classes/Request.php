@@ -102,26 +102,8 @@ class Request implements ServerRequestInterface, RestRequestInterface
 
     public function getSentData()
     {
-        if ($this->sentData) {
-            return $this->sentData;
-        }
-        $contentTypes = $this->getHeader('content-type');
-        $isFormEncoded = array_reduce(
-            $contentTypes,
-            function ($isFormEncoded, $contentType): bool {
-                if ($isFormEncoded) {
-                    return true;
-                }
-
-                return strpos($contentType, 'application/x-www-form-urlencoded') !== false
-                    || strpos($contentType, 'multipart/form-data') !== false;
-            },
-            false
-        );
-        if ($isFormEncoded) {
-            $this->sentData = $this->getParsedBody();
-        } else {
-            $this->sentData = json_decode((string)$this->getBody(), true);
+        if (!$this->sentData) {
+            $this->sentData = $this->decodeSentData();
         }
 
         return $this->sentData;
@@ -182,5 +164,44 @@ class Request implements ServerRequestInterface, RestRequestInterface
         $this->originalRequest = $request;
 
         return $this;
+    }
+
+    /**
+     * @return array|mixed|object|null
+     */
+    private function decodeSentData()
+    {
+        $contentTypes = $this->getHeader('content-type');
+        $isFormEncoded = array_reduce(
+            $contentTypes,
+            function ($isFormEncoded, $contentType): bool {
+                if ($isFormEncoded) {
+                    return true;
+                }
+
+                return strpos($contentType, 'application/x-www-form-urlencoded') !== false
+                    || strpos($contentType, 'multipart/form-data') !== false;
+            },
+            false
+        );
+
+        // Data was sent form encoded, so we expect it to already be properly parsed
+        if ($isFormEncoded) {
+            return $this->getParsedBody();
+        }
+
+        // We expect the content to be a JSON payload
+        $body = (string)$this->getBody();
+        if ('' === $body || 'null' === $body) {
+            return null;
+        }
+
+        $decodedData = json_decode($body, true);
+        if ($decodedData === null) {
+            // Decoding failed -> fall back to the parsed body
+            return $this->getParsedBody();
+        } else {
+            return $decodedData;
+        }
     }
 }
