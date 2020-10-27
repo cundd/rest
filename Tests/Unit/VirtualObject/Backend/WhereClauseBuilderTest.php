@@ -250,11 +250,11 @@ class WhereClauseBuilderTest extends TestCase
     /**
      * @param $input
      * @dataProvider resolveOperatorWithInvalidValuesDataProvider
-     * @expectedException InvalidOperatorException
      */
     public function testResolveOperatorWithInvalidValues($input)
     {
-        echo WhereClauseBuilder::resolveOperator($input);
+        $this->expectException(InvalidOperatorException::class);
+        WhereClauseBuilder::resolveOperator($input);
     }
 
     public function resolveOperatorWithInvalidValuesDataProvider(): array
