@@ -1,5 +1,6 @@
 <?php
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 if (!defined('TYPO3_MODE')) {
@@ -11,8 +12,10 @@ call_user_func(
         // Register eID
         $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['rest'] = \Cundd\Rest\BootstrapDispatcher::class . '::processRequest';
 
-        // Detect and "hijack" REST requests
-        if (isset($_SERVER['REQUEST_URI'])) {
+        if (isset($_SERVER['REQUEST_URI'])
+            && class_exists(Typo3Version::class)
+            && (new Typo3Version())->getMajorVersion() < 10) {
+            // Detect and "hijack" REST requests
             $restRequestBasePath = (string)(getenv(
                 'TYPO3_REST_REQUEST_BASE_PATH'
             ) ?: getenv(
