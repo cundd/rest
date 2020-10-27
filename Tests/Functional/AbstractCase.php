@@ -9,8 +9,6 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Handler\AuthHandler;
-use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
@@ -67,6 +65,7 @@ class AbstractCase extends FunctionalTestCase
 
     /**
      * @var ObjectManager
+     * @deprecated use buildConfiguredObjectManager() instead
      */
     protected $objectManager;
 
@@ -83,7 +82,6 @@ class AbstractCase extends FunctionalTestCase
         $this->registerAssetCache();
         $this->registerLoggerImplementation();
         $this->objectManager = $this->buildConfiguredObjectManager();
-        $this->configureConfigurationProvider();
     }
 
     protected function tearDown()
@@ -194,7 +192,7 @@ class AbstractCase extends FunctionalTestCase
     /**
      * @return ObjectManagerInterface
      */
-    private function buildConfiguredObjectManager(): ObjectManagerInterface
+    protected function buildConfiguredObjectManager(): ObjectManagerInterface
     {
         $this->initializeIconRegistry();
 
@@ -215,88 +213,6 @@ class AbstractCase extends FunctionalTestCase
         );
 
         return GeneralUtility::makeInstance(ObjectManager::class);
-    }
-
-    protected function configureConfigurationProvider()
-    {
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
-        $configurationProvider->setSettings(
-            [
-                "paths"            => [
-                    // "all" => [
-                    //     "path"         => "all",
-                    //     "read"         => "deny",
-                    //     "write"        => "deny",
-                    //     "handlerClass" => CrudHandler::class,
-                    // ],
-                    //
-                    // "document" => [
-                    //     "path"  => "Document",
-                    //     "read"  => "deny",
-                    //     "write" => "deny",
-                    // ],
-                    //
-                    // "auth" => [
-                    //     "path"         => "auth",
-                    //     "read"         => "allow",
-                    //     "write"        => "allow",
-                    //     "handlerClass" => AuthHandler::class,
-                    // ],
-                ],
-
-                # Define words that should not be converted to singular
-                "singularToPlural" => [
-                    "news"        => "news",
-                    "equipment"   => "equipment",
-                    "information" => "information",
-                    "rice"        => "rice",
-                    "money"       => "money",
-                    "species"     => "species",
-                    "series"      => "series",
-                    "fish"        => "fish",
-                    "sheep"       => "sheep",
-                    "press"       => "press",
-                    "sms"         => "sms",
-                ],
-            ]
-        );
-
-        $this->configurePath(
-            "all",
-            [
-                "path"         => "all",
-                "read"         => "deny",
-                "write"        => "deny",
-                "handlerClass" => CrudHandler::class,
-            ]
-        );
-        $this->configurePath(
-            "document",
-            [
-                "path"  => "Document",
-                "read"  => "deny",
-                "write" => "deny",
-            ]
-        );
-        $this->configurePath(
-            "auth",
-            [
-                "path"         => "auth",
-                "read"         => "allow",
-                "write"        => "allow",
-                "handlerClass" => AuthHandler::class,
-            ]
-        );
-    }
-
-    protected function configurePath(string $path, array $pathConfiguration)
-    {
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $this->objectManager->get(ConfigurationProviderInterface::class);
-        $configuration = $configurationProvider->getSettings();
-        $configuration['paths'][$path] = $pathConfiguration;
-        $configurationProvider->setSettings($configuration);
     }
 
     protected function registerLoggerImplementation()

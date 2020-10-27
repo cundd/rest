@@ -70,7 +70,7 @@
         <lastlogin>1394886395</lastlogin>
         <is_online>1394891237</is_online>
         <tx_extbase_type>0</tx_extbase_type>
-        <tx_rest_apikey>myApiKey</tx_rest_apikey>
+        <tx_rest_apikey>api-key</tx_rest_apikey>
     </fe_users>
     <fe_users>
         <!--<uid>3</uid>-->
@@ -106,7 +106,7 @@
         <lastlogin>1439302329</lastlogin>
         <is_online>1439302329</is_online>
         <tx_extbase_type>0</tx_extbase_type>
-        <tx_rest_apikey>myApiKey</tx_rest_apikey>
+        <tx_rest_apikey>api-key</tx_rest_apikey>
     </fe_users>
     <fe_users>
         <!--<uid>4</uid>-->
@@ -142,7 +142,7 @@
         <lastlogin>1439302466</lastlogin>
         <is_online>1439302466</is_online>
         <tx_extbase_type>0</tx_extbase_type>
-        <tx_rest_apikey>myApiKey</tx_rest_apikey>
+        <tx_rest_apikey>api-key</tx_rest_apikey>
     </fe_users>
     <fe_users>
         <!--<uid>5</uid>-->
@@ -178,7 +178,7 @@
         <lastlogin>1439302466</lastlogin>
         <is_online>1439302466</is_online>
         <tx_extbase_type>0</tx_extbase_type>
-        <tx_rest_apikey>myApiKey</tx_rest_apikey>
+        <tx_rest_apikey>api-key</tx_rest_apikey>
     </fe_users>
     <fe_users>
         <!--<uid>5</uid>-->
@@ -214,6 +214,6 @@
         <lastlogin>1439302466</lastlogin>
         <is_online>1439302466</is_online>
         <tx_extbase_type>0</tx_extbase_type>
-        <tx_rest_apikey>myApiKey</tx_rest_apikey>
+        <tx_rest_apikey>api-key</tx_rest_apikey>
     </fe_users>
 </dataset>

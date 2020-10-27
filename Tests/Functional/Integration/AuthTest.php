@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Tests\Functional\Integration;
-
 
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
@@ -19,7 +17,6 @@ class AuthTest extends AbstractIntegrationCase
     public function setUp()
     {
         parent::setUp();
-        $this->configureUserProvider();
         $this->configureFrontendUserAuthentication();
 
         $this->addApiKeyColumn();
@@ -49,7 +46,7 @@ class AuthTest extends AbstractIntegrationCase
      */
     public function getStatusTest()
     {
-        $response = $this->request('auth/login');
+        $response = $this->buildRequestAndDispatch($this->buildConfiguredObjectManager(), 'auth/login');
 
         $this->assertSame(
             200,
@@ -68,14 +65,17 @@ class AuthTest extends AbstractIntegrationCase
      */
     public function checkLoginJsonTest()
     {
-        $response = $this->request('auth/login', 'POST');
+        $objectManager = $this->buildConfiguredObjectManager();
+        $this->configureUserProvider();
+        $response = $this->buildRequestAndDispatch($objectManager, 'auth/login', 'POST');
         $this->assertSame(
             '{"status":"logged-out"}',
             (string)$response->getBody(),
             $this->getErrorDescription($response)
         );
 
-        $response = $this->request(
+        $response = $this->buildRequestAndDispatch(
+            $objectManager,
             'auth/login',
             'POST',
             ['username' => $this->getApiUser(), 'apikey' => $this->getApiKey()],

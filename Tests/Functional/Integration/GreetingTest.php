@@ -7,13 +7,13 @@ use Nimut\TestingFramework\Http\Response;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Util\PHP\DefaultPhpProcess;
 use Text_Template;
-use TYPO3\CMS\Core\Information\Typo3Version;
-use function class_exists;
 use function json_decode;
 use function var_export;
 
 class GreetingTest extends FunctionalTestCase
 {
+    use ImportPagesTrait;
+
     protected $testExtensionsToLoad = ['typo3conf/ext/rest'];
 
     /**
@@ -25,13 +25,7 @@ class GreetingTest extends FunctionalTestCase
     {
         $this->importDataSet('ntf://Database/sys_language.xml');
         $this->importDataSet('ntf://Database/tt_content.xml');
-
-        if (class_exists(Typo3Version::class) && (new Typo3Version())->getMajorVersion() >= 10) {
-            $this->importDataSet(__DIR__ . '/../Fixtures/pages-modern-typo3.xml');
-        } else {
-            $this->importDataSet('ntf://Database/pages.xml');
-            $this->importDataSet('ntf://Database/pages_language_overlay.xml');
-        }
+        $this->importPages();
 
         // Setup the page with uid 1 and include the TypoScript as sys_template record
         $this->setUpFrontendRootPage(
@@ -86,9 +80,9 @@ class GreetingTest extends FunctionalTestCase
         }
 
         $arguments = [
-            'documentRoot' => $this->getInstancePath(),
-            'requestUrl'   => 'http://localhost' . $path . $additionalParameter,
-            'HTTP_ACCEPT_LANGUAGE'=>'de-DE'
+            'documentRoot'         => $this->getInstancePath(),
+            'requestUrl'           => 'http://localhost' . $path . $additionalParameter,
+            'HTTP_ACCEPT_LANGUAGE' => 'de-DE',
         ];
 
         $template = new Text_Template('ntf://Frontend/Request.tpl');
