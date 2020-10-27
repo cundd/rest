@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests;
 
+use BadMethodCallException;
+use DateTime;
+use JsonSerializable;
+use SplObjectStorage;
+use Traversable;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -10,12 +15,18 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
 ClassBuilderTrait::buildClassIfNotExists(Repository::class);
-ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, \SplObjectStorage::class);
+ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
 ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
+/**
+ * @method getUid()
+ * @method _setProperty(string $name, $value)
+ * @method array _getProperties()
+ */
 class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 {
     protected $uid;
+
     protected $pid;
 
     public function __construct(array $properties = [])
@@ -32,44 +43,55 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
         // Prevent calling GeneralUtility::logDeprecatedFunction();
     }
 
-    /**
-     * Reconstitutes a property. Only for internal use.
-     *
-     * @param string $propertyName
-     * @param mixed  $propertyValue
-     * @return bool
-     */
-    public function _setProperty($propertyName, $propertyValue)
+    public function __call($name, $arguments)
     {
-        if (property_exists($this, $propertyName)) {
-            $this->{$propertyName} = $propertyValue;
+        $getUid = function () {
+            return $this->uid;
+        };
 
-            return true;
-        }
+        /**
+         * Reconstitutes a property. Only for internal use.
+         *
+         * @param string $propertyName
+         * @param mixed  $propertyValue
+         * @return bool
+         */
+        $_setProperty = function ($propertyName, $propertyValue) {
+            if (property_exists($this, $propertyName)) {
+                $this->{$propertyName} = $propertyValue;
 
-        return false;
-    }
-
-    public function getUid()
-    {
-        return $this->uid;
-    }
-
-    /**
-     * Returns a hash map of property names and property values. Only for internal use.
-     *
-     * @return array The properties
-     */
-    public function _getProperties()
-    {
-        $properties = get_object_vars($this);
-        foreach ($properties as $propertyName => $propertyValue) {
-            if ($propertyName[0] === '_') {
-                unset($properties[$propertyName]);
+                return true;
             }
-        }
 
-        return $properties;
+            return false;
+        };
+
+        /**
+         * Returns a hash map of property names and property values. Only for internal use.
+         *
+         * @return array The properties
+         */
+        $_getProperties = function () {
+            $properties = get_object_vars($this);
+            foreach ($properties as $propertyName => $propertyValue) {
+                if ($propertyName[0] === '_') {
+                    unset($properties[$propertyName]);
+                }
+            }
+
+            return $properties;
+        };
+
+        if ($name === 'getUid') {
+            return $getUid();
+        }
+        if ($name === '_setProperty') {
+            return $_setProperty(...$arguments);
+        }
+        if ($name === '_getProperties') {
+            return $_getProperties();
+        }
+        throw new BadMethodCallException();
     }
 }
 
@@ -119,12 +141,12 @@ class MyNestedModel extends BaseModel
     protected $base = 'Base';
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $date = null;
 
     /**
-     * @var \Cundd\Rest\Tests\MyModel
+     * @var MyModel
      */
     protected $child = null;
 
@@ -132,7 +154,7 @@ class MyNestedModel extends BaseModel
     {
         parent::__construct();
         $this->child = new MyModel();
-        $this->date = new \DateTime();
+        $this->date = new DateTime();
     }
 
     /**
@@ -168,7 +190,7 @@ class MyNestedModel extends BaseModel
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      */
     public function setDate($date)
     {
@@ -176,7 +198,7 @@ class MyNestedModel extends BaseModel
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate()
     {
@@ -187,12 +209,12 @@ class MyNestedModel extends BaseModel
 class MyNestedModelWithObjectStorage extends MyNestedModel
 {
     /**
-     * @var ObjectStorage|array|\Traversable
+     * @var ObjectStorage|array|Traversable
      */
     protected $children;
 
     /**
-     * @return ObjectStorage|array|\Traversable
+     * @return ObjectStorage|array|Traversable
      */
     public function getChildren()
     {
@@ -200,7 +222,7 @@ class MyNestedModelWithObjectStorage extends MyNestedModel
     }
 
     /**
-     * @param ObjectStorage|array|\Traversable $children
+     * @param ObjectStorage|array|Traversable $children
      */
     public function setChildren($children)
     {
@@ -239,7 +261,7 @@ class SimpleClass
     }
 }
 
-class SimpleClassJsonSerializable extends SimpleClass implements \JsonSerializable
+class SimpleClassJsonSerializable extends SimpleClass implements JsonSerializable
 {
     function jsonSerialize()
     {
