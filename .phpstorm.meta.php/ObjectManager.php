@@ -8,6 +8,11 @@ namespace PHPSTORM_META {
     );
 
     override(
+        Typo3ObjectManagerInterface::get(0),
+        map([])
+    );
+
+    override(
         \TYPO3\CMS\Extbase\Object\ObjectManager::get(0),
         map([])
     );
