@@ -17,4 +17,14 @@ trait ImportPagesTrait
             $this->importDataSet('ntf://Database/pages_language_overlay.xml');
         }
     }
+
+    public function importPagesWithRootId10()
+    {
+        if (class_exists(Typo3Version::class) && (new Typo3Version())->getMajorVersion() >= 10) {
+            $this->importDataSet(__DIR__ . '/../Fixtures/pages-root-not-1-modern-typo3.xml');
+        } else {
+            $this->importDataSet(__DIR__ . '/../Fixtures/pages-root-not-1.xml');
+            $this->importDataSet(__DIR__ . '/../Fixtures/pages_language_overlay-root-not-1.xml');
+        }
+    }
 }

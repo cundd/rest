@@ -18,10 +18,10 @@ class GreetingTest extends FunctionalTestCase
 
     /**
      * @dataProvider dataProviderTestLanguage
-     * @param string $path
+     * @param string $prefix
      * @param string $expectedMessage
      */
-    public function testLanguage(string $path, string $expectedMessage)
+    public function testLanguage(string $prefix, string $expectedMessage)
     {
         $this->importDataSet('ntf://Database/sys_language.xml');
         $this->importDataSet('ntf://Database/tt_content.xml');
@@ -35,12 +35,27 @@ class GreetingTest extends FunctionalTestCase
             ]
         );
 
-        // Fetch the frontend response
-        $response = $this->fetchFrontendResponse($path . 'rest/');
+        $this->fetchPathAndTestMessage($prefix, $expectedMessage);
+    }
 
-        // Assert no error has occurred
-        $this->assertSame('success', $response->getStatus());
-        $this->assertSame('{"message":"' . $expectedMessage . '"}', $response->getContent());
+    /**
+     * @dataProvider dataProviderTestLanguage
+     * @param string $prefix
+     * @param string $expectedMessage
+     */
+    public function testRootPageNot1(string $prefix, string $expectedMessage)
+    {
+        $this->importDataSet('ntf://Database/sys_language.xml');
+        $this->importPagesWithRootId10();
+
+        // Setup the page with uid 10 and include the TypoScript as sys_template record
+        $this->setUpFrontendRootPage(
+            10,
+            [
+                'ntf://TypoScript/JsonRenderer.ts',
+            ]
+        );
+        $this->fetchPathAndTestMessage($prefix, $expectedMessage);
     }
 
     public function dataProviderTestLanguage(): array
@@ -66,7 +81,7 @@ class GreetingTest extends FunctionalTestCase
         $workspaceId = 0,
         $failOnFailure = true,
         $frontendUserId = 0
-    ) {
+    ): Response {
         $additionalParameter = '';
 
         if (!empty($frontendUserId)) {
@@ -107,5 +122,19 @@ class GreetingTest extends FunctionalTestCase
         }
 
         return new Response($result['status'], $result['content'], $result['error']);
+    }
+
+    /**
+     * @param string $prefix
+     * @param string $expectedMessage
+     */
+    private function fetchPathAndTestMessage(string $prefix, string $expectedMessage): void
+    {
+        // Fetch the frontend response
+        $response = $this->fetchFrontendResponse($prefix . 'rest/');
+
+        // Assert no error has occurred
+        $this->assertSame('success', $response->getStatus());
+        $this->assertSame('{"message":"' . $expectedMessage . '"}', $response->getContent());
     }
 }
