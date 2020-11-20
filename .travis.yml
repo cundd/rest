@@ -18,7 +18,6 @@ matrix:
     - php: nightly
     - php: hhvm
     - php: 7.4snapshot
-    - env: TYPO3=^10.4 DB=mysql
     - env: TYPO3=master DB=mysql
 
   exclude:
@@ -30,7 +29,7 @@ matrix:
     - php: "7.1"
       env: TYPO3=^10.4 DB=mysql
 
-      # TYPO3 8 LTS with PHP 7.3
+    # TYPO3 8 LTS with PHP 7.3
     - php: "7.3"
       env: TYPO3=^8.7 DB=mysql
 
