@@ -42,10 +42,19 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cundd\\Rest\\Tests\\": "Tests/"
+            "Cundd\\Rest\\Tests\\": "Tests/",
+            "Cundd\\CustomRest\\": "Tests/Functional/Fixtures/Extensions/custom_rest/Classes"
         }
     },
     "replace": {
         "typo3-ter/rest": "self.version"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@prepare-extension-test-structure"
+        ],
+        "prepare-extension-test-structure": [
+            "Nimut\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+        ]
     }
 }
