@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Cundd\Rest\Bootstrap\V10;
+namespace Cundd\Rest\Bootstrap;
 
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher;
@@ -47,17 +47,39 @@ class MiddlewareBootstrap
      * @param ServerRequestInterface $request
      * @return TypoScriptFrontendController
      */
-    public function bootstrap(ServerRequestInterface $request): TypoScriptFrontendController
+    public function bootstrapCore(ServerRequestInterface $request): TypoScriptFrontendController
     {
         $this->initializeObjectManager();
 
-        $coreBootstrap = new V10CoreBootstrap($this->objectManager);
+        $coreBootstrapFactory = new CoreBootstrapFactory($this->objectManager);
+        $coreBootstrap = $coreBootstrapFactory->build();
         $frontendController = $coreBootstrap->initialize($request);
 
         $this->initializeConfiguration($this->configuration);
         $this->registerSingularToPlural($this->objectManager);
 
         return $frontendController;
+    }
+
+    /**
+     * Initialize the system language
+     *
+     * @param TypoScriptFrontendController $frontendController
+     * @param ServerRequestInterface       $request
+     * @return ServerRequestInterface
+     */
+    public function bootstrapLanguage(
+        TypoScriptFrontendController $frontendController,
+        ServerRequestInterface $request
+    ): ServerRequestInterface {
+        $languageBootstrapFactory = new LanguageBootstrapFactory($this->objectManager);
+        $languageEnhancedRequest = $languageBootstrapFactory->build()->prepareRequest($frontendController, $request);
+
+        // Store the enhanced/patched request so that e.g. the LocalizationUtility can read the requested
+        // language
+        $GLOBALS['TYPO3_REQUEST'] = $languageEnhancedRequest;
+
+        return $languageEnhancedRequest;
     }
 
     /**

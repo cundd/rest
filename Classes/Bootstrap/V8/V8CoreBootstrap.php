@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Cundd\Rest\Bootstrap\V9;
+namespace Cundd\Rest\Bootstrap\V8;
 
 use Cundd\Rest\Bootstrap\AbstractCoreBootstrap;
+use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
@@ -16,24 +17,29 @@ use function is_array;
 use function is_callable;
 use function is_object;
 
-class V9CoreBootstrap extends AbstractCoreBootstrap
+/**
+ * Class V8CoreBootstrap
+ *
+ * @deprecated will be removed in 6.0
+ */
+class V8CoreBootstrap extends AbstractCoreBootstrap
 {
     /**
-     * @var V9LanguageBootstrap
+     * @var V8LanguageBootstrap
      */
     protected $languageBootstrap;
 
-    ///**
-    // * Core constructor.
-    // *
-    // * @param V9LanguageBootstrap    $languageBootstrap
-    // * @param ObjectManagerInterface $objectManager
-    // */
-    //public function __construct(ObjectManagerInterface $objectManager)
-    //{
-    //    parent::__construct($objectManager);
-    //    //$this->languageBootstrap = $languageBootstrap;
-    //}
+    /**
+     * Core constructor.
+     *
+     * @param V8LanguageBootstrap    $languageBootstrap
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function __construct(V8LanguageBootstrap $languageBootstrap, ObjectManagerInterface $objectManager)
+    {
+        parent::__construct($objectManager);
+        $this->languageBootstrap = $languageBootstrap;
+    }
 
     /**
      * Initializes the TYPO3 environment
@@ -43,18 +49,18 @@ class V9CoreBootstrap extends AbstractCoreBootstrap
      */
     public function initialize(ServerRequestInterface $request): TypoScriptFrontendController
     {
-        //$this->initializeTimeTracker();
-        //$this->languageBootstrap->initializeLanguageObject($request);
+        $this->initializeTimeTracker();
+        $this->languageBootstrap->initializeLanguageObject($request);
 
-        //if ($this->getFrontendControllerIsInitialized()) {
-        //    return $GLOBALS['TSFE'];
-        //}
+        if ($this->getFrontendControllerIsInitialized()) {
+            return $GLOBALS['TSFE'];
+        }
         $frontendController = $this->buildFrontendController($this->getPageUid($request), $request);
 
         // Register the frontend controller as the global TSFE
         $GLOBALS['TSFE'] = $frontendController;
         $this->configureFrontendController($frontendController, $request);
-        //$this->languageBootstrap->initializeFrontendController($frontendController, $request);
+        $this->languageBootstrap->initializeFrontendController($frontendController, $request);
 
         return $frontendController;
     }

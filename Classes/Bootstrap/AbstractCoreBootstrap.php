@@ -5,6 +5,7 @@ namespace Cundd\Rest\Bootstrap;
 
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
@@ -57,6 +58,13 @@ abstract class AbstractCoreBootstrap implements CoreBootstrapInterface
      */
     protected function getPageUid(ServerRequestInterface $request): int
     {
-        return (int)($request->getQueryParams()['pid'] ?? 0);
+        $queryParams = $request->getQueryParams();
+        if (isset($queryParams['pid'])) {
+            return (int)$queryParams['pid'];
+        }
+        /** @var Site|null $site */
+        $site = $request->getAttribute('site');
+
+        return $site ? $site->getRootPageId() : 0;
     }
 }

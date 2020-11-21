@@ -13,6 +13,8 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  * Main entry point into the REST application
+ *
+ * @deprecated will be removed in 6.0
  */
 class BootstrapDispatcher
 {

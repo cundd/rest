@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Http;
 
-use Cundd\Rest\Bootstrap\V10\MiddlewareBootstrap;
-use Cundd\Rest\Bootstrap\V10\V10LanguageBootstrap;
+use Cundd\Rest\Bootstrap\MiddlewareBootstrap;
 use Cundd\Rest\Utility\SiteLanguageUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,21 +18,15 @@ class RestMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!$this->isRestRequest($request)) {
+        if ($this->isRestRequest($request)) {
+            $middlewareBootstrap = new MiddlewareBootstrap();
+            $frontendController = $middlewareBootstrap->bootstrapCore($request);
+            $languageEnhancedRequest = $middlewareBootstrap->bootstrapLanguage($frontendController, $request);
+
+            return $middlewareBootstrap->buildDispatcher()->processRequest($languageEnhancedRequest ?? $request);
+        } else {
             return $handler->handle($request);
         }
-
-        $middlewareBootstrap = new MiddlewareBootstrap();
-        $frontendController = $middlewareBootstrap->bootstrap($request);
-
-        $languageBootstrap = new V10LanguageBootstrap();
-        $languageEnhancedRequest = $languageBootstrap->prepareRequest($frontendController, $request);
-
-        // Store the enhanced/patched request so that e.g. the LocalizationUtility can read the requested
-        // language
-        $GLOBALS['TYPO3_REQUEST'] = $languageEnhancedRequest;
-
-        return $middlewareBootstrap->buildDispatcher()->processRequest($languageEnhancedRequest ?? $request);
     }
 
     /**
