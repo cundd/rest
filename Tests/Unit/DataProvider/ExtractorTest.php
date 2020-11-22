@@ -27,6 +27,7 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use function class_exists;
+use function method_exists;
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -45,7 +46,7 @@ class ExtractorTest extends TestCase
         parent::setUpBeforeClass();
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
-        if (class_exists(GeneralUtility::class)) {
+        if (class_exists(GeneralUtility::class) && method_exists(GeneralUtility::class, 'setIndpEnv')) {
             GeneralUtility::setIndpEnv('TYPO3_SITE_URL', 'http://rest.cundd.net/');
         }
     }
@@ -56,10 +57,14 @@ class ExtractorTest extends TestCase
 
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
         $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
+        /** @var ConfigurationProviderInterface $configurationProvider */
+        $configurationProvider = $configurationProviderProphecy->reveal();
+        /** @var LoggerInterface $logger */
+        $logger = $this->prophesize(LoggerInterface::class)->reveal();
 
         $this->fixture = new Extractor(
-            $configurationProviderProphecy->reveal(),
-            $this->prophesize(LoggerInterface::class)->reveal()
+            $configurationProvider,
+            $logger
 
         );
     }
@@ -76,7 +81,7 @@ class ExtractorTest extends TestCase
      * @param array $expected
      * @dataProvider extractSimpleDataProvider
      */
-    public function extractSimpleTest($input, $expected)
+    public function extractSimpleTest($input, array $expected)
     {
         $this->assertEquals($expected, $this->fixture->extract($input));
     }
@@ -84,7 +89,7 @@ class ExtractorTest extends TestCase
     /**
      * @return array
      */
-    public function extractSimpleDataProvider()
+    public function extractSimpleDataProvider(): array
     {
         $this->prepareClasses();
         $exampleData = ['firstName' => 'Daniel', 'lastName' => 'Corn'];
@@ -104,7 +109,7 @@ class ExtractorTest extends TestCase
      * @param array $expected
      * @dataProvider extractCollectionDataProvider
      */
-    public function extractCollectionTest($input, $expected)
+    public function extractCollectionTest($input, array $expected)
     {
         $this->assertEquals($expected, $this->fixture->extract($input));
     }
@@ -112,7 +117,7 @@ class ExtractorTest extends TestCase
     /**
      * @return array
      */
-    public function extractCollectionDataProvider()
+    public function extractCollectionDataProvider(): array
     {
         $this->setUpBeforeClass();
 
@@ -147,7 +152,7 @@ class ExtractorTest extends TestCase
      * @param array $expected
      * @dataProvider extractCollectionDataProvider
      */
-    public function extractModelWithCollectionPropertyTest($input, $expected)
+    public function extractModelWithCollectionPropertyTest($input, array $expected)
     {
         $model = new MyNestedModel();
         $model->setChild($input);
@@ -197,12 +202,12 @@ class ExtractorTest extends TestCase
     }
 
     /**
-     * @param int       $currentDepth
-     * @param int       $maxDepth
+     * @param int      $currentDepth
+     * @param int      $maxDepth
      * @param DateTime $testDate
      * @return MyNestedModel
      */
-    protected function buildNestedModels($currentDepth, $maxDepth, $testDate)
+    protected function buildNestedModels(int $currentDepth, int $maxDepth, DateTime $testDate): MyNestedModel
     {
         $model = new MyNestedModel();
         $model->_setProperty('uid', $currentDepth + 1);
@@ -249,10 +254,14 @@ class ExtractorTest extends TestCase
 
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProviderProphecy */
         $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
+        /** @var ConfigurationProviderInterface $configurationProvider */
+        $configurationProvider = $configurationProviderProphecy->reveal();
+        /** @var LoggerInterface $logger */
+        $logger = $this->prophesize(LoggerInterface::class)->reveal();
 
         $this->fixture = new Extractor(
-            $configurationProviderProphecy->reveal(),
-            $this->prophesize(LoggerInterface::class)->reveal(),
+            $configurationProvider,
+            $logger,
             3
         );
 
@@ -411,7 +420,7 @@ class ExtractorTest extends TestCase
      * @param $testDate
      * @return array
      */
-    protected function getExpectedOutputForRecursion(DateTimeInterface $testDate)
+    protected function getExpectedOutputForRecursion(DateTimeInterface $testDate): array
     {
         return [
             'base'  => 'Base',
@@ -428,11 +437,11 @@ class ExtractorTest extends TestCase
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
-                       'base'  => 'Base',
-                       'date'  => $testDate->format(DateTime::ATOM),
-                       'uid'   => 2,
-                       'pid'   => null,
-                       'child' => [
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(DateTime::ATOM),
+                    'uid'   => 2,
+                    'pid'   => null,
+                    'child' => [
                         'name' => 'Initial value',
                         'uid'  => null,
                         'pid'  => null,
