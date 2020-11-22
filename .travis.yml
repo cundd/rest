@@ -10,7 +10,7 @@ env:
   - TYPO3=^8.7 DB=mysql
   - TYPO3=^9.5 DB=mysql
   - TYPO3=^10.4 DB=mysql
-  - TYPO3=master DB=mysql
+  - TYPO3=dev-master DB=mysql
 
 matrix:
   fast_finish: true
@@ -19,7 +19,7 @@ matrix:
     - php: hhvm
     - php: 7.4snapshot
     - env: TYPO3=^8.7 DB=mysql
-    - env: TYPO3=master DB=mysql
+    - env: TYPO3=dev-master DB=mysql
 
   exclude:
     # TYPO3 9 LTS with PHP 7.1
