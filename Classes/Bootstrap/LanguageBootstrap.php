@@ -95,7 +95,7 @@ class LanguageBootstrap
         $site = $routeResult->getSite();
 
         // If a language is requested explicitly look if it is available in the Site
-        if ($requestedLanguageUid) {
+        if (isset($requestedLanguageUid)) {
             $language = $site->getLanguageById($requestedLanguageUid);
         } else {
             $language = $routeResult->getLanguage();
