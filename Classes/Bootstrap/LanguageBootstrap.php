@@ -77,7 +77,7 @@ class LanguageBootstrap
 
         // TYPO3 v8
         if (!class_exists(SiteMatcher::class)) {
-            if ($requestedLanguageUid) {
+            if ($requestedLanguageUid !== null) {
                 return new LanguageInformation(
                     $requestedLanguageUid,
                     $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)
@@ -95,7 +95,7 @@ class LanguageBootstrap
         $site = $routeResult->getSite();
 
         // If a language is requested explicitly look if it is available in the Site
-        if ($requestedLanguageUid) {
+        if ($requestedLanguageUid !== null) {
             $language = $site->getLanguageById($requestedLanguageUid);
         } else {
             $language = $routeResult->getLanguage();
@@ -111,7 +111,7 @@ class LanguageBootstrap
         // Set language if defined
         if ($language && $language->getLanguageId() !== null) {
             return LanguageInformation::fromSiteLanguage($language);
-        } elseif ($requestedLanguageUid) {
+        } elseif ($requestedLanguageUid !== null) {
             return new LanguageInformation(
                 $requestedLanguageUid,
                 $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)
