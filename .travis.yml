@@ -51,8 +51,8 @@ before_script:
   - phpenv config-rm xdebug.ini || echo "xdebug.ini not removed";
   #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "CREATE DATABASE typo3;"; fi
   #  - if [[ "$DB" == "mysql" || "$DB" == "mariadb" ]]; then mysql -e "GRANT ALL PRIVILEGES ON typo3.* to travis@'%';"; fi
-  # Install Composer version 1
-  - composer self-update --1
+  # Install Composer version 1 for TYPO3 8
+  - if [[ "$TYPO3" == "TYPO3_8-7" ]]; then composer self-update --1; fi
   - >
     export typo3DatabaseName="typo3";
     export typo3DatabaseHost="127.0.0.1";
