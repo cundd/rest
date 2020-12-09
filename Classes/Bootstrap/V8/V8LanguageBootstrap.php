@@ -8,8 +8,6 @@ use Cundd\Rest\Bootstrap\Language\LanguageInformation;
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Routing\SiteMatcher;
-use TYPO3\CMS\Core\Routing\SiteRouteResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use function class_exists;
@@ -89,42 +87,7 @@ class V8LanguageBootstrap extends AbstractLanguageBootstrap
         $requestedLanguageUid = $this->getRequestedLanguageUid($frontendController, $request);
 
         // TYPO3 v8
-        if (!class_exists(SiteMatcher::class)) {
-            if ($requestedLanguageUid) {
-                return new LanguageInformation(
-                    $requestedLanguageUid,
-                    $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)
-                );
-            } else {
-                return null;
-            }
-        }
-
-        // support new TYPO3 v9.2 Site Handling until middleware concept is implemented
-        // see https://github.com/cundd/rest/issues/59
-
-        /** @var SiteRouteResult $routeResult */
-        $routeResult = $this->objectManager->get(SiteMatcher::class)->matchRequest($request);
-        $site = $routeResult->getSite();
-
-        // If a language is requested explicitly look if it is available in the Site
-        if ($requestedLanguageUid) {
-            $language = $site->getLanguageById($requestedLanguageUid);
-        } else {
-            $language = $routeResult->getLanguage();
-        }
-
-        // Patch the original Request so that at least `site` and `routing` are defined
-        $patchedRequest = $request
-            ->withAttribute('site', $site)
-            ->withAttribute('language', $language)
-            ->withAttribute('routing', $routeResult);
-        $GLOBALS['TYPO3_REQUEST'] = $patchedRequest;
-
-        // Set language if defined
-        if ($language && $language->getLanguageId() !== null) {
-            return LanguageInformation::fromSiteLanguage($language);
-        } elseif ($requestedLanguageUid) {
+        if ($requestedLanguageUid !== null) {
             return new LanguageInformation(
                 $requestedLanguageUid,
                 $this->getLanguageCodeForId($frontendController, $requestedLanguageUid)

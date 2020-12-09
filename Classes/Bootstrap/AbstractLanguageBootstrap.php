@@ -26,7 +26,7 @@ abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
         $requestedLanguageUid = $this->getRequestedLanguageUid($frontendController, $request);
 
         // If a language is requested explicitly look if it is available in the Site
-        if ($requestedLanguageUid) {
+        if ($requestedLanguageUid !== null) {
             /** @var Site $site */
             $site = $request->getAttribute('site');
             $language = $site->getLanguageById($requestedLanguageUid);
