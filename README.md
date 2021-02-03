@@ -1,13 +1,14 @@
-REST v4
+REST v5
 =======
 
 The REST API for TYPO3 CMS
 
 This branch represents the development of version 4.
 
+- 4.x releases can be found [here](https://github.com/cundd/rest/tree/v4)
 - 3.x releases can be found [here](https://github.com/cundd/rest/tree/v3)
 - 2.x releases can be found [here](https://github.com/cundd/rest/tree/v2)
 
 Please visit http://rest.corn.rest/ for installation and configuration instructions
 
-[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v4)](https://travis-ci.org/cundd/rest)
+[![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v5)](https://travis-ci.org/cundd/rest)
