@@ -12,3 +12,8 @@ This branch represents the development of version 4.
 Please visit http://rest.corn.rest/ for installation and configuration instructions
 
 [![Build Status](https://travis-ci.org/cundd/rest.svg?branch=v5)](https://travis-ci.org/cundd/rest)
+
+
+Contribution
+------------
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in REST by you, shall be licensed as above, without any additional terms or conditions.
