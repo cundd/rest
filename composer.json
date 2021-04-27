@@ -56,5 +56,10 @@
         "prepare-extension-test-structure": [
             "Nimut\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
         ]
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "rest"
+        }
     }
 }
