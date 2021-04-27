@@ -5,7 +5,13 @@ if (!defined('TYPO3_MODE')) {
 
 call_user_func(
     function () {
-        if (version_compare(TYPO3_version, '9.5.0') >= 0) {
+        if (version_compare(TYPO3_version, '10.4.0') >= 0) {
+            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+                'rest',
+                'Configuration/TypoScript/Page/TYPO3-10',
+                'Virtual Object - Page'
+            );
+        } elseif (version_compare(TYPO3_version, '9.5.0') >= 0) {
             \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
                 'rest',
                 'Configuration/TypoScript/Page/TYPO3-9',
