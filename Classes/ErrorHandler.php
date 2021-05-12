@@ -4,6 +4,14 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Utility\DebugUtility;
+use function error_get_last;
+use function header;
+use function headers_sent;
+use function http_response_code;
+use function json_encode;
+use function ob_end_clean;
+use function register_shutdown_function;
+use function sprintf;
 
 /**
  * Error handler to capture fatal errors
@@ -52,22 +60,24 @@ class ErrorHandler
     private static function printError(\Exception $error)
     {
         ob_end_clean();
-        http_response_code(500);
-        header('Content-Type: application/json');
-        if (static::getShowDebugInformation()) {
-            $response = [
-                'error' => sprintf(
-                    'Error #%d: %s',
-                    $error->getCode(),
-                    $error->getMessage()
-                ),
-            ];
-        } else {
-            $response = [
-                'error' => sprintf('Sorry! Something is wrong. Exception code #%d', $error->getCode()),
-            ];
-        }
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            if (static::getShowDebugInformation()) {
+                $response = [
+                    'error' => sprintf(
+                        'Error #%d: %s',
+                        $error->getCode(),
+                        $error->getMessage()
+                    ),
+                ];
+            } else {
+                $response = [
+                    'error' => sprintf('Sorry! Something is wrong. Exception code #%d', $error->getCode()),
+                ];
+            }
 
-        echo json_encode($response);
+            echo json_encode($response);
+        }
     }
 }
