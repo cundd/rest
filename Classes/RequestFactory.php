@@ -8,13 +8,26 @@ use Cundd\Rest\Domain\Model\Format;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Utility\SiteLanguageUtility;
+use Cundd\Rest\Utility\SiteUtility;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
+use function basename;
 use function call_user_func;
 use function class_exists;
+use function dirname;
+use function filter_var;
 use function getenv;
+use function is_numeric;
+use function ltrim;
+use function preg_replace;
+use function rtrim;
 use function sprintf;
+use function strlen;
+use function strrpos;
+use function strtok;
+use function substr;
+use function trim;
 
 /**
  * Factory class to get the current Request
@@ -207,6 +220,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         $path = $this->removePathPrefix($path, '/' . trim((string)$pathPrefix, '/'));
         $path = $this->removePathPrefix($path, '/rest/');
 
+        $sitePrefix = SiteUtility::detectSitePrefix($request);
+        $path = $this->removePathPrefix($path, rtrim($sitePrefix, '/') . '/rest/');
+        // The Site-Language Prefix also contains the Site Prefix
         $siteLanguagePrefix = SiteLanguageUtility::detectSiteLanguagePrefix($request);
         $path = $this->removePathPrefix($path, $siteLanguagePrefix . 'rest/');
 
