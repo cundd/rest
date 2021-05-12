@@ -25,7 +25,7 @@ class V10LanguageBootstrap extends AbstractLanguageBootstrap
     ): ServerRequestInterface {
         $newRequest = parent::prepareRequest($frontendController, $request);
 
-        $languageAspect = LanguageAspectFactory::createFromSiteLanguage($request->getAttribute('language'));
+        $languageAspect = LanguageAspectFactory::createFromSiteLanguage($newRequest->getAttribute('language'));
         $context = GeneralUtility::makeInstance(Context::class);
         $context->setAspect('language', $languageAspect);
 
