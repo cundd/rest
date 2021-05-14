@@ -6,7 +6,11 @@ namespace Cundd\Rest\Bootstrap;
 use Cundd\Rest\Exception\InvalidLanguageException;
 use Locale;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use function class_exists;
 
@@ -31,6 +35,8 @@ abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
             $site = $request->getAttribute('site');
             $language = $site->getLanguageById($requestedLanguageUid);
 
+            $this->setLanguageAspect($language);
+
             return $request
                 ->withAttribute('language', $language);
         }
@@ -46,6 +52,8 @@ abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
         //         }
         //     }
         // }
+
+        $this->setLanguageAspect($request->getAttribute('language'));
 
         return $request;
     }
@@ -216,5 +224,15 @@ abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param SiteLanguage $language
+     */
+    protected function setLanguageAspect(SiteLanguage $language): void
+    {
+        $languageAspect = LanguageAspectFactory::createFromSiteLanguage($language);
+        $context = GeneralUtility::makeInstance(Context::class);
+        $context->setAspect('language', $languageAspect);
     }
 }
