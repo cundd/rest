@@ -5,36 +5,16 @@ namespace Cundd\Rest\Bootstrap\V9;
 
 use Cundd\Rest\Bootstrap\AbstractCoreBootstrap;
 use Psr\Http\Message\ServerRequestInterface;
-use stdClass;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
-use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 use function class_exists;
 use function is_array;
 use function is_callable;
-use function is_object;
 
 class V9CoreBootstrap extends AbstractCoreBootstrap
 {
-    /**
-     * @var V9LanguageBootstrap
-     */
-    protected $languageBootstrap;
-
-    ///**
-    // * Core constructor.
-    // *
-    // * @param V9LanguageBootstrap    $languageBootstrap
-    // * @param ObjectManagerInterface $objectManager
-    // */
-    //public function __construct(ObjectManagerInterface $objectManager)
-    //{
-    //    parent::__construct($objectManager);
-    //    //$this->languageBootstrap = $languageBootstrap;
-    //}
-
     /**
      * Initializes the TYPO3 environment
      *
@@ -43,18 +23,11 @@ class V9CoreBootstrap extends AbstractCoreBootstrap
      */
     public function initialize(ServerRequestInterface $request): TypoScriptFrontendController
     {
-        //$this->initializeTimeTracker();
-        //$this->languageBootstrap->initializeLanguageObject($request);
-
-        //if ($this->getFrontendControllerIsInitialized()) {
-        //    return $GLOBALS['TSFE'];
-        //}
         $frontendController = $this->buildFrontendController($this->getPageUid($request), $request);
 
         // Register the frontend controller as the global TSFE
         $GLOBALS['TSFE'] = $frontendController;
         $this->configureFrontendController($frontendController, $request);
-        //$this->languageBootstrap->initializeFrontendController($frontendController, $request);
 
         return $frontendController;
     }
@@ -114,23 +87,5 @@ class V9CoreBootstrap extends AbstractCoreBootstrap
 
         $frontendController->determineId($request);
         $frontendController->getConfigArray();
-    }
-
-    /**
-     * @return bool
-     */
-    private function getFrontendControllerIsInitialized(): bool
-    {
-        return isset($GLOBALS['TSFE'])
-            && is_object($GLOBALS['TSFE'])
-            && !($GLOBALS['TSFE'] instanceof stdClass);
-    }
-
-    private function initializeTimeTracker()
-    {
-        if (!isset($GLOBALS['TT']) || !is_object($GLOBALS['TT'])) {
-            $GLOBALS['TT'] = new TimeTracker();
-            $GLOBALS['TT']->start();
-        }
     }
 }
