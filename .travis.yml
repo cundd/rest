@@ -1,38 +1,34 @@
 language: php
 php:
-  - "7.1"
-  - "7.2"
   - "7.3"
   - "7.4"
+  - "8.0"
   - "nightly"
 
 env:
-  - TYPO3=^8.7 DB=mysql
   - TYPO3=^9.5 DB=mysql
   - TYPO3=^10.4 DB=mysql
-  - TYPO3=dev-master DB=mysql
 
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
+    - php: "8.0"
     - php: nightly
     - php: hhvm
-    - php: 7.4snapshot
-    - env: TYPO3=^8.7 DB=mysql
+    - env: TYPO3=~11.0 DB=mysql
     - env: TYPO3=dev-master DB=mysql
 
-  exclude:
-    # TYPO3 9 LTS with PHP 7.1
-    - php: "7.1"
+  include:
+    - php: "7.2"
       env: TYPO3=^9.5 DB=mysql
-
-    # TYPO3 10 LTS with PHP 7.1
-    - php: "7.1"
-      env: TYPO3=^10.4 DB=mysql
-
-    # TYPO3 8 LTS with PHP 7.3
-    - php: "7.3"
-      env: TYPO3=^8.7 DB=mysql
+    - php: "7.4"
+      env: TYPO3=~11.0 DB=mysql
+    - php: "8.0"
+      env: TYPO3=~11.0 DB=mysql
+    - php: "7.4"
+      env: TYPO3=dev-master DB=mysql
+    - php: "8.0"
+      env: TYPO3=dev-master DB=mysql
 
 services:
   - mysql
