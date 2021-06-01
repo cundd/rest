@@ -44,7 +44,7 @@ class CacheFactory
         ObjectManager $objectManager
     ): CacheInterface {
         $cacheImplementation = $configurationProvider->getSetting('cacheClass');
-        if ($cacheImplementation && $objectManager->isRegistered($cacheImplementation)) {
+        if ($cacheImplementation && class_exists($cacheImplementation)) {
             return $objectManager->get($cacheImplementation);
         }
 
