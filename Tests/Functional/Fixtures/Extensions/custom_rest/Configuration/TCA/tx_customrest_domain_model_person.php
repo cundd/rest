@@ -67,8 +67,8 @@ return [
                 'items'               => [
                     ['', 0],
                 ],
-                'foreign_table'       => 'tx_customrest2_domain_model_person',
-                'foreign_table_where' => 'AND tx_customrest2_domain_model_person.pid=###CURRENT_PID### AND tx_customrest2_domain_model_person.sys_language_uid IN (-1,0)',
+                'foreign_table'       => 'tx_customrest_domain_model_person',
+                'foreign_table_where' => 'AND tx_customrest_domain_model_person.pid=###CURRENT_PID### AND tx_customrest_domain_model_person.sys_language_uid IN (-1,0)',
             ],
         ],
         'l10n_diffsource'  => [
@@ -147,7 +147,7 @@ return [
         ],
         'birthday' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:custom_rest2/Resources/Private/Language/locallang_db.xlf:tx_customrest2_domain_model_person.birthday',
+            'label' => 'LLL:EXT:custom_rest2/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.birthday',
             'config' => [
                 'dbType' => 'date',
                 'type' => 'input',
