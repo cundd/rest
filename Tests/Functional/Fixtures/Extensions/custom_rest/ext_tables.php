@@ -22,5 +22,10 @@ call_user_func(
         ExtensionManagementUtility::allowTableOnStandardPages(
             'tx_customrest_domain_model_person'
         );
+        ExtensionManagementUtility::addStaticFile(
+            'custom_rest',
+            'Configuration/TypoScript',
+            'Custom Rest Configuration'
+        );
     }
 );
