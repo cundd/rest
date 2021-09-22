@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
+use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
@@ -12,9 +13,11 @@ use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Utility\DebugUtility;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 
 /**
  * Main dispatcher of REST requests
@@ -52,23 +55,31 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     protected static $sharedDispatcher;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Initialize
      *
      * @param ObjectManagerInterface   $objectManager
      * @param RequestFactoryInterface  $requestFactory
      * @param ResponseFactoryInterface $responseFactory
      * @param LoggerInterface          $logger
+     * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         RequestFactoryInterface $requestFactory,
         ResponseFactoryInterface $responseFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         $this->objectManager = $objectManager;
         $this->requestFactory = $requestFactory;
         $this->responseFactory = $responseFactory;
         $this->logger = $logger;
+        $this->eventDispatcher = $eventDispatcher ?? GeneralUtility::getContainer()->get(EventDispatcherInterface::class);
 
         self::$sharedDispatcher = $this;
     }
@@ -99,10 +110,15 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $response = $this->dispatchInternal($request);
 
-        return $this->addCorsHeaders(
+        $response = $this->addCorsHeaders(
             $request,
             $this->addAdditionalHeaders($this->addDebugHeaders($request, $response))
         );
+
+        $event = new AfterRequestDispatchedEvent($request, $response);
+        $this->eventDispatcher->dispatch($event);
+
+        return $event->getResponse();
     }
 
     /**
