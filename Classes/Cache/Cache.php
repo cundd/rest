@@ -84,9 +84,15 @@ class Cache implements CacheInterface
         /** TODO: Send 304 status if appropriate */
         $response = $this->responseFactory->createResponse($responseData['content'], intval($responseData['status']));
 
+        // remove none headers
+        unset($responseData['content'], $responseData['status']);
+
+        // set all cached headers again
+        foreach ($responseData as $header => $value) {
+            $response = $response->withHeader($header, $value);
+        }
+
         return $response
-            ->withHeader(Header::CONTENT_TYPE, $responseData[Header::CONTENT_TYPE])
-            ->withHeader(Header::LAST_MODIFIED, $responseData[Header::LAST_MODIFIED])
             ->withHeader(Header::EXPIRES, $this->getHttpDate(time() + $this->getExpiresHeaderLifetime()))
             ->withHeader(Header::CUNDD_REST_CACHED, 'true');
     }
@@ -115,12 +121,13 @@ class Cache implements CacheInterface
         $cacheInstance = $this->getCacheInstance();
         $cacheInstance->set(
             $this->getCacheKeyForRequest($request),
+            array_merge(
+                $response->getHeaders(),
             [
                 'content'             => (string)$response->getBody(),
                 'status'              => $response->getStatusCode(),
-                Header::CONTENT_TYPE  => $response->getHeader(Header::CONTENT_TYPE),
                 Header::LAST_MODIFIED => $this->getHttpDate(time()),
-            ],
+            ]),
             $this->getTags($request),
             $cacheLifetime
         );
