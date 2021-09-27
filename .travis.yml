@@ -61,9 +61,6 @@ before_script:
     export typo3DatabaseUsername="root";
     export typo3DatabasePassword="";
 
-  # Downgrade doctrine/dbal to 2.11 on v10 and v11 (see https://github.com/Nimut/testing-framework/issues/136)
-  - if [[ "$TYPO3" == "^10.4" || "$TYPO3" == "~11.0" ]]; then composer require "doctrine/dbal:2.11" --no-update; fi
-
   - composer require typo3/minimal=$TYPO3 --no-update;
   - composer update;
 
