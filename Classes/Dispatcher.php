@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
+use Cundd\Rest\Dispatcher\DispatcherFactory;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
@@ -17,7 +18,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 
 /**
  * Main dispatcher of REST requests
@@ -51,6 +51,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      * The shared instance
      *
      * @var Dispatcher
+     * @deprecated utilize dependency injection instead. Will be removed in 6.0
      */
     protected static $sharedDispatcher;
 
@@ -62,10 +63,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     /**
      * Initialize
      *
-     * @param ObjectManagerInterface   $objectManager
-     * @param RequestFactoryInterface  $requestFactory
-     * @param ResponseFactoryInterface $responseFactory
-     * @param LoggerInterface          $logger
+     * @param ObjectManagerInterface        $objectManager
+     * @param RequestFactoryInterface       $requestFactory
+     * @param ResponseFactoryInterface      $responseFactory
+     * @param LoggerInterface               $logger
      * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(
@@ -73,13 +74,13 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         RequestFactoryInterface $requestFactory,
         ResponseFactoryInterface $responseFactory,
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher = null
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->objectManager = $objectManager;
         $this->requestFactory = $requestFactory;
         $this->responseFactory = $responseFactory;
         $this->logger = $logger;
-        $this->eventDispatcher = $eventDispatcher ?? GeneralUtility::getContainer()->get(EventDispatcherInterface::class);
+        $this->eventDispatcher = $eventDispatcher;
 
         self::$sharedDispatcher = $this;
     }
@@ -218,11 +219,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         if (!self::$sharedDispatcher) {
             /** @var ObjectManagerInterface $objectManager */
             $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            $requestFactory = $objectManager->getRequestFactory();
-            $responseFactory = $objectManager->getResponseFactory();
-            /** @var LoggerInterface $logger */
-            $logger = $objectManager->get(LoggerInterface::class);
-            new static($objectManager, $requestFactory, $responseFactory, $logger);
+
+            $dispatcherFactory = new DispatcherFactory($objectManager);
+            $dispatcherFactory->build();
         }
 
         return self::$sharedDispatcher;

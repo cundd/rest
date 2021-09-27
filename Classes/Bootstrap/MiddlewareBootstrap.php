@@ -6,7 +6,6 @@ namespace Cundd\Rest\Bootstrap;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -87,12 +86,9 @@ class MiddlewareBootstrap
      */
     public function buildDispatcher(): DispatcherInterface
     {
-        $objectManager = $this->objectManager;
-        $requestFactory = $objectManager->getRequestFactory();
-        $responseFactory = $objectManager->getResponseFactory();
-        $logger = $objectManager->get(LoggerInterface::class);
+        $dispatcherFactory = new Dispatcher\DispatcherFactory($this->objectManager);
 
-        return new Dispatcher($objectManager, $requestFactory, $responseFactory, $logger);
+        return $dispatcherFactory->build();
     }
 
     /**

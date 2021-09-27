@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\DataProvider\Utility;
+use Cundd\Rest\Dispatcher\DispatcherFactory;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Log\LoggerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -85,7 +85,8 @@ class BootstrapDispatcher
 
             $this->initializeConfiguration($this->configuration);
             $this->registerSingularToPlural($this->objectManager);
-            $this->dispatcher = $this->buildDispatcher($this->objectManager);
+            $dispatcherFactory = new DispatcherFactory($this->objectManager);
+            $this->dispatcher = $dispatcherFactory->build();
 
             $this->isInitialized = true;
         }
@@ -125,18 +126,5 @@ class BootstrapDispatcher
                 Utility::registerSingularForPlural($singular, $plural);
             }
         }
-    }
-
-    /**
-     * @param ObjectManagerInterface $objectManager
-     * @return DispatcherInterface
-     */
-    private function buildDispatcher(ObjectManagerInterface $objectManager): DispatcherInterface
-    {
-        $requestFactory = $objectManager->getRequestFactory();
-        $responseFactory = $objectManager->getResponseFactory();
-        $logger = $objectManager->get(LoggerInterface::class);
-
-        return new Dispatcher($objectManager, $requestFactory, $responseFactory, $logger);
     }
 }
