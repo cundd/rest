@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Cundd\Rest\Dispatcher;
@@ -8,7 +7,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Event which is fired after the dispatcher has successfully dispatched a request.
+ * Event which is fired after the dispatcher has successfully dispatched a request
  */
 final class AfterRequestDispatchedEvent
 {
@@ -51,5 +50,4 @@ final class AfterRequestDispatchedEvent
     {
         $this->response = $response;
     }
-
 }
