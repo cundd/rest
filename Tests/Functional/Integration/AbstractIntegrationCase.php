@@ -18,7 +18,6 @@ use Cundd\Rest\Tests\RequestBuilderTrait;
 use InvalidArgumentException;
 use Nimut\TestingFramework\Http\Response as NimutResponse;
 use PHPUnit\Util\PHP\DefaultPhpProcess;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Text_Template;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as Typo3ObjectManagerInterface;
@@ -84,7 +83,7 @@ class AbstractIntegrationCase extends AbstractCase
             $objectManager->get(RequestFactoryInterface::class),
             $objectManager->get(ResponseFactoryInterface::class),
             new Logger(new StreamLogger()),
-            $objectManager->get(EventDispatcherInterface::class)
+            null
         );
 
         return $dispatcher->dispatch($request);

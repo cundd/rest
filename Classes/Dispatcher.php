@@ -56,7 +56,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     protected static $sharedDispatcher;
 
     /**
-     * @var EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     protected $eventDispatcher;
 
@@ -74,7 +74,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         RequestFactoryInterface $requestFactory,
         ResponseFactoryInterface $responseFactory,
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        ?EventDispatcherInterface $eventDispatcher
     ) {
         $this->objectManager = $objectManager;
         $this->requestFactory = $requestFactory;
@@ -115,6 +115,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             $request,
             $this->addAdditionalHeaders($this->addDebugHeaders($request, $response))
         );
+
+        if (!$this->eventDispatcher) {
+            return $response;
+        }
 
         $event = new AfterRequestDispatchedEvent($request, $response);
         $this->eventDispatcher->dispatch($event);
