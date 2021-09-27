@@ -82,7 +82,8 @@ class AbstractIntegrationCase extends AbstractCase
             $objectManager->get(ObjectManagerInterface::class),
             $objectManager->get(RequestFactoryInterface::class),
             $objectManager->get(ResponseFactoryInterface::class),
-            new Logger(new StreamLogger())
+            new Logger(new StreamLogger()),
+            null
         );
 
         return $dispatcher->dispatch($request);
