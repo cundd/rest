@@ -516,7 +516,7 @@ class Extractor implements ExtractorInterface
     private function assertExtractableType($input)
     {
         if (is_resource($input)) {
-            new \InvalidArgumentException('Can not extract data from resources');
+            throw new \InvalidArgumentException('Can not extract data from resources');
         }
     }
 
