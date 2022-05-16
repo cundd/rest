@@ -18,8 +18,6 @@ class CustomRestTest extends AbstractIntegrationCase
         'typo3conf/ext/rest/Tests/Functional/Fixtures/Extensions/custom_rest',
     ];
 
-    protected $coreExtensionsToLoad = ['extbase', 'fluid'];
-
     public function setUp()
     {
         parent::setUp();
