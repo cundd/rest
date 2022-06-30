@@ -18,6 +18,7 @@ use Cundd\Rest\Tests\SimpleClassJsonSerializable;
 use DateTime;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use SplObjectStorage;
@@ -34,6 +35,7 @@ use function method_exists;
  */
 class ExtractorTest extends TestCase
 {
+    use ProphecyTrait;
     use ClassBuilderTrait;
 
     /**
@@ -41,7 +43,7 @@ class ExtractorTest extends TestCase
      */
     protected $fixture;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -51,7 +53,7 @@ class ExtractorTest extends TestCase
         }
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -69,7 +71,7 @@ class ExtractorTest extends TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

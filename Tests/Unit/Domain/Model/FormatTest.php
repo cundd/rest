@@ -1,10 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Cundd\Rest\Domain\Model;
+namespace Cundd\Rest\Tests\Unit\Domain\Model;
 
+use Cundd\Rest\Domain\Model\Format;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
-class FormatTest extends \PHPUnit\Framework\TestCase
+class FormatTest extends TestCase
 {
     /**
      * @test
@@ -16,7 +20,7 @@ class FormatTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($input, (string)new Format($input));
     }
 
-    public function validFormatDataProvider()
+    public function validFormatDataProvider(): array
     {
         return [
             ['json',],
@@ -29,20 +33,20 @@ class FormatTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider invalidFormatDataProvider
      * @param $input
-     * @expectedException \InvalidArgumentException
      */
     public function invalidFormatTest($input)
     {
+        $this->expectException(InvalidArgumentException::class);
         new Format($input);
     }
 
-    public function invalidFormatDataProvider()
+    public function invalidFormatDataProvider(): array
     {
         return [
             ['blur',],
             ['',],
             [null],
-            [new \stdClass()],
+            [new stdClass()],
             [[]],
         ];
     }

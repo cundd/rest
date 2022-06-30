@@ -10,7 +10,7 @@ use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
  */
 class TypoScriptConfigurationProviderTest extends AbstractConfigurationProviderCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = $this->objectManager->get(TypoScriptConfigurationProvider::class);

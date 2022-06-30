@@ -8,7 +8,7 @@ use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
 
 class BackendTest extends AbstractBackendTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

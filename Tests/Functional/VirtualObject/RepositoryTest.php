@@ -16,14 +16,14 @@ class RepositoryTest extends AbstractDatabaseCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = $this->objectManager->get(RepositoryInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

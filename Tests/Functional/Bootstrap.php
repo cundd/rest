@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional;
 
 use Cundd\Rest\Tests\AbstractBootstrap;
+use Exception;
 
 require_once __DIR__ . '/../AbstractBootstrap.php';
 
@@ -17,6 +18,7 @@ class Bootstrap extends AbstractBootstrap
      */
     protected function bootstrapSystem()
     {
+        require_once  __DIR__.'/../../vendor/autoload.php';
         $this->setupTYPO3();
         $this->setupAbstractCase();
     }
@@ -24,7 +26,7 @@ class Bootstrap extends AbstractBootstrap
     /**
      * Loads the TYPO3 Functional Tests bootstrap class
      *
-     * @throws \Exception if the Functional Tests Bootstrap class could not be found
+     * @throws Exception if the Functional Tests Bootstrap class could not be found
      */
     private function setupTYPO3()
     {
@@ -34,17 +36,11 @@ class Bootstrap extends AbstractBootstrap
         }
 
         $functionalTestsBootstrapPath = $this->detectFunctionalTestsBootstrapPath();
-        if (false === $functionalTestsBootstrapPath) {
-            $this->printWarning('Could not detect the path to the Functional Tests Bootstrap file');
-        } else {
+        if (false !== $functionalTestsBootstrapPath) {
             require_once $functionalTestsBootstrapPath;
         }
 
         $this->prepareTestBaseClass();
-
-        if (!defined('ORIGINAL_ROOT')) {
-            $this->printWarning('ORIGINAL_ROOT should be defined by now');
-        }
     }
 
     /**
@@ -90,7 +86,7 @@ class Bootstrap extends AbstractBootstrap
             $typo3BasePath = $this->getTYPO3InstallationPath(realpath(__DIR__) ?: __DIR__);
         }
         if ($typo3BasePath === false) {
-            $typo3BasePath = $this->getTYPO3InstallationPath(realpath(getcwd()) ?: getcwd());
+            $typo3BasePath = $this->getTYPO3InstallationPath((string)(realpath(getcwd()) ?: getcwd()));
         }
 
         return $typo3BasePath;
@@ -122,9 +118,9 @@ class Bootstrap extends AbstractBootstrap
      * Print a warning to STDERR
      *
      * @param string $message
-     * @param array  ...$arguments
+     * @param string ...$arguments
      */
-    private function printWarning($message, ...$arguments)
+    private function printWarning(string $message, ...$arguments)
     {
         fwrite(STDERR, vsprintf((string)$message, $arguments) . PHP_EOL);
     }
@@ -135,7 +131,7 @@ class Bootstrap extends AbstractBootstrap
      * @param string $startPath
      * @return string|bool Returns the path to the TYPO3 installation or FALSE if it could not be found
      */
-    private function getTYPO3InstallationPath($startPath)
+    private function getTYPO3InstallationPath(string $startPath)
     {
         $cur = $startPath;
         while ($cur !== '/') {

@@ -18,7 +18,7 @@ class HandlerDescriptorTest extends AbstractCase
      */
     private $fixture;
 
-    public function setup()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -56,7 +56,7 @@ class HandlerDescriptorTest extends AbstractCase
     public function getInformationTest()
     {
         $result = $this->fixture->getInformation();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
 
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('all', $result);
@@ -85,7 +85,7 @@ class HandlerDescriptorTest extends AbstractCase
         $this->assertEquals(['auth_alias'], $configuration->getAliases());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

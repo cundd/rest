@@ -11,7 +11,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DoctrineBackendTest extends AbstractBackendTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!class_exists(ConnectionPool::class)) {

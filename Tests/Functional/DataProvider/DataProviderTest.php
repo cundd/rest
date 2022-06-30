@@ -35,7 +35,7 @@ class DataProviderTest extends AbstractCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -64,7 +64,7 @@ class DataProviderTest extends AbstractCase
         $this->fixture = $this->objectManager->get(DataProvider::class);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

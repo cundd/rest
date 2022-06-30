@@ -17,7 +17,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
      */
     protected $fixture;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

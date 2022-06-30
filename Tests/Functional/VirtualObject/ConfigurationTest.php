@@ -19,7 +19,7 @@ class ConfigurationTest extends AbstractVirtualObjectCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ class ConfigurationTest extends AbstractVirtualObjectCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

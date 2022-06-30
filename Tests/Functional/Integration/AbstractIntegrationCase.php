@@ -38,7 +38,7 @@ class AbstractIntegrationCase extends AbstractCase
      */
     private $dispatcher;
 
-    public function setUp()
+    public function setUp(): void
     {
         // Set TEST_MODE to true
         putenv('TEST_MODE=true');

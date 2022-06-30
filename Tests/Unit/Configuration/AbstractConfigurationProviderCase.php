@@ -8,17 +8,21 @@ use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Handler\CrudHandler;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 abstract class AbstractConfigurationProviderCase extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ConfigurationProviderInterface|TypoScriptConfigurationProvider|StandaloneConfigurationProvider
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +65,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
      */
     abstract function getConfigurationProviderToTest();
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
     }
@@ -74,16 +78,16 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $this->fixture->setSettings(
             [
                 'paths' => [
-                    'my_protectedext'              => [
+                    'my_protectedext'               => [
                         'path'  => 'my_protectedext-*',
                         'read'  => 'allow',
                         'write' => 'require',
                     ],
-                    'vendor-my_ext-my_model'       => [
+                    'vendor-my_ext-my_model'        => [
                         'read'  => 'require',
                         'write' => 'deny',
                     ],
-                    'vendor-my_other_ext-my_model' => [
+                    'vendor-my_other_ext-my_model'  => [
                         'path'          => 'vendor-my_other_ext-my_model',
                         'cacheLifeTime' => 2,
                     ],
@@ -96,7 +100,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         );
 
         $resourceTypeConfigurations = $this->fixture->getConfiguredResources();
-        $this->assertInternalType('array', $resourceTypeConfigurations);
+        $this->assertIsArray($resourceTypeConfigurations);
         $this->assertCount(4, $resourceTypeConfigurations);
         array_map(
             function ($c) {
@@ -132,20 +136,20 @@ abstract class AbstractConfigurationProviderCase extends TestCase
 
     /**
      * @test
-     * @expectedException \Cundd\Rest\Exception\InvalidArgumentException
      */
     public function getConfiguredResourceTypesInvalidReadTest()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->fixture->setSettings(['paths' => ['my_protectedext' => ['read' => 'invalid']]]);
         $this->fixture->getConfiguredResources();
     }
 
     /**
      * @test
-     * @expectedException \Cundd\Rest\Exception\InvalidArgumentException
      */
     public function getConfiguredResourceTypesInvalidWriteTest()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]);
         $this->fixture->getConfiguredResources();
     }
@@ -213,7 +217,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
     public function getConfiguredHandlersTest()
     {
         $handlerConfigurations = $this->fixture->getConfiguredResources();
-        $this->assertInternalType('array', $handlerConfigurations);
+        $this->assertIsArray($handlerConfigurations);
         $this->assertCount(5, $handlerConfigurations);
         array_map(
             function ($c) {

@@ -16,11 +16,13 @@ use Cundd\Rest\Tests\RequestBuilderTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Argument\Token\TypeToken;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class CacheFactoryTest extends TestCase
 {
+    use ProphecyTrait;
     use RequestBuilderTrait;
 
     /**
@@ -32,7 +34,7 @@ class CacheFactoryTest extends TestCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->fixture = new CacheFactory();
@@ -42,7 +44,7 @@ class CacheFactoryTest extends TestCase
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

@@ -27,7 +27,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
      */
     private $restObjectManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         /** @var TypoScriptConfigurationProvider $configurationProvider */
@@ -58,7 +58,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $this->fixture = new ConfigurationBasedAccessController($configurationProvider, $restObjectManager);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->fixture);
         unset($this->restObjectManager);

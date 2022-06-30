@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Router;
 
 
+use Closure;
 use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\Router;
 use Cundd\Rest\Tests\Unit\AbstractRequestBasedCase;
+use stdClass;
 
 class RouterTest extends AbstractRequestBasedCase
 {
@@ -25,16 +27,16 @@ class RouterTest extends AbstractRequestBasedCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
 
-        $this->cb = \Closure::bind(
+        $this->cb = Closure::bind(
             function () {
                 return func_get_args();
             },
-            new \stdClass()
+            new stdClass()
         );
 
         $this->fixture = new Router();
@@ -42,7 +44,7 @@ class RouterTest extends AbstractRequestBasedCase
 
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();
@@ -173,17 +175,17 @@ class RouterTest extends AbstractRequestBasedCase
      */
     public function dispatchMatchingRoutesSortedTest($method)
     {
-        $perfectMatchCallback = \Closure::bind(
+        $perfectMatchCallback = Closure::bind(
             function () {
                 return 'matched the route path/perfect-match';
             },
-            new \stdClass()
+            new stdClass()
         );
-        $perfectMatchCountCallback = \Closure::bind(
+        $perfectMatchCountCallback = Closure::bind(
             function () {
                 return 'matched the route path/perfect-match/_count';
             },
-            new \stdClass()
+            new stdClass()
         );
 
         $this->fixture->add(Route::get('path/{slug}', $this->cb));
@@ -220,11 +222,11 @@ class RouterTest extends AbstractRequestBasedCase
      */
     public function dispatchLikeDefaultHandlerTest()
     {
-        $count = \Closure::bind(
+        $count = Closure::bind(
             function () {
                 return 'returns the number of elements';
             },
-            new \stdClass()
+            new stdClass()
         );
         $resourceType = 'cundd-resource-type';
         $this->fixture->add(Route::get($resourceType . '/?', $this->cb)); // listAll

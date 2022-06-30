@@ -8,16 +8,17 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Tests\Unit\VirtualObjectCaseTrait;
 use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Cundd\Rest\VirtualObject\ConfigurationInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ConfigurationTest
  */
-class ConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
+class ConfigurationFactoryTest extends TestCase
 {
     use VirtualObjectCaseTrait;
 
     /**
-     * @var \Cundd\Rest\VirtualObject\ConfigurationFactory
+     * @var ConfigurationFactory
      */
     protected $fixture;
 
@@ -63,13 +64,13 @@ class ConfigurationFactoryTest extends \PHPUnit\Framework\TestCase
     ];
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = new ConfigurationFactory(new StandaloneConfigurationProvider($this->typoScriptDummyArray));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

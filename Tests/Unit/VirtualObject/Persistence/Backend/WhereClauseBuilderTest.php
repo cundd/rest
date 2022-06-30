@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Cundd\Rest\VirtualObject\Persistence\Backend;
+namespace Cundd\Rest\Tests\Unit\VirtualObject\Persistence\Backend;
 
 use Cundd\Rest\VirtualObject\Exception\InvalidOperatorException;
+use Cundd\Rest\VirtualObject\Persistence\Backend\WhereClause;
+use Cundd\Rest\VirtualObject\Persistence\Backend\WhereClauseBuilder;
 use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use PHPUnit\Framework\TestCase;
@@ -212,16 +214,16 @@ class WhereClauseBuilderTest extends TestCase
     }
 
     /**
-     * @param $input
-     * @param $expected
+     * @param string|int $input
+     * @param            $expected
      * @dataProvider resolveOperatorDataProvider
      */
-    public function testResolveOperator(string $input, string $expected)
+    public function testResolveOperator($input, string $expected)
     {
         $this->assertEquals($expected, WhereClauseBuilder::resolveOperator($input));
     }
 
-    public function resolveOperatorDataProvider()
+    public function resolveOperatorDataProvider(): array
     {
         return [
             [QueryInterface::OPERATOR_IN, 'IN'],
@@ -266,13 +268,13 @@ class WhereClauseBuilderTest extends TestCase
         ];
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->fixture = new WhereClauseBuilder();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->fixture->reset();
         unset($this->fixture);

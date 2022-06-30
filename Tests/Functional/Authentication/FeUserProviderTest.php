@@ -20,7 +20,7 @@ class FeUserProviderTest extends AbstractCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = new FeUserProvider();

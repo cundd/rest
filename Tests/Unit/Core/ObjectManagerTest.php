@@ -40,6 +40,7 @@ use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -50,6 +51,7 @@ use Prophecy\Prophecy\ObjectProphecy;
  */
 class ObjectManagerTest extends TestCase
 {
+    use ProphecyTrait;
     use InjectPropertyTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
@@ -64,7 +66,7 @@ class ObjectManagerTest extends TestCase
      */
     private $container;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
@@ -115,7 +117,7 @@ class ObjectManagerTest extends TestCase
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

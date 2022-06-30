@@ -11,6 +11,7 @@ use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
@@ -20,19 +21,21 @@ use Zend\Diactoros\ServerRequestFactory;
  */
 class RequestFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var RequestFactoryInterface
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->fixture = $this->buildRequestFactory();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         unset($_GET['u']);

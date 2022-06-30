@@ -18,7 +18,7 @@ class CustomRestTest extends AbstractIntegrationCase
         'typo3conf/ext/rest/Tests/Functional/Fixtures/Extensions/custom_rest',
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
