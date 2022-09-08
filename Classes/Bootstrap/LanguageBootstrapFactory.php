@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Bootstrap;
 
 use Cundd\Rest\Bootstrap\V10\V10LanguageBootstrap;
+use Cundd\Rest\Bootstrap\V11\V11LanguageBootstrap;
 use Cundd\Rest\Bootstrap\V8\V8LanguageBootstrap;
 use Cundd\Rest\Bootstrap\V9\V9LanguageBootstrap;
 use Cundd\Rest\ObjectManagerInterface;
@@ -33,8 +34,10 @@ class LanguageBootstrapFactory
 
         if ((new Typo3Version())->getMajorVersion() == 9) {
             return new V9LanguageBootstrap();
-        } else {
+        } elseif ((new Typo3Version())->getMajorVersion() == 10) {
             return new V10LanguageBootstrap();
+        } else {
+            return new V11LanguageBootstrap();
         }
     }
 }

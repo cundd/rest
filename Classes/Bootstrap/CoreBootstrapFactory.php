@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Bootstrap;
 
 use Cundd\Rest\Bootstrap\V10\V10CoreBootstrap;
+use Cundd\Rest\Bootstrap\V11\V11CoreBootstrap;
 use Cundd\Rest\Bootstrap\V8\V8CoreBootstrap;
 use Cundd\Rest\Bootstrap\V8\V8LanguageBootstrap;
 use Cundd\Rest\Bootstrap\V9\V9CoreBootstrap;
@@ -34,8 +35,10 @@ class CoreBootstrapFactory
 
         if ((new Typo3Version())->getMajorVersion() == 9) {
             return new V9CoreBootstrap($this->objectManager);
-        } else {
+        } elseif ((new Typo3Version())->getMajorVersion() == 10) {
             return new V10CoreBootstrap($this->objectManager);
+        } else {
+            return new V11CoreBootstrap($this->objectManager);
         }
     }
 }
