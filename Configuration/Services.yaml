@@ -7,6 +7,6 @@ services:
 
   Cundd\Rest\:
     resource: '../Classes/*'
-    exclude: '../Classes/Configuration/StandaloneConfigurationProvider.php'
+    exclude: ['../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php']
 
   Cundd\Rest\Configuration\ConfigurationProviderInterface: '@Cundd\Rest\Configuration\TypoScriptConfigurationProvider'
