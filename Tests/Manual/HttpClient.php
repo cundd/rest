@@ -12,7 +12,9 @@ use UnexpectedValueException;
 class HttpClient
 {
     private $verbose;
+
     private $baseUrl;
+
     private $statistics = [
         'numberOfRequestsTotal'     => 0,
         'numberOfRequestsPerMethod' => [
@@ -228,7 +230,7 @@ class HttpClient
                 $headers['http_code'] = [$httpCode];
                 $headers['status_phrase'] = [$statusPhrase];
             } else {
-                [$key, $value] = explode(': ', $line);
+                [$key, $value] = array_map('trim', explode(':', $line));
 
                 if (!isset($headers[$key])) {
                     $headers[$key] = [$value];
