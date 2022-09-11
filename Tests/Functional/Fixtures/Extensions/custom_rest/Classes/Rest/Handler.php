@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnusedParameterInspection */
+<?php
+/** @noinspection PhpUnusedParameterInspection */
+declare(strict_types=1);
 
 namespace Cundd\CustomRest\Rest;
 
@@ -207,119 +209,6 @@ class Handler implements HandlerInterface
         );
 
         /*------------------------------------------------------
-         * Sample Routes for Controller "Person"
-         *-----------------------------------------------------*/
-
-        /*
-         * To define a new "base" route, a specific path is assigned to Route::get
-         * instead of the universal $request->getResourceType(). Here it is the path
-         * "/cundd-custom_rest-person"
-         */
-
-        /* ------------ GET ------------- */
-
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person
-        $router->add(
-            Route::get(
-                '/cundd-custom_rest-person/?',
-                function (RestRequestInterface $request) {
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'list',
-                        []
-                    );
-                }
-            )
-        );
-
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/show/12
-        $router->add(
-            Route::get(
-                '/cundd-custom_rest-person/show/{int}/?',
-                function (RestRequestInterface $request, $int) {
-                    $arguments = [
-                        'uid' => $int,
-                    ];
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'show',
-                        $arguments
-                    );
-                }
-            )
-        );
-
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/firstname/daniel
-        $router->add(
-            Route::get(
-                '/cundd-custom_rest-person/firstname/{slug}/?',
-                function (RestRequestInterface $request, $slug) {
-                    $arguments = [
-                        'firstName' => $slug,
-                    ];
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'firstName',
-                        $arguments
-                    );
-                }
-            )
-        );
-
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/lastname/corn
-        $router->add(
-            Route::get(
-                '/cundd-custom_rest-person/lastname/{slug}/?',
-                function (RestRequestInterface $request, $slug) {
-                    $arguments = [
-                        'lastName' => $slug,
-                    ];
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'lastName',
-                        $arguments
-                    );
-                }
-            )
-        );
-
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/birthday/0000-00-00
-        $router->add(
-            Route::get(
-                '/cundd-custom_rest-person/birthday/{slug}/?',
-                function (RestRequestInterface $request, $slug) {
-                    $arguments = [
-                        'date' => $slug,
-                    ];
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'birthday',
-                        $arguments
-                    );
-                }
-            )
-        );
-
-        /*------------------------------------------------------
          * Detailed error routes for empty person path endpoints
          *-----------------------------------------------------*/
 
@@ -363,51 +252,6 @@ class Handler implements HandlerInterface
                         'Please add a first name: /cundd-custom_rest-person/firstname/{firstName}.',
                         404,
                         $request
-                    );
-                }
-            )
-        );
-
-        /* ------------ POST ------------- */
-
-        # curl -X POST -H "Content-Type: application/json" -d '{"firstName":"john","lastName":"john"}' http://localhost:8888/rest/customhandler/create
-        $router->add(
-            Route::post(
-                $request->getResourceType() . '/create/?',
-                function (RestRequestInterface $request) {
-                    $arguments = [
-                        'person' => $request->getSentData(),
-                    ];
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'create',
-                        $arguments
-                    );
-                }
-            )
-        );
-
-        # curl -X PATCH -H "Content-Type: application/json" -d '{"firstName":"john","lastName":"john"}' http://localhost:8888/rest/customhandler/update/1
-        $router->add(
-            Route::patch(
-                $request->getResourceType() . '/update/{int}/?',
-                function (RestRequestInterface $request, $id) {
-                    $arguments = [
-                        'person' => $request->getSentData(),
-                    ];
-                    $arguments['person']['__identity'] = $id;
-
-                    return $this->helper->callExtbasePlugin(
-                        'customRest',
-                        'Cundd',
-                        'CustomRest',
-                        'Person',
-                        'update',
-                        $arguments
                     );
                 }
             )

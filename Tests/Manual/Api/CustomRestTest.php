@@ -273,31 +273,6 @@ class CustomRestTest extends AbstractApiCase
     /**
      * @test
      */
-    public function runExtbaseTest()
-    {
-        $path = 'cundd-custom_rest-route/create';
-        $data = [
-            'firstName' => 'john',
-            'lastName'  => 'john',
-        ];
-        $response = $this->requestJson(
-            $path,
-            'POST',
-            $data,
-            [
-                'Content-Type' => 'application/json',
-            ]
-        );
-
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame('{"success":1}', $response->getBody(), $this->getErrorDescription($response));
-        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
-    }
-
-    /**
-     * @test
-     */
     public function unauthorizedTest()
     {
         $path = 'cundd-custom_rest-require';
@@ -356,10 +331,6 @@ class CustomRestTest extends AbstractApiCase
             ['customhandler/bool/yes', 200],
             ['customhandler/bool/no', 200],
             ['cundd-custom_rest-person', 200],
-            ['cundd-custom_rest-person/show/1', 200],
-            ['cundd-custom_rest-person/firstname/daniel', 200],
-            ['cundd-custom_rest-person/lastname/corn', 200],
-            ['cundd-custom_rest-person/birthday/0000-00-00', 200],
             ['cundd-custom_rest-person/show', 200],
             ['cundd-custom_rest-person/lastname', 404],
             ['cundd-custom_rest-person/firstname', 404],

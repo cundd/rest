@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Cundd\CustomRest\Domain\Validator;
 
@@ -25,6 +26,7 @@ class PersonValidator extends AbstractValidator
      */
     public function __construct(PersonRepository $personRepository)
     {
+        parent::__construct();
         $this->personRepository = $personRepository;
     }
 
