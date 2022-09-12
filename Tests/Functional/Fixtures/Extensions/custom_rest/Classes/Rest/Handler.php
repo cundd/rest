@@ -29,25 +29,17 @@ class Handler implements HandlerInterface
     protected $responseFactory;
 
     /**
-     * @var Helper
-     */
-    protected $helper;
-
-    /**
      * Handler constructor
      *
      * @param ObjectManagerInterface   $objectManager
      * @param ResponseFactoryInterface $responseFactory
-     * @param Helper                   $helper
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ResponseFactoryInterface $responseFactory,
-        Helper $helper
+        ResponseFactoryInterface $responseFactory
     ) {
         $this->objectManager = $objectManager;
         $this->responseFactory = $responseFactory;
-        $this->helper = $helper;
     }
 
     /**
