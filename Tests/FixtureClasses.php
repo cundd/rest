@@ -13,10 +13,10 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-ClassBuilderTrait::buildClassIfNotExists(AbstractDomainObject::class);
-ClassBuilderTrait::buildClassIfNotExists(Repository::class);
-ClassBuilderTrait::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
-ClassBuilderTrait::buildInterfaceIfNotExists(DomainObjectInterface::class);
+ClassBuilder::buildClassIfNotExists(AbstractDomainObject::class);
+ClassBuilder::buildClassIfNotExists(Repository::class);
+ClassBuilder::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
+ClassBuilder::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
 /**
  * @method getUid()
@@ -263,7 +263,7 @@ class SimpleClass
 
 class SimpleClassJsonSerializable extends SimpleClass implements JsonSerializable
 {
-    function jsonSerialize()
+    function jsonSerialize(): array
     {
         return [
             "firstName" => $this->firstName,

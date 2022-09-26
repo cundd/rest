@@ -228,7 +228,7 @@ class ObjectManagerTest extends AbstractCase
     public function getHandlerFromResourceTest()
     {
         $expectedHandler = '\\Vendor\\Ext' . time() . '\\Rest\\Handler';
-        $this->buildClass([$expectedHandler, '', CrudHandler::class]);
+        $this->buildClass($expectedHandler, '', CrudHandler::class);
 
         $resourceType = new ResourceType('some_extension-my_model');
         $resourceTypeString = (string)$resourceType;
