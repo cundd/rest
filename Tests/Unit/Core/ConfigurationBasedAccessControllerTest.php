@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Core;
 
-
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
@@ -14,6 +13,7 @@ use Cundd\Rest\Tests\Functional\Fixtures\DummyAuthenticationProvider;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 
@@ -24,6 +24,7 @@ use Prophecy\Prophecy\ObjectProphecy;
  */
 class ConfigurationBasedAccessControllerTest extends TestCase
 {
+    use ProphecyTrait;
     use RequestBuilderTrait;
 
     /**

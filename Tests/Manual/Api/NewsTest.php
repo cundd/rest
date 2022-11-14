@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual\Api;
 
+use Exception;
+
 /**
  * Test the default Data Provider using the News extension (https://github.com/georgringer/news)
  */
@@ -78,7 +80,7 @@ class NewsTest extends AbstractApiCase
         $parsedBody = $response->getParsedBody();
         $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
         $this->assertArrayHasKey('uid', $parsedBody, $this->getErrorDescription($response));
-        $this->assertInternalType('int', $parsedBody['uid'], $this->getErrorDescription($response));
+        $this->assertIsInt($parsedBody['uid'], $this->getErrorDescription($response));
         $this->assertArrayHasKey('title', $parsedBody, $this->getErrorDescription($response));
         $this->assertSame($header, $parsedBody['title'], $this->getErrorDescription($response));
     }
@@ -112,7 +114,7 @@ class NewsTest extends AbstractApiCase
      * @test
      * @param string $suffix
      * @dataProvider suffixDataProvider
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateNewsWithIdInUrlTest($suffix = '')
     {
@@ -139,7 +141,7 @@ class NewsTest extends AbstractApiCase
      * @test
      * @param string $suffix
      * @dataProvider suffixDataProvider
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateNewsWithIdShouldFailTest($suffix = '')
     {
@@ -169,7 +171,7 @@ class NewsTest extends AbstractApiCase
      * @test
      * @param string $suffix
      * @dataProvider suffixDataProvider
-     * @throws \Exception
+     * @throws Exception
      */
     public function deleteNewsWithIdInUrlTest($suffix = '')
     {
@@ -190,7 +192,7 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     private function addNewsAndGetId()
     {
@@ -204,7 +206,7 @@ class NewsTest extends AbstractApiCase
         );
 
         if (!isset($response->getParsedBody()['uid'])) {
-            throw new \Exception('Content does not contain key "uid"');
+            throw new Exception('Content does not contain key "uid"');
         }
 
         return $response->getParsedBody()['uid'];

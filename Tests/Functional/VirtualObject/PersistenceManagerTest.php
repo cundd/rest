@@ -13,18 +13,18 @@ require_once __DIR__ . '/AbstractDatabaseCase.php';
 class PersistenceManagerTest extends AbstractDatabaseCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface
+     * @var PersistenceManagerInterface
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = $this->objectManager->get(PersistenceManagerInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

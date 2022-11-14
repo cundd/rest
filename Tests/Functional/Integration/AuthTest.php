@@ -14,7 +14,7 @@ class AuthTest extends AbstractIntegrationCase
 {
     use FeUserCaseTrait;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->configureFrontendUserAuthentication();

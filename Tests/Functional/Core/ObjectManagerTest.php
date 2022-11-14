@@ -42,7 +42,7 @@ class ObjectManagerTest extends AbstractCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
@@ -52,7 +52,7 @@ class ObjectManagerTest extends AbstractCase
         $this->injectConfigurationProviderUsingHandlerClass();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Reset the last request
         unset($this->fixture);
@@ -228,7 +228,7 @@ class ObjectManagerTest extends AbstractCase
     public function getHandlerFromResourceTest()
     {
         $expectedHandler = '\\Vendor\\Ext' . time() . '\\Rest\\Handler';
-        $this->buildClass([$expectedHandler, '', CrudHandler::class]);
+        $this->buildClass($expectedHandler, '', CrudHandler::class);
 
         $resourceType = new ResourceType('some_extension-my_model');
         $resourceTypeString = (string)$resourceType;

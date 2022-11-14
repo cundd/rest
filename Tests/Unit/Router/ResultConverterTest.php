@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Router;
 
-
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
@@ -11,13 +10,17 @@ use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 
-
-class ResultConverterTest extends \PHPUnit\Framework\TestCase
+class ResultConverterTest extends TestCase
 {
+    use ProphecyTrait;
     use RequestBuilderTrait;
 
     /**
@@ -39,7 +42,7 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         putenv('TEST_MODE=yes');
@@ -52,7 +55,7 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->responseFactory);
         unset($this->fixture);
@@ -123,7 +126,9 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
 
         /** @var ResponseFactoryInterface|ObjectProphecy $responseFactoryProphecy */
         $responseFactoryProphecy = $this->prophesize(ResponseFactory::class);
-        $responseFactoryProphecy->createSuccessResponse('some result', 200, $request)->shouldBeCalled();
+        /** @var MethodProphecy $methodProphecy */
+        $methodProphecy = $responseFactoryProphecy->createSuccessResponse('some result', 200, $request);
+        $methodProphecy->shouldBeCalled();
 
         $this->responseFactory = $responseFactoryProphecy->reveal();
 
@@ -163,7 +168,7 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
         $this->fixture = new ResultConverter(
             $this->buildRouter(
                 function () {
-                    throw new \Exception('An exception', 1483531241);
+                    throw new Exception('An exception', 1483531241);
                 }
             ),
             $this->responseFactory,
@@ -186,7 +191,7 @@ class ResultConverterTest extends \PHPUnit\Framework\TestCase
     public function dispatchWillConvertExceptionsTest()
     {
         $this->fixture = new ResultConverter(
-            $this->buildRouter(new \Exception('An exception', 1483531241)),
+            $this->buildRouter(new Exception('An exception', 1483531241)),
             $this->responseFactory,
             $this->exceptionHandler
         );

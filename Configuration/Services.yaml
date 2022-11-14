@@ -1,0 +1,12 @@
+services:
+  # general settings
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Cundd\Rest\:
+    resource: '../Classes/*'
+    exclude: ['../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php']
+
+  Cundd\Rest\Configuration\ConfigurationProviderInterface: '@Cundd\Rest\Configuration\TypoScriptConfigurationProvider'

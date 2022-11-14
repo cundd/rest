@@ -33,7 +33,7 @@ class AuthTest extends AbstractApiCase
         $errorDescription = $this->getErrorDescription($response);
         $this->assertSame(200, $response->getStatusCode(), $errorDescription);
         $this->assertSame('{"status":"logged-in"}', $response->getBody(), $errorDescription);
-        $this->assertInternalType('array', $response->getHeader('Set-Cookie'), $errorDescription);
+        $this->assertIsArray($response->getHeader('Set-Cookie'), $errorDescription);
         $this->assertNotEmpty($response->getHeader('Set-Cookie'), $errorDescription);
     }
 
@@ -53,7 +53,7 @@ class AuthTest extends AbstractApiCase
         $errorDescription = $this->getErrorDescription($response);
         $this->assertSame(200, $response->getStatusCode(), $errorDescription);
         $this->assertSame('{"status":"logged-in"}', $response->getBody(), $errorDescription);
-        $this->assertInternalType('array', $response->getHeader('Set-Cookie'), $errorDescription);
+        $this->assertIsArray($response->getHeader('Set-Cookie'), $errorDescription);
         $this->assertNotEmpty($response->getHeader('Set-Cookie'), $errorDescription);
     }
 
@@ -109,7 +109,7 @@ class AuthTest extends AbstractApiCase
         );
         $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
         $this->assertSame('{"status":"logged-in"}', $response->getBody(), $this->getErrorDescription($response));
-        $this->assertInternalType('array', $response->getHeader('Set-Cookie'), $this->getErrorDescription($response));
+        $this->assertIsArray($response->getHeader('Set-Cookie'), $this->getErrorDescription($response));
         $this->assertNotEmpty($response->getHeader('Set-Cookie'), $this->getErrorDescription($response));
 
         $cookie = $response->getHeaderLine('Set-Cookie');

@@ -23,7 +23,7 @@ use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
 use Exception;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use Prophecy\Prophecy\ObjectProphecy;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use SimpleXMLElement;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
@@ -40,7 +40,6 @@ use function method_exists;
 use function simplexml_load_file;
 
 /**
- * @method ObjectProphecy prophesize($classOrInterface = null);
  * @method void assertInternalType($expected, $actual, $message = '')
  * @method void assertEquals($expected, $actual, $message = '', ...$args)
  * @method void assertSame($expected, $actual, $message = '')
@@ -58,6 +57,7 @@ use function simplexml_load_file;
  */
 class AbstractCase extends FunctionalTestCase
 {
+    use ProphecyTrait;
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
@@ -69,7 +69,7 @@ class AbstractCase extends FunctionalTestCase
      */
     protected $objectManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         try {
             parent::setUp();
@@ -84,7 +84,7 @@ class AbstractCase extends FunctionalTestCase
         $this->objectManager = $this->buildConfiguredObjectManager();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

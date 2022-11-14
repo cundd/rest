@@ -33,7 +33,7 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
         ],
     ];
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();
@@ -45,7 +45,7 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
     public function getSettingsTest()
     {
         $settings = $this->fixture->getSettings();
-        $this->assertInternalType('array', $settings);
+        $this->assertIsArray($settings);
 
         if (count($this->fixture->getSettings()) !== 0) {
             $this->assertTrue(isset($settings['paths']) || isset($settings['paths.']));
@@ -58,10 +58,10 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
     public function getSettingTest()
     {
         $settings = $this->fixture->getSettings();
-        $this->assertInternalType('array', $settings);
+        $this->assertIsArray($settings);
         if (count($settings) > 0) {
-            $this->assertInternalType('array', $this->fixture->getSetting('paths'));
-            $this->assertInternalType('array', $this->fixture->getSetting('paths.all'));
+            $this->assertIsArray($this->fixture->getSetting('paths'));
+            $this->assertIsArray($this->fixture->getSetting('paths.all'));
             $this->assertEquals('all', $this->fixture->getSetting('paths.all.path'));
         }
     }

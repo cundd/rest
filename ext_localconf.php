@@ -1,5 +1,14 @@
 <?php
 
+use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
+use Cundd\Rest\Authentication\UserProviderInterface;
+use Cundd\Rest\BootstrapDispatcher;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\Handler\HandlerInterface;
+use TYPO3\CMS\Extbase\Object\Container\Container;
+
 if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
@@ -9,7 +18,7 @@ call_user_func(
         // TYPO3 v8
         if (!class_exists(TYPO3\CMS\Core\Information\Typo3Version::class)) {
             // Register eID
-            $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['rest'] = \Cundd\Rest\BootstrapDispatcher::class . '::processRequest';
+            $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['rest'] = BootstrapDispatcher::class . '::processRequest';
 
             if (isset($_SERVER['REQUEST_URI'])) {
                 // Detect and "hijack" REST requests
@@ -34,17 +43,18 @@ call_user_func(
         }
 
         // Register Cache
-        if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'])) {
+        if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'])
+            || !is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'])) {
             $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['cundd_rest_cache'] = [];
         }
 
         $implementationsMap = [
-            \Cundd\Rest\Configuration\ConfigurationProviderInterface::class => \Cundd\Rest\Configuration\TypoScriptConfigurationProvider::class,
-            \Cundd\Rest\Authentication\UserProviderInterface::class         => \Cundd\Rest\Authentication\UserProvider\FeUserProvider::class,
-            \Cundd\Rest\Handler\HandlerInterface::class                     => \Cundd\Rest\Handler\CrudHandler::class,
+            ConfigurationProviderInterface::class => TypoScriptConfigurationProvider::class,
+            UserProviderInterface::class         => FeUserProvider::class,
+            HandlerInterface::class                     => CrudHandler::class,
         ];
         $objectContainer = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \TYPO3\CMS\Extbase\Object\Container\Container::class
+            Container::class
         );
         foreach ($implementationsMap as $interface => $impl) {
             $objectContainer->registerImplementation($interface, $impl);

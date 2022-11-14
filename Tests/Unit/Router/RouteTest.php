@@ -8,8 +8,10 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Router\ParameterTypeInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use LogicException;
+use PHPUnit\Framework\TestCase;
 
-class RouteTest extends \PHPUnit\Framework\TestCase
+class RouteTest extends TestCase
 {
     use RequestBuilderTrait;
 
@@ -22,7 +24,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -309,10 +311,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
      * @test
      * @param string $pattern
      * @dataProvider shouldThrowForInvalidParametersDataProvider
-     * @expectedException \LogicException
      */
     public function shouldThrowForInvalidParametersTest($pattern)
     {
+        $this->expectException(LogicException::class);
         Route::routeWithPattern($pattern, $this->cb);
     }
 

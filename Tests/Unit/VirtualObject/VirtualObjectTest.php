@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\VirtualObject;
 
 use Cundd\Rest\VirtualObject\VirtualObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Virtual Object tests
  */
-class VirtualObjectTest extends \PHPUnit\Framework\TestCase
+class VirtualObjectTest extends TestCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\VirtualObject
+     * @var VirtualObject
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fixture = new VirtualObject(
             [
@@ -27,7 +28,7 @@ class VirtualObjectTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
     }

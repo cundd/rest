@@ -107,14 +107,14 @@ CONFIGURATION;
         return $this->testConfiguration;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->createTable();
         $this->insertData();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->truncateTable();
         $this->dropTable();
@@ -171,9 +171,9 @@ SQL;
     {
         $testDatabaseTable = self::$testDatabaseTable;
         if ($this->isSqliteDriver()) {
-            $dropTableSQL = "DELETE FROM  $testDatabaseTable";
+            $dropTableSQL = "DELETE FROM $testDatabaseTable";
         } else {
-            $dropTableSQL = "TRUNCATE TABLE  $testDatabaseTable";
+            $dropTableSQL = "TRUNCATE TABLE $testDatabaseTable";
         }
         $databaseConnection = $this->getDatabaseBackend();
         $databaseConnection->executeQuery($dropTableSQL);

@@ -19,14 +19,14 @@ class ExtractorFileTest extends AbstractCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->fixture = $this->objectManager->get(ExtractorInterface::class);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();

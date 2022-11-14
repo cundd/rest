@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
+use Cundd\Rest\VirtualObject\Exception\InvalidPropertyException;
+use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
@@ -13,18 +15,18 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 class ObjectConverterTest extends AbstractVirtualObjectCase
 {
     /**
-     * @var \Cundd\Rest\VirtualObject\ObjectConverter
+     * @var ObjectConverter
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = new ObjectConverter();
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();
@@ -179,7 +181,7 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
+     * @expectedException InvalidPropertyException
      */
     public function convertFromVirtualObjectWithUndefinedPropertyTest()
     {
@@ -194,7 +196,7 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException \Cundd\Rest\VirtualObject\Exception\InvalidPropertyException
+     * @expectedException InvalidPropertyException
      */
     public function convertToVirtualObjectWithUndefinedPropertyTest()
     {
@@ -419,7 +421,7 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException \Cundd\Rest\VirtualObject\Exception\MissingConfigurationException
+     * @expectedException MissingConfigurationException
      */
     public function throwExceptionIfConfigurationIsNotSet()
     {

@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Tests\Functional\Cache;
 
 use Cundd\Rest\Cache\Cache;
@@ -12,6 +11,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
@@ -23,12 +23,14 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
  */
 class CacheTest extends AbstractCase
 {
+    use ProphecyTrait;
+
     /**
      * @var Cache
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -39,12 +41,11 @@ class CacheTest extends AbstractCase
         $this->fixture = $fixture;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();
     }
-
 
     /**
      * @test

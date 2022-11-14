@@ -10,7 +10,7 @@ use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
  */
 class StandaloneConfigurationProviderTest extends AbstractConfigurationProviderCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->fixture = new StandaloneConfigurationProvider($this->settings);
