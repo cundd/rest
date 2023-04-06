@@ -13,26 +13,6 @@ class SessionManager implements SingletonInterface
     const KEY_PREFIX = 'rest-';
 
     /**
-     * @var bool
-     */
-    protected $didInitialize = false;
-
-    /**
-     * Reads the session data from the database
-     */
-    protected function initialize()
-    {
-        if (!$this->didInitialize) {
-            $frontendUserAuthentication = $this->getFrontendUserAuthentication();
-            if (method_exists($frontendUserAuthentication, 'fetchSessionData')) {
-                $frontendUserAuthentication->fetchSessionData();
-            }
-
-            $this->didInitialize = true;
-        }
-    }
-
-    /**
      * Returns the value for the given key
      *
      * @param string $key
@@ -40,8 +20,6 @@ class SessionManager implements SingletonInterface
      */
     public function valueForKey(string $key)
     {
-        $this->initialize();
-
         return $this->getFrontendUserAuthentication()->getKey('ses', self::KEY_PREFIX . $key);
     }
 
