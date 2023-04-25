@@ -8,7 +8,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response as TYPO3Response;
-use Zend\Diactoros\Response as ZendResponse;
+use Laminas\Diactoros\Response as LaminasResponse;
 
 /**
  * Factory class to create Response objects
@@ -117,8 +117,8 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
         if (class_exists(TYPO3Response::class)) {
             return TYPO3Response::class;
         }
-        if (class_exists(ZendResponse::class)) {
-            return ZendResponse::class;
+        if (class_exists(LaminasResponse::class)) {
+            return LaminasResponse::class;
         }
         throw new LogicException('No response implementation found');
     }

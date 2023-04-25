@@ -5,7 +5,7 @@ namespace Cundd\Rest\Tests;
 
 use Psr\Http\Message\ResponseInterface;
 use UnexpectedValueException;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 use function rewind;
 
 trait ResponseBuilderTrait
