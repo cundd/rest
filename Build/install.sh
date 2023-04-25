@@ -6,7 +6,7 @@ set -o errexit
 PROJECT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # The branch of TYPO3 to checkout (e.g. 'TYPO3_8-7', 'TYPO3_7-6')
-: ${TYPO3="master"}
+: ${TYPO3="v11"}
 : ${REPO="$(basename ${PROJECT_HOME})"}
 
 : ${PHP_BINARY="php"}
