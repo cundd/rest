@@ -19,6 +19,7 @@ class RestMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isRestRequest($request)) {
+            $GLOBALS['TYPO3_REQUEST'] = $request;
             $middlewareBootstrap = new MiddlewareBootstrap();
             $frontendController = $middlewareBootstrap->bootstrapCore($request);
             $languageEnhancedRequest = $middlewareBootstrap->bootstrapLanguage($frontendController, $request);
