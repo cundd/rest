@@ -11,7 +11,6 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
@@ -21,8 +20,6 @@ use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager as TYPO3ObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as TYPO3ObjectManagerInterface;
 
 use function class_exists;
 use function interface_exists;
@@ -30,31 +27,16 @@ use function sprintf;
 
 /**
  * Specialized Object Manager
- *
- * @method bool isRegistered($class)
  */
 class ObjectManager implements ObjectManagerInterface, SingletonInterface
 {
-    /**
-     * Configuration provider
-     *
-     * @var TypoScriptConfigurationProvider
-     */
-    protected $configurationProvider;
+    protected ?ConfigurationProviderInterface $configurationProvider = null;
 
-    /**
-     * @var ContainerInterface|TYPO3ObjectManagerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * Object Manager constructor
-     *
-     * @param ContainerInterface|TYPO3ObjectManagerInterface|null $container
-     */
-    public function __construct($container = null)
+    public function __construct(ContainerInterface $container = null)
     {
-        $this->container = $container ?: GeneralUtility::makeInstance(TYPO3ObjectManager::class);
+        $this->container = $container ?: GeneralUtility::makeInstance(ContainerInterface::class);
     }
 
     public function get($class, ...$arguments)
