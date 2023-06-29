@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Tests\Unit;
-
 
 use Cundd\Rest\VirtualObject\Configuration;
 use Cundd\Rest\VirtualObject\ConfigurationFactory;

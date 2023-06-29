@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Core;
@@ -9,12 +10,12 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Request;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\ServerRequestFactory;
 
 /**
  * Test case for class new \Cundd\Rest\RequestFactory

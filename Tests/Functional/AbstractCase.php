@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
@@ -35,6 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Container\Container;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+
 use function get_parent_class;
 use function method_exists;
 use function simplexml_load_file;
@@ -92,7 +94,7 @@ class AbstractCase extends FunctionalTestCase
     /**
      * Build a new request with the given URI
      *
-     * @param string      $uri
+     * @param string $uri
      * @param string|null $format
      * @param string|null $method
      * @return RestRequestInterface

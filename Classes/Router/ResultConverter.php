@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
@@ -11,6 +12,7 @@ use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Utility\DebugUtility;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+
 use function array_map;
 use function implode;
 use function preg_replace;

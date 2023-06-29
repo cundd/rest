@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual\Api;
-
 
 class ContentTest extends AbstractApiCase
 {

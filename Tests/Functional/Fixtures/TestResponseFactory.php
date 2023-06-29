@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Fixtures;
@@ -7,6 +8,7 @@ use Cundd\Rest\Tests\ResponseBuilderTrait;
 use InvalidArgumentException;
 use Nimut\TestingFramework\Http\Response as NimutResponse;
 use Psr\Http\Message\ResponseInterface;
+
 use function preg_match;
 use function strlen;
 use function substr;

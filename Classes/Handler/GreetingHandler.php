@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Handler;
@@ -9,6 +10,7 @@ use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 use function class_exists;
 use function date;
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2013-11-28T11:34:19Z" product-name="rest">
-		<header/>
-		<body>
+    <file source-language="en" datatype="plaintext" original="messages" date="2013-11-28T11:34:19Z" product-name="rest">
+        <header/>
+        <body>
             <trans-unit id="tx_rest_domain_model_document">
                 <source>Document</source>
             </trans-unit>
@@ -12,6 +12,6 @@
             <trans-unit id="reports.handler.description">
                 <source>An overview of registered Handlers</source>
             </trans-unit>
-		</body>
-	</file>
+        </body>
+    </file>
 </xliff>

@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Fixtures;
-
 
 use Psr\Container\ContainerInterface;
 

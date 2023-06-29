@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Configuration;
@@ -9,6 +10,7 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\SingletonInterface;
+
 use function is_numeric;
 
 /**
@@ -215,7 +217,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * If no explicit path is configured use the current key
      *
-     * @param array  $configuration
+     * @param array $configuration
      * @param string $path
      * @return array
      */

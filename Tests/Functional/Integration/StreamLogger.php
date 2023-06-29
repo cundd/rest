@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
@@ -22,7 +22,6 @@ class StreamLogger extends AbstractLogger
         }
         $this->stream = $stream;
     }
-
 
     public function log($level, $message, array $context = [])
     {

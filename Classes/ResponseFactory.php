@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest;
 
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use Laminas\Diactoros\Response as LaminasResponse;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response as TYPO3Response;
-use Laminas\Diactoros\Response as LaminasResponse;
 
 /**
  * Factory class to create Response objects

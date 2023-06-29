@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\VirtualObject;
@@ -62,7 +63,6 @@ class ConfigurationFactoryTest extends TestCase
             ],
         ],
     ];
-
 
     public function setUp(): void
     {
@@ -128,7 +128,6 @@ class ConfigurationFactoryTest extends TestCase
         );
         $this->validateConfiguration($configurationObject);
     }
-
 
     /**
      * Runs the test on the given configuration

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap;
@@ -10,6 +11,7 @@ use Cundd\Rest\Bootstrap\V8\V8LanguageBootstrap;
 use Cundd\Rest\Bootstrap\V9\V9CoreBootstrap;
 use Cundd\Rest\ObjectManagerInterface;
 use TYPO3\CMS\Core\Information\Typo3Version;
+
 use function class_exists;
 
 class CoreBootstrapFactory

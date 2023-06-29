@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
@@ -7,6 +8,7 @@ use Nimut\TestingFramework\Http\Response;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use PHPUnit\Util\PHP\DefaultPhpProcess;
 use Text_Template;
+
 use function json_decode;
 use function var_export;
 

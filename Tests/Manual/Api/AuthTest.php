@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual\Api;
@@ -62,7 +63,7 @@ class AuthTest extends AbstractApiCase
      */
     public function logoutWithPostTest()
     {
-        list($sessionVariable, $sessionId) = $this->loginAndGetSession();
+        [$sessionVariable, $sessionId] = $this->loginAndGetSession();
 
         $status = $this->request('auth/login', 'GET', null, ['Cookie' => "$sessionVariable=$sessionId"]);
         $this->assertSame('{"status":"logged-in"}', $status->getBody(), $this->getErrorDescription($status));
@@ -82,7 +83,7 @@ class AuthTest extends AbstractApiCase
      */
     public function logoutWithGetTest()
     {
-        list($sessionVariable, $sessionId) = $this->loginAndGetSession();
+        [$sessionVariable, $sessionId] = $this->loginAndGetSession();
 
         $status = $this->request('auth/login', 'GET', null, ['Cookie' => "$sessionVariable=$sessionId"]);
         $this->assertSame('{"status":"logged-in"}', $status->getBody(), $this->getErrorDescription($status));
@@ -95,7 +96,6 @@ class AuthTest extends AbstractApiCase
         $this->assertSame(200, $status->getStatusCode(), $this->getErrorDescription($status));
         $this->assertSame('{"status":"logged-out"}', $status->getBody(), $this->getErrorDescription($status));
     }
-
 
     /**
      * @return array
@@ -113,7 +113,7 @@ class AuthTest extends AbstractApiCase
         $this->assertNotEmpty($response->getHeader('Set-Cookie'), $this->getErrorDescription($response));
 
         $cookie = $response->getHeaderLine('Set-Cookie');
-        list($sessionCookie,) = explode(';', $cookie);
+        [$sessionCookie,] = explode(';', $cookie);
 
         return explode('=', $sessionCookie, 2);
     }

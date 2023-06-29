@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap\V10;
@@ -10,6 +11,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+
 use function is_array;
 
 class V10CoreBootstrap extends AbstractCoreBootstrap

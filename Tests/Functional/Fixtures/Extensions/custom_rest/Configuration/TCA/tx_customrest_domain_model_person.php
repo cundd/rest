@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('TYPO3_MODE')) {
     die ('Access denied.');
 }
@@ -145,16 +146,16 @@ return [
                 'eval' => 'trim',
             ],
         ],
-        'birthday' => [
+        'birthday'         => [
             'exclude' => true,
-            'label' => 'LLL:EXT:custom_rest2/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.birthday',
-            'config' => [
-                'dbType' => 'date',
-                'type' => 'input',
+            'label'   => 'LLL:EXT:custom_rest2/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.birthday',
+            'config'  => [
+                'dbType'     => 'date',
+                'type'       => 'input',
                 'renderType' => 'inputDateTime',
-                'size' => 7,
-                'eval' => 'date',
-                'default' => null,
+                'size'       => 7,
+                'eval'       => 'date',
+                'default'    => null,
             ],
         ],
     ],

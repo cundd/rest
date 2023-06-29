@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Core;
@@ -77,7 +78,7 @@ class ObjectManagerTest extends TestCase
     }
 
     /**
-     * @param array  $settings
+     * @param array $settings
      * @param string $handler
      * @param string $dataProvider
      */

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Router\Exception;
@@ -7,6 +8,7 @@ use Cundd\Rest\Router\RouteInterface;
 use Cundd\Rest\Utility\DebugUtility;
 use RuntimeException;
 use Throwable;
+
 use function sprintf;
 
 /**

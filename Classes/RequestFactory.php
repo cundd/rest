@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest;
@@ -12,6 +13,7 @@ use Cundd\Rest\Utility\SiteUtility;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
+
 use function basename;
 use function call_user_func;
 use function class_exists;

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -10,7 +10,6 @@ use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
-
 
 class ObjectConverterTest extends AbstractVirtualObjectCase
 {
@@ -121,7 +120,6 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
         $rawData = $this->fixture->convertFromVirtualObject($virtualObject);
         $this->assertEquals($this->testRawData, $rawData);
 
-
         $testObjectData = $this->testObjectData;
         $testObjectData['property2'] = 'Actually this should not be a string';
         $virtualObject = new VirtualObject($testObjectData);
@@ -139,7 +137,6 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
         $testRawData['property_three'] = 10.002;
         $virtualObject = $this->fixture->convertToVirtualObject($testRawData);
         $this->assertEquals($this->testObjectData, $virtualObject->getData());
-
 
         $testRawData = $this->testRawData;
         $testRawData['property_two'] = 'Actually this should not be a string';

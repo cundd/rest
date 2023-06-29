@@ -6,7 +6,7 @@ Installation
 
 1. Install TYPO3 and configure a website with some pages and a bit of content
 
-2. Include the testing TypoScript configuration 
+2. Include the testing TypoScript configuration
     ```TypoScript
     <INCLUDE_TYPOSCRIPT: source="FILE:EXT:rest/Tests/Configuration/TypoScript/Configuration.typoscript">
     ```

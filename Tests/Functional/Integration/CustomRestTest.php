@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
@@ -245,7 +246,7 @@ class CustomRestTest extends AbstractIntegrationCase
     {
         $path = 'cundd-custom_rest-route/subpath';
         $data = [
-            'user'  => 'Daniel',
+            'user' => 'Daniel',
             'hobby' => 'playing guitar',
         ];
         $response = $this->buildRequestAndDispatch(

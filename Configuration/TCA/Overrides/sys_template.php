@@ -1,9 +1,9 @@
 <?php
+
 defined('TYPO3') or die();
 
-call_user_func(function()
-{
-   $extensionKey = 'rest';
+call_user_func(function () {
+    $extensionKey = 'rest';
 
     if (version_compare(TYPO3_version, '10.4.0') >= 0) {
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
@@ -30,5 +30,4 @@ call_user_func(function()
         'Configuration/TypoScript/Content',
         'Virtual Object - Content'
     );
-
 });

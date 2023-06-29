@@ -50,8 +50,8 @@ call_user_func(
 
         $implementationsMap = [
             ConfigurationProviderInterface::class => TypoScriptConfigurationProvider::class,
-            UserProviderInterface::class         => FeUserProvider::class,
-            HandlerInterface::class                     => CrudHandler::class,
+            UserProviderInterface::class          => FeUserProvider::class,
+            HandlerInterface::class               => CrudHandler::class,
         ];
         $objectContainer = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
             Container::class

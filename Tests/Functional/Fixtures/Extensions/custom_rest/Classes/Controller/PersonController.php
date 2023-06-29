@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\CustomRest\Controller;
@@ -10,6 +11,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\MvcPropertyMappingConfiguration;
 use TYPO3\CMS\Extbase\Mvc\View\JsonView;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\CMS\Extbase\Property\TypeConverter\PersistentObjectConverter;
+
 use function get_parent_class;
 use function method_exists;
 

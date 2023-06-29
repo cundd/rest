@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
@@ -21,6 +22,7 @@ use PHPUnit\Util\PHP\DefaultPhpProcess;
 use Psr\Http\Message\ResponseInterface;
 use Text_Template;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as Typo3ObjectManagerInterface;
+
 use function is_array;
 use function is_string;
 use function json_decode;

@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual\Api;
-
 
 use Cundd\Rest\Tests\Manual\HttpClient;
 use Cundd\Rest\Tests\Manual\HttpErrorDescriptionTrait;

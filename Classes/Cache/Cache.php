@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Cache;
@@ -123,11 +124,12 @@ class Cache implements CacheInterface
             $this->getCacheKeyForRequest($request),
             array_merge(
                 $response->getHeaders(),
-            [
-                'content'             => (string)$response->getBody(),
-                'status'              => $response->getStatusCode(),
-                Header::LAST_MODIFIED => $this->getHttpDate(time()),
-            ]),
+                [
+                    'content' => (string)$response->getBody(),
+                    'status' => $response->getStatusCode(),
+                    Header::LAST_MODIFIED => $this->getHttpDate(time()),
+                ]
+            ),
             $this->getTags($request),
             $cacheLifetime
         );

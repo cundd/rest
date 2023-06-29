@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Cache;
@@ -12,9 +13,9 @@ class CacheFactory
     /**
      * Return a Cache instance for the Resource Type
      *
-     * @param ResourceType $resourceType
+     * @param ResourceType                   $resourceType
      * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManager $objectManager
+     * @param ObjectManager                  $objectManager
      * @return CacheInterface
      */
     public function buildCache(

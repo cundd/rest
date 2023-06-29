@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
@@ -8,6 +9,7 @@ require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 use Cundd\Rest\VirtualObject\Configuration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function strpos;
 
 /**

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest;
 
 use Cundd\Rest\Utility\DebugUtility;
+
 use function error_get_last;
 use function header;
 use function headers_sent;

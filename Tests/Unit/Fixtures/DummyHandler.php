@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Fixtures;
@@ -11,6 +12,5 @@ class DummyHandler implements HandlerInterface
 {
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
-
     }
 }

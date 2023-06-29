@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace Cundd\Rest\Tests;
-
 
 use PHPUnit\Framework\TestCase;
 

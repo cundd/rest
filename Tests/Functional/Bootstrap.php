@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
@@ -18,7 +19,7 @@ class Bootstrap extends AbstractBootstrap
      */
     protected function bootstrapSystem()
     {
-        require_once  __DIR__.'/../../vendor/autoload.php';
+        require_once __DIR__ . '/../../vendor/autoload.php';
         $this->setupTYPO3();
         $this->setupAbstractCase();
     }

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests;
 
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use UnexpectedValueException;
-use Laminas\Diactoros\Response;
+
 use function rewind;
 
 trait ResponseBuilderTrait

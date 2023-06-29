@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
@@ -311,16 +312,16 @@ class DataProviderTest extends AbstractCase
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
-                    'base'  => 'Base',
-                    'date'  => $testDate->format(DateTime::ATOM),
-                    'uid'   => 2,
-                    'pid'   => null,
-                    'child' => [
-                        'name' => 'Initial value',
-                        'uid'  => null,
-                        'pid'  => null,
+                       'base'  => 'Base',
+                       'date'  => $testDate->format(DateTime::ATOM),
+                       'uid'   => 2,
+                       'pid'   => null,
+                       'child' => [
+                           'name' => 'Initial value',
+                           'uid'  => null,
+                           'pid'  => null,
 
-                    ],
+                       ],
                 ],
             ],
         ];

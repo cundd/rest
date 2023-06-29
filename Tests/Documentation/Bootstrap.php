@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Documentation;
@@ -26,7 +27,7 @@ class Bootstrap
                 $prophet->prophesize(RestRequestInterface::class);
                 $event->getContext()->addVariables(
                     [
-                        'router'  => new Router(),
+                        'router' => new Router(),
                         'request' => RequestBuilderTrait::buildTestRequest('some/path'),
                     ]
                 );

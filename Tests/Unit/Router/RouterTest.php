@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Router;
-
 
 use Closure;
 use Cundd\Rest\Router\Exception\NotFoundException;
@@ -31,7 +31,6 @@ class RouterTest extends AbstractRequestBasedCase
     {
         parent::setUp();
 
-
         $this->cb = Closure::bind(
             function () {
                 return func_get_args();
@@ -40,8 +39,6 @@ class RouterTest extends AbstractRequestBasedCase
         );
 
         $this->fixture = new Router();
-
-
     }
 
     protected function tearDown(): void
@@ -206,7 +203,6 @@ class RouterTest extends AbstractRequestBasedCase
         $this->fixture->add(Route::delete('path/perfect-match/_count', $perfectMatchCountCallback));
         $this->fixture->add(Route::put('path/perfect-match/_count', $perfectMatchCountCallback));
 
-
         $this->assertSame(
             'matched the route path/perfect-match',
             $this->fixture->dispatch($this->buildTestRequest('/path/perfect-match', $method))
@@ -240,7 +236,6 @@ class RouterTest extends AbstractRequestBasedCase
             Route::routeWithPatternAndMethod($resourceType . '/{slug}/?', 'PATCH', $this->cb)
         ); // replace
         $this->fixture->add(Route::get($resourceType . '/{slug}/{slug}/?', $this->cb)); // getProperty
-
 
         $this->assertSame(
             'returns the number of elements',
@@ -408,7 +403,6 @@ class RouterTest extends AbstractRequestBasedCase
 
     public function getMatchingRoutesBooleanMatchesDataProvider()
     {
-
         return [
             ['/path/1', 'GET'],
             ['/path/1', 'POST'],

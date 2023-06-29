@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Fixtures;
-
 
 use Cundd\Rest\Handler\HandlerDescriptionInterface;
 use Cundd\Rest\Handler\HandlerInterface;
@@ -19,7 +19,7 @@ class CustHandler implements HandlerInterface, HandlerDescriptionInterface
      *
      * @return string
      */
-    public function getDescription():string
+    public function getDescription(): string
     {
         return 'Example Custom Handler';
     }

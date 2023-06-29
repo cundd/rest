@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests;
@@ -16,8 +17,12 @@ trait ClassBuilderTrait
      * @param bool         $silent
      * @throws Exception
      */
-    public static function buildClass(string $className, string $namespace = '', string $extends = '', bool $silent = false)
-    {
+    public static function buildClass(
+        string $className,
+        string $namespace = '',
+        string $extends = '',
+        bool $silent = false
+    ) {
         ClassBuilder::buildClass($className, $namespace, $extends, $silent);
     }
 
@@ -44,7 +49,7 @@ trait ClassBuilderTrait
      */
     public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = '')
     {
-        ClassBuilder::buildInterface($interfaceName,$namespace,$extends);
+        ClassBuilder::buildInterface($interfaceName, $namespace, $extends);
     }
 
     /**
@@ -55,8 +60,8 @@ trait ClassBuilderTrait
      * @param string $extends
      * @throws Exception
      */
-    public static function buildInterfaceIfNotExists($interfaceName, string $namespace = '', string $extends = ''):void
+    public static function buildInterfaceIfNotExists($interfaceName, string $namespace = '', string $extends = ''): void
     {
-        ClassBuilder::buildInterfaceIfNotExists($interfaceName,$namespace,$extends);
+        ClassBuilder::buildInterfaceIfNotExists($interfaceName, $namespace, $extends);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
@@ -23,6 +24,7 @@ use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
+
 use function sprintf;
 
 /**

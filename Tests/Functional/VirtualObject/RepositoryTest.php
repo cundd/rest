@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -62,7 +62,6 @@ class RepositoryTest extends AbstractDatabaseCase
 
         $this->fixture->add($object);
 
-
         $this->assertEquals(3, $this->fixture->countAll());
 
         $result = $this->fixture->findAll();
@@ -91,7 +90,6 @@ class RepositoryTest extends AbstractDatabaseCase
         $this->fixture->remove($object);
 
         $this->assertEquals(1, $this->fixture->countAll());
-
 
         $objectData = [
             'uid' => 200, // <= this is relevant

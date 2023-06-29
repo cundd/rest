@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject;
 
@@ -63,7 +63,6 @@ class PersistenceManagerTest extends AbstractDatabaseCase
 
         $this->fixture->add($object);
 
-
         $this->assertEquals(3, $this->fixture->getObjectCountByQuery(new Query()));
 
         $result = $this->fixture->getObjectDataByQuery(new Query());
@@ -92,7 +91,6 @@ class PersistenceManagerTest extends AbstractDatabaseCase
         $this->fixture->remove($object);
 
         $this->assertEquals(1, $this->fixture->getObjectCountByQuery(new Query()));
-
 
         $objectData = [
             'uid' => 200, // <= this is relevant

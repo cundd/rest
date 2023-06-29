@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
@@ -6,6 +7,7 @@ namespace Cundd\Rest\Tests\Functional;
 use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Doctrine\DBAL\Exception\NonUniqueFieldNameException;
+
 use function strpos;
 
 trait FeUserCaseTrait

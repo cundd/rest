@@ -45,27 +45,27 @@ overwriteSettings:
       Repository: merge
 
   Configuration:
-    #TCA: merge
-    #TypoScript: keep
+  #TCA: merge
+  #TypoScript: keep
 
   Resources:
     Private:
-      #Language: merge
-      #Templates: keep
+    #Language: merge
+    #Templates: keep
 
   ext_icon.gif: keep
 
-#  ext_localconf.php: merge
+  #  ext_localconf.php: merge
 
-#  ext_tables.php: merge
+  #  ext_tables.php: merge
 
-#  ext_tables.sql: merge
+  #  ext_tables.sql: merge
 
-## use static date attribute in xliff files ##
-#staticDateInXliffFiles: 2014-05-24T12:06:00Z
+  ## use static date attribute in xliff files ##
+  #staticDateInXliffFiles: 2014-05-24T12:06:00Z
 
-## list of error codes for warnings that should be ignored ##
-#ignoreWarnings:
+  ## list of error codes for warnings that should be ignored ##
+  #ignoreWarnings:
   #503
 
 ######### settings for classBuilder #############################

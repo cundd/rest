@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
 use TYPO3\CMS\Core\Information\Typo3Version;
+
 use function class_exists;
 
 trait ImportPagesTrait

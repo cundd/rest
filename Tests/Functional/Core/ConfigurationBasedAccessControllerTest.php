@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Core;
-
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
@@ -80,7 +80,6 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
         $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-
 
         $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
         $this->assertTrue($this->fixture->getAccess($request->withMethod('GET'))->isUnauthorized());

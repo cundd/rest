@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2014-05-24T12:43:48Z" product-name="custom_rest">
-		<header/>
-		<body>
-			<trans-unit id="first_name.description">
-				<source>firstName</source>
-			</trans-unit>
-			<trans-unit id="last_name.description">
-				<source>lastName</source>
-			</trans-unit>
-			<trans-unit id="birthday.description">
-				<source>birthday</source>
-			</trans-unit>
-		</body>
-	</file>
+    <file source-language="en" datatype="plaintext" original="messages" date="2014-05-24T12:43:48Z"
+          product-name="custom_rest">
+        <header/>
+        <body>
+            <trans-unit id="first_name.description">
+                <source>firstName</source>
+            </trans-unit>
+            <trans-unit id="last_name.description">
+                <source>lastName</source>
+            </trans-unit>
+            <trans-unit id="birthday.description">
+                <source>birthday</source>
+            </trans-unit>
+        </body>
+    </file>
 </xliff>

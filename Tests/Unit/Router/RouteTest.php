@@ -1,8 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Router;
-
 
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Router\ParameterTypeInterface;

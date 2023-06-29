@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\VirtualObject\Backend;
@@ -171,7 +172,6 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
         $this->assertEquals(1, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($query)));
     }
 
-
     /**
      * @test
      */
@@ -204,7 +204,6 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
         // Record with UID `200` should not exist anymore
         $this->assertEquals(0, $this->fixture->getObjectCountByQuery(self::$testDatabaseTable, new Query($identifier)));
     }
-
 
     /**
      * @test
