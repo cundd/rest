@@ -19,29 +19,4 @@ interface RequestFactoryInterface
      * @return RestRequestInterface
      */
     public function buildRequest(ServerRequestInterface $request): RestRequestInterface;
-
-    /**
-     * Returns the request
-     *
-     * @return RestRequestInterface
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function getRequest();
-
-    /**
-     * Resets the current request
-     *
-     * @return $this
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function resetRequest();
-
-    /**
-     * Register/overwrite the current request
-     *
-     * @param ServerRequestInterface $request
-     * @return $this
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function registerCurrentRequest($request);
 }

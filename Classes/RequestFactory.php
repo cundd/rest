@@ -10,13 +10,10 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Utility\SiteLanguageUtility;
 use Cundd\Rest\Utility\SiteUtility;
-use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
 
 use function basename;
-use function call_user_func;
-use function class_exists;
 use function dirname;
 use function filter_var;
 use function getenv;
@@ -24,7 +21,6 @@ use function is_numeric;
 use function ltrim;
 use function preg_replace;
 use function rtrim;
-use function sprintf;
 use function strlen;
 use function strrpos;
 use function strtok;
@@ -37,39 +33,13 @@ use function trim;
 class RequestFactory implements SingletonInterface, RequestFactoryInterface
 {
     /**
-     * @var RestRequestInterface
-     */
-    private $request;
-
-    /**
      * @var ConfigurationProviderInterface
      */
-    private $configurationProvider;
+    private ConfigurationProviderInterface $configurationProvider;
 
-    /**
-     * @var ServerRequestInterface
-     * @deprecated
-     */
-    private $originalRequest;
-
-    /**
-     * @var string
-     * @deprecated
-     */
-    private $factoryClass;
-
-    /**
-     * Request Factory constructor
-     *
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param string                         $factoryClass deprecated
-     */
-    public function __construct(
-        ConfigurationProviderInterface $configurationProvider,
-        string $factoryClass = '\TYPO3\CMS\Core\Http\ServerRequestFactory'
-    ) {
+    public function __construct(ConfigurationProviderInterface $configurationProvider)
+    {
         $this->configurationProvider = $configurationProvider;
-        $this->factoryClass = $factoryClass;
     }
 
     public function buildRequest(ServerRequestInterface $request): RestRequestInterface
@@ -85,54 +55,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             new ResourceType($pathInfo->resourceType),
             new Format($pathInfo->format)
         );
-    }
-
-    /**
-     * Returns the request
-     *
-     * @return RestRequestInterface
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function getRequest()
-    {
-        if (!$this->request) {
-            $this->request = $this->constructRequest();
-        }
-
-        return $this->request;
-    }
-
-    /**
-     * Resets the current request
-     *
-     * @return $this
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function resetRequest()
-    {
-        $this->request = null;
-        $this->originalRequest = null;
-
-        return $this;
-    }
-
-    /**
-     * Register/overwrite the current request
-     *
-     * @param RestRequestInterface $request
-     * @return $this
-     * @deprecated use buildRequest() instead. Will be removed in 6.0
-     */
-    public function registerCurrentRequest($request)
-    {
-        $this->resetRequest();
-        if ($request instanceof Request) {
-            $this->request = $request;
-        } else {
-            $this->originalRequest = $request;
-        }
-
-        return $this;
     }
 
     /**
@@ -263,7 +185,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param string $path
      * @return object
      */
-    private function splitPathAndFormat(string $path)
+    private function splitPathAndFormat(string $path): object
     {
         $format = '';
 
@@ -300,7 +222,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
      * @param ServerRequestInterface $request
      * @return object
      */
-    private function determinePathAndFormat(ServerRequestInterface $request)
+    private function determinePathAndFormat(ServerRequestInterface $request): object
     {
         $path = $this->getRawPath($request);
 
@@ -320,28 +242,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
         // Extract path and format
         return $this->splitPathAndFormat($path);
-    }
-
-    /**
-     * @return RestRequestInterface
-     */
-    private function constructRequest()
-    {
-        if (!class_exists($this->factoryClass)) {
-            throw new LogicException(sprintf('PSR7 factory class "%s" not found', $this->factoryClass));
-        }
-
-        $originalRequest = $this->originalRequest ?? call_user_func($this->factoryClass . '::fromGlobals');
-        $pathInfo = $this->determineAndAnalyseInputPath($originalRequest);
-        $internalUri = $originalRequest->getUri()->withPath($pathInfo->path);
-
-        return new Request(
-            $originalRequest,
-            $internalUri,
-            $pathInfo->originalPath,
-            new ResourceType($pathInfo->resourceType),
-            new Format($pathInfo->format)
-        );
     }
 
     /**

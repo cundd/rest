@@ -49,14 +49,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     protected $logger;
 
     /**
-     * The shared instance
-     *
-     * @var Dispatcher
-     * @deprecated utilize dependency injection instead. Will be removed in 6.0
-     */
-    protected static $sharedDispatcher;
-
-    /**
      * @var EventDispatcherInterface|null
      */
     protected $eventDispatcher;
@@ -82,8 +74,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $this->responseFactory = $responseFactory;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
-
-        self::$sharedDispatcher = $this;
     }
 
     /**
@@ -97,8 +87,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      */
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
-        $this->requestFactory->registerCurrentRequest($request);
-
         return $this->dispatch($this->requestFactory->buildRequest($request));
     }
 
@@ -184,52 +172,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         ErrorHandler::registerHandler();
 
         return $resultConverter->dispatch($request);
-    }
-
-    /**
-     * Print the greeting
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
-     * @deprecated will be removed in 6.0
-     */
-    public function greet(RestRequestInterface $request): ResponseInterface
-    {
-        $greeting = 'What\'s up?';
-        $hour = date('H');
-        if ($hour <= '10') {
-            $greeting = 'Good Morning!';
-        } elseif ($hour >= '23') {
-            $greeting = 'Hy! Still awake?';
-        }
-
-        $response = $this->responseFactory->createSuccessResponse($greeting, 200, $request);
-
-        $this->logger->logResponse(
-            'response: ' . $response->getStatusCode(),
-            ['response' => (string)$response->getBody()]
-        );
-
-        return $response;
-    }
-
-    /**
-     * Returns the shared dispatcher instance
-     *
-     * @return Dispatcher
-     * @deprecated utilize dependency injection instead. Will be removed in 6.0
-     */
-    public static function getSharedDispatcher()
-    {
-        if (!self::$sharedDispatcher) {
-            /** @var ObjectManagerInterface $objectManager */
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-            $dispatcherFactory = new DispatcherFactory($objectManager);
-            $dispatcherFactory->build();
-        }
-
-        return self::$sharedDispatcher;
     }
 
     /**
