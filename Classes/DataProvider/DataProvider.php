@@ -396,7 +396,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         if ($model instanceof DomainObjectInterface) {
             return $model->_isNew();
         }
-        if (is_callable($model, 'getUid')) {
+        if (is_callable([$model, 'getUid'])) {
             return $model->getUid() === null;
         }
 
