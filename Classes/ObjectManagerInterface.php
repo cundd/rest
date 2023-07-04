@@ -22,10 +22,9 @@ interface ObjectManagerInterface
      * Return an instance of the given class
      *
      * @param string $class The class name of the object to return an instance of
-     * @param array  $arguments
      * @return object The object instance
      */
-    public function get($class, ...$arguments);
+    public function get(string $class): object;
 
     /**
      * Return the configuration provider

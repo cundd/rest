@@ -18,10 +18,12 @@ use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
+use LogicException;
 use Psr\Container\ContainerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function class_exists;
+use function func_num_args;
 use function interface_exists;
 use function sprintf;
 
@@ -39,9 +41,13 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $this->container = $container ?: GeneralUtility::makeInstance(ContainerInterface::class);
     }
 
-    public function get($class, ...$arguments)
+    public function get(string $class): object
     {
-        return $this->container->get($class, ...$arguments);
+        if (func_num_args() > 1) {
+            throw new LogicException('Passing additional arguments to `get()` is not supported anymore');
+        }
+
+        return $this->container->get($class);
     }
 
     public function getResponseFactory(): ResponseFactoryInterface
