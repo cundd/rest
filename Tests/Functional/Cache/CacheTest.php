@@ -26,20 +26,15 @@ class CacheTest extends AbstractCase
 {
     use ProphecyTrait;
 
-    /**
-     * @var Cache
-     */
-    protected $fixture;
+    protected Cache $fixture;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        /** @var Cache $fixture */
-        $fixture = $this->objectManager->get(Cache::class);
-        $fixture->setCacheLifetime(10);
-        $fixture->setExpiresHeaderLifetime(5);
-        $this->fixture = $fixture;
+        $this->fixture = $this->getContainer()->get(Cache::class);
+        $this->fixture->setCacheLifetime(10);
+        $this->fixture->setExpiresHeaderLifetime(5);
     }
 
     protected function tearDown(): void
@@ -62,7 +57,7 @@ class CacheTest extends AbstractCase
         $this->assertEquals($expectedKey, $cacheKey, 'Failed for URI ' . $uri);
     }
 
-    public function getCacheKeyDataProvider()
+    public function getCacheKeyDataProvider(): array
     {
         return [
             ['e53553c0d92fd881af17e02c9bba3e3dd592e1b5', 'MyExt-MyModel/1'],
@@ -90,7 +85,6 @@ class CacheTest extends AbstractCase
     {
         $uri = 'MyExt-MyModel/1';
         $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
-        /** @var RestRequestInterface $request */
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals('8f0f35de918d2e1494849827b2b453792c54d030', $cacheKey, 'Failed for URI ' . $uri);
     }
@@ -101,11 +95,8 @@ class CacheTest extends AbstractCase
     public function getCacheKeyForGetRequestWithDifferentParametersShouldNotMatchTest()
     {
         $uri = 'MyExt-MyModel/1';
-        /** @var RestRequestInterface $request */
         $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
-        /** @var RestRequestInterface $request2 */
         $request2 = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter2']);
-        /** @var RestRequestInterface $requestWithoutParameters */
         $requestWithoutParameters = $this->buildRequestWithUri($uri);
 
         $this->assertNotEquals(
@@ -225,7 +216,7 @@ class CacheTest extends AbstractCase
      * @param array $header
      * @param bool  $expected
      */
-    public function canBeCachedTest(array $header, $expected)
+    public function canBeCachedTest(array $header, bool $expected)
     {
         $request = $this->buildRequestWithUri('MyAliasedModel');
         $response = $this->buildTestResponse(200, $header, 'Test content');
@@ -244,7 +235,7 @@ class CacheTest extends AbstractCase
         $this->assertFalse($this->fixture->canBeCached($request, $response));
     }
 
-    public function setCachedValueForRequestWillNotCacheDataProvider()
+    public function setCachedValueForRequestWillNotCacheDataProvider(): array
     {
         return [
             [[Header::CUNDD_REST_NO_CACHE => 'true'], false],
@@ -270,8 +261,10 @@ class CacheTest extends AbstractCase
      * @param int                  $cacheLifetime
      * @return ResourceConfiguration
      */
-    private function buildResourceConfiguration(RestRequestInterface $request, $cacheLifetime = -1)
-    {
+    private function buildResourceConfiguration(
+        RestRequestInterface $request,
+        int $cacheLifetime = -1
+    ): ResourceConfiguration {
         return new ResourceConfiguration(
             $request->getResourceType(),
             Access::allowed(),

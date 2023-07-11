@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
+use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
@@ -15,16 +16,13 @@ class ExtractorFileTest extends AbstractCase
     use FileBuilderTrait;
     use DomainModelProphetTrait;
 
-    /**
-     * @var ExtractorInterface
-     */
-    protected $fixture;
+    protected ExtractorInterface $fixture;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get(ExtractorInterface::class);
+        $this->fixture = $this->getContainer()->get(Extractor::class);
     }
 
     public function tearDown(): void

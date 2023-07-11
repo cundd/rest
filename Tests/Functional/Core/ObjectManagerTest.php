@@ -20,6 +20,7 @@ use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
+use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
@@ -38,16 +39,12 @@ use Prophecy\Prophecy\ObjectProphecy;
  */
 class ObjectManagerTest extends AbstractCase
 {
-    /**
-     * @var ObjectManager
-     */
-    protected $fixture;
+    protected ObjectManager $fixture;
 
     public function setUp(): void
     {
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
-        $this->registerLoggerImplementation();
 
         $this->fixture = new ObjectManager();
         $this->injectConfigurationProviderUsingHandlerClass();
@@ -95,7 +92,7 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getAuthenticationProviderTest()
     {
-        $this->injectConfigurationProviderUsingHandlerClass(['authenticationProvider' => []], '');
+        $this->injectConfigurationProviderUsingHandlerClass(['authenticationProvider' => []]);
         $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
     }
@@ -112,8 +109,7 @@ class ObjectManagerTest extends AbstractCase
                     50 => CredentialsAuthenticationProvider::class,
                     10 => BasicAuthenticationProvider::class,
                 ],
-            ],
-            ''
+            ]
         );
         /** @var AuthenticationProviderCollection $object */
         $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
@@ -130,15 +126,11 @@ class ObjectManagerTest extends AbstractCase
      * @dataProvider dataProviderTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array  $classToBuild
      * @throws Exception
      */
-    public function getDataProviderTest(string $url, string $expectedClass, $classToBuild = [])
+    public function getDataProviderTest(string $url, string $expectedClass)
     {
         $_GET['u'] = $url;
-        if ($classToBuild) {
-            $this->buildClass($classToBuild);
-        }
 
         $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $dataProvider);
@@ -188,15 +180,11 @@ class ObjectManagerTest extends AbstractCase
      * @dataProvider handlerTestGenerator
      * @param string $url
      * @param string $expectedClass
-     * @param array  $classToBuild
      * @throws Exception
      */
-    public function getHandlerTest(string $url, string $expectedClass, $classToBuild = [])
+    public function getHandlerTest(string $url, string $expectedClass)
     {
         $_GET['u'] = $url;
-        if ($classToBuild) {
-            $this->buildClass($classToBuild);
-        }
 
         $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
@@ -228,8 +216,16 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getHandlerFromResourceTest()
     {
-        $expectedHandler = '\\Vendor\\Ext' . time() . '\\Rest\\Handler';
+        $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
         $this->buildClass($expectedHandler, '', CrudHandler::class);
+        $this->getContainer()->set(
+            $expectedHandler,
+            new $expectedHandler(
+                $this->fixture,
+                new ResponseFactory(),
+                $this->getContainer()->get(LoggerInterface::class)
+            )
+        );
 
         $resourceType = new ResourceType('some_extension-my_model');
         $resourceTypeString = (string)$resourceType;
@@ -253,25 +249,17 @@ class ObjectManagerTest extends AbstractCase
         $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
-    /**
-     * @param array  $settings
-     * @param string $handler
-     * @param string $dataProvider
-     */
-    private function injectConfigurationProviderUsingHandlerClass(
-        array $settings = [],
-        string $handler = '',
-        string $dataProvider = ''
-    ) {
+    private function injectConfigurationProviderUsingHandlerClass(array $settings = []): void
+    {
         /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
         $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
         /** @var MethodProphecy|string $handlerClassMethod */
         $handlerClassMethod = $resourceConfiguration->getHandlerClass();
-        $handlerClassMethod->willReturn($handler);
+        $handlerClassMethod->willReturn('');
 
         /** @var MethodProphecy|string $dataProviderClassMethod */
         $dataProviderClassMethod = $resourceConfiguration->getDataProviderClass();
-        $dataProviderClassMethod->willReturn($dataProvider);
+        $dataProviderClassMethod->willReturn('');
 
         /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProvider */
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
@@ -286,11 +274,7 @@ class ObjectManagerTest extends AbstractCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(
-            function ($args) use ($settings) {
-                return isset($settings[$args[0]]) ? $settings[$args[0]] : null;
-            }
-        );
+        $getSettingsProphecy->will(fn($args) => $settings[$args[0]] ?? null);
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 }

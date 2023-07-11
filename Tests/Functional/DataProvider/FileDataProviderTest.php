@@ -25,7 +25,7 @@ class FileDataProviderTest extends AbstractCase
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get(DataProvider::class);
+        $this->fixture = $this->getContainer()->get(DataProvider::class);
     }
 
     public function tearDown(): void

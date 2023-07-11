@@ -9,6 +9,7 @@ use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Documentation\HandlerDescriptor;
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
@@ -22,8 +23,6 @@ class HandlerDescriptorTest extends AbstractCase
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->registerLoggerImplementation();
 
         $configurationProvider = new TypoScriptConfigurationProvider();
         $configurationProvider->setSettings(
@@ -46,7 +45,7 @@ class HandlerDescriptorTest extends AbstractCase
         );
 
         $this->fixture = new HandlerDescriptor(
-            $this->objectManager->get(ObjectManagerInterface::class),
+            $this->getContainer()->get(ObjectManager::class),
             $configurationProvider
         );
     }

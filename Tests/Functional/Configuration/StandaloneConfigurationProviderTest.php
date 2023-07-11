@@ -7,7 +7,7 @@ namespace Cundd\Rest\Tests\Functional\Configuration;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 
 /**
- * More tests in Tests/Unit/Configuration/StandaloneConfigurationProviderTest.php
+ * @see \Cundd\Rest\Tests\Unit\Configuration\StandaloneConfigurationProviderTest
  */
 class StandaloneConfigurationProviderTest extends AbstractConfigurationProviderCase
 {

@@ -20,12 +20,12 @@ class DummyDataProvider implements DataProviderInterface
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType): object
+    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function createModel(array $data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType): ?object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
@@ -35,12 +35,12 @@ class DummyDataProvider implements DataProviderInterface
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function getModelData($model)
+    public function getModelData(mixed $model): mixed
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function getModelProperty($model, string $propertyParameter)
+    public function getModelProperty($model, string $propertyParameter): mixed
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
@@ -54,5 +54,4 @@ class DummyDataProvider implements DataProviderInterface
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
-
 }

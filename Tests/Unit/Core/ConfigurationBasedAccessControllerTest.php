@@ -21,7 +21,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 /**
  * Unit tests for ConfigurationBasedAccessController
  *
- * @see \Cundd\Rest\Tests\Functional\Core\ConfigurationBasedAccessController for Functional tests
+ * @see \Cundd\Rest\Tests\Functional\Core\ConfigurationBasedAccessControllerTest for Functional tests
  */
 class ConfigurationBasedAccessControllerTest extends TestCase
 {
@@ -78,7 +78,6 @@ class ConfigurationBasedAccessControllerTest extends TestCase
 
     private function buildAccessController(callable $configureObjectManager = null): ConfigurationBasedAccessController
     {
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
         $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [

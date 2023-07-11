@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests;
 
+use Composer\Autoload\ClassLoader;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractBootstrap
@@ -17,6 +18,11 @@ abstract class AbstractBootstrap
 
     private function setupComposer()
     {
+        // If run within composer context
+        if (class_exists(ClassLoader::class, false)) {
+            return;
+        }
+
         // Load composer autoloader
         if (file_exists(__DIR__ . '/../vendor/')) {
             require_once __DIR__ . '/../vendor/autoload.php';

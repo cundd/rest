@@ -13,6 +13,6 @@ class BackendTest extends AbstractBackendTest
     {
         parent::setUp();
 
-        $this->fixture = $this->objectManager->get(BackendInterface::class);
+        $this->fixture = $this->getContainer()->get(BackendInterface::class);
     }
 }

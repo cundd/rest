@@ -3,9 +3,7 @@
 use Cundd\CustomRest\Controller\PersonController;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3') or die();
 
 (static function () {
     ExtensionUtility::configurePlugin(

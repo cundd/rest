@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use TYPO3\CMS\Core\Information\Typo3Version;
-
-use function class_exists;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 trait ImportPagesTrait
 {
-    public function importPages()
+    public function importPages(): void
     {
-        if (class_exists(Typo3Version::class) && (new Typo3Version())->getMajorVersion() >= 9) {
+        try {
             $this->importDataSet(__DIR__ . '/../Fixtures/pages-modern-typo3.xml');
-        } else {
-            $this->importDataSet('ntf://Database/pages.xml');
-            $this->importDataSet('ntf://Database/pages_language_overlay.xml');
+        } catch (UniqueConstraintViolationException) {
         }
     }
 
-    public function importPagesWithRootId10()
+    public function importPagesWithRootId10(): void
     {
-        if (class_exists(Typo3Version::class) && (new Typo3Version())->getMajorVersion() >= 9) {
+        try {
             $this->importDataSet(__DIR__ . '/../Fixtures/pages-root-not-1-modern-typo3.xml');
-        } else {
-            $this->importDataSet(__DIR__ . '/../Fixtures/pages-root-not-1.xml');
-            $this->importDataSet(__DIR__ . '/../Fixtures/pages_language_overlay-root-not-1.xml');
+        } catch (UniqueConstraintViolationException) {
         }
     }
 }

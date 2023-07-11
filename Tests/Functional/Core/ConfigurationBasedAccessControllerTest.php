@@ -13,24 +13,15 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 /**
  * Functional tests for ConfigurationBasedAccessController
  *
- * @see \Cundd\Rest\Tests\Unit\Core\ConfigurationBasedAccessController for Unit tests
+ * @see \Cundd\Rest\Tests\Unit\Core\ConfigurationBasedAccessControllerTest for Unit tests
  */
 class ConfigurationBasedAccessControllerTest extends AbstractCase
 {
-    /**
-     * @var ConfigurationBasedAccessController
-     */
-    private $fixture;
-
-    /**
-     * @var ObjectManager
-     */
-    private $restObjectManager;
+    private ConfigurationBasedAccessController $fixture;
 
     public function setUp(): void
     {
         parent::setUp();
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
         $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [
@@ -53,15 +44,13 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
             ]
         );
 
-        /** @var ObjectManager $restObjectManager */
-        $restObjectManager = $this->objectManager->get(ObjectManager::class);
+        $restObjectManager = $this->getContainer()->get(ObjectManager::class);
         $this->fixture = new ConfigurationBasedAccessController($configurationProvider, $restObjectManager);
     }
 
     protected function tearDown(): void
     {
         unset($this->fixture);
-        unset($this->restObjectManager);
         parent::tearDown();
     }
 

@@ -8,8 +8,6 @@ use Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface;
 use Cundd\Rest\VirtualObject\Persistence\Query;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-require_once __DIR__ . '/AbstractDatabaseCase.php';
-
 class PersistenceManagerTest extends AbstractDatabaseCase
 {
     /**
@@ -20,7 +18,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get(PersistenceManagerInterface::class);
+        $this->fixture = $this->getContainer()->get(PersistenceManagerInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 

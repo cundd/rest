@@ -4,97 +4,42 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use Nimut\TestingFramework\Http\Response;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
-use PHPUnit\Util\PHP\DefaultPhpProcess;
-use Text_Template;
-
-use function json_decode;
-use function var_export;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 abstract class AbstractGreetingCase extends FunctionalTestCase
 {
     use ImportPagesTrait;
+    use FrontendRequestTrait;
+    use FrontendSiteSetupTrait;
 
-    protected $testExtensionsToLoad = ['typo3conf/ext/rest'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
+
+    protected function setUp(): void
+    {
+//        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
+        parent::setUp();
+//        $this->backendUser = $this->setUpBackendUser(1);
+        // Note late static binding - Workspace related tests override the constant
+//        $this->setWorkspaceId(static::VALUE_WorkspaceId);
+//        Bootstrap::initializeLanguageObject();
+    }
 
     public function dataProviderTestLanguage(): array
     {
         return [
             ['/', "What's up?"],
-            ['/da/', "Hvad s\u00e5?"],
+            ['/dk/', "Hvad s\u00e5?"],
             ['/de/', "Wie geht's?"],
         ];
     }
 
-    /**
-     * @param string $prefix
-     * @param string $expectedMessage
-     */
-    protected function fetchPathAndTestMessage(string $prefix, string $expectedMessage): void
+    protected function fetchPathAndTestMessage(string $prefix, string $expectedMessage, ?int $pageId = null): void
     {
         // Fetch the frontend response
-        $response = $this->fetchFrontendResponse($prefix . 'rest/');
+        $response = $this->fetchFrontendResponse($prefix . 'rest/', $pageId, ['no_cache' => 1]);
 
         // Assert no error has occurred
-        $this->assertSame('success', $response->getStatus());
-        $this->assertSame('{"message":"' . $expectedMessage . '"}', $response->getContent());
-    }
-
-    /**
-     * @param string $path
-     * @param int    $backendUserId
-     * @param int    $workspaceId
-     * @param bool   $failOnFailure
-     * @param int    $frontendUserId
-     * @return Response
-     */
-    protected function fetchFrontendResponse(
-        string $path,
-        $backendUserId = 0,
-        $workspaceId = 0,
-        $failOnFailure = true,
-        $frontendUserId = 0
-    ): Response {
-        $additionalParameter = '';
-
-        if (!empty($frontendUserId)) {
-            $additionalParameter .= '&frontendUserId=' . (int)$frontendUserId;
-        }
-        if (!empty($backendUserId)) {
-            $additionalParameter .= '&backendUserId=' . (int)$backendUserId;
-        }
-        if (!empty($workspaceId)) {
-            $additionalParameter .= '&workspaceId=' . (int)$workspaceId;
-        }
-
-        $arguments = [
-            'documentRoot'         => $this->getInstancePath(),
-            'requestUrl'           => 'http://localhost' . $path . $additionalParameter,
-            'HTTP_ACCEPT_LANGUAGE' => 'de-DE',
-        ];
-
-        $template = new Text_Template('ntf://Frontend/Request.tpl');
-        $template->setVar(
-            [
-                'arguments'    => var_export($arguments, true),
-                'originalRoot' => ORIGINAL_ROOT,
-                'ntfRoot'      => __DIR__ . '/../../../vendor/nimut/testing-framework/',
-            ]
-        );
-
-        $php = DefaultPhpProcess::factory();
-        $response = $php->runJob($template->render());
-        $result = json_decode($response['stdout'], true);
-
-        if ($result === null) {
-            $this->fail('Frontend Response is empty.' . LF . 'Error: ' . LF . $response['stderr']);
-        }
-
-        if ($failOnFailure && $result['status'] === Response::STATUS_Failure) {
-            $this->fail('Frontend Response has failure:' . LF . $result['error']);
-        }
-
-        return new Response($result['status'], $result['content'], $result['error']);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('{"message":"' . $expectedMessage . '"}', $response->getBody()->getContents());
     }
 }

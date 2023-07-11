@@ -8,8 +8,6 @@ use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
 use Cundd\Rest\Tests\Functional\Fixtures\FrontendUserAuthentication;
 use Cundd\Rest\Tests\Functional\Fixtures\UserProvider;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\Container\Container;
 
 class AuthTest extends AbstractIntegrationCase
 {
@@ -24,18 +22,12 @@ class AuthTest extends AbstractIntegrationCase
         $this->importDataSet(__DIR__ . '/../Fixtures/login.xml');
     }
 
-    private function configureUserProvider()
+    private function configureUserProvider(): void
     {
-        /** @var Container $objectContainer */
-        $objectContainer = GeneralUtility::makeInstance(Container::class);
-
-        $objectContainer->registerImplementation(
-            UserProviderInterface::class,
-            UserProvider::class
-        );
+        $this->getContainer()->set(UserProviderInterface::class, new UserProvider());
     }
 
-    private function configureFrontendUserAuthentication()
+    private function configureFrontendUserAuthentication(): void
     {
         FrontendUserAuthentication::reset();
 
@@ -47,7 +39,7 @@ class AuthTest extends AbstractIntegrationCase
      */
     public function getStatusTest()
     {
-        $response = $this->buildRequestAndDispatch($this->buildConfiguredObjectManager(), 'auth/login');
+        $response = $this->buildRequestAndDispatch($this->getContainer(), 'auth/login');
 
         $this->assertSame(
             200,
@@ -66,7 +58,7 @@ class AuthTest extends AbstractIntegrationCase
      */
     public function checkLoginJsonTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
+        $objectManager = $this->getContainer();
         $this->configureUserProvider();
         $response = $this->buildRequestAndDispatch($objectManager, 'auth/login', 'POST');
         $this->assertSame(

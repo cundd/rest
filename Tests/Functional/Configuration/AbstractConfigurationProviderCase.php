@@ -9,12 +9,9 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
 
 abstract class AbstractConfigurationProviderCase extends AbstractCase
 {
-    /**
-     * @var ConfigurationProviderInterface
-     */
-    protected $fixture;
+    protected ConfigurationProviderInterface $fixture;
 
-    protected $settings = [
+    protected array $settings = [
         'paths' => [
             'all'             => [
                 'path'  => 'all',

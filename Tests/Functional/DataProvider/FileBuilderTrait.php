@@ -44,7 +44,7 @@ trait FileBuilderTrait
      * @param Prophet|null $prophet
      * @return FileReference
      */
-    public function createFileReferenceMock(array $fileReferenceProperties = [], Prophet $prophet = null)
+    public function createFileReferenceMock(array $fileReferenceProperties = [], Prophet $prophet = null): FileReference
     {
         if (null === $prophet) {
             $prophet = new Prophet();

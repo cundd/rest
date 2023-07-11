@@ -8,39 +8,19 @@ use Cundd\CustomRest\Domain\Model\Person;
 use Cundd\CustomRest\Domain\Repository\PersonRepository;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
 
-/**
- * Class PersonValidator
- */
 class PersonValidator extends AbstractValidator
 {
-    /**
-     * personRepository
-     *
-     * @var PersonRepository
-     */
-    protected $personRepository;
+    protected PersonRepository $personRepository;
 
-    /**
-     * Person Validator constructor
-     *
-     * @param PersonRepository $personRepository
-     */
     public function __construct(PersonRepository $personRepository)
     {
-        parent::__construct();
         $this->personRepository = $personRepository;
     }
 
-    /**
-     * Validation of given Params
-     *
-     * @param $person
-     * @return void
-     */
-    public function isValid($person)
+    public function isValid(mixed $value): void
     {
-        if ($person instanceof Person) {
-            if (!$this->validateCustom($person)) {
+        if ($value instanceof Person) {
+            if (!$this->validateCustom($value)) {
                 $this->addError('validation failed!', 1472506812);
             }
         }
@@ -52,7 +32,7 @@ class PersonValidator extends AbstractValidator
      * @param Person $person
      * @return bool
      */
-    protected function validateCustom($person)
+    protected function validateCustom(Person $person): bool
     {
         return ($person->getFirstName() == $person->getLastName());
     }

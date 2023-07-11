@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
 
-use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
-use Cundd\Rest\Authentication\UserProviderInterface;
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
-use Cundd\Rest\Dispatcher;
-use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
+use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\InjectPropertyTrait;
@@ -19,27 +15,20 @@ use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
 use Cundd\Rest\VirtualObject\Persistence\BackendInterface;
-use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\RawQueryBackendInterface;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DoctrineException;
 use Exception;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
-use SimpleXMLElement;
+use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\Container\Container;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-
-use function get_parent_class;
-use function method_exists;
-use function simplexml_load_file;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * @method void assertInternalType($expected, $actual, $message = '')
@@ -65,25 +54,19 @@ class AbstractCase extends FunctionalTestCase
     use ClassBuilderTrait;
     use InjectPropertyTrait;
 
-    /**
-     * @var ObjectManager
-     * @deprecated use buildConfiguredObjectManager() instead
-     */
-    protected $objectManager;
+    protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
 
     public function setUp(): void
     {
         try {
             parent::setUp();
-        } catch (\TYPO3\CMS\Core\Exception $exception) {
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException|\TYPO3\CMS\Core\Exception $exception) {
         }
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
         $this->registerAssetCache();
         $this->registerLoggerImplementation();
-        $this->objectManager = $this->buildConfiguredObjectManager();
     }
 
     protected function tearDown(): void
@@ -115,73 +98,73 @@ class AbstractCase extends FunctionalTestCase
         );
     }
 
-    /**
-     * Imports a data set represented as XML into the test database,
-     *
-     * @param string $path Absolute path to the XML file containing the data set to load
-     * @return void
-     * @throws Exception
-     */
-    protected function importDataSet($path)
-    {
-        if (method_exists(get_parent_class($this), 'importDataSet')) {
-            parent::importDataSet($path);
-
-            return;
-        }
-
-        if (!is_file($path)) {
-            throw new Exception(
-                'Fixture file ' . $path . ' not found',
-                1376746261
-            );
-        }
-
-        $database = $this->getDatabaseBackend();
-        $xml = simplexml_load_file($path);
-        $foreignKeys = [];
-
-        /** @var SimpleXMLElement $table */
-        foreach ($xml->children() as $table) {
-            $insertArray = [];
-
-            /** @var SimpleXMLElement $column */
-            foreach ($table->children() as $column) {
-                $columnName = $column->getName();
-                $columnValue = null;
-
-                if (isset($column['ref'])) {
-                    [$tableName, $elementId] = explode('#', $column['ref']);
-                    $columnValue = $foreignKeys[$tableName][$elementId];
-                } elseif (isset($column['is-NULL']) && ($column['is-NULL'] === 'yes')) {
-                    $columnValue = null;
-                } else {
-                    $columnValue = (string)$table->$columnName;
-                }
-
-                $insertArray[$columnName] = $columnValue;
-            }
-
-            $tableName = $table->getName();
-            try {
-                $insertedId = $database->addRow($tableName, $insertArray);
-
-                if (isset($table['id'])) {
-                    $elementId = (string)$table['id'];
-                    $foreignKeys[$tableName][$elementId] = $insertedId;
-                }
-            } catch (SqlErrorException $exception) {
-                $this->markTestSkipped(
-                    sprintf(
-                        'Error when processing fixture file: %s. Can not insert data to table %s: %s',
-                        $path,
-                        $tableName,
-                        $exception->getMessage()
-                    )
-                );
-            }
-        }
-    }
+//    /**
+//     * Imports a data set represented as XML into the test database,
+//     *
+//     * @param string $path Absolute path to the XML file containing the data set to load
+//     * @return void
+//     * @throws Exception
+//     */
+//    protected function importDataSet(string $path): void
+//    {
+//        if (method_exists(get_parent_class($this), 'importDataSet')) {
+//            parent::importDataSet($path);
+//
+//            return;
+//        }
+//
+//        if (!is_file($path)) {
+//            throw new Exception(
+//                'Fixture file ' . $path . ' not found',
+//                1376746261
+//            );
+//        }
+//
+//        $database = $this->getDatabaseBackend();
+//        $xml = simplexml_load_file($path);
+//        $foreignKeys = [];
+//
+//        /** @var SimpleXMLElement $table */
+//        foreach ($xml->children() as $table) {
+//            $insertArray = [];
+//
+//            /** @var SimpleXMLElement $column */
+//            foreach ($table->children() as $column) {
+//                $columnName = $column->getName();
+//                $columnValue = null;
+//
+//                if (isset($column['ref'])) {
+//                    [$tableName, $elementId] = explode('#', $column['ref']);
+//                    $columnValue = $foreignKeys[$tableName][$elementId];
+//                } elseif (isset($column['is-NULL']) && ($column['is-NULL'] === 'yes')) {
+//                    $columnValue = null;
+//                } else {
+//                    $columnValue = (string)$table->$columnName;
+//                }
+//
+//                $insertArray[$columnName] = $columnValue;
+//            }
+//
+//            $tableName = $table->getName();
+//            try {
+//                $insertedId = $database->addRow($tableName, $insertArray);
+//
+//                if (isset($table['id'])) {
+//                    $elementId = (string)$table['id'];
+//                    $foreignKeys[$tableName][$elementId] = $insertedId;
+//                }
+//            } catch (SqlErrorException $exception) {
+//                $this->markTestSkipped(
+//                    sprintf(
+//                        'Error when processing fixture file: %s. Can not insert data to table %s: %s',
+//                        $path,
+//                        $tableName,
+//                        $exception->getMessage()
+//                    )
+//                );
+//            }
+//        }
+//    }
 
     /**
      * @return BackendInterface|RawQueryBackendInterface
@@ -191,38 +174,36 @@ class AbstractCase extends FunctionalTestCase
         return BackendFactory::getBackend();
     }
 
-    /**
-     * @return ObjectManagerInterface
-     */
     protected function buildConfiguredObjectManager(): ObjectManagerInterface
     {
-        $this->initializeIconRegistry();
-
-        /** @var Container $objectContainer */
-        $objectContainer = GeneralUtility::makeInstance(Container::class);
-
-        $objectContainer->registerImplementation(
-            ConfigurationProviderInterface::class,
-            TypoScriptConfigurationProvider::class
-        );
-        $objectContainer->registerImplementation(
-            UserProviderInterface::class,
-            FeUserProvider::class
-        );
-        $objectContainer->registerImplementation(
-            DispatcherInterface::class,
-            Dispatcher::class
-        );
-
-        return GeneralUtility::makeInstance(ObjectManager::class);
+        return new ObjectManager($this->getContainer());
+//        /** @var Container $objectContainer */
+//        $this->initializeIconRegistry();
+//        $objectContainer = GeneralUtility::makeInstance(Container::class);
+//
+//        $objectContainer->registerImplementation(
+//            ConfigurationProviderInterface::class,
+//            TypoScriptConfigurationProvider::class
+//        );
+//        $objectContainer->registerImplementation(
+//            UserProviderInterface::class,
+//            FeUserProvider::class
+//        );
+//        $objectContainer->registerImplementation(
+//            DispatcherInterface::class,
+//            Dispatcher::class
+//        );
+//
+//        return GeneralUtility::makeInstance(ObjectManager::class);
     }
 
-    protected function registerLoggerImplementation()
+    private function registerLoggerImplementation()
     {
         /** @var Container $container */
-        $container = GeneralUtility::makeInstance(Container::class);
-        $container->registerImplementation(PsrLoggerInterface::class, StreamLogger::class);
-        $container->registerImplementation(CunddLoggerInterface::class, StreamLogger::class);
+        $container = $this->getContainer();
+        $streamLogger = new StreamLogger();
+        $container->set(PsrLoggerInterface::class, $streamLogger);
+        $container->set(CunddLoggerInterface::class, $streamLogger);
     }
 
     private function initializeIconRegistry()

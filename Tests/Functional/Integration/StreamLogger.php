@@ -11,9 +11,7 @@ class StreamLogger extends AbstractLogger
     private $stream;
 
     /**
-     * StreamLogger constructor.
-     *
-     * @param $stream
+     * @param resource|null $stream
      */
     public function __construct($stream = null)
     {

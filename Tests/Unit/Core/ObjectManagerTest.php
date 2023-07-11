@@ -32,6 +32,7 @@ use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\SessionManager;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Fixtures\UserProvider;
+use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\InjectPropertyTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\Unit\Fixtures\Container;
@@ -57,15 +58,9 @@ class ObjectManagerTest extends TestCase
     use RequestBuilderTrait;
     use ClassBuilderTrait;
 
-    /**
-     * @var ObjectManager
-     */
-    private $fixture;
+    private ObjectManager $fixture;
 
-    /**
-     * @var Container
-     */
-    private $container;
+    private Container $container;
 
     public function setUp(): void
     {
@@ -110,11 +105,7 @@ class ObjectManagerTest extends TestCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(
-            function ($args) use ($settings) {
-                return isset($settings[$args[0]]) ? $settings[$args[0]] : null;
-            }
-        );
+        $getSettingsProphecy->will(fn($args) => $settings[$args[0]] ?? null);
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 

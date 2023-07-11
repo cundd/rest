@@ -6,6 +6,8 @@ namespace Cundd\Rest\Tests\Functional\Integration;
 
 class GreetingTest extends AbstractGreetingCase
 {
+    private const ROOT_PAGE_ID = 1;
+
     /**
      * @dataProvider dataProviderTestLanguage
      * @param string $prefix
@@ -13,18 +15,20 @@ class GreetingTest extends AbstractGreetingCase
      */
     public function testLanguage(string $prefix, string $expectedMessage)
     {
-        $this->importDataSet('ntf://Database/sys_language.xml');
-        $this->importDataSet('ntf://Database/tt_content.xml');
+//        $this->importDataSet('ntf://Database/sys_language.xml');
+//        $this->importDataSet('ntf://Database/tt_content.xml');
         $this->importPages();
 
-        // Setup the page with uid 1 and include the TypoScript as sys_template record
+        // Set up the page with uid 10 and include the TypoScript as sys_template record
+//        $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
         $this->setUpFrontendRootPage(
-            1,
+            self::ROOT_PAGE_ID,
             [
-                'ntf://TypoScript/JsonRenderer.ts',
+                __DIR__ . '/../Fixtures/TypoScript/BasicPage.typoscript'
+//                __DIR__ . '/../Fixtures/TypoScript/JsonRenderer.typoscript'
             ]
         );
-
-        $this->fetchPathAndTestMessage($prefix, $expectedMessage);
+        $this->setUpFrontendSite(self::ROOT_PAGE_ID);
+        $this->fetchPathAndTestMessage($prefix, $expectedMessage, self::ROOT_PAGE_ID);
     }
 }

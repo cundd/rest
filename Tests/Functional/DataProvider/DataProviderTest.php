@@ -22,6 +22,7 @@ use DateTime;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
@@ -35,6 +36,8 @@ class DataProviderTest extends AbstractCase
      * @var DataProviderInterface|ClassLoadingInterface
      */
     protected $fixture;
+
+    protected bool $initializeDatabase = false;
 
     public function setUp(): void
     {
@@ -62,7 +65,13 @@ class DataProviderTest extends AbstractCase
             class_alias(MyModelRepository::class, 'Vendor\\MyExt\\Domain\\Repository\\MyModelRepository');
         }
 
-        $this->fixture = $this->objectManager->get(DataProvider::class);
+        /** @var Container $container */
+        $container = $this->getContainer();
+        $container->set('\\MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
+        $container->set('\\MyExt\\Domain\\Repository\\MySecondModelRepository', new MyModelRepository());
+        $container->set('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
+
+        $this->fixture = $container->get(DataProvider::class);
     }
 
     public function tearDown(): void
@@ -76,7 +85,7 @@ class DataProviderTest extends AbstractCase
      */
     public function convertTest()
     {
-        $concreteObjectManager = $this->objectManager;
+        $concreteObjectManager = $this->getContainer();
         $data = ['some' => 'Data'];
 
         /** @var ObjectProphecy|PropertyMapper $propertyMapperMock */
@@ -162,6 +171,8 @@ class DataProviderTest extends AbstractCase
             'Vendor\\MyExt\\Domain\\Repository\\Group',
             '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository'
         );
+        $groupRepositoryClass = '\\Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository';
+        $this->getContainer()->set($groupRepositoryClass, new $groupRepositoryClass());
         $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('vendor-my_ext-group-my_model'));
         $this->assertInstanceOf('Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository', $repository);
     }
@@ -263,7 +274,7 @@ class DataProviderTest extends AbstractCase
             'child' => [
                 'base'  => 'Base',
                 'date'  => $testDate->format(DateTime::ATOM),
-                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
+                'child' => 'http://res/rest/cundd-rest-tests-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
             ],
@@ -309,7 +320,7 @@ class DataProviderTest extends AbstractCase
             'uid'      => 1,
             'pid'      => null,
             'children' => [
-                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                0 => 'http://res/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
                        'base'  => 'Base',

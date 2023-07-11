@@ -19,8 +19,8 @@
         <fax/>
         <email/>
         <crdate>1320060686</crdate>
-        <cruser_id>3</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>3</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>0</deleted>
         <uc is-NULL="yes"/>
         <title/>
@@ -55,8 +55,8 @@
         <fax/>
         <email/>
         <crdate>1393354416</crdate>
-        <cruser_id>2</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>2</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>0</deleted>
         <uc is-NULL="yes"/>
         <title/>
@@ -91,8 +91,8 @@
         <fax/>
         <email/>
         <crdate>1439302187</crdate>
-        <cruser_id>2</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>2</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>1</deleted>
         <uc is-NULL="yes"/>
         <title/>
@@ -127,8 +127,8 @@
         <fax/>
         <email/>
         <crdate>1439302466</crdate>
-        <cruser_id>2</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>2</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>0</deleted>
         <uc is-NULL="yes"/>
         <title/>
@@ -163,8 +163,8 @@
         <fax/>
         <email/>
         <crdate>1439302466</crdate>
-        <cruser_id>2</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>2</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>0</deleted>
         <uc is-NULL="yes"/>
         <title/>
@@ -199,8 +199,8 @@
         <fax/>
         <email/>
         <crdate>1439302466</crdate>
-        <cruser_id>2</cruser_id>
-        <lockToDomain/>
+<!--        <cruser_id>2</cruser_id>-->
+<!--        <lockToDomain/>-->
         <deleted>0</deleted>
         <uc is-NULL="yes"/>
         <title/>

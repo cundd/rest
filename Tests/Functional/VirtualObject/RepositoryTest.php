@@ -7,8 +7,6 @@ namespace Cundd\Rest\Tests\Functional\VirtualObject;
 use Cundd\Rest\VirtualObject\Persistence\RepositoryInterface;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
-require_once __DIR__ . '/AbstractDatabaseCase.php';
-
 class RepositoryTest extends AbstractDatabaseCase
 {
     /**
@@ -19,7 +17,7 @@ class RepositoryTest extends AbstractDatabaseCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get(RepositoryInterface::class);
+        $this->fixture = $this->getContainer()->get(RepositoryInterface::class);
         $this->fixture->setConfiguration($this->getTestConfiguration());
     }
 

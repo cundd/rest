@@ -14,7 +14,7 @@ class TypoScriptConfigurationProviderTest extends AbstractConfigurationProviderC
     public function setUp(): void
     {
         parent::setUp();
-        $this->fixture = $this->objectManager->get(TypoScriptConfigurationProvider::class);
+        $this->fixture = $this->getContainer()->get(TypoScriptConfigurationProvider::class);
         $this->fixture->setSettings($this->settings);
     }
 }

@@ -17,17 +17,18 @@
         "ext-json": "*"
     },
     "require-dev": {
+        "ext-curl": "*",
+        "ext-simplexml": "*",
+        "cundd/test-flight": "^0.1.5",
+        "laminas/laminas-diactoros": "^2.25.2",
+        "phpspec/prophecy": "*",
+        "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.5.21",
+        "psr/container": "^2.0",
         "psr/http-message": "^1.0.1",
         "psr/log": "^2.0",
-        "laminas/laminas-diactoros": "^2.25.2",
-        "typo3/cms-core": "^12.3",
-        "cundd/test-flight": "^0.1.5",
-        "phpspec/prophecy": "*",
-        "ext-simplexml": "*",
-        "ext-curl": "*",
-        "psr/container": "^2.0",
-        "phpspec/prophecy-phpunit": "^2.0"
+        "typo3/cms-core": "^12.4",
+        "typo3/testing-framework": "^7 || ^8"
     },
     "homepage": "https://rest.corn.rest/",
     "authors": [
@@ -51,17 +52,10 @@
     "replace": {
         "typo3-ter/rest": "self.version"
     },
-    "scripts": {
-        "post-autoload-dump": [
-            "@prepare-extension-test-structure"
-        ],
-        "prepare-extension-test-structure": [
-            "Nimut\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
-        ]
-    },
     "extra": {
         "typo3/cms": {
-            "web-dir": ".Build/public",
+            "app-dir": ".Build",
+            "web-dir": ".Build/Web",
             "extension-key": "rest"
         }
     },

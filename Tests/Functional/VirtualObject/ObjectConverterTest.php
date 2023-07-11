@@ -9,14 +9,35 @@ use Cundd\Rest\VirtualObject\Exception\MissingConfigurationException;
 use Cundd\Rest\VirtualObject\ObjectConverter;
 use Cundd\Rest\VirtualObject\VirtualObject;
 
+use const PHP_INT_MAX;
+
 require_once __DIR__ . '/AbstractVirtualObjectCase.php';
 
 class ObjectConverterTest extends AbstractVirtualObjectCase
 {
-    /**
-     * @var ObjectConverter
-     */
-    protected $fixture;
+    protected array $testRawData = [
+        'property_one'   => 'Property 1 value',
+        'property_two'   => 0.98,
+        'property_three' => 10,
+        'property_four'  => PHP_INT_MAX,
+        'property_five'  => true,
+        'property_six'   => false,
+        'property_seven' => false,
+        'property_eight' => 8,
+    ];
+
+    protected array $testObjectData = [
+        'property1'      => 'Property 1 value',
+        'property2'      => 0.98,
+        'property3'      => 10,
+        'property4'      => PHP_INT_MAX,
+        'property5'      => true,
+        'property6'      => false,
+        'property_seven' => false,
+        'property_eight' => 8,
+    ];
+
+    protected ObjectConverter $fixture;
 
     public function setUp(): void
     {
@@ -178,10 +199,10 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException InvalidPropertyException
      */
     public function convertFromVirtualObjectWithUndefinedPropertyTest()
     {
+        $this->expectException(InvalidPropertyException::class);
         $testObjectData = $this->testObjectData;
         $testObjectData['property99'] = 'What ever - this must not be in the result';
         $virtualObject = new VirtualObject($testObjectData);
@@ -193,10 +214,10 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException InvalidPropertyException
      */
     public function convertToVirtualObjectWithUndefinedPropertyTest()
     {
+        $this->expectException(InvalidPropertyException::class);
         $testRawData = $this->testRawData;
         $testRawData['property_ninetynine'] = 'What ever - this must not be in the result';
         $virtualObject = $this->fixture->convertToVirtualObject($testRawData);
@@ -418,34 +439,13 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     * @expectedException MissingConfigurationException
+     *
      */
     public function throwExceptionIfConfigurationIsNotSet()
     {
+        $this->expectException(MissingConfigurationException::class);
         $virtualObject = new VirtualObject();
         $converter = new ObjectConverter();
         $converter->convertFromVirtualObject($virtualObject);
     }
-
-    protected $testRawData = [
-        'property_one'   => 'Property 1 value',
-        'property_two'   => 0.98,
-        'property_three' => 10,
-        'property_four'  => PHP_INT_MAX,
-        'property_five'  => true,
-        'property_six'   => false,
-        'property_seven' => false,
-        'property_eight' => 8,
-    ];
-
-    protected $testObjectData = [
-        'property1'      => 'Property 1 value',
-        'property2'      => 0.98,
-        'property3'      => 10,
-        'property4'      => PHP_INT_MAX,
-        'property5'      => true,
-        'property6'      => false,
-        'property_seven' => false,
-        'property_eight' => 8,
-    ];
 }

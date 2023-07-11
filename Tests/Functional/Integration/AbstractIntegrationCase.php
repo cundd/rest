@@ -10,51 +10,43 @@ use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\Logger;
-use Cundd\Rest\ObjectManagerInterface;
+use Cundd\Rest\ObjectManager;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\Functional\Fixtures\TestResponseFactory;
 use Cundd\Rest\Tests\RequestBuilderTrait;
-use InvalidArgumentException;
-use Nimut\TestingFramework\Http\Response as NimutResponse;
-use PHPUnit\Util\PHP\DefaultPhpProcess;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Text_Template;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface as Typo3ObjectManagerInterface;
 
 use function is_array;
-use function is_string;
 use function json_decode;
 use function putenv;
-use function var_export;
 
 class AbstractIntegrationCase extends AbstractCase
 {
     use RequestBuilderTrait;
+    use FrontendRequestTrait;
 
-    protected $testExtensionsToLoad = ['typo3conf/ext/rest'];
+    protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
 
-    /**
-     * @var DispatcherInterface
-     */
-    private $dispatcher;
+    private DispatcherInterface $dispatcher;
 
     public function setUp(): void
     {
         // Set TEST_MODE to true
         putenv('TEST_MODE=true');
         parent::setUp();
-
-        // Unset the Object Manager property to prevent serialization errors in case a failure occurs
-        unset($this->objectManager);
+//        $this->setUpBackendUser(1);
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
+        $this->setUpFrontendRootPage(1, ['EXT:rest/ext_typoscript_setup.txt']);
     }
 
     protected function configurePath(
-        Typo3ObjectManagerInterface $objectManager,
+        ContainerInterface $objectManager,
         string $path,
         array $pathConfiguration
-    ) {
+    ): void {
         /** @var TypoScriptConfigurationProvider $configurationProvider */
         $configurationProvider = $objectManager->get(ConfigurationProviderInterface::class);
         $configuration = $configurationProvider->getSettings();
@@ -70,21 +62,20 @@ class AbstractIntegrationCase extends AbstractCase
      * Limitations:
      *  - This will bypass TYPO3's routing
      *
-     * @param Typo3ObjectManagerInterface $objectManager
-     * @param RestRequestInterface        $request
+     * @param ContainerInterface   $objectManager
+     * @param RestRequestInterface $request
      * @return ResponseInterface
      */
     public function dispatch(
-        Typo3ObjectManagerInterface $objectManager,
+        ContainerInterface $objectManager,
         RestRequestInterface $request
     ): ResponseInterface {
-        $objectManager->get(RequestFactoryInterface::class)->registerCurrentRequest($request);
-
         $dispatcher = new Dispatcher(
-            $objectManager->get(ObjectManagerInterface::class),
+            $objectManager->get(ObjectManager::class),
             $objectManager->get(RequestFactoryInterface::class),
             $objectManager->get(ResponseFactoryInterface::class),
             new Logger(new StreamLogger()),
+            $objectManager->get(RouterInterface::class),
             null
         );
 
@@ -94,20 +85,20 @@ class AbstractIntegrationCase extends AbstractCase
     /**
      * Build a request and dispatch it using the REST Dispatcher
      *
-     * @param Typo3ObjectManagerInterface $objectManager
-     * @param string                      $path
-     * @param string                      $method
-     * @param string|array|null           $body
-     * @param array                       $headers
-     * @param null                        $basicAuth Ignored
+     * @param ContainerInterface $objectManager
+     * @param string             $path
+     * @param string             $method
+     * @param array|string|null  $body
+     * @param array              $headers
+     * @param null               $basicAuth Ignored
      * @return ResponseInterface
      * @see dispatch()
      */
     public function buildRequestAndDispatch(
-        Typo3ObjectManagerInterface $objectManager,
+        ContainerInterface $objectManager,
         string $path,
         string $method = 'GET',
-        $body = null,
+        array|string|null $body = null,
         array $headers = [],
         /** @noinspection PhpUnusedParameterInspection */
         $basicAuth = null
@@ -125,86 +116,83 @@ class AbstractIntegrationCase extends AbstractCase
         return $this->dispatch($objectManager, $request);
     }
 
-    /**
-     * Dispatch a Frontend Request using the Nimut testing framework
-     *
-     * Use this method to preform a full Functional Test against TYPO3's frontend.
-     *
-     * Limitations:
-     *  - POST requests are not supported
-     *  - Headers are not supported
-     *
-     * @param string $path
-     * @param int    $backendUserId
-     * @param int    $workspaceId
-     * @param bool   $failOnFailure
-     * @param int    $frontendUserId
-     * @return ResponseInterface
-     */
-    protected function fetchFrontendResponse(
-        string $path,
-        $backendUserId = 0,
-        $workspaceId = 0,
-        $failOnFailure = true,
-        $frontendUserId = 0
-    ): ResponseInterface {
-        $additionalParameter = '';
+//    /**
+//     * Dispatch a Frontend Request using the Nimut testing framework
+//     *
+//     * Use this method to preform a full Functional Test against TYPO3's frontend.
+//     *
+//     * Limitations:
+//     *  - POST requests are not supported
+//     *  - Headers are not supported
+//     *
+//     * @param string   $path
+//     * @param int      $backendUserId
+//     * @param int      $workspaceId
+//     * @param int      $frontendUserId
+//     * @param int|null $pageId
+//     * @return ResponseInterface
+//     */
+//    protected function fetchFrontendResponse(
+//        string $path,
+//        int $backendUserId = 0,
+//        int $workspaceId = 0,
+//        int $frontendUserId = 0,
+//        ?int $pageId = null
+//    ): ResponseInterface {
+//        $additionalParameter = '';
+//
+//        if (!empty($frontendUserId)) {
+//            $additionalParameter .= '&frontendUserId=' . (int)$frontendUserId;
+//        }
+//        if (!empty($backendUserId)) {
+//            $additionalParameter .= '&backendUserId=' . (int)$backendUserId;
+//        }
+//        if (!empty($workspaceId)) {
+//            $additionalParameter .= '&workspaceId=' . (int)$workspaceId;
+//        }
+//
+//        $internalRequest = new InternalRequest('http://localhost' . $path . $additionalParameter);
+//        if (null !== $pageId) {
+//            return $this->executeFrontendSubRequest($internalRequest->withPageId($pageId));
+//        } else {
+//            return $this->executeFrontendSubRequest($internalRequest);
+//        }
+////
+////        $arguments = [
+////            'documentRoot'         => $this->getInstancePath(),
+////            'requestUrl'           => 'http://localhost' . $path . $additionalParameter,
+////            'HTTP_ACCEPT_LANGUAGE' => 'de-DE',
+////        ];
+////
+////        $template = new Text_Template('ntf://Frontend/Request.tpl');
+////        $template->setVar(
+////            [
+////                'arguments'    => var_export($arguments, true),
+////                'originalRoot' => ORIGINAL_ROOT,
+////                'ntfRoot'      => __DIR__ . '/../../../vendor/nimut/testing-framework/',
+////            ]
+////        );
+////
+////        $php = DefaultPhpProcess::factory();
+////        $response = $php->runJob($template->render());
+////        $result = json_decode($response['stdout'], true);
+////
+////        if ($result === null) {
+////            $this->fail('Frontend Response is empty.' . LF . 'Error: ' . LF . $response['stderr']);
+////        }
+////
+////        if ($failOnFailure && $result['status'] === NimutResponse::STATUS_Failure) {
+////            $this->fail('Frontend Response has failure:' . LF . $result['error']);
+////        }
+////
+////        return TestResponseFactory::fromResponse(
+////            new NimutResponse($result['status'], $result['content'], $result['error'])
+////        );
+//    }
 
-        if (!empty($frontendUserId)) {
-            $additionalParameter .= '&frontendUserId=' . (int)$frontendUserId;
-        }
-        if (!empty($backendUserId)) {
-            $additionalParameter .= '&backendUserId=' . (int)$backendUserId;
-        }
-        if (!empty($workspaceId)) {
-            $additionalParameter .= '&workspaceId=' . (int)$workspaceId;
-        }
-
-        $arguments = [
-            'documentRoot'         => $this->getInstancePath(),
-            'requestUrl'           => 'http://localhost' . $path . $additionalParameter,
-            'HTTP_ACCEPT_LANGUAGE' => 'de-DE',
-        ];
-
-        $template = new Text_Template('ntf://Frontend/Request.tpl');
-        $template->setVar(
-            [
-                'arguments'    => var_export($arguments, true),
-                'originalRoot' => ORIGINAL_ROOT,
-                'ntfRoot'      => __DIR__ . '/../../../vendor/nimut/testing-framework/',
-            ]
-        );
-
-        $php = DefaultPhpProcess::factory();
-        $response = $php->runJob($template->render());
-        $result = json_decode($response['stdout'], true);
-
-        if ($result === null) {
-            $this->fail('Frontend Response is empty.' . LF . 'Error: ' . LF . $response['stderr']);
-        }
-
-        if ($failOnFailure && $result['status'] === NimutResponse::STATUS_Failure) {
-            $this->fail('Frontend Response has failure:' . LF . $result['error']);
-        }
-
-        return TestResponseFactory::fromResponse(
-            new NimutResponse($result['status'], $result['content'], $result['error'])
-        );
-    }
-
-    /**
-     * @param ResponseInterface|NimutResponse|string $response
-     * @return string
-     */
     protected function getErrorDescription(ResponseInterface $response): string
     {
-        if ($response instanceof ResponseInterface) {
-            $body = (string)(clone $response->getBody());
-        } elseif ($response instanceof NimutResponse) {
-            $body = $response->getContent();
-        } else {
-            $body = (string)$response;
-        }
+        $body = (string)(clone $response->getBody());
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
             . substr($body, 0, (int)getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
             . '------------------------------------';
@@ -215,22 +203,12 @@ class AbstractIntegrationCase extends AbstractCase
         );
     }
 
-    /**
-     * @param ResponseInterface|NimutResponse|string|null|array $response
-     * @return mixed
-     */
-    protected function getParsedBody($response)
+    protected function getParsedBody(ResponseInterface|string $response): mixed
     {
         if ($response instanceof ResponseInterface) {
             return $this->getParsedBody((string)$response->getBody());
-        } elseif ($response instanceof NimutResponse) {
-            return $this->getParsedBody($response->getContent());
-        } elseif (is_array($response)) {
-            return $response;
-        } elseif (is_string($response)) {
-            return json_decode($response, true);
         } else {
-            throw new InvalidArgumentException();
+            return json_decode($response, true);
         }
     }
 }

@@ -11,13 +11,13 @@ class ClassBuilder
     /**
      * Dynamically creates a class
      *
-     * @param string|array $className
+     * @param array|string $className
      * @param string       $namespace
      * @param string       $extends
      * @param bool         $silent
      * @throws Exception
      */
-    public static function buildClass($className, string $namespace = '', string $extends = '', bool $silent = false)
+    public static function buildClass(array|string $className, string $namespace = '', string $extends = '', bool $silent = false): void
     {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $className,
@@ -48,7 +48,7 @@ class ClassBuilder
      * @param string $extends
      * @throws Exception
      */
-    public static function buildClassIfNotExists(string $className, string $namespace = '', string $extends = '')
+    public static function buildClassIfNotExists(string $className, string $namespace = '', string $extends = ''): void
     {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $className,
@@ -69,7 +69,7 @@ class ClassBuilder
      * @param string $extends
      * @throws Exception
      */
-    public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = '')
+    public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = ''): void
     {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $interfaceName,
@@ -102,7 +102,7 @@ class ClassBuilder
         string $interfaceName,
         string $namespace = '',
         string $extends = ''
-    ) {
+    ): void {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $interfaceName,
             $namespace,
@@ -128,7 +128,7 @@ class ClassBuilder
         string $preparedClassName,
         string $preparedNamespace,
         string $preparedExtends
-    ) {
+    ): void {
         $code = [];
         if ($preparedNamespace) {
             $code[] = "namespace $preparedNamespace;";
@@ -161,7 +161,7 @@ class ClassBuilder
         $preparedNamespace = $namespace;
         $preparedExtends = $extends;
 
-        if (false !== strpos($className, '\\')) {
+        if (str_contains($className, '\\')) {
             $lastSlashPos = strrpos($className, '\\');
             $preparedNamespace = substr($className, 0, $lastSlashPos);
             $preparedClassName = substr($className, $lastSlashPos + 1);

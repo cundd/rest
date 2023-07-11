@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\Integration;
 
 use Cundd\Rest\Tests\Functional\Fixtures\CustHandler;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Container;
 
 class CustomHandlerTest extends AbstractIntegrationCase
 {
@@ -14,12 +15,9 @@ class CustomHandlerTest extends AbstractIntegrationCase
      */
     public function getIndexTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
+        $objectManager = $this->getContainer();
         $this->configureHandlerPath($objectManager);
-        $response = $this->dispatch(
-            $objectManager,
-            $this->buildTestRequest('/cust')
-        );
+        $response = $this->dispatch($objectManager, $this->buildTestRequest('/cust'));
 
         $this->assertSame(
             '{"message":"GET Index"}',
@@ -34,12 +32,9 @@ class CustomHandlerTest extends AbstractIntegrationCase
      */
     public function getFooTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
-        $this->configureHandlerPath($objectManager);
-        $response = $this->dispatch(
-            $objectManager,
-            $this->buildTestRequest('/cust/foo')
-        );
+        $container = $this->getContainer();
+        $this->configureHandlerPath($container);
+        $response = $this->dispatch($container, $this->buildTestRequest('/cust/foo'));
 
         $this->assertSame(
             '{"message":"GET Foo"}',
@@ -54,12 +49,9 @@ class CustomHandlerTest extends AbstractIntegrationCase
      */
     public function postBarTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
-        $this->configureHandlerPath($objectManager);
-        $response = $this->dispatch(
-            $objectManager,
-            $this->buildTestRequest('/cust/bar', 'POST')
-        );
+        $container = $this->getContainer();
+        $this->configureHandlerPath($container);
+        $response = $this->dispatch($container, $this->buildTestRequest('/cust/bar', 'POST'));
 
         $this->assertSame(
             '{"message":"POST Bar"}',
@@ -74,10 +66,9 @@ class CustomHandlerTest extends AbstractIntegrationCase
      */
     public function postFooShouldFailTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
-        $this->configureHandlerPath($objectManager);
-
-        $response = $this->dispatch($objectManager, $this->buildTestRequest('/cust/foo', 'POST'));
+        $container = $this->getContainer();
+        $this->configureHandlerPath($container);
+        $response = $this->dispatch($container, $this->buildTestRequest('/cust/foo', 'POST'));
 
         $this->assertSame(
             '{"error":"Not Found"}',
@@ -92,9 +83,9 @@ class CustomHandlerTest extends AbstractIntegrationCase
      */
     public function getBarShouldFailTest()
     {
-        $objectManager = $this->buildConfiguredObjectManager();
-        $this->configureHandlerPath($objectManager);
-        $response = $this->dispatch($objectManager, $this->buildTestRequest('/cust/bar'));
+        $container = $this->getContainer();
+        $this->configureHandlerPath($container);
+        $response = $this->dispatch($container, $this->buildTestRequest('/cust/bar'));
 
         $this->assertSame(
             '{"error":"Not Found"}',
@@ -104,8 +95,13 @@ class CustomHandlerTest extends AbstractIntegrationCase
         $this->assertSame(404, $response->getStatusCode());
     }
 
-    protected function configureHandlerPath(ObjectManagerInterface $objectManager): void
+    /**
+     * @param ContainerInterface|Container $objectManager
+     * @return void
+     */
+    protected function configureHandlerPath(ContainerInterface $objectManager): void
     {
+        $objectManager->set(CustHandler::class, new CustHandler());
         $this->configurePath(
             $objectManager,
             'cust',

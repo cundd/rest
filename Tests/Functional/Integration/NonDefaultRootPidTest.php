@@ -6,6 +6,8 @@ namespace Cundd\Rest\Tests\Functional\Integration;
 
 class NonDefaultRootPidTest extends AbstractGreetingCase
 {
+    private const ROOT_PAGE_ID = 10;
+
     /**
      * @dataProvider dataProviderTestLanguage
      * @param string $prefix
@@ -13,16 +15,17 @@ class NonDefaultRootPidTest extends AbstractGreetingCase
      */
     public function testNonDefaultRootPid(string $prefix, string $expectedMessage)
     {
-        $this->importDataSet('ntf://Database/sys_language.xml');
+//        $this->importDataSet('ntf://Database/sys_language.xml');
         $this->importPagesWithRootId10();
 
-        // Setup the page with uid 10 and include the TypoScript as sys_template record
+        // Set up the page with uid 10 and include the TypoScript as sys_template record
         $this->setUpFrontendRootPage(
-            10,
+            self::ROOT_PAGE_ID,
             [
-                'ntf://TypoScript/JsonRenderer.ts',
+                __DIR__ . '/../Fixtures/TypoScript/JsonRenderer.typoscript'
             ]
         );
-        $this->fetchPathAndTestMessage($prefix, $expectedMessage);
+        $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
+        $this->fetchPathAndTestMessage($prefix, $expectedMessage, self::ROOT_PAGE_ID);
     }
 }
