@@ -9,24 +9,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Logger extends AbstractLogger
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $concreteLogger;
+    private \Psr\Log\LoggerInterface $concreteLogger;
 
-    /**
-     * Logger constructor
-     *
-     * @param \Psr\Log\LoggerInterface|null $concreteLogger
-     */
     public function __construct(\Psr\Log\LoggerInterface $concreteLogger = null)
     {
         $this->concreteLogger = $concreteLogger
-            ? $concreteLogger
-            : GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+            ?? GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         $this->concreteLogger->log($level, $message, $context);
     }

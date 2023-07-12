@@ -26,7 +26,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     protected $settings = null;
 
     /**
-     * Returns the setting with the given key
+     * Return the setting with the given key
      *
      * @param string $keyPath
      * @param mixed  $defaultValue
@@ -58,7 +58,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Returns the settings read from the TypoScript
+     * Return the settings read from the TypoScript
      *
      * @return array
      */
@@ -72,7 +72,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Overwrites the settings
+     * Overwrite the settings
      *
      * @param array $settings
      * @internal
@@ -83,10 +83,10 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Returns the configuration matching the given resource type
+     * Return the configuration matching the given resource type
      *
      * @param ResourceType $resourceType
-     * @return ResourceConfiguration
+     * @return ResourceConfiguration|null
      */
     public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration
     {
@@ -98,7 +98,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             throw new InvalidResourceTypeException(
                 sprintf(
                     'Invalid normalized Resource Type "%s"',
-                    is_null($resourceTypeString) ? 'null' : $resourceTypeString
+                    $resourceTypeString
                 )
             );
         }
@@ -122,7 +122,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Returns the paths configured in the settings
+     * Return the paths configured in the settings
      *
      * @return ResourceConfiguration[]
      */
@@ -152,8 +152,8 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
                 $readAccess,
                 $writeAccess,
                 $cacheLifetime,
-                isset($configuration['handlerClass']) ? $configuration['handlerClass'] : '',
-                isset($configuration['dataProviderClass']) ? $configuration['dataProviderClass'] : '',
+                $configuration['handlerClass'] ?? '',
+                $configuration['dataProviderClass'] ?? '',
                 $this->getAliasesForResourceType($resourceType),
                 $expiresHeaderLifetime
             );
@@ -174,10 +174,10 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         $currentPathPattern = str_replace(
             '*',
             '\w*',
-            str_replace('?', '\w', (string)$pattern)
+            str_replace('?', '\w', $pattern)
         );
 
-        return 0 !== preg_match("!^$currentPathPattern$!", (string)$resourceTypeString);
+        return 0 !== preg_match("!^$currentPathPattern$!", $resourceTypeString);
     }
 
     /**
@@ -201,9 +201,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         );
     }
 
-    /**
-     * @return array
-     */
     private function getRawConfiguredResourceTypes(): array
     {
         $settings = $this->getSettings();
@@ -211,7 +208,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             return $settings['paths'];
         }
 
-        return isset($settings['paths.']) ? $settings['paths.'] : [];
+        return $settings['paths.'] ?? [];
     }
 
     /**
@@ -223,17 +220,13 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      */
     private function preparePath(array $configuration, string $path): array
     {
-        $resourceType = isset($configuration['path']) ? $configuration['path'] : trim($path, '.');
+        $resourceType = $configuration['path'] ?? trim($path, '.');
         $normalizeResourceType = Utility::normalizeResourceType($resourceType);
         $configuration['path'] = $normalizeResourceType;
 
         return [$configuration, $normalizeResourceType];
     }
 
-    /**
-     * @param array $configuration
-     * @return int
-     */
     private function detectCacheLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['cacheLifeTime']) && is_numeric($configuration['cacheLifeTime'])) {

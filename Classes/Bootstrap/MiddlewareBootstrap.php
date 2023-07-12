@@ -7,35 +7,22 @@ namespace Cundd\Rest\Bootstrap;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class MiddlewareBootstrap
 {
-    /**
-     * @var ConfigurationManagerInterface
-     */
-    private $configurationManager;
+    private ObjectManagerInterface $objectManager;
+
+    private array $configuration;
 
     /**
-     * @var ObjectManagerInterface
+     * @param ObjectManagerInterface $objectManager
+     * @param array                  $configuration
      */
-    private $objectManager;
-
-    /**
-     * @var array
-     */
-    private $configuration;
-
-    /**
-     * @param ObjectManagerInterface|null $objectManager
-     * @param array                       $configuration
-     */
-    public function __construct(ObjectManagerInterface $objectManager = null, array $configuration = [])
+    public function __construct(ObjectManagerInterface $objectManager, array $configuration = [])
     {
         $this->objectManager = $objectManager;
         $this->configuration = $configuration;
@@ -45,20 +32,21 @@ class MiddlewareBootstrap
      * Bootstrap the TYPO3 environment
      *
      * @param ServerRequestInterface $request
-     * @return TypoScriptFrontendController
+     * @return ServerRequestInterface
      */
-    public function bootstrapCore(ServerRequestInterface $request): TypoScriptFrontendController
+    public function bootstrapCore(ServerRequestInterface $request): ServerRequestInterface
     {
-        $this->initializeObjectManager();
-
         $coreBootstrapFactory = new CoreBootstrapFactory($this->objectManager);
         $coreBootstrap = $coreBootstrapFactory->build();
-        $frontendController = $coreBootstrap->initialize($request);
+        $request = $coreBootstrap->initialize($request);
+//        $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('frontend.typoscript', $frontendController);
 
         $this->initializeConfiguration($this->configuration);
+
+        $GLOBALS['TYPO3_REQUEST'] = $request;
         $this->registerSingularToPlural($this->objectManager);
 
-        return $frontendController;
+        return $request;
     }
 
     /**
@@ -72,7 +60,7 @@ class MiddlewareBootstrap
         TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request
     ): ServerRequestInterface {
-        $languageBootstrapFactory = new LanguageBootstrapFactory($this->objectManager);
+        $languageBootstrapFactory = new LanguageBootstrapFactory();
         $languageEnhancedRequest = $languageBootstrapFactory->build()->prepareRequest($frontendController, $request);
 
         // Store the enhanced/patched request so that e.g. the LocalizationUtility can read the requested
@@ -97,20 +85,10 @@ class MiddlewareBootstrap
      *
      * @param array $configuration
      */
-    private function initializeConfiguration(array $configuration)
+    private function initializeConfiguration(array $configuration): void
     {
-        $this->configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
-        $this->configurationManager->setConfiguration($configuration);
-    }
-
-    /**
-     * Initialize the Object Manager instance
-     */
-    private function initializeObjectManager()
-    {
-        if (!$this->objectManager) {
-            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        }
+        $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
+        $configurationManager->setConfiguration($configuration);
     }
 
     /**
@@ -118,7 +96,7 @@ class MiddlewareBootstrap
      *
      * @param ObjectManagerInterface $objectManager
      */
-    private function registerSingularToPlural(ObjectManagerInterface $objectManager)
+    private function registerSingularToPlural(ObjectManagerInterface $objectManager): void
     {
         $singularToPlural = $objectManager->getConfigurationProvider()->getSetting('singularToPlural');
         if ($singularToPlural) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cundd\Rest\DataProvider;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-use Exception;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
@@ -32,11 +31,11 @@ interface DataProviderInterface
      *
      * This method will load existing models
      *
-     * @param array|string|int $identifier   Data of the new model or it's UID
+     * @param int|array|string $identifier   Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
-    public function fetchModel($identifier, ResourceType $resourceType): ?object;
+    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): ?object;
 
     /**
      * Create a new Domain Model with the given data
@@ -47,9 +46,9 @@ interface DataProviderInterface
      *
      * @param array        $data         Data of the new model
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return object|DomainObjectInterface|Exception Return the created Model on success otherwise an Exception
+     * @return object|null Return the created Model on success otherwise an Exception
      */
-    public function createModel(array $data, ResourceType $resourceType);
+    public function createModel(array $data, ResourceType $resourceType): ?object;
 
     /**
      * Converts the data into an instance of the Domain Model for the Resource Type
@@ -66,7 +65,7 @@ interface DataProviderInterface
      * @param mixed $model
      * @return array|null|int|bool|string|float
      */
-    public function getModelData($model);
+    public function getModelData(mixed $model): mixed;
 
     /**
      * Return the property data from the given Model
@@ -75,10 +74,7 @@ interface DataProviderInterface
      * @param string                       $propertyParameter
      * @return mixed
      */
-    public function getModelProperty(
-        object $model,
-        string $propertyParameter
-    );
+    public function getModelProperty(object $model, string $propertyParameter): mixed;
 
     /**
      * Add or update the given Model in the repository
@@ -87,10 +83,7 @@ interface DataProviderInterface
      * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
-    public function saveModel(
-        object $model,
-        ResourceType $resourceType
-    ): void;
+    public function saveModel(object $model, ResourceType $resourceType): void;
 
     /**
      * Remove the given model from the repository for the given API resource type
@@ -99,8 +92,5 @@ interface DataProviderInterface
      * @param ResourceType                 $resourceType The API resource type
      * @return void
      */
-    public function removeModel(
-        object $model,
-        ResourceType $resourceType
-    ): void;
+    public function removeModel(object $model, ResourceType $resourceType): void;
 }

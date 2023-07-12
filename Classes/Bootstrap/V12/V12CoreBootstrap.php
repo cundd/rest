@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cundd\Rest\Bootstrap\V11;
+namespace Cundd\Rest\Bootstrap\V12;
 
 use Cundd\Rest\Bootstrap\AbstractCoreBootstrap;
 use Cundd\Rest\Utility\SiteLanguageUtility;
@@ -14,10 +14,11 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+
 use function is_array;
 use function is_callable;
 
-class V11CoreBootstrap extends AbstractCoreBootstrap
+class V12CoreBootstrap extends AbstractCoreBootstrap
 {
     public function initialize(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -39,8 +40,8 @@ class V11CoreBootstrap extends AbstractCoreBootstrap
         $context = GeneralUtility::makeInstance(Context::class);
         $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
         /** @var Site $site */
-        $site = $request->getAttribute('site', null);
-        $pageArguments = $request->getAttribute('routing', null);
+        $site = $request->getAttribute('site');
+        $pageArguments = $request->getAttribute('routing');
         if (!$pageArguments instanceof PageArguments) {
             $pageArguments = new PageArguments($pageUid, '0', []);
         }
@@ -69,11 +70,12 @@ class V11CoreBootstrap extends AbstractCoreBootstrap
         if (!is_array($frontendController->page)) {
             $frontendController->page = [];
         }
-
         // Build an instance of ContentObjectRenderer
         $frontendController->newCObj();
 
         $frontendController->determineId($request);
+        $request = $frontendController->getFromCache($request);
+
         if (is_callable([$frontendController, 'getConfigArray'])) {
             $frontendController->getConfigArray();
         }

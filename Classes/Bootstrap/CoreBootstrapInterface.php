@@ -13,7 +13,7 @@ interface CoreBootstrapInterface
      * Initializes the TYPO3 environment
      *
      * @param ServerRequestInterface $request
-     * @return TypoScriptFrontendController
+     * @return ServerRequestInterface
      */
-    public function initialize(ServerRequestInterface $request): TypoScriptFrontendController;
+    public function initialize(ServerRequestInterface $request): ServerRequestInterface;
 }

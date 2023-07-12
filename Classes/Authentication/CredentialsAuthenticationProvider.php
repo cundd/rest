@@ -13,10 +13,7 @@ use Cundd\Rest\SessionManager;
  */
 class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider
 {
-    /**
-     * @var SessionManager
-     */
-    protected $sessionManager;
+    protected SessionManager $sessionManager;
 
     /**
      * Credentials Authentication Provider constructor

@@ -11,9 +11,9 @@
         "restful"
     ],
     "require": {
-        "php": "^7.4|^8.1",
+        "php": "^8.1",
         "ext-ctype": "*",
-        "typo3/cms-core": "^11.5.24 || ^12.3",
+        "typo3/cms-core": "^11.5 || ^12.4",
         "ext-json": "*"
     },
     "require-dev": {
@@ -68,6 +68,6 @@
         }
     },
     "suggest": {
-        "nimut/testing-framework": "^6.0.1"
-        }
+        "typo3/cms-core": "^11.5.24 || ^12.3"
+    }
 }

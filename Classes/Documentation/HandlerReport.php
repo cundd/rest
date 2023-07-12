@@ -6,42 +6,20 @@ namespace Cundd\Rest\Documentation;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Reports\Controller\ReportController;
 use TYPO3\CMS\Reports\ReportInterface;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 class HandlerReport implements ReportInterface
 {
-    /**
-     * @var StandaloneView
-     * @inject
-     */
-    private $view;
+    private ViewInterface $view;
 
-    /**
-     * @var HandlerDescriptor
-     * @inject
-     */
-    private $handlerDescriptor;
+    private HandlerDescriptor $handlerDescriptor;
 
-    /**
-     * HandlerReport constructor
-     *
-     * @param ReportController       $reportController
-     * @param ViewInterface|null     $view
-     * @param HandlerDescriptor|null $handlerDescriptor
-     */
-    public function __construct(
-        /** @noinspection PhpUnusedParameterInspection */
-        ReportController $reportController,
-        ViewInterface $view = null,
-        HandlerDescriptor $handlerDescriptor = null
-    ) {
-        $om = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->view = $view ?: $om->get(StandaloneView::class);
-        $this->handlerDescriptor = $handlerDescriptor ?: $om->get(HandlerDescriptor::class);
+    public function __construct(HandlerDescriptor $handlerDescriptor)
+    {
+        $this->view = GeneralUtility::makeInstance(StandaloneView::class);;
+        $this->handlerDescriptor = $handlerDescriptor;
     }
 
     /**
@@ -59,5 +37,25 @@ class HandlerReport implements ReportInterface
         $this->view->assign('information', $information);
 
         return $this->view->render();
+    }
+
+    public function getIdentifier(): string
+    {
+        return 'cundd-rest';
+    }
+
+    public function getTitle(): string
+    {
+        return 'REST';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Get a status report about the REST integration';
+    }
+
+    public function getIconIdentifier(): string
+    {
+        return 'module-reports';
     }
 }

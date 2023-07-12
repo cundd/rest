@@ -7,20 +7,13 @@ namespace Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManagerInterface;
+use Cundd\Rest\Router\RouterInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-
-use function class_exists;
 
 class DispatcherFactory
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(readonly private ObjectManagerInterface $objectManager)
     {
-        $this->objectManager = $objectManager;
     }
 
     public function build(): DispatcherInterface
@@ -28,12 +21,16 @@ class DispatcherFactory
         $requestFactory = $this->objectManager->getRequestFactory();
         $responseFactory = $this->objectManager->getResponseFactory();
         $logger = $this->objectManager->get(LoggerInterface::class);
-        if (class_exists(EventDispatcherInterface::class)) {
-            $eventDispatcher = $this->objectManager->get(EventDispatcherInterface::class);
-        } else {
-            $eventDispatcher = null;
-        }
+        $router = $this->objectManager->get(RouterInterface::class);
+        $eventDispatcher = $this->objectManager->get(EventDispatcherInterface::class);
 
-        return new Dispatcher($this->objectManager, $requestFactory, $responseFactory, $logger, $eventDispatcher);
+        return new Dispatcher(
+            $this->objectManager,
+            $requestFactory,
+            $responseFactory,
+            $logger,
+            $router,
+            $eventDispatcher
+        );
     }
 }

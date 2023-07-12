@@ -6,10 +6,14 @@ namespace Cundd\Rest;
 
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Utility\DebugUtility;
 use Laminas\Diactoros\Response as LaminasResponse;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response as TYPO3Response;
+
+use function is_scalar;
+use function var_export;
 
 /**
  * Factory class to create Response objects
@@ -92,9 +96,18 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
                 }
 
                 $response->getBody()->write(json_encode($body));
-                $response = $response->withHeader(Header::CONTENT_TYPE, 'application/json');
-                break;
 
+                return $response->withHeader(Header::CONTENT_TYPE, 'application/json');
+
+            case 'txt':
+            case 'html':
+                if (is_scalar($data)) {
+                    $response->getBody()->write((string)$data);
+                } elseif (DebugUtility::allowDebugInformation()) {
+                    $response->getBody()->write(var_export($data, true));
+                }
+
+                return $response;
             case 'xml':
                 // TODO: support more response formats
 
@@ -105,9 +118,9 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
                         $request->getFormat()
                     )
                 );
-        }
 
-        return $response;
+                return $response;
+        }
     }
 
     /**

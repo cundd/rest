@@ -7,3 +7,9 @@ services:
 
   Cundd\CustomRest\:
     resource: '../Classes/*'
+
+  Cundd\CustomRest\Rest\Handler:
+    public: true
+
+  Cundd\CustomRest\Domain\Repository\PersonRepository:
+    public: true

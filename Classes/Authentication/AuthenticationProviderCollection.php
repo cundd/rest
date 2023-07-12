@@ -17,7 +17,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      *
      * @var SplObjectStorage<AuthenticationProviderInterface>
      */
-    protected $providers;
+    protected SplObjectStorage $providers;
 
     /**
      * Create a new Authentication Provider collection with the given providers

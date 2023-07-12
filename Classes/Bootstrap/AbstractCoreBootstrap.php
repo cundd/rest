@@ -7,7 +7,6 @@ namespace Cundd\Rest\Bootstrap;
 use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -15,10 +14,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 abstract class AbstractCoreBootstrap implements CoreBootstrapInterface
 {
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * Core constructor.
@@ -51,7 +47,7 @@ abstract class AbstractCoreBootstrap implements CoreBootstrapInterface
     abstract protected function configureFrontendController(
         TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request
-    );
+    ): ServerRequestInterface;
 
     /**
      * @param ServerRequestInterface $request

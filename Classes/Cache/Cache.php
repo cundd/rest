@@ -36,7 +36,7 @@ class Cache implements CacheInterface
     private $cacheLifetime;
 
     /**
-     * Life time defined in the expires header
+     * Lifetime defined in the expires header
      *
      * @var integer
      */

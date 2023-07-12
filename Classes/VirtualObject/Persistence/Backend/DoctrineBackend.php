@@ -7,6 +7,7 @@ namespace Cundd\Rest\VirtualObject\Persistence\Backend;
 use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DoctrineException;
 use LogicException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
@@ -43,7 +44,7 @@ class DoctrineBackend extends AbstractBackend
             $connection->insert($tableName, $row);
 
             return (int)$connection->lastInsertId();
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
     }
@@ -53,7 +54,7 @@ class DoctrineBackend extends AbstractBackend
         $this->assertValidTableName($tableName);
         try {
             return $this->getConnection($tableName)->update($tableName, $row, $identifier);
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
     }
@@ -63,7 +64,7 @@ class DoctrineBackend extends AbstractBackend
         $this->assertValidTableName($tableName);
         try {
             return $this->getConnection($tableName)->delete($tableName, $identifier);
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
     }
@@ -76,7 +77,7 @@ class DoctrineBackend extends AbstractBackend
         if ($this->isQueryEmpty($query)) {
             try {
                 $statement = $this->getConnection($tableName)->executeQuery($baseQuery);
-            } catch (DBALException $exception) {
+            } catch (DBALException|DoctrineException $exception) {
                 throw SqlErrorException::fromException($exception);
             }
         } else {
@@ -88,13 +89,13 @@ class DoctrineBackend extends AbstractBackend
                     $baseQuery . " WHERE " . $whereClause->getExpression(),
                     $whereClause->getBoundVariables()
                 );
-            } catch (DBALException $exception) {
+            } catch (DBALException|DoctrineException $exception) {
                 throw SqlErrorException::fromException($exception);
             }
         }
         try {
             $result = $statement->fetch();
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
 
@@ -116,7 +117,7 @@ class DoctrineBackend extends AbstractBackend
             }
             try {
                 $statement = $this->getConnection($tableName)->executeQuery($baseSql);
-            } catch (DBALException $exception) {
+            } catch (DBALException|DoctrineException $exception) {
                 throw SqlErrorException::fromException($exception);
             }
         } else {
@@ -130,14 +131,14 @@ class DoctrineBackend extends AbstractBackend
 
             try {
                 $statement = $this->getConnection($tableName)->executeQuery($sql, $whereClause->getBoundVariables());
-            } catch (DBALException $exception) {
+            } catch (DBALException|DoctrineException $exception) {
                 throw SqlErrorException::fromException($exception);
             }
         }
 
         try {
             return $statement->fetchAll();
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
     }
@@ -146,7 +147,7 @@ class DoctrineBackend extends AbstractBackend
     {
         try {
             return $this->getConnection('fe_users')->executeQuery($query);
-        } catch (DBALException $exception) {
+        } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
     }

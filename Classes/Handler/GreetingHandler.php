@@ -19,10 +19,7 @@ use function date;
  */
 class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
 {
-    /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
 
     public function __construct(ResponseFactoryInterface $responseFactory)
     {

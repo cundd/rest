@@ -24,12 +24,9 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * @var ObjectConverter[]
      */
-    protected $objectConverterMap = [];
+    protected array $objectConverterMap = [];
 
-    /**
-     * @var ConfigurationFactory
-     */
-    protected $configurationFactory;
+    protected ConfigurationFactory $configurationFactory;
 
     /**
      * VirtualObjectDataProvider constructor.
@@ -56,6 +53,7 @@ class VirtualObjectDataProvider extends DataProvider
      *
      * @param ResourceType|string $resourceType
      * @return ObjectConverter
+     * @throws MissingConfigurationException
      */
     public function getObjectConverterForResourceType(ResourceType $resourceType): ObjectConverter
     {
@@ -95,7 +93,7 @@ class VirtualObjectDataProvider extends DataProvider
         );
     }
 
-    public function createModel(array $data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType): ?object
     {
         // If no data is given return a new empty instance
         if (!$data) {
@@ -110,7 +108,7 @@ class VirtualObjectDataProvider extends DataProvider
         return Repository::class;
     }
 
-    public function getRepositoryForResourceType(ResourceType $resourceType)
+    public function getRepositoryForResourceType(ResourceType $resourceType): object
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         /** @var RepositoryInterface|\TYPO3\CMS\Extbase\Persistence\RepositoryInterface $repository */
@@ -120,12 +118,12 @@ class VirtualObjectDataProvider extends DataProvider
         return $repository;
     }
 
-    public function getEmptyModelForResourceType(ResourceType $resourceType)
+    public function getEmptyModelForResourceType(ResourceType $resourceType): VirtualObject
     {
         return new VirtualObject();
     }
 
-    public function getModelData($model)
+    public function getModelData(mixed $model): mixed
     {
         $properties = parent::getModelData($model);
         if ($properties === $model) {
@@ -135,7 +133,7 @@ class VirtualObjectDataProvider extends DataProvider
         return $properties;
     }
 
-    public function getModelProperty(object $model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter): mixed
     {
         /** @var VirtualObject $model */
         $modelData = $model->getData();

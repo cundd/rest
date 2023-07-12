@@ -11,12 +11,9 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
  */
 class TypoScriptConfigurationProvider extends AbstractConfigurationProvider
 {
-    /**
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
+    protected ConfigurationManager $configurationManager;
 
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
@@ -34,10 +31,7 @@ class TypoScriptConfigurationProvider extends AbstractConfigurationProvider
             $typoScript = $this->configurationManager->getConfiguration(
                 ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
             );
-            if (isset($typoScript['plugin.'])
-                && isset($typoScript['plugin.']['tx_rest.'])
-                && isset($typoScript['plugin.']['tx_rest.']['settings.'])
-            ) {
+            if (isset($typoScript['plugin.']['tx_rest.']['settings.'])) {
                 $this->settings = $typoScript['plugin.']['tx_rest.']['settings.'];
             }
         }

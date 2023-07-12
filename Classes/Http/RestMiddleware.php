@@ -22,11 +22,14 @@ class RestMiddleware implements MiddlewareInterface
     {
         if ($this->isRestRequest($request)) {
             $GLOBALS['TYPO3_REQUEST'] = $request;
-            $middlewareBootstrap = new MiddlewareBootstrap();
-            $frontendController = $middlewareBootstrap->bootstrapCore($request);
-            $languageEnhancedRequest = $middlewareBootstrap->bootstrapLanguage($frontendController, $request);
+            $middlewareBootstrap = new MiddlewareBootstrap(GeneralUtility::makeInstance(ObjectManagerInterface::class));
+            $request = $middlewareBootstrap->bootstrapCore($request);
+            $languageEnhancedRequest = $middlewareBootstrap->bootstrapLanguage(
+                $request->getAttribute('frontend.controller'),
+                $request
+            );
 
-            return $middlewareBootstrap->buildDispatcher()->processRequest($languageEnhancedRequest ?? $request);
+            return $middlewareBootstrap->buildDispatcher()->processRequest($languageEnhancedRequest);
         } else {
             return $handler->handle($request);
         }

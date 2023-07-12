@@ -25,6 +25,10 @@ use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 
+use function is_bool;
+use function is_float;
+use function is_int;
+use function is_string;
 use function sprintf;
 
 /**
@@ -32,36 +36,14 @@ use function sprintf;
  */
 class DataProvider implements DataProviderInterface, ClassLoadingInterface, SingletonInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
-    /**
-     * @var ExtractorInterface
-     */
-    protected $extractor;
+    protected ExtractorInterface $extractor;
 
-    /**
-     * Logger instance
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
-    /**
-     * @var IdentityProviderInterface
-     */
-    protected $identityProvider;
+    protected IdentityProviderInterface $identityProvider;
 
-    /**
-     * Data Provider constructor
-     *
-     * @param ObjectManagerInterface    $objectManager
-     * @param ExtractorInterface        $extractor
-     * @param IdentityProviderInterface $identityProvider
-     * @param LoggerInterface|null      $logger
-     */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ExtractorInterface $extractor,
@@ -74,7 +56,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->identityProvider = $identityProvider;
     }
 
-    public function getModelData($model)
+    public function getModelData(mixed $model): mixed
     {
         return $this->extractor->extract($model);
     }
@@ -83,10 +65,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     {
         [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        return ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+        return '\\' . ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
     }
 
-    public function getRepositoryForResourceType(ResourceType $resourceType)
+    public function getRepositoryForResourceType(ResourceType $resourceType): object
     {
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         $repository = null;
@@ -142,7 +124,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->getRepositoryForResourceType($resourceType)->countAll();
     }
 
-    public function fetchModel($identifier, ResourceType $resourceType): ?object
+    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): ?object
     {
         if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
             return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
@@ -151,7 +133,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return null;
     }
 
-    public function createModel(array $data, ResourceType $resourceType)
+    public function createModel(array $data, ResourceType $resourceType): ?object
     {
         // If no data is given return a new empty instance
         if (!$data) {
@@ -169,7 +151,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->convertIntoModel($data, $resourceType);
     }
 
-    public function getModelProperty(object $model, string $propertyParameter)
+    public function getModelProperty(object $model, string $propertyParameter): mixed
     {
         InvalidArgumentException::assertObject($model);
         $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
@@ -246,7 +228,12 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     public function getEmptyModelForResourceType(ResourceType $resourceType)
     {
-        return $this->objectManager->get($this->getModelClassForResourceType($resourceType));
+        $modelClassForResourceType = $this->getModelClassForResourceType($resourceType);
+        if ($this->objectManager->has($modelClassForResourceType)) {
+            return $this->objectManager->get($modelClassForResourceType);
+        } else {
+            return new $modelClassForResourceType();
+        }
     }
 
     /**
@@ -289,7 +276,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * Return the configuration for property mapping
      *
-     * @param ResourceType|string $resourceType
+     * @param ResourceType $resourceType
      * @return PropertyMappingConfiguration
      */
     protected function getPropertyMappingConfigurationForResourceType(
@@ -302,11 +289,11 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * Load the model with the given identifier
      *
-     * @param mixed               $identifier
-     * @param ResourceType|string $resourceType
+     * @param mixed        $identifier
+     * @param ResourceType $resourceType
      * @return null|object
      */
-    protected function getModelWithIdentityForResourceType($identifier, ResourceType $resourceType): ?object
+    protected function getModelWithIdentityForResourceType(mixed $identifier, ResourceType $resourceType): ?object
     {
         $repository = $this->getRepositoryForResourceType($resourceType);
 
@@ -320,27 +307,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             $this->getModelClassForResourceType($resourceType)
         );
 
-        switch ($type) {
-            case 'string':
-                $typeMatching = is_string($identifier);
-                break;
-
-            case 'boolean':
-                $typeMatching = is_bool($identifier);
-                break;
-
-            case 'integer':
-                $typeMatching = is_int($identifier);
-                break;
-
-            case 'float':
-                $typeMatching = is_float($identifier);
-                break;
-
-            case 'array':
-            default:
-                $typeMatching = false;
-        }
+        $typeMatching = match ($type) {
+            'string' => is_string($identifier),
+            'boolean' => is_bool($identifier),
+            'integer' => is_int($identifier),
+            'float' => is_float($identifier),
+            default => false,
+        };
 
         if ($typeMatching) {
             $findMethod = 'findOneBy' . ucfirst($property);
@@ -363,7 +336,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     }
 
     /**
-     * Returns the logger
+     * Return the logger
      *
      * @return LoggerInterface
      */
@@ -376,10 +349,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->logger;
     }
 
-    /**
-     * @param $exception
-     */
-    protected function logException(Exception $exception)
+    protected function logException(Exception $exception): void
     {
         $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
         $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);

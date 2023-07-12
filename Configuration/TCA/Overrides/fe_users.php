@@ -1,8 +1,8 @@
 <?php
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
+defined('TYPO3') or die();
 
 $tempColumns = [
     'tx_rest_apikey' => [
@@ -16,11 +16,11 @@ $tempColumns = [
     ],
 ];
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
+ExtensionManagementUtility::addTCAcolumns(
     'fe_users',
     $tempColumns
 );
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+ExtensionManagementUtility::addToAllTCAtypes(
     'fe_users',
     'tx_rest_apikey;;;;1-1-1',
     '',

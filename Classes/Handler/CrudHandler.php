@@ -22,22 +22,11 @@ use LimitIterator;
  */
 class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 {
-    /**
-     * Object Manager
-     *
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * Handler constructor

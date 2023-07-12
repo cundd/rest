@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
-use Cundd\Rest\Dispatcher\DispatcherFactory;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
@@ -28,45 +27,24 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Dispatcher implements SingletonInterface, DispatcherInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
-    /**
-     * @var RequestFactoryInterface
-     */
-    protected $requestFactory;
+    protected RequestFactoryInterface $requestFactory;
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    protected $eventDispatcher;
+    protected ?EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * Initialize
-     *
-     * @param ObjectManagerInterface        $objectManager
-     * @param RequestFactoryInterface       $requestFactory
-     * @param ResponseFactoryInterface      $responseFactory
-     * @param LoggerInterface               $logger
-     * @param EventDispatcherInterface|null $eventDispatcher
-     */
+    private RouterInterface $router;
+
     public function __construct(
         ObjectManagerInterface $objectManager,
         RequestFactoryInterface $requestFactory,
         ResponseFactoryInterface $responseFactory,
         LoggerInterface $logger,
+        RouterInterface $router,
         ?EventDispatcherInterface $eventDispatcher
     ) {
         $this->objectManager = $objectManager;
@@ -74,6 +52,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $this->responseFactory = $responseFactory;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->router = $router;
     }
 
     /**
@@ -142,14 +121,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         return $newResponse;
     }
 
-    /**
-     * @return ResultConverter
-     */
     private function getResultConverter(): ResultConverter
     {
-        $router = $this->objectManager->get(RouterInterface::class);
-
-        return new ResultConverter($router, $this->responseFactory, [$this->logger, 'logException']);
+        return new ResultConverter($this->router, $this->responseFactory, [$this->logger, 'logException']);
     }
 
     /**

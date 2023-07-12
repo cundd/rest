@@ -20,9 +20,9 @@ class Utility
     /**
      * Mapping from singular to plural
      *
-     * @var array
+     * @var array<string, string>
      */
-    protected static $singularToPlural = [];
+    protected static array $singularToPlural = [];
 
     /**
      * Returns an array of class name parts including vendor, extension and domain model
@@ -186,10 +186,10 @@ class Utility
     /**
      * Add a mapping from singular to plural
      *
-     * @param $singular
-     * @param $plural
+     * @param string $singular
+     * @param string $plural
      */
-    public static function registerSingularForPlural($singular, $plural)
+    public static function registerSingularForPlural(string $singular, string $plural): void
     {
         static::$singularToPlural[$singular] = $plural;
     }
@@ -200,7 +200,7 @@ class Utility
      * @param string|ResourceType $resourceType
      * @return string
      */
-    public static function normalizeResourceType($resourceType): string
+    public static function normalizeResourceType(ResourceType|string $resourceType): string
     {
         $resourceTypeString = trim((string)$resourceType, '.');
 

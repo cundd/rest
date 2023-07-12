@@ -15,10 +15,10 @@ interface ClassLoadingInterface
      * Return the domain model repository for the models the given API resource type points to
      *
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return TYPO3RepositoryInterface|RestRepository
+     * @return object
      * @throws LogicException if no repository could be found
      */
-    public function getRepositoryForResourceType(ResourceType $resourceType);
+    public function getRepositoryForResourceType(ResourceType $resourceType): object;
 
     /**
      * Return the domain model repository class name for the given API resource type

@@ -13,10 +13,8 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
 {
     /**
      * Provider that will check the user credentials
-     *
-     * @var UserProviderInterface
      */
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
     /**
      * BasicAuth Provider constructor

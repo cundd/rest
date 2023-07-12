@@ -50,6 +50,11 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->container->get($class);
     }
 
+    public function has(string $id): bool
+    {
+        return $this->container->has($id);
+    }
+
     public function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->get(ResponseFactoryInterface::class);
@@ -102,11 +107,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             }
         }
 
-        return call_user_func(
-            [$this, 'get'],
-            AuthenticationProviderCollection::class,
-            $providerInstances
-        );
+        return new AuthenticationProviderCollection($providerInstances);
     }
 
     public function getAccessController(RestRequestInterface $request): AccessControllerInterface
@@ -114,7 +115,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $resourceType = $request->getResourceType();
         [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        // Check if an extension provides a Authentication Provider
+        // Check if an extension provides an Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
         if (class_exists($accessControllerClass)) {
             return $this->get($accessControllerClass);
@@ -137,7 +138,9 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         // Check for a specific builtin Handler
         $specialHandler = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
         if (class_exists($specialHandler)) {
-            return $this->get($specialHandler);
+            return $this->has($specialHandler)
+                ? $this->get($specialHandler)
+                : GeneralUtility::makeInstance($specialHandler);
         } else {
             return $this->get(CrudHandler::class);
         }
@@ -192,9 +195,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             );
         }
 
-        if ($implementation[0] === '\\') {
-            $implementation = substr($implementation, 1);
-        }
+        $implementation = ltrim($implementation, '\\');
 
         return $this->get($implementation);
     }

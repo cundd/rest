@@ -7,6 +7,92 @@ services:
 
   Cundd\Rest\:
     resource: '../Classes/*'
-    exclude: ['../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php']
+    exclude: [ '../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php' ]
 
-  Cundd\Rest\Configuration\ConfigurationProviderInterface: '@Cundd\Rest\Configuration\TypoScriptConfigurationProvider'
+  Cundd\Rest\Access\ConfigurationBasedAccessController:
+    public: true
+  Cundd\Rest\Authentication\UserProviderInterface:
+    alias: 'Cundd\Rest\Authentication\UserProvider\FeUserProvider'
+    public: true
+  Cundd\Rest\Authentication\BasicAuthenticationProvider:
+    public: true
+  Cundd\Rest\Authentication\RequestAuthenticationProvider:
+    public: true
+  Cundd\Rest\Authentication\CredentialsAuthenticationProvider:
+    public: true
+
+  Cundd\Rest\Cache\Cache:
+    public: true
+  Cundd\Rest\Cache\CacheFactory:
+    public: true
+
+  Cundd\Rest\Configuration\ConfigurationProviderInterface:
+    alias: 'Cundd\Rest\Configuration\TypoScriptConfigurationProvider'
+    public: true
+  Cundd\Rest\Configuration\TypoScriptConfigurationProvider:
+    public: true
+
+  Cundd\Rest\DataProvider\DataProviderInterface:
+    alias: 'Cundd\Rest\DataProvider\DataProvider'
+    public: true
+  Cundd\Rest\DataProvider\DataProvider:
+    public: true
+  Cundd\Rest\DataProvider\Extractor:
+    public: true
+
+  Cundd\Rest\Dispatcher\DispatcherInterface: '@Cundd\Rest\Dispatcher'
+  Cundd\Rest\Dispatcher:
+    public: true
+
+  Cundd\Rest\RequestFactoryInterface:
+    alias: 'Cundd\Rest\RequestFactory'
+    public: true
+  Cundd\Rest\RequestFactory:
+    public: true
+  Cundd\Rest\ResponseFactoryInterface:
+    alias: 'Cundd\Rest\ResponseFactory'
+    public: true
+  Cundd\Rest\ResponseFactory:
+    public: true
+
+  Cundd\Rest\Router\RouterInterface:
+    alias: 'Cundd\Rest\Router\Router'
+    public: true
+
+  Cundd\Rest\Handler\HandlerInterface: '@Cundd\Rest\Handler\CrudHandler'
+  Cundd\Rest\Handler\AuthHandler:
+    public: true
+  Cundd\Rest\Handler\CrudHandler:
+    public: true
+  Cundd\Rest\Handler\GreetingHandler:
+    public: true
+
+  Cundd\Rest\Log\LoggerInterface:
+    alias: 'Cundd\Rest\Log\Logger'
+    public: true
+
+  Cundd\Rest\ObjectManagerInterface:
+    alias: 'Cundd\Rest\ObjectManager'
+    public: true
+  Cundd\Rest\ObjectManager:
+    public: true
+
+  Cundd\Rest\Persistence\Generic\RestQuerySettings:
+    public: true
+  Cundd\Rest\SessionManager:
+    public: true
+
+  Cundd\Rest\VirtualObject\ConfigurationFactory:
+    public: true
+  Cundd\Rest\VirtualObject\Persistence\BackendInterface:
+    alias: 'Cundd\Rest\VirtualObject\Persistence\Backend\DoctrineBackend'
+    public: true
+  Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface:
+    alias: 'Cundd\Rest\VirtualObject\Persistence\PersistenceManager'
+    public: true
+  Cundd\Rest\VirtualObject\Persistence\QueryInterface:
+    alias: 'Cundd\Rest\VirtualObject\Persistence\Query'
+    public: true
+  Cundd\Rest\VirtualObject\Persistence\RepositoryInterface:
+    alias: 'Cundd\Rest\VirtualObject\Persistence\Repository'
+    public: true

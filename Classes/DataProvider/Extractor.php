@@ -12,7 +12,6 @@ use Prophecy\Exception\Call\UnexpectedCallException as ProphecyUnexpectedCallExc
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Traversable;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\AbstractFile;
@@ -35,35 +34,35 @@ class Extractor implements ExtractorInterface
     /**
      * @var ConfigurationProviderInterface
      */
-    protected $configurationProvider;
+    protected ConfigurationProviderInterface $configurationProvider;
 
     /**
      * Logger instance
      *
-     * @var Logger
+     * @var LoggerInterface|null
      */
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     /**
      * The current depth when preparing model data for output
      *
      * @var int
      */
-    protected $depthOfObjectTreeTraversal = 0;
+    protected int $depthOfObjectTreeTraversal = 0;
 
     /**
      * The maximum depth when preparing model data for output
      *
      * @var int
      */
-    protected $maxDepthOfObjectTreeTraversal;
+    protected int $maxDepthOfObjectTreeTraversal;
 
     /**
      * Dictionary of handled models to their count
      *
      * @var array
      */
-    protected static $handledModels = [];
+    protected static array $handledModels = [];
 
     /**
      * Extractor constructor
@@ -75,7 +74,7 @@ class Extractor implements ExtractorInterface
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
         LoggerInterface $logger = null,
-        $maxDepthOfObjectTreeTraversal = 6
+        int $maxDepthOfObjectTreeTraversal = 6
     ) {
         $this->configurationProvider = $configurationProvider;
         $this->logger = $logger;
@@ -435,9 +434,7 @@ class Extractor implements ExtractorInterface
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
-        return isset(static::$handledModels[$objectHash])
-            ? static::$handledModels[$objectHash]
-            : 0;
+        return static::$handledModels[$objectHash] ?? 0;
     }
 
     /**
@@ -451,7 +448,7 @@ class Extractor implements ExtractorInterface
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
-        $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
+        $value = static::$handledModels[$objectHash] ?? 0;
         $value += 1;
         static::$handledModels[$objectHash] = $value;
 
@@ -469,7 +466,7 @@ class Extractor implements ExtractorInterface
         InvalidArgumentException::assertObject($object);
         $objectHash = spl_object_hash($object);
 
-        $value = isset(static::$handledModels[$objectHash]) ? static::$handledModels[$objectHash] : 0;
+        $value = static::$handledModels[$objectHash] ?? 0;
         $value -= 1;
         static::$handledModels[$objectHash] = $value;
 

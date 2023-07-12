@@ -19,59 +19,33 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     /**
      * Status logged in
      */
-    const STATUS_LOGGED_IN = 'logged-in';
+    public const STATUS_LOGGED_IN = 'logged-in';
 
     /**
      * Status logged out
      */
-    const STATUS_LOGGED_OUT = 'logged-out';
+    public const STATUS_LOGGED_OUT = 'logged-out';
 
     /**
      * Status failed login attempt
      */
-    const STATUS_FAILURE = 'login failure';
+    public const STATUS_FAILURE = 'login failure';
 
-    /**
-     * @var SessionManager
-     */
-    protected $sessionManager;
+    protected SessionManager $sessionManager;
 
     /**
      * Provider that will check the user credentials
      *
      * @var UserProviderInterface
      */
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
-    /**
-     * Current request
-     *
-     * @var RestRequestInterface
-     * @deprecated will be removed in 5.0
-     */
-    protected $request;
-
-    /**
-     * @var RequestFactoryInterface
-     * @deprecated will be removed in 5.0
-     */
-    protected $requestFactory;
-
-    /**
-     * AuthHandler constructor.
-     *
-     * @param SessionManager               $sessionManager
-     * @param UserProviderInterface        $userProvider
-     * @param RequestFactoryInterface|null $requestFactory
-     */
     public function __construct(
         SessionManager $sessionManager,
-        UserProviderInterface $userProvider,
-        ?RequestFactoryInterface $requestFactory = null
+        UserProviderInterface $userProvider
     ) {
         $this->sessionManager = $sessionManager;
         $this->userProvider = $userProvider;
-        $this->requestFactory = $requestFactory;
     }
 
     /**
@@ -85,7 +59,7 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     }
 
     /**
-     * Returns the current status
+     * Return the current status
      *
      * @return array
      */

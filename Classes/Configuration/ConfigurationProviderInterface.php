@@ -21,7 +21,7 @@ interface ConfigurationProviderInterface
     public const ACCESS_METHOD_READ = 'read';
 
     /**
-     * Returns the setting with the given key
+     * Return the setting with the given key
      *
      * @param string $keyPath
      * @param mixed  $defaultValue
@@ -30,21 +30,21 @@ interface ConfigurationProviderInterface
     public function getSetting(string $keyPath, $defaultValue = null);
 
     /**
-     * Returns the settings read from the TypoScript
+     * Return the settings read from the TypoScript
      *
      * @return array
      */
     public function getSettings(): array;
 
     /**
-     * Returns the paths configured in the settings
+     * Return the paths configured in the settings
      *
      * @return ResourceConfiguration[]
      */
     public function getConfiguredResources(): array;
 
     /**
-     * Returns the configuration matching the given resource type
+     * Return the configuration matching the given resource type
      *
      * @param ResourceType $resourceType
      * @return ResourceConfiguration|null

@@ -23,10 +23,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public const ACCESS_NOT_REQUIRED = ['OPTIONS'];
 
-    /**
-     * @var ConfigurationProviderInterface
-     */
-    protected $configurationProvider;
+    protected ConfigurationProviderInterface $configurationProvider;
 
     /**
      * ConfigurationBasedAccessController constructor

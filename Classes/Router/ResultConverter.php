@@ -198,10 +198,6 @@ class ResultConverter implements RouterInterface
         );
     }
 
-    /**
-     * @param $exception
-     * @return array
-     */
     private function getDebugDetails(Exception $exception): array
     {
         return [

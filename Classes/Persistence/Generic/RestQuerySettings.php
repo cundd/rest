@@ -13,5 +13,5 @@ class RestQuerySettings extends TYPO3Generic\Typo3QuerySettings implements TYPO3
      *
      * @var boolean
      */
-    protected $respectStoragePage = false;
+    protected bool $respectStoragePage = false;
 }
