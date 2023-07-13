@@ -9,11 +9,8 @@ use Cundd\Rest\ObjectManagerInterface;
 
 class CoreBootstrapFactory
 {
-    private ObjectManagerInterface $objectManager;
-
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(private ObjectManagerInterface $objectManager)
     {
-        $this->objectManager = $objectManager;
     }
 
     public function build(): CoreBootstrapInterface

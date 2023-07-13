@@ -14,16 +14,8 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 abstract class AbstractCoreBootstrap implements CoreBootstrapInterface
 {
-    protected ObjectManagerInterface $objectManager;
-
-    /**
-     * Core constructor.
-     *
-     * @param ObjectManagerInterface $objectManager
-     */
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(protected ObjectManagerInterface $objectManager)
     {
-        $this->objectManager = $objectManager;
     }
 
     /**

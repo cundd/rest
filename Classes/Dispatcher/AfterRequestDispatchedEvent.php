@@ -12,15 +12,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class AfterRequestDispatchedEvent
 {
-    /**
-     * @var RestRequestInterface
-     */
-    private $request;
+    private RestRequestInterface $request;
 
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
+    private ResponseInterface $response;
 
     public function __construct(RestRequestInterface $request, ResponseInterface $response)
     {
@@ -28,25 +22,16 @@ final class AfterRequestDispatchedEvent
         $this->response = $response;
     }
 
-    /**
-     * @return RestRequestInterface
-     */
     public function getRequest(): RestRequestInterface
     {
         return $this->request;
     }
 
-    /**
-     * @return ResponseInterface
-     */
     public function getResponse(): ResponseInterface
     {
         return $this->response;
     }
 
-    /**
-     * @param ResponseInterface $response
-     */
     public function setResponse(ResponseInterface $response): void
     {
         $this->response = $response;

@@ -28,15 +28,6 @@ class VirtualObjectDataProvider extends DataProvider
 
     protected ConfigurationFactory $configurationFactory;
 
-    /**
-     * VirtualObjectDataProvider constructor.
-     *
-     * @param ConfigurationFactory      $configurationFactory
-     * @param ObjectManagerInterface    $objectManager
-     * @param ExtractorInterface        $extractor
-     * @param IdentityProviderInterface $identityProvider
-     * @param LoggerInterface|null      $logger
-     */
     public function __construct(
         ConfigurationFactory $configurationFactory,
         ObjectManagerInterface $objectManager,
@@ -51,7 +42,7 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Return the Object Converter with the matching configuration
      *
-     * @param ResourceType|string $resourceType
+     * @param ResourceType $resourceType
      * @return ObjectConverter
      * @throws MissingConfigurationException
      */
@@ -74,7 +65,7 @@ class VirtualObjectDataProvider extends DataProvider
      * Return the Configuration for the given resource type
      *
      * @param ResourceType $resourceType
-     * @return ConfigurationInterface
+     * @return ConfigurationInterface|null
      * @throws MissingConfigurationException
      */
     public function getConfigurationForResourceType(ResourceType $resourceType): ?ConfigurationInterface
