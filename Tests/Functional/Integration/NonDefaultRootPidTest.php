@@ -8,6 +8,27 @@ class NonDefaultRootPidTest extends AbstractGreetingCase
 {
     private const ROOT_PAGE_ID = 10;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->importPagesWithRootId10();
+        $this->setUpFrontendRootPage(
+            self::ROOT_PAGE_ID,
+            [
+                'setup' => [
+                    $this->prepareFrontendTypoScriptPath(
+                        __DIR__ . '/../Fixtures/TypoScript/BasicPage.typoscript'
+                    ),
+                    $this->prepareFrontendTypoScriptPath(
+                        __DIR__ . '/../../../ext_typoscript_setup.txt'
+                    ),
+                ]
+            ]
+        );
+        $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
+    }
+
     /**
      * @dataProvider dataProviderTestLanguage
      * @param string $prefix
@@ -15,17 +36,6 @@ class NonDefaultRootPidTest extends AbstractGreetingCase
      */
     public function testNonDefaultRootPid(string $prefix, string $expectedMessage)
     {
-//        $this->importDataSet('ntf://Database/sys_language.xml');
-        $this->importPagesWithRootId10();
-
-        // Set up the page with uid 10 and include the TypoScript as sys_template record
-        $this->setUpFrontendRootPage(
-            self::ROOT_PAGE_ID,
-            [
-                __DIR__ . '/../Fixtures/TypoScript/JsonRenderer.typoscript'
-            ]
-        );
-        $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
         $this->fetchPathAndTestMessage($prefix, $expectedMessage, self::ROOT_PAGE_ID);
     }
 }

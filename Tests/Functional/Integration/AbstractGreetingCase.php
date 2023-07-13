@@ -4,25 +4,15 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use Cundd\Rest\Tests\Functional\AbstractCase;
 
-abstract class AbstractGreetingCase extends FunctionalTestCase
+abstract class AbstractGreetingCase extends AbstractCase
 {
     use ImportPagesTrait;
     use FrontendRequestTrait;
     use FrontendSiteSetupTrait;
 
     protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
-
-    protected function setUp(): void
-    {
-//        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
-        parent::setUp();
-//        $this->backendUser = $this->setUpBackendUser(1);
-        // Note late static binding - Workspace related tests override the constant
-//        $this->setWorkspaceId(static::VALUE_WorkspaceId);
-//        Bootstrap::initializeLanguageObject();
-    }
 
     public function dataProviderTestLanguage(): array
     {
@@ -40,6 +30,7 @@ abstract class AbstractGreetingCase extends FunctionalTestCase
 
         // Assert no error has occurred
         $this->assertSame(200, $response->getStatusCode());
+        $response->getBody()->rewind();
         $this->assertSame('{"message":"' . $expectedMessage . '"}', $response->getBody()->getContents());
     }
 }

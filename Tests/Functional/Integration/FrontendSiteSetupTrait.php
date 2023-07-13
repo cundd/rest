@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
+use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
+use function file_exists;
+use function realpath;
+use function sprintf;
+use function strlen;
+use function substr;
 
 trait FrontendSiteSetupTrait
 {
@@ -72,6 +78,26 @@ trait FrontendSiteSetupTrait
         $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('core');
         if ($cache->has('sites-configuration')) {
             $cache->remove('sites-configuration');
+        }
+    }
+
+    protected function prepareFrontendTypoScriptPath(string $inputPath): bool|string
+    {
+        if (!file_exists($inputPath)) {
+            throw new InvalidArgumentException(sprintf('Could not find TypoScript file at "%s"', $inputPath));
+        }
+        $path = realpath($inputPath);
+        if (false === $path) {
+            throw new InvalidArgumentException(
+                sprintf('Could not get realpath of TypoScript file at "%s"', $inputPath)
+            );
+        }
+
+        $extensionBasePath = realpath(__DIR__ . '/../../../');
+        if (str_starts_with($path, $extensionBasePath)) {
+            return 'EXT:rest/' . substr($path, strlen($extensionBasePath) + 1);
+        } else {
+            return $path;
         }
     }
 }
