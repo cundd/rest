@@ -1,21 +1,14 @@
 <?xml version="1.0"?>
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
     backupGlobals="true"
     bootstrap="UnitTestsBootstrap.php"
     cacheResult="false"
     colors="true"
     beStrictAboutTestsThatDoNotTestAnything="false"
-    displayDetailsOnTestsThatTriggerDeprecations="true"
-    displayDetailsOnTestsThatTriggerErrors="true"
-    displayDetailsOnTestsThatTriggerNotices="true"
-    displayDetailsOnTestsThatTriggerWarnings="true"
-    failOnDeprecation="true"
-    failOnNotice="true"
     failOnRisky="true"
     failOnWarning="true"
-    cacheDirectory=".phpunit.cache"
 >
     <testsuites>
         <testsuite name="Unit tests">
