@@ -37,17 +37,9 @@ class Format
         'pdf'   => 'application/pdf',
     ];
 
-    /**
-     * @var string
-     */
-    private $format;
+    private string $format;
 
-    /**
-     * Format constructor
-     *
-     * @param string $format
-     */
-    public function __construct($format)
+    public function __construct(string $format)
     {
         $this->assertValidFormat($format);
         $this->format = $format;
@@ -64,7 +56,7 @@ class Format
     }
 
     /**
-     * Return a HTML Format instance
+     * Return HTML Format instance
      *
      * @return Format
      */
@@ -92,7 +84,7 @@ class Format
      * Return if the given format is valid
      *
      * @param $format
-     * @return boolean
+     * @return bool
      */
     public static function isValidFormat($format): bool
     {
@@ -105,20 +97,8 @@ class Format
         return isset($mimeTypes[$format]);
     }
 
-    /**
-     * @param mixed $format
-     */
-    private static function assertValidFormat($format)
+    private static function assertValidFormat(string $format): void
     {
-        if (!is_string($format)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Format must be of type string "%s" given',
-                    is_object($format) ? get_class($format) : gettype($format)
-                )
-            );
-        }
-
         if (!static::isValidFormat($format)) {
             throw new InvalidArgumentException(sprintf('Invalid format "%s"', $format));
         }

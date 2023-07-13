@@ -46,9 +46,6 @@ class FormatTest extends TestCase
         return [
             ['blur',],
             ['',],
-            [null],
-            [new stdClass()],
-            [[]],
         ];
     }
 }
