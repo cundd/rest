@@ -7,7 +7,7 @@ services:
 
   Cundd\Rest\:
     resource: '../Classes/*'
-    exclude: [ '../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php' ]
+    exclude: [ '../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php','../Classes/Domain/Model/*' ]
 
   Cundd\Rest\Access\ConfigurationBasedAccessController:
     public: true
