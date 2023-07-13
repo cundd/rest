@@ -24,8 +24,8 @@ jobs:
       - name: Lint PHP
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
 
-#      - name: Unit tests
-#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+      - name: Unit tests
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
 
       - name: Functional tests with mariadb
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
