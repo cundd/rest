@@ -25,8 +25,6 @@ use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
-use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
@@ -77,7 +75,7 @@ class AbstractCase extends FunctionalTestCase
     /**
      * Build a new request with the given URI
      *
-     * @param string $uri
+     * @param string      $uri
      * @param string|null $format
      * @param string|null $method
      * @return RestRequestInterface
@@ -87,7 +85,7 @@ class AbstractCase extends FunctionalTestCase
         ?string $format = null,
         ?string $method = null
     ): RestRequestInterface {
-        return RequestBuilderTrait::buildTestRequest(
+        return $this->buildTestRequest(
             $uri,
             $method,
             [],     // $params
@@ -98,78 +96,10 @@ class AbstractCase extends FunctionalTestCase
         );
     }
 
-//    /**
-//     * Imports a data set represented as XML into the test database,
-//     *
-//     * @param string $path Absolute path to the XML file containing the data set to load
-//     * @return void
-//     * @throws Exception
-//     */
-//    protected function importDataSet(string $path): void
-//    {
-//        if (method_exists(get_parent_class($this), 'importDataSet')) {
-//            parent::importDataSet($path);
-//
-//            return;
-//        }
-//
-//        if (!is_file($path)) {
-//            throw new Exception(
-//                'Fixture file ' . $path . ' not found',
-//                1376746261
-//            );
-//        }
-//
-//        $database = $this->getDatabaseBackend();
-//        $xml = simplexml_load_file($path);
-//        $foreignKeys = [];
-//
-//        /** @var SimpleXMLElement $table */
-//        foreach ($xml->children() as $table) {
-//            $insertArray = [];
-//
-//            /** @var SimpleXMLElement $column */
-//            foreach ($table->children() as $column) {
-//                $columnName = $column->getName();
-//                $columnValue = null;
-//
-//                if (isset($column['ref'])) {
-//                    [$tableName, $elementId] = explode('#', $column['ref']);
-//                    $columnValue = $foreignKeys[$tableName][$elementId];
-//                } elseif (isset($column['is-NULL']) && ($column['is-NULL'] === 'yes')) {
-//                    $columnValue = null;
-//                } else {
-//                    $columnValue = (string)$table->$columnName;
-//                }
-//
-//                $insertArray[$columnName] = $columnValue;
-//            }
-//
-//            $tableName = $table->getName();
-//            try {
-//                $insertedId = $database->addRow($tableName, $insertArray);
-//
-//                if (isset($table['id'])) {
-//                    $elementId = (string)$table['id'];
-//                    $foreignKeys[$tableName][$elementId] = $insertedId;
-//                }
-//            } catch (SqlErrorException $exception) {
-//                $this->markTestSkipped(
-//                    sprintf(
-//                        'Error when processing fixture file: %s. Can not insert data to table %s: %s',
-//                        $path,
-//                        $tableName,
-//                        $exception->getMessage()
-//                    )
-//                );
-//            }
-//        }
-//    }
-
     /**
      * @return BackendInterface|RawQueryBackendInterface
      */
-    protected function getDatabaseBackend()
+    protected function getDatabaseBackend(): BackendInterface
     {
         return BackendFactory::getBackend();
     }
@@ -177,27 +107,9 @@ class AbstractCase extends FunctionalTestCase
     protected function buildConfiguredObjectManager(): ObjectManagerInterface
     {
         return new ObjectManager($this->getContainer());
-//        /** @var Container $objectContainer */
-//        $this->initializeIconRegistry();
-//        $objectContainer = GeneralUtility::makeInstance(Container::class);
-//
-//        $objectContainer->registerImplementation(
-//            ConfigurationProviderInterface::class,
-//            TypoScriptConfigurationProvider::class
-//        );
-//        $objectContainer->registerImplementation(
-//            UserProviderInterface::class,
-//            FeUserProvider::class
-//        );
-//        $objectContainer->registerImplementation(
-//            DispatcherInterface::class,
-//            Dispatcher::class
-//        );
-//
-//        return GeneralUtility::makeInstance(ObjectManager::class);
     }
 
-    private function registerLoggerImplementation()
+    private function registerLoggerImplementation(): void
     {
         /** @var Container $container */
         $container = $this->getContainer();
@@ -206,20 +118,7 @@ class AbstractCase extends FunctionalTestCase
         $container->set(CunddLoggerInterface::class, $streamLogger);
     }
 
-    private function initializeIconRegistry()
-    {
-        $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
-
-        if (!$iconRegistry->isRegistered('default-not-found')) {
-            $iconRegistry->registerIcon(
-                'default-not-found',
-                SvgIconProvider::class,
-                ['source' => 'EXT:rest/ext_icon.svg']
-            );
-        }
-    }
-
-    private function registerAssetCache()
+    private function registerAssetCache(): void
     {
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         try {
