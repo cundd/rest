@@ -50,6 +50,10 @@ trait RequestBuilderTrait
                 $pathParts = explode('.', $path);
                 $format = array_pop($pathParts);
                 $path = implode('.', $pathParts);
+                if (!Format::isValidFormat($format)) {
+                    $path .= '.' . $format;
+                    $format = Format::DEFAULT_FORMAT;
+                }
             }
         }
         if ($rawBody) {
