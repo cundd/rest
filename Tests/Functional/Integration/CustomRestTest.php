@@ -9,7 +9,6 @@ use TYPO3\CMS\Core\Locking\Exception\LockAcquireWouldBlockException;
 use TYPO3\CMS\Core\Locking\ResourceMutex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function base64_encode;
 use function putenv;
 
 /**
@@ -324,43 +323,6 @@ class CustomRestTest extends AbstractIntegrationCase
             (string)$response->getBody(),
             $this->getErrorDescription($response)
         );
-    }
-
-    /**
-     * @test
-     */
-    public function authorizeTest()
-    {
-        // TODO: Mock the Session Manager
-        $this->markTestSkipped('Not implemented for Functional Tests');
-        $path = 'cundd-custom_rest-require';
-        $response = $this->buildRequestAndDispatch(
-            $this->getContainer(),
-            $path,
-            'GET',
-            null,
-            ['Authorization' => 'Basic ' . base64_encode('daniel:api-key')]
-        );
-
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($this->getParsedBody($response), $this->getErrorDescription($response));
-        $this->assertSame(
-            '{"message":"Access Granted"}',
-            (string)$response->getBody(),
-            $this->getErrorDescription($response)
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getForbiddenTest()
-    {
-        // TODO: Mock the Session Manager
-        $this->markTestSkipped('Not implemented for Functional Tests');
-        //        $response = $this->buildRequestAndDispatch($this->buildConfiguredObjectManager(), 'cundd-custom_rest-require');
-        $response = $this->buildRequestAndDispatch($this->getContainer(), 'cundd-custom_rest-require');
-        $this->assertSame(403, $response->getStatusCode());
     }
 
     /**
