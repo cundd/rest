@@ -282,10 +282,6 @@ services:
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
           set -x
         fi
-      echo link typo3temp
-             mkdir /tmp/typo3temp
-             ln -s /tmp/typo3temp ${ROOT_DIR}/.Build/Web/typo3temp
-             ls -l ${ROOT_DIR}/.Build/Web/typo3temp/
         echo Waiting for database start...;
         while ! nc -z mariadb10 3306; do
           sleep 1;
