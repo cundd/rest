@@ -357,7 +357,7 @@ case ${TEST_SUITE} in
                 echo "${HELP}" >&2
                 exit 1
         esac
-        echo docker-compose down
+        docker-compose down
         ;;
     lint)
         setUpDockerComposeDotEnv
