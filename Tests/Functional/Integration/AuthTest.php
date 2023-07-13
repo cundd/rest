@@ -86,18 +86,12 @@ class AuthTest extends AbstractIntegrationCase
         );
     }
 
-    /**
-     * @return string
-     */
-    protected function getApiUser()
+    protected function getApiUser(): string
     {
         return UserProvider::getApiUser();
     }
 
-    /**
-     * @return string
-     */
-    protected function getApiKey()
+    protected function getApiKey(): string
     {
         return UserProvider::getApiKey();
     }

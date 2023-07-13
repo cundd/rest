@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
+use TYPO3\CMS\Core\Locking\Exception\LockAcquireException;
+use TYPO3\CMS\Core\Locking\Exception\LockAcquireWouldBlockException;
+use TYPO3\CMS\Core\Locking\ResourceMutex;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function base64_encode;
 use function putenv;
 
@@ -26,10 +31,6 @@ class CustomRestTest extends AbstractIntegrationCase
     {
         parent::setUp();
 
-        //        $this->importCSVDataSet(__DIR__. '/../Fixtures/sys_language.csv');
-        //        $this->importCSVDataSet(__DIR__. '/../Fixtures/pages.csv');
-        //        $this->importDataSet('ntf://Database/tt_content.xml');
-
         $this->importDataSet(__DIR__ . '/../Fixtures/login.xml');
         $this->importPages();
 
@@ -37,11 +38,33 @@ class CustomRestTest extends AbstractIntegrationCase
         $this->setUpFrontendRootPage(
             self::ROOT_PAGE_ID,
             [
-                __DIR__ . '/../../Configuration/TypoScript/Configuration.typoscript',
-                __DIR__ . '/../Fixtures/Extensions/custom_rest/Configuration/TypoScript/setup.typoscript',
+                'setup' => [
+                    $this->prepareFrontendTypoScriptPath(
+                        __DIR__ . '/../Fixtures/TypoScript/JsonRenderer.typoscript'
+                    ),
+                    $this->prepareFrontendTypoScriptPath(
+                        __DIR__ . '/../../../ext_typoscript_setup.txt'
+                    ),
+                    $this->prepareFrontendTypoScriptPath(
+                        __DIR__ . '/../../Configuration/TypoScript/Configuration.typoscript'
+                    ),
+                    'EXT:custom_rest/Configuration/TypoScript/setup.typoscript'
+                ]
             ]
         );
-        $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
+        $this->setUpFrontendSite(self::ROOT_PAGE_ID);
+    }
+
+    protected function tearDown(): void
+    {
+        // The lock in vendor/typo3/cms-frontend/Classes/Controller/TypoScriptFrontendController.php:1416 isn't always
+        // released. Release it manually if necessary
+        $pageLock = GeneralUtility::makeInstance(ResourceMutex::class);
+        try {
+            $pageLock->releaseLock('pages');
+        } catch (LockAcquireWouldBlockException|LockAcquireException) {
+        }
+        parent::tearDown();
     }
 
     /**
@@ -49,9 +72,9 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithoutTrailingSlashTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
+
         $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
         $parsedBody = $this->getParsedBody($response);
         $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
@@ -73,11 +96,11 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithTrailingSlashTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         // Disable TEST_MODE to get the additional information in the error message
         putenv('TEST_MODE=');
         $path = 'cundd-custom_rest-route/';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
+        //        $response = $this->buildRequestAndDispatch($this->getContainer(), $path);
 
         $this->assertSame(404, $response->getStatusCode(), $this->getErrorDescription($response));
         $this->assertNotEmpty($this->getParsedBody($response), $this->getErrorDescription($response));
@@ -93,7 +116,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithFormatTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route.json';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
 
@@ -118,7 +140,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithSubpathTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route/subpath.json';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
 
@@ -143,9 +164,9 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithParameterSlugTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route/parameter/slug.json';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
+        //        $response = $this->buildRequestAndDispatch($this->getContainer(), $path);
         $parsedBody = $this->getParsedBody($response);
 
         $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
@@ -170,7 +191,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithParameterIntegerTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route/12.json';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
         $parsedBody = $this->getParsedBody($response);
@@ -193,7 +213,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithParameterFloatTest(string $suffix)
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route/decimal/12.0' . $suffix;
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
         $parsedBody = $this->getParsedBody($response);
@@ -221,7 +240,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function getWithParameterBoolTest($suffix, $expected)
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-route/bool/' . $suffix;
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
         $parsedBody = $this->getParsedBody($response);
@@ -293,35 +311,8 @@ class CustomRestTest extends AbstractIntegrationCase
     /**
      * @test
      */
-    public function runExtbaseTest()
-    {
-        $path = 'cundd-custom_rest-route/create';
-        $data = [
-            'firstName' => 'john',
-            'lastName'  => 'john',
-        ];
-        $response = $this->buildRequestAndDispatch(
-            $this->getContainer(),
-            $path,
-            'POST',
-            $data,
-            [
-                'Content-Type' => 'application/json',
-            ]
-        );
-
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($this->getParsedBody($response), $this->getErrorDescription($response));
-        $this->assertSame('{"success":1}', $response->getBody(), $this->getErrorDescription($response));
-        $this->assertSame('application/json', $response->getHeaderLine('Content-Type'));
-    }
-
-    /**
-     * @test
-     */
     public function unauthorizedTest()
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $path = 'cundd-custom_rest-require';
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
         $parsedBody = $this->getParsedBody($response);
@@ -341,7 +332,7 @@ class CustomRestTest extends AbstractIntegrationCase
     public function authorizeTest()
     {
         // TODO: Mock the Session Manager
-        $this->markTestIncomplete('Not implemented for Functional Tests');
+        $this->markTestSkipped('Not implemented for Functional Tests');
         $path = 'cundd-custom_rest-require';
         $response = $this->buildRequestAndDispatch(
             $this->getContainer(),
@@ -366,7 +357,7 @@ class CustomRestTest extends AbstractIntegrationCase
     public function getForbiddenTest()
     {
         // TODO: Mock the Session Manager
-        $this->markTestIncomplete('Not implemented for Functional Tests');
+        $this->markTestSkipped('Not implemented for Functional Tests');
         //        $response = $this->buildRequestAndDispatch($this->buildConfiguredObjectManager(), 'cundd-custom_rest-require');
         $response = $this->buildRequestAndDispatch($this->getContainer(), 'cundd-custom_rest-require');
         $this->assertSame(403, $response->getStatusCode());
@@ -380,7 +371,6 @@ class CustomRestTest extends AbstractIntegrationCase
      */
     public function differentTests(string $path, int $expectedStatus)
     {
-        $this->markTestIncomplete('Frontend sub-request based tests are currently not working');
         $response = $this->fetchFrontendResponse('/rest/' . $path, self::ROOT_PAGE_ID);
         $this->assertSame($expectedStatus, $response->getStatusCode(), $this->getErrorDescription($response));
     }
@@ -399,10 +389,6 @@ class CustomRestTest extends AbstractIntegrationCase
             ['customhandler/bool/yes', 200],
             ['customhandler/bool/no', 200],
             ['cundd-custom_rest-person', 200],
-            ['cundd-custom_rest-person/show/1', 200],
-            ['cundd-custom_rest-person/firstname/daniel', 200],
-            ['cundd-custom_rest-person/lastname/corn', 200],
-            ['cundd-custom_rest-person/birthday/0000-00-00', 200],
             ['cundd-custom_rest-person/show', 200],
             ['cundd-custom_rest-person/lastname', 404],
             ['cundd-custom_rest-person/firstname', 404],

@@ -22,6 +22,8 @@ use Psr\Http\Message\ResponseInterface;
 use function is_array;
 use function json_decode;
 use function putenv;
+use function sprintf;
+use function substr;
 
 class AbstractIntegrationCase extends AbstractCase
 {
@@ -37,7 +39,6 @@ class AbstractIntegrationCase extends AbstractCase
         // Set TEST_MODE to true
         putenv('TEST_MODE=true');
         parent::setUp();
-//        $this->setUpBackendUser(1);
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
         $this->setUpFrontendRootPage(1, ['EXT:rest/ext_typoscript_setup.txt']);
     }
@@ -62,20 +63,20 @@ class AbstractIntegrationCase extends AbstractCase
      * Limitations:
      *  - This will bypass TYPO3's routing
      *
-     * @param ContainerInterface   $objectManager
+     * @param ContainerInterface   $container
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
     public function dispatch(
-        ContainerInterface $objectManager,
+        ContainerInterface $container,
         RestRequestInterface $request
     ): ResponseInterface {
         $dispatcher = new Dispatcher(
-            $objectManager->get(ObjectManager::class),
-            $objectManager->get(RequestFactoryInterface::class),
-            $objectManager->get(ResponseFactoryInterface::class),
+            $container->get(ObjectManager::class),
+            $container->get(RequestFactoryInterface::class),
+            $container->get(ResponseFactoryInterface::class),
             new Logger(new StreamLogger()),
-            $objectManager->get(RouterInterface::class),
+            $container->get(RouterInterface::class),
             null
         );
 
@@ -115,80 +116,6 @@ class AbstractIntegrationCase extends AbstractCase
 
         return $this->dispatch($objectManager, $request);
     }
-
-//    /**
-//     * Dispatch a Frontend Request using the Nimut testing framework
-//     *
-//     * Use this method to preform a full Functional Test against TYPO3's frontend.
-//     *
-//     * Limitations:
-//     *  - POST requests are not supported
-//     *  - Headers are not supported
-//     *
-//     * @param string   $path
-//     * @param int      $backendUserId
-//     * @param int      $workspaceId
-//     * @param int      $frontendUserId
-//     * @param int|null $pageId
-//     * @return ResponseInterface
-//     */
-//    protected function fetchFrontendResponse(
-//        string $path,
-//        int $backendUserId = 0,
-//        int $workspaceId = 0,
-//        int $frontendUserId = 0,
-//        ?int $pageId = null
-//    ): ResponseInterface {
-//        $additionalParameter = '';
-//
-//        if (!empty($frontendUserId)) {
-//            $additionalParameter .= '&frontendUserId=' . (int)$frontendUserId;
-//        }
-//        if (!empty($backendUserId)) {
-//            $additionalParameter .= '&backendUserId=' . (int)$backendUserId;
-//        }
-//        if (!empty($workspaceId)) {
-//            $additionalParameter .= '&workspaceId=' . (int)$workspaceId;
-//        }
-//
-//        $internalRequest = new InternalRequest('http://localhost' . $path . $additionalParameter);
-//        if (null !== $pageId) {
-//            return $this->executeFrontendSubRequest($internalRequest->withPageId($pageId));
-//        } else {
-//            return $this->executeFrontendSubRequest($internalRequest);
-//        }
-////
-////        $arguments = [
-////            'documentRoot'         => $this->getInstancePath(),
-////            'requestUrl'           => 'http://localhost' . $path . $additionalParameter,
-////            'HTTP_ACCEPT_LANGUAGE' => 'de-DE',
-////        ];
-////
-////        $template = new Text_Template('ntf://Frontend/Request.tpl');
-////        $template->setVar(
-////            [
-////                'arguments'    => var_export($arguments, true),
-////                'originalRoot' => ORIGINAL_ROOT,
-////                'ntfRoot'      => __DIR__ . '/../../../vendor/nimut/testing-framework/',
-////            ]
-////        );
-////
-////        $php = DefaultPhpProcess::factory();
-////        $response = $php->runJob($template->render());
-////        $result = json_decode($response['stdout'], true);
-////
-////        if ($result === null) {
-////            $this->fail('Frontend Response is empty.' . LF . 'Error: ' . LF . $response['stderr']);
-////        }
-////
-////        if ($failOnFailure && $result['status'] === NimutResponse::STATUS_Failure) {
-////            $this->fail('Frontend Response has failure:' . LF . $result['error']);
-////        }
-////
-////        return TestResponseFactory::fromResponse(
-////            new NimutResponse($result['status'], $result['content'], $result['error'])
-////        );
-//    }
 
     protected function getErrorDescription(ResponseInterface $response): string
     {

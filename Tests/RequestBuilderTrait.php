@@ -11,6 +11,13 @@ use Cundd\Rest\Request;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 
+use function array_pop;
+use function basename;
+use function explode;
+use function implode;
+use function strrpos;
+use function substr;
+
 trait RequestBuilderTrait
 {
     /**
@@ -36,7 +43,14 @@ trait RequestBuilderTrait
         $resourceType = new ResourceType((string)strtok($path, '/'));
 
         if (null === $format) {
-            $format = Format::DEFAULT_FORMAT;
+            $resourceName = basename($path);
+            if (strrpos($resourceName, '.') === false) {
+                $format = Format::DEFAULT_FORMAT;
+            } else {
+                $pathParts = explode('.', $path);
+                $format = array_pop($pathParts);
+                $path = implode('.', $pathParts);
+            }
         }
         if ($rawBody) {
             $stream = fopen('php://temp', 'a+');
