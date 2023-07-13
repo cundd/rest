@@ -18,10 +18,6 @@ class MiddlewareBootstrap
 
     private array $configuration;
 
-    /**
-     * @param ObjectManagerInterface $objectManager
-     * @param array                  $configuration
-     */
     public function __construct(ObjectManagerInterface $objectManager, array $configuration = [])
     {
         $this->objectManager = $objectManager;
@@ -39,7 +35,6 @@ class MiddlewareBootstrap
         $coreBootstrapFactory = new CoreBootstrapFactory($this->objectManager);
         $coreBootstrap = $coreBootstrapFactory->build();
         $request = $coreBootstrap->initialize($request);
-//        $GLOBALS['TYPO3_REQUEST'] = $request->withAttribute('frontend.typoscript', $frontendController);
 
         $this->initializeConfiguration($this->configuration);
 
@@ -70,9 +65,6 @@ class MiddlewareBootstrap
         return $languageEnhancedRequest;
     }
 
-    /**
-     * @return DispatcherInterface
-     */
     public function buildDispatcher(): DispatcherInterface
     {
         $dispatcherFactory = new Dispatcher\DispatcherFactory($this->objectManager);
@@ -93,6 +85,8 @@ class MiddlewareBootstrap
 
     /**
      * Register singulars to the plural
+     *
+     * TODO: Move this to a better place
      *
      * @param ObjectManagerInterface $objectManager
      */
