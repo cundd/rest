@@ -1,0 +1,37 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+
+  testsuite:
+    name: all tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '8.1', '8.2' ]
+        minMax: [ 'composerInstallMin', 'composerInstallMax' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Composer
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s ${{ matrix.minMax }}
+
+      - name: Composer validate
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
+
+      - name: Lint PHP
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
+
+#      - name: Unit tests
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s unit
+
+      - name: Functional tests with mariadb
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
+
+#      - name: Functional tests with postgres
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d postgres -s functional
+#
+#      - name: Functional tests with sqlite
+#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d sqlite -s functional
