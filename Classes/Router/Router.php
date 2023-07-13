@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router implements RouterInterface
 {
-    protected $registeredRoutes = [
+    protected array $registeredRoutes = [
         'GET'  => [],
         'POST' => [],
         'PUT'  => [],
@@ -68,7 +68,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeGet($pattern, callable $callback): RouterInterface
+    public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->add(Route::get($pattern, $callback));
 
@@ -82,7 +82,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePost($pattern, callable $callback): RouterInterface
+    public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->add(Route::post($pattern, $callback));
 
@@ -96,7 +96,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePut($pattern, callable $callback): RouterInterface
+    public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->add(Route::put($pattern, $callback));
 
@@ -110,7 +110,7 @@ class Router implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeDelete($pattern, callable $callback): RouterInterface
+    public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->add(Route::delete($pattern, $callback));
 

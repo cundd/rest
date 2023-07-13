@@ -46,7 +46,7 @@ class Utility
         if ('' === $resourceTypeString) {
             return ['', '', ''];
         }
-        if (strpos($resourceTypeString, '_') !== false) {
+        if (str_contains($resourceTypeString, '_')) {
             $resourceTypeString = static::underscoredToUpperCamelCase($resourceTypeString);
         }
         $parts = explode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $resourceTypeString, 3);
@@ -102,10 +102,10 @@ class Utility
      * @param string $className
      * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
      */
-    public static function getResourceTypeForClassName(string $className)
+    public static function getResourceTypeForClassName(string $className): ResourceType|bool
     {
-        if (strpos($className, '\\') === false) {
-            if (substr($className, 0, 3) === 'Tx_') {
+        if (!str_contains($className, '\\')) {
+            if (str_starts_with($className, 'Tx_')) {
                 $className = substr($className, 3);
             }
             $className = str_replace('_', '\\', $className);
@@ -119,7 +119,7 @@ class Utility
 
         try {
             return new ResourceType(implode(static::API_RESOURCE_TYPE_PART_SEPARATOR, $classNameParts));
-        } catch (InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException) {
             return false;
         }
     }

@@ -18,7 +18,7 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function get($pattern, callable $callback): RouteInterface;
+    public static function get(string|ResourceType $pattern, callable $callback): RouteInterface;
 
     /**
      * Creates a new Route with the given pattern and callback for the method POST
@@ -27,7 +27,7 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function post($pattern, callable $callback): RouteInterface;
+    public static function post(string|ResourceType $pattern, callable $callback): RouteInterface;
 
     /**
      * Creates a new Route with the given pattern and callback for the method PUT
@@ -36,7 +36,7 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function put($pattern, callable $callback): RouteInterface;
+    public static function put(string|ResourceType $pattern, callable $callback): RouteInterface;
 
     /**
      * Creates a new Route with the given pattern and callback for the method DELETE
@@ -45,7 +45,7 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function delete($pattern, callable $callback): RouteInterface;
+    public static function delete(string|ResourceType $pattern, callable $callback): RouteInterface;
 
     /**
      * Creates a new Route with the given pattern and callback for the method OPTIONS
@@ -54,7 +54,7 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function options($pattern, callable $callback): RouteInterface;
+    public static function options(string|ResourceType $pattern, callable $callback): RouteInterface;
 
     /**
      * Creates a new Route with the given pattern and callback for the method PATCH
@@ -63,5 +63,5 @@ interface RouteFactoryInterface
      * @param callable            $callback
      * @return RouteInterface
      */
-    public static function patch($pattern, callable $callback): RouteInterface;
+    public static function patch(string|ResourceType $pattern, callable $callback): RouteInterface;
 }

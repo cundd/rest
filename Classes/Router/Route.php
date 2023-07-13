@@ -11,74 +11,53 @@ use Psr\Http\Message\ResponseInterface;
 
 class Route implements RouteInterface, RouteFactoryInterface
 {
-    /**
-     * @var string
-     */
-    private $pattern;
+    private string $pattern;
 
-    /**
-     * @var int
-     */
-    private $priority;
+    private int $priority;
 
-    /**
-     * @var array
-     */
-    private $parameters;
+    private array $parameters;
 
-    /**
-     * @var string
-     */
-    private $method;
+    private string $method;
 
     /**
      * @var callable
      */
     private $callback;
 
-    /**
-     * Route constructor
-     *
-     * @param string|ResourceType $pattern
-     * @param string              $method
-     * @param callable            $callback
-     */
-    public function __construct($pattern, string $method, callable $callback)
+    public function __construct(ResourceType|string $pattern, string $method, callable $callback)
     {
-        $this->assertStringOrObject($pattern, 'pattern');
-
         $this->pattern = $this->normalizePattern($pattern);
         $this->method = strtoupper($method);
         $this->callback = $callback;
         $this->parameters = ParameterType::extractParameterTypesFromPattern($this->pattern);
     }
 
-    public static function get($pattern, callable $callback): RouteInterface
+    public static function get(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'GET', $callback);
     }
 
-    public static function post($pattern, callable $callback): RouteInterface
+    public static function post(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'POST', $callback);
     }
 
-    public static function put($pattern, callable $callback): RouteInterface
+    public static function put(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'PUT', $callback);
     }
 
-    public static function delete($pattern, callable $callback): RouteInterface
+    public static function delete(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'DELETE', $callback);
     }
 
-    public static function options($pattern, callable $callback): RouteInterface
+    public static function options(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'OPTIONS', $callback);
     }
 
-    public static function patch($pattern, callable $callback): RouteInterface
+    public static function patch(string|ResourceType $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'PATCH', $callback);
     }
@@ -90,7 +69,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param callable            $callback
      * @return static
      */
-    public static function routeWithPattern($pattern, callable $callback): RouteInterface
+    public static function routeWithPattern(ResourceType|string $pattern, callable $callback): RouteInterface
     {
         return new static($pattern, 'GET', $callback);
     }
@@ -174,22 +153,11 @@ class Route implements RouteInterface, RouteFactoryInterface
      */
     public function getPriority(): int
     {
-        if (!$this->priority) {
+        if (!isset($this->priority)) {
             $this->priority = $this->determinePriority();
         }
 
         return $this->priority;
-    }
-
-    /**
-     * @param mixed  $input
-     * @param string $argumentName
-     */
-    private function assertStringOrObject($input, string $argumentName)
-    {
-        if (!is_string($input) && !(is_object($input) && method_exists($input, '__toString'))) {
-            throw InvalidArgumentException::buildException($input, 'string', $argumentName);
-        }
     }
 
     /**
@@ -198,7 +166,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * @param string|ResourceType $inputPattern
      * @return string
      */
-    private function normalizePattern($inputPattern): string
+    private function normalizePattern(ResourceType|string $inputPattern): string
     {
         $pattern = '/' . ltrim((string)$inputPattern, '/');
         $patternParts = explode('/', $pattern);

@@ -25,8 +25,8 @@ abstract class ParameterType
      */
     private static function createParameter(string $input): ?string
     {
-        $startsWithBracket = substr($input, 0, 1) === '{';
-        $endsWithBracket = substr($input, -1) === '}';
+        $startsWithBracket = str_starts_with($input, '{');
+        $endsWithBracket = str_ends_with($input, '}');
 
         if (!$startsWithBracket && !$endsWithBracket) {
             return null;
@@ -38,36 +38,17 @@ abstract class ParameterType
         }
 
         $type = substr($input, 1, -1);
-        switch (strtolower($type)) {
-            case 'integer':
-            case 'int':
-                return ParameterTypeInterface::INTEGER;
 
-            case 'slug':
-            case 'string':
-                return ParameterTypeInterface::SLUG;
-
-            case 'raw':
-                return ParameterTypeInterface::RAW;
-
-            case 'float':
-            case 'double':
-            case 'number':
-                return ParameterTypeInterface::FLOAT;
-
-            case 'bool':
-            case 'boolean':
-                return ParameterTypeInterface::BOOLEAN;
-
-            default:
-                throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
-        }
+        return match (strtolower($type)) {
+            'integer', 'int' => ParameterTypeInterface::INTEGER,
+            'slug', 'string' => ParameterTypeInterface::SLUG,
+            'raw' => ParameterTypeInterface::RAW,
+            'float', 'double', 'number' => ParameterTypeInterface::FLOAT,
+            'bool', 'boolean' => ParameterTypeInterface::BOOLEAN,
+            default => throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type)),
+        };
     }
 
-    /**
-     * @param $pattern
-     * @return array
-     */
     private static function splitPattern(string $pattern): array
     {
         return array_reduce(

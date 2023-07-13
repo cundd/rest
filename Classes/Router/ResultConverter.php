@@ -24,15 +24,8 @@ use function substr;
  */
 class ResultConverter implements RouterInterface
 {
-    /**
-     * @var Router
-     */
-    private $router;
-
-    /**
-     * @var ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private RouterInterface $router;
+    private ResponseFactoryInterface $responseFactory;
 
     /**
      * @var callable
@@ -62,7 +55,7 @@ class ResultConverter implements RouterInterface
      * @param RestRequestInterface $request
      * @return ResponseInterface
      */
-    public function dispatch(RestRequestInterface $request)
+    public function dispatch(RestRequestInterface $request): ResponseInterface
     {
         try {
             $result = $this->router->dispatch($request);
@@ -103,7 +96,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeGet($pattern, callable $callback): RouterInterface
+    public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->router->routeGet($pattern, $callback);
 
@@ -117,7 +110,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePost($pattern, callable $callback): RouterInterface
+    public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->router->routePost($pattern, $callback);
 
@@ -131,7 +124,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routePut($pattern, callable $callback): RouterInterface
+    public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->router->routePut($pattern, $callback);
 
@@ -145,7 +138,7 @@ class ResultConverter implements RouterInterface
      * @param callable            $callback
      * @return RouterInterface
      */
-    public function routeDelete($pattern, callable $callback): RouterInterface
+    public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface
     {
         $this->router->routeDelete($pattern, $callback);
 
