@@ -189,7 +189,6 @@ class Handler implements HandlerInterface
 
         /*
          * To access this route a valid login is required.
-         * This requirement is defined in ext_typoscript_setup.txt line 9
          */
         # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require
         $router->add(

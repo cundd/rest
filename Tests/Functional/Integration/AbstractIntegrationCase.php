@@ -40,7 +40,9 @@ class AbstractIntegrationCase extends AbstractCase
         putenv('TEST_MODE=true');
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
-        $this->setUpFrontendRootPage(1, ['EXT:rest/ext_typoscript_setup.txt']);
+        $this->setUpFrontendRootPage(1, [
+            __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
+        ]);
     }
 
     protected function configurePath(

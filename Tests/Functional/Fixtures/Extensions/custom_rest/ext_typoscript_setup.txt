@@ -1,4 +1,0 @@
-# If you receive a cHash error you can either specify a valid cHash for your requests or
-# disable `features.requireCHashArgumentForActionArguments`
-# see: https://docs.typo3.org/typo3cms/extensions/core/8-dev/Changelog/8.5/Breaking-78002-EnforceCHashArgumentForExtbaseActions.html
-#plugin.tx_customrest.features.requireCHashArgumentForActionArguments = 0

@@ -21,7 +21,7 @@ class NonDefaultRootPidTest extends AbstractGreetingCase
                         __DIR__ . '/../Fixtures/TypoScript/BasicPage.typoscript'
                     ),
                     $this->prepareFrontendTypoScriptPath(
-                        __DIR__ . '/../../../ext_typoscript_setup.txt'
+                        __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
                     ),
                 ]
             ]

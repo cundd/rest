@@ -42,7 +42,7 @@ class CustomRestTest extends AbstractIntegrationCase
                         __DIR__ . '/../Fixtures/TypoScript/JsonRenderer.typoscript'
                     ),
                     $this->prepareFrontendTypoScriptPath(
-                        __DIR__ . '/../../../ext_typoscript_setup.txt'
+                        __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
                     ),
                     $this->prepareFrontendTypoScriptPath(
                         __DIR__ . '/../../Configuration/TypoScript/Configuration.typoscript'
