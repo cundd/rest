@@ -6,9 +6,10 @@ namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\Functional\Fixtures\FrontendUserAuthentication;
+use Cundd\Rest\Tests\Functional\Integration\FrontendSiteSetupTrait;
 
 /**
  * Functional tests for ConfigurationBasedAccessController
@@ -17,6 +18,8 @@ use Cundd\Rest\Tests\Functional\AbstractCase;
  */
 class ConfigurationBasedAccessControllerTest extends AbstractCase
 {
+    use FrontendSiteSetupTrait;
+
     private ConfigurationBasedAccessController $fixture;
 
     public function setUp(): void
@@ -44,6 +47,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
             ]
         );
 
+        $this->configureFrontendUserAuthentication();
         $restObjectManager = $this->getContainer()->get(ObjectManager::class);
         $this->fixture = new ConfigurationBasedAccessController($configurationProvider, $restObjectManager);
     }
@@ -51,7 +55,15 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     protected function tearDown(): void
     {
         unset($this->fixture);
+        FrontendUserAuthentication::reset();
         parent::tearDown();
+    }
+
+    private function configureFrontendUserAuthentication(): void
+    {
+        FrontendUserAuthentication::reset();
+
+        $GLOBALS['TSFE'] = (object)['fe_user' => new FrontendUserAuthentication()];
     }
 
     /**
