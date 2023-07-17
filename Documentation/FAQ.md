@@ -1,7 +1,7 @@
 Resource Type
 -------------
 
-The resource type is a identifier for a model class. It is the first segment of the request path, after alias mapping has been applied.
+The resource type is an identifier for a model class. It is the first segment of the request path, after alias mapping has been applied.
 
 
 Sending data
@@ -226,13 +226,13 @@ plugin.tx_rest.settings.paths {
 Caching
 -------
 
-To enable caching set the cache life time:
+To enable caching set the cache lifetime:
 
 ```typo3_typoscript
 plugin.tx_rest.settings.cacheLifetime = 3600
 ```
 
-Additionally a separate life time for the expires header can be defined:
+Additionally, a separate lifetime for the expires header can be defined:
 
 ```typo3_typoscript
 plugin.tx_rest.settings.expiresHeaderLifetime = 300
@@ -250,21 +250,6 @@ E.g.: TYPO3 is installed in `$DOC_ROOT/dev_install/` and accessed through `http:
 Internationalization and localization
 -------------------------------------
 
-The extension supports different types to handle localized requests.
-
-All languages must be registered in the language map:
-
- ```typo3_typoscript
-plugin.tx_rest.settings {
-    languages {
-        en = 0
-        de = 1
-    }
-}
-```
-
 > The start page of your site should be translated. The extension will use it as the context for handling the request.
 
 - Since version `3.6.0` TYPO3's site handling is supported
-- Specify the `GET`-parameter `L` with the language UID
-- Specify a `Accept-Language` header

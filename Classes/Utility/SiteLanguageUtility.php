@@ -30,7 +30,7 @@ class SiteLanguageUtility
     {
         $siteLanguage = self::detectSiteLanguage($request);
         if ($siteLanguage) {
-            return (string)$siteLanguage->getBase()->getPath();
+            return $siteLanguage->getBase()->getPath();
         } else {
             return '/';
         }

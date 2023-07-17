@@ -32,14 +32,8 @@ use function trim;
  */
 class RequestFactory implements SingletonInterface, RequestFactoryInterface
 {
-    /**
-     * @var ConfigurationProviderInterface
-     */
-    private ConfigurationProviderInterface $configurationProvider;
-
-    public function __construct(ConfigurationProviderInterface $configurationProvider)
+    public function __construct(private ConfigurationProviderInterface $configurationProvider)
     {
-        $this->configurationProvider = $configurationProvider;
     }
 
     public function buildRequest(ServerRequestInterface $request): RestRequestInterface
