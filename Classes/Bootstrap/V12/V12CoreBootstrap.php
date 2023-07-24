@@ -9,6 +9,7 @@ use Cundd\Rest\Utility\SiteLanguageUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\TypoScriptAspect;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,7 +38,7 @@ class V12CoreBootstrap extends AbstractCoreBootstrap
         int $pageUid,
         ServerRequestInterface $request
     ): TypoScriptFrontendController {
-        $context = GeneralUtility::makeInstance(Context::class);
+        $context = $this->buildContext();
         $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
         /** @var Site $site */
         $site = $request->getAttribute('site');
@@ -81,5 +82,19 @@ class V12CoreBootstrap extends AbstractCoreBootstrap
         }
 
         return $request;
+    }
+
+    private function buildContext(): Context
+    {
+        /** @var Context $context */
+        $context = GeneralUtility::makeInstance(Context::class);
+
+        // Configure the TypoScript aspect to force template parsing.
+        // Without this, the TypoScript configuration inside the
+        // `FrontendConfigurationManager` would not be populated on cached
+        // frontend requests
+        $context->setAspect('typoscript', new TypoScriptAspect(true));
+
+        return $context;
     }
 }
