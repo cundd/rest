@@ -12,19 +12,8 @@ use Exception;
 
 abstract class AbstractAccessController implements AccessControllerInterface
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * AbstractAccessController constructor
-     *
-     * @param ObjectManagerInterface $objectManager
-     */
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct(protected ObjectManagerInterface $objectManager)
     {
-        $this->objectManager = $objectManager;
     }
 
     /**

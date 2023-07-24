@@ -77,7 +77,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * @param array $settings
      * @internal
      */
-    public function setSettings(array $settings)
+    public function setSettings(array $settings): void
     {
         $this->settings = $settings;
     }

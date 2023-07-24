@@ -25,12 +25,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
     protected ConfigurationProviderInterface $configurationProvider;
 
-    /**
-     * ConfigurationBasedAccessController constructor
-     *
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManagerInterface         $objectManager
-     */
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
         ObjectManagerInterface $objectManager
