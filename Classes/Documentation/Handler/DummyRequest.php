@@ -15,14 +15,8 @@ use TYPO3\CMS\Core\Http\Uri;
 
 class DummyRequest implements RestRequestInterface
 {
-    /**
-     * @var ResourceType
-     */
-    private $resourceType;
-
-    public function __construct(ResourceType $resourceType)
+    public function __construct(private readonly ResourceType $resourceType)
     {
-        $this->resourceType = $resourceType;
     }
 
     public function getOriginalRequest(): ServerRequestInterface
@@ -80,122 +74,122 @@ class DummyRequest implements RestRequestInterface
         return clone $this;
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return '1.1';
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion(string $version): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return [[]];
     }
 
-    public function hasHeader($name)
+    public function hasHeader(string $name): bool
     {
         return false;
     }
 
-    public function getHeader($name)
+    public function getHeader(string $name): array
     {
         return [];
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine(string $name): string
     {
         return '';
     }
 
-    public function withHeader($name, $value)
+    public function withHeader(string $name, $value): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader(string $name, $value): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader(string $name): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return new Stream('php://temp');
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return '';
     }
 
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget(string $requestTarget): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return 'GET';
     }
 
-    public function withMethod($method)
+    public function withMethod(string $method): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return new Uri((string)$this->resourceType);
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return [];
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return [];
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return [];
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return [];
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return clone $this;
     }
@@ -205,27 +199,27 @@ class DummyRequest implements RestRequestInterface
         return null;
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return [];
     }
 
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, $default = null)
     {
         return null;
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute(string $name, $value): ServerRequestInterface
     {
         return clone $this;
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute(string $name): ServerRequestInterface
     {
         return clone $this;
     }

@@ -25,9 +25,6 @@ trait ServerRequestProxyTrait
      */
     abstract protected function setOriginalRequest(ServerRequestInterface $request): Request;
 
-    /**
-     * @return ServerRequestProxyTrait
-     */
     protected function copy(): self
     {
         return clone $this;
@@ -40,7 +37,7 @@ trait ServerRequestProxyTrait
      *
      * @return string HTTP protocol version.
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->getOriginalRequest()->getProtocolVersion();
     }
@@ -70,7 +67,7 @@ trait ServerRequestProxyTrait
      *     key MUST be a header name, and each value MUST be an array of strings
      *     for that header.
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->getOriginalRequest()->getHeaders();
     }
@@ -83,7 +80,7 @@ trait ServerRequestProxyTrait
      *                     name using a case-insensitive string comparison. Returns false if
      *                     no matching header name is found in the message.
      */
-    public function hasHeader($name)
+    public function hasHeader(string $name): bool
     {
         return $this->getOriginalRequest()->hasHeader($name);
     }
@@ -102,7 +99,7 @@ trait ServerRequestProxyTrait
      *                     header. If the header does not appear in the message, this method MUST
      *                     return an empty array.
      */
-    public function getHeader($name)
+    public function getHeader(string $name): array
     {
         return $this->getOriginalRequest()->getHeader($name);
     }
@@ -126,7 +123,7 @@ trait ServerRequestProxyTrait
      *                     concatenated together using a comma. If the header does not appear in
      *                     the message, this method MUST return an empty string.
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine(string $name): string
     {
         return $this->getOriginalRequest()->getHeaderLine($name);
     }
@@ -136,7 +133,7 @@ trait ServerRequestProxyTrait
      *
      * @return StreamInterface Returns the body as a stream.
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->getOriginalRequest()->getBody();
     }
@@ -157,7 +154,7 @@ trait ServerRequestProxyTrait
      *
      * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return $this->getOriginalRequest()->getRequestTarget();
     }
@@ -167,7 +164,7 @@ trait ServerRequestProxyTrait
      *
      * @return string Returns the request method.
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->getOriginalRequest()->getMethod();
     }
@@ -181,7 +178,7 @@ trait ServerRequestProxyTrait
      * @return UriInterface Returns a UriInterface instance
      *     representing the URI of the request.
      */
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->getOriginalRequest()->getUri();
     }
@@ -195,7 +192,7 @@ trait ServerRequestProxyTrait
      *
      * @return array
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->getOriginalRequest()->getServerParams();
     }
@@ -210,7 +207,7 @@ trait ServerRequestProxyTrait
      *
      * @return array
      */
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return $this->getOriginalRequest()->getCookieParams();
     }
@@ -227,7 +224,7 @@ trait ServerRequestProxyTrait
      *
      * @return array
      */
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->getOriginalRequest()->getQueryParams();
     }
@@ -244,7 +241,7 @@ trait ServerRequestProxyTrait
      * @return array An array tree of UploadedFileInterface instances; an empty
      *     array MUST be returned if no data is present.
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->getOriginalRequest()->getUploadedFiles();
     }
@@ -280,7 +277,7 @@ trait ServerRequestProxyTrait
      *
      * @return array Attributes derived from the request.
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->getOriginalRequest()->getAttributes();
     }
@@ -300,7 +297,7 @@ trait ServerRequestProxyTrait
      * @return mixed
      * @see getAttributes()
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, $default = null): mixed
     {
         return $this->getOriginalRequest()->getAttribute($name, $default);
     }
@@ -318,7 +315,7 @@ trait ServerRequestProxyTrait
      * @param string $version HTTP protocol version
      * @return ServerRequestInterface
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion(string $version): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withProtocolVersion($version));
     }
@@ -338,7 +335,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @throws InvalidArgumentException for invalid header names or values.
      */
-    public function withHeader($name, $value)
+    public function withHeader(string $name, $value): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withHeader($name, $value));
     }
@@ -359,7 +356,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @throws InvalidArgumentException for invalid header names or values.
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader(string $name, $value): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAddedHeader($name, $value));
     }
@@ -376,7 +373,7 @@ trait ServerRequestProxyTrait
      * @param string $name Case-insensitive header field name to remove.
      * @return ServerRequestInterface
      */
-    public function withoutHeader($name)
+    public function withoutHeader(string $name): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutHeader($name));
     }
@@ -394,7 +391,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @throws InvalidArgumentException When the body is not valid.
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withBody($body));
     }
@@ -416,7 +413,7 @@ trait ServerRequestProxyTrait
      * @param mixed $requestTarget
      * @return ServerRequestInterface
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withRequestTarget($requestTarget));
     }
@@ -436,7 +433,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @throws InvalidArgumentException for invalid HTTP methods.
      */
-    public function withMethod($method)
+    public function withMethod(string $method): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withMethod($method));
     }
@@ -471,7 +468,7 @@ trait ServerRequestProxyTrait
      * @param bool         $preserveHost Preserve the original state of the Host header.
      * @return ServerRequestInterface
      */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUri($uri, $preserveHost));
     }
@@ -493,7 +490,7 @@ trait ServerRequestProxyTrait
      * @param array $cookies Array of key/value pairs representing cookies.
      * @return ServerRequestInterface
      */
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withCookieParams($cookies));
     }
@@ -520,7 +517,7 @@ trait ServerRequestProxyTrait
      *                     $_GET.
      * @return ServerRequestInterface
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withQueryParams($query));
     }
@@ -536,7 +533,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @throws InvalidArgumentException if an invalid structure is provided.
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUploadedFiles($uploadedFiles));
     }
@@ -569,7 +566,7 @@ trait ServerRequestProxyTrait
      * @throws InvalidArgumentException if an unsupported argument type is
      *                                provided.
      */
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withParsedBody($data));
     }
@@ -589,7 +586,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute(string $name, $value): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAttribute($name, $value));
     }
@@ -608,7 +605,7 @@ trait ServerRequestProxyTrait
      * @return ServerRequestInterface
      * @see getAttributes()
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute(string $name): ServerRequestInterface
     {
         return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutAttribute($name));
     }
