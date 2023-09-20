@@ -8,7 +8,6 @@ use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -23,35 +22,21 @@ class Cache implements CacheInterface
 {
     /**
      * Concrete cache instance
-     *
-     * @var VariableFrontend
      */
-    private $cacheInstance;
+    private FrontendInterface $cacheInstance;
 
     /**
-     * Cache life time
-     *
-     * @var integer
+     * Cache lifetime
      */
-    private $cacheLifetime;
+    private int $cacheLifetime;
 
     /**
-     * Lifetime defined in the expires header
-     *
-     * @var integer
+     * Lifetime sent in the expires header
      */
-    private $expiresHeaderLifetime;
+    private int $expiresHeaderLifetime;
 
-    /**
-     * @var ResponseFactory
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
-    /**
-     * Cache constructor
-     *
-     * @param ResponseFactoryInterface $responseFactory
-     */
     public function __construct(ResponseFactoryInterface $responseFactory)
     {
         $this->responseFactory = $responseFactory;
@@ -62,7 +47,7 @@ class Cache implements CacheInterface
         $cacheLifetime = $this->getCacheLifetime();
 
         /*
-         * Use caching if the cache life time configuration is not -1, an API
+         * Use caching if the cache lifetime configuration is not -1, an API
          * path is given and the request is a read request
          */
         $useCaching = ($cacheLifetime !== -1) && $request->getPath();
@@ -110,7 +95,7 @@ class Cache implements CacheInterface
         $cacheLifetime = $this->getCacheLifetime();
 
         /*
-         * Use caching if the cache life time configuration is not -1, an API
+         * Use caching if the cache lifetime configuration is not -1, an API
          * path is given and the request is a read request
          */
         $useCaching = ($cacheLifetime !== -1) && $request->getPath();
@@ -135,12 +120,6 @@ class Cache implements CacheInterface
         );
     }
 
-    /**
-     * Returns the cache key for the given request
-     *
-     * @param RestRequestInterface $request
-     * @return string
-     */
     public function getCacheKeyForRequest(RestRequestInterface $request): string
     {
         $cacheKey = sha1($request->getUri() . '_' . $request->getFormat() . '_' . $request->getMethod());
@@ -152,12 +131,6 @@ class Cache implements CacheInterface
         return $cacheKey;
     }
 
-    /**
-     * Sets the cache life time
-     *
-     * @param int $cacheLifetime
-     * @return $this
-     */
     public function setCacheLifetime(int $cacheLifetime): CacheInterface
     {
         $this->cacheLifetime = $cacheLifetime;
@@ -165,22 +138,11 @@ class Cache implements CacheInterface
         return $this;
     }
 
-    /**
-     * Returns the cache life time
-     *
-     * @return int
-     */
     public function getCacheLifetime(): int
     {
         return $this->cacheLifetime;
     }
 
-    /**
-     * Sets the life time defined in the expires header
-     *
-     * @param int $expiresHeaderLifetime
-     * @return $this
-     */
     public function setExpiresHeaderLifetime(int $expiresHeaderLifetime): CacheInterface
     {
         $this->expiresHeaderLifetime = $expiresHeaderLifetime;
@@ -188,29 +150,24 @@ class Cache implements CacheInterface
         return $this;
     }
 
-    /**
-     * Returns the life time defined in the expires header
-     *
-     * @return int
-     */
     public function getExpiresHeaderLifetime(): int
     {
         return $this->expiresHeaderLifetime;
     }
 
     /**
-     * Sets the concrete Cache instance
+     * Set the concrete Cache instance
      *
      * @param FrontendInterface $cacheInstance
      * @internal
      */
-    public function setCacheInstance(FrontendInterface $cacheInstance)
+    public function setCacheInstance(FrontendInterface $cacheInstance): void
     {
         $this->cacheInstance = $cacheInstance;
     }
 
     /**
-     * Returns a date in the format for a HTTP header
+     * Return a date in the format for a HTTP header
      *
      * @param int $date
      * @return string
@@ -221,13 +178,11 @@ class Cache implements CacheInterface
     }
 
     /**
-     * Returns the cache instance
-     *
-     * @return FrontendInterface|VariableFrontend
+     * Return the cache instance
      */
-    private function getCacheInstance()
+    private function getCacheInstance(): FrontendInterface
     {
-        if (!$this->cacheInstance) {
+        if (!isset($this->cacheInstance)) {
             /** @var CacheManager $cacheManager */
             $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
             $this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
@@ -237,11 +192,11 @@ class Cache implements CacheInterface
     }
 
     /**
-     * Clears the cache for the current request
+     * Clear the cache for the current request
      *
      * @param RestRequestInterface $request
      */
-    private function clearCache(RestRequestInterface $request)
+    private function clearCache(RestRequestInterface $request): void
     {
         $allTags = $this->getTags($request);
         $firstTag = $allTags[0];
@@ -249,7 +204,7 @@ class Cache implements CacheInterface
     }
 
     /**
-     * Returns the tags for the current request
+     * Return the tags for the current request
      *
      * @param RestRequestInterface $request
      * @return string[]
@@ -281,6 +236,7 @@ class Cache implements CacheInterface
      * @param RestRequestInterface $request
      * @param ResponseInterface    $response
      * @return bool
+     * @internal
      */
     public function canBeCached(RestRequestInterface $request, ResponseInterface $response): bool
     {
@@ -304,7 +260,7 @@ class Cache implements CacheInterface
      * @param ResponseInterface $response
      * @return bool
      */
-    protected function cacheControlPreventsCaching(ResponseInterface $response): bool
+    private function cacheControlPreventsCaching(ResponseInterface $response): bool
     {
         $cacheControlHeaders = $response->getHeader(Header::CACHE_CONTROL);
         $noCacheValues = [
