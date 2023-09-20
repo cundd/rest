@@ -226,7 +226,7 @@ plugin.tx_rest.settings.paths {
 Caching
 -------
 
-To enable caching set the cache lifetime:
+To enable caching for all resource types set the cache lifetime inside `settings`:
 
 ```typo3_typoscript
 plugin.tx_rest.settings.cacheLifetime = 3600
@@ -237,6 +237,20 @@ Additionally, a separate lifetime for the expires header can be defined:
 ```typo3_typoscript
 plugin.tx_rest.settings.expiresHeaderLifetime = 300
 ```
+
+Furthermore, it is possible to define a lifetime for a resource type separately:
+
+```typo3_typoscript
+plugin.tx_rest.settings.paths {
+    path {
+        path = Cundd-Daa-Bar
+        cacheLifetime = 3600
+        expiresHeaderLifetime = 300
+    }
+}
+```
+
+> If `cacheLifetime` is set to `0` TYPO3 will cache the response forever
 
 
 Install TYPO3 and REST in a subdirectory
