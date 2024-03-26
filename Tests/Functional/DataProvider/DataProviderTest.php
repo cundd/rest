@@ -67,9 +67,9 @@ class DataProviderTest extends AbstractCase
 
         /** @var Container $container */
         $container = $this->getContainer();
-        $container->set('\\MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
-        $container->set('\\MyExt\\Domain\\Repository\\MySecondModelRepository', new MyModelRepository());
-        $container->set('\\Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
+        $container->set('MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
+        $container->set('MyExt\\Domain\\Repository\\MySecondModelRepository', new MyModelRepository());
+        $container->set('Vendor\\MyExt\\Domain\\Repository\\MyModelRepository', new MyModelRepository());
 
         $this->fixture = $container->get(DataProvider::class);
     }
@@ -171,10 +171,10 @@ class DataProviderTest extends AbstractCase
             'Vendor\\MyExt\\Domain\\Repository\\Group',
             '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository'
         );
-        $groupRepositoryClass = '\\Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository';
+        $groupRepositoryClass = 'Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository';
         $this->getContainer()->set($groupRepositoryClass, new $groupRepositoryClass());
         $repository = $this->fixture->getRepositoryForResourceType(new ResourceType('vendor-my_ext-group-my_model'));
-        $this->assertInstanceOf('Vendor\\MyExt\\Domain\\Repository\\Group\\MyModelRepository', $repository);
+        $this->assertInstanceOf($groupRepositoryClass, $repository);
     }
 
     /**

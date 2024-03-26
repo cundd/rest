@@ -65,7 +65,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     {
         [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        return '\\' . ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+        return ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
     }
 
     public function getRepositoryForResourceType(ResourceType $resourceType): object
