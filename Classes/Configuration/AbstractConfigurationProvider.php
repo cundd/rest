@@ -15,15 +15,23 @@ use function is_numeric;
 
 /**
  * Abstract Configuration Provider
+ *
+ * @phpstan-type RawConfiguration array{path?:string, read?:'deny'|'require'|'allow', write?:'deny'|'require'|'allow', handlerClass?: string, cacheLifetime?:int, expiresHeaderLifetime?:int}
+ * @phpstan-type Settings array{paths?:array<string,RawConfiguration>}
  */
 abstract class AbstractConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface
 {
     /**
      * Settings read from the TypoScript
      *
-     * @var array
+     * @var Settings
      */
-    protected $settings = null;
+    protected ?array $settings = null;
+
+    /**
+     * @var array<string,ResourceConfiguration>
+     */
+    protected array $configurationCollection = [];
 
     /**
      * Return the setting with the given key
@@ -60,7 +68,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Return the settings read from the TypoScript
      *
-     * @return array
+     * @return Settings
      */
     public function getSettings(): array
     {
@@ -74,12 +82,13 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Overwrite the settings
      *
-     * @param array $settings
+     * @param Settings $settings
      * @internal
      */
     public function setSettings(array $settings): void
     {
         $this->settings = $settings;
+        $this->configurationCollection = [];
     }
 
     /**
@@ -128,38 +137,42 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      */
     public function getConfiguredResources(): array
     {
-        $configurationCollection = [];
-        foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
-            [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
+        if(empty($this->configurationCollection)) {
+            $configurationCollection = [];
+            foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
+                [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
 
-            $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
-                ? new Access($configuration[self::ACCESS_METHOD_READ])
-                : Access::denied();
-            $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
-                ? new Access($configuration[self::ACCESS_METHOD_WRITE])
-                : Access::denied();
+                $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
+                    ? new Access($configuration[self::ACCESS_METHOD_READ])
+                    : Access::denied();
+                $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
+                    ? new Access($configuration[self::ACCESS_METHOD_WRITE])
+                    : Access::denied();
 
-            if (isset($configuration['className'])) {
-                throw new InvalidConfigurationException('Unsupported configuration key "className"');
+                if (isset($configuration['className'])) {
+                    throw new InvalidConfigurationException('Unsupported configuration key "className"');
+                }
+
+                $resourceType = new ResourceType($normalizeResourceType);
+                $cacheLifetime = $this->detectCacheLifetimeConfiguration($configuration);
+                $expiresHeaderLifetime = $this->detectExpiresHeaderLifetimeConfiguration($configuration);
+
+                $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
+                    $resourceType,
+                    $readAccess,
+                    $writeAccess,
+                    $cacheLifetime,
+                    $configuration['handlerClass'] ?? '',
+                    $configuration['dataProviderClass'] ?? '',
+                    $this->getAliasesForResourceType($resourceType),
+                    $expiresHeaderLifetime
+                );
             }
 
-            $resourceType = new ResourceType($normalizeResourceType);
-            $cacheLifetime = $this->detectCacheLifetimeConfiguration($configuration);
-            $expiresHeaderLifetime = $this->detectExpiresHeaderLifetimeConfiguration($configuration);
-
-            $configurationCollection[$normalizeResourceType] = new ResourceConfiguration(
-                $resourceType,
-                $readAccess,
-                $writeAccess,
-                $cacheLifetime,
-                $configuration['handlerClass'] ?? '',
-                $configuration['dataProviderClass'] ?? '',
-                $this->getAliasesForResourceType($resourceType),
-                $expiresHeaderLifetime
-            );
+            $this->configurationCollection = $configurationCollection;
         }
 
-        return $configurationCollection;
+        return $this->configurationCollection;
     }
 
     /**
@@ -201,6 +214,9 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         );
     }
 
+    /**
+     * @return array<string,RawConfiguration>
+     */
     private function getRawConfiguredResourceTypes(): array
     {
         $settings = $this->getSettings();
@@ -214,9 +230,9 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * If no explicit path is configured use the current key
      *
-     * @param array $configuration
+     * @param RawConfiguration $configuration
      * @param string $path
-     * @return array
+     * @return array{0:RawConfiguration,1:string}
      */
     private function preparePath(array $configuration, string $path): array
     {
@@ -227,6 +243,9 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         return [$configuration, $normalizeResourceType];
     }
 
+    /**
+     * @param RawConfiguration $configuration
+     */
     private function detectCacheLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['cacheLifeTime']) && is_numeric($configuration['cacheLifeTime'])) {
@@ -239,6 +258,9 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         return -1;
     }
 
+    /**
+       * @param RawConfiguration $configuration
+       */
     private function detectExpiresHeaderLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['expiresHeaderLifetime']) && is_numeric($configuration['expiresHeaderLifetime'])) {

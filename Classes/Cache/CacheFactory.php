@@ -46,10 +46,10 @@ class CacheFactory
     ): CacheInterface {
         $cacheImplementation = $configurationProvider->getSetting('cacheClass');
         if ($cacheImplementation && class_exists($cacheImplementation)) {
-            return $objectManager->get($cacheImplementation);
+            return $objectManager->get($cacheImplementation);// @phpstan-ignore return.type
         }
 
-        return $objectManager->get(Cache::class);
+        return $objectManager->get(Cache::class); // @phpstan-ignore return.type
     }
 
     /**
@@ -62,7 +62,7 @@ class CacheFactory
         ResourceType $resourceType
     ): int {
         $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
-        $cacheLifetime = $resourceConfiguration->getCacheLifetime();
+        $cacheLifetime = $resourceConfiguration?->getCacheLifetime();
         if ($cacheLifetime > -1) {
             return $cacheLifetime;
         }

@@ -6,13 +6,14 @@ namespace Cundd\Rest\Configuration;
 
 /**
  * Standalone Configuration Provider
+ * @phpstan-import-type Settings from AbstractConfigurationProvider
  */
 class StandaloneConfigurationProvider extends AbstractConfigurationProvider
 {
     /**
      * Standalone Configuration Provider constructor
      *
-     * @param array $settings
+     * @param Settings $settings
      */
     public function __construct(array $settings)
     {
