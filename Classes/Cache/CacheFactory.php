@@ -67,13 +67,13 @@ class CacheFactory
             return $cacheLifetime;
         }
 
-        $cacheLifetime = $configurationProvider->getSetting('cacheLifeTime');
-        if ($cacheLifetime !== null) {
+        $cacheLifetime = $configurationProvider->getSetting('cacheLifetime');
+        if ($cacheLifetime !== null && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
             return (int)$cacheLifetime;
         }
 
-        $cacheLifetime = $configurationProvider->getSetting('cacheLifetime');
-        if ($cacheLifetime !== null) {
+        $cacheLifetime = $configurationProvider->getSetting('cacheLifeTime');
+        if ($cacheLifetime !== null && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
             return (int)$cacheLifetime;
         }
 

@@ -23,9 +23,9 @@ abstract class AbstractConfigurationProviderCase extends TestCase
      */
     protected $fixture;
 
-    public function setUp(): void
+    public function setup(): void
     {
-        parent::setUp();
+        parent::setup();
 
         $settings = [
             'paths' => [
@@ -64,11 +64,12 @@ abstract class AbstractConfigurationProviderCase extends TestCase
     /**
      * @return ConfigurationProviderInterface|TypoScriptConfigurationProvider|StandaloneConfigurationProvider
      */
-    abstract function getConfigurationProviderToTest();
+    abstract public function getConfigurationProviderToTest();
 
     public function tearDown(): void
     {
         unset($this->fixture);
+        parent::tearDown();
     }
 
     /**
@@ -95,6 +96,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
                     'vendor-my_other_ext-my_model2' => [
                         'path'          => 'vendor-my_other_ext-my_model2',
                         'cacheLifetime' => 3,
+                        'cacheLifeTime' => 200, // the key "cacheLifetime" must have precedence
                     ],
                 ],
             ]
