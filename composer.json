@@ -44,7 +44,6 @@
         }
     },
     "replace": {
-        "rest": "self.version",
         "typo3-ter/rest": "self.version"
     }
 }
