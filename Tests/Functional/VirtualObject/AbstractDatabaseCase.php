@@ -51,8 +51,6 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
 
     /**
      * Returns the test configuration object
-     *
-     * @return Configuration
      */
     protected function getTestConfiguration(): Configuration
     {
@@ -63,8 +61,6 @@ class AbstractDatabaseCase extends AbstractVirtualObjectCase
 
     /**
      * Returns the configuration data
-     *
-     * @return array
      */
     protected function getTestConfigurationData(): array
     {
@@ -188,9 +184,6 @@ SQL;
         $databaseConnection->addRow(self::$testDatabaseTable, self::$testData[1]);
     }
 
-    /**
-     * @return bool
-     */
     protected function isSqliteDriver(): bool
     {
         /** @var ConnectionPool $connectionPool */

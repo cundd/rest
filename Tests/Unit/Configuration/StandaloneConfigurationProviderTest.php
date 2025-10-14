@@ -8,7 +8,7 @@ use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 
 class StandaloneConfigurationProviderTest extends AbstractConfigurationProviderCase
 {
-    function getConfigurationProviderToTest()
+    public function getConfigurationProviderToTest()
     {
         return new StandaloneConfigurationProvider([]);
     }

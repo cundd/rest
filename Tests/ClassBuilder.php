@@ -11,10 +11,6 @@ class ClassBuilder
     /**
      * Dynamically creates a class
      *
-     * @param array|string $className
-     * @param string       $namespace
-     * @param string       $extends
-     * @param bool         $silent
      * @throws Exception
      */
     public static function buildClass(array|string $className, string $namespace = '', string $extends = '', bool $silent = false): void
@@ -43,9 +39,6 @@ class ClassBuilder
     /**
      * Dynamically creates a class
      *
-     * @param string $className
-     * @param string $namespace
-     * @param string $extends
      * @throws Exception
      */
     public static function buildClassIfNotExists(string $className, string $namespace = '', string $extends = ''): void
@@ -64,9 +57,6 @@ class ClassBuilder
     /**
      * Dynamically creates an interface
      *
-     * @param string $interfaceName
-     * @param string $namespace
-     * @param string $extends
      * @throws Exception
      */
     public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = ''): void
@@ -93,15 +83,12 @@ class ClassBuilder
     /**
      * Dynamically creates an interface
      *
-     * @param string $interfaceName
-     * @param string $namespace
-     * @param string $extends
      * @throws Exception
      */
     public static function buildInterfaceIfNotExists(
         string $interfaceName,
         string $namespace = '',
-        string $extends = ''
+        string $extends = '',
     ): void {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $interfaceName,
@@ -117,17 +104,13 @@ class ClassBuilder
     /**
      * Dynamically create the class or interface
      *
-     * @param string $type
-     * @param string $preparedClassName
-     * @param string $preparedNamespace
-     * @param string $preparedExtends
      * @throws Exception
      */
     protected static function buildCode(
         string $type,
         string $preparedClassName,
         string $preparedNamespace,
-        string $preparedExtends
+        string $preparedExtends,
     ): void {
         $code = [];
         if ($preparedNamespace) {
@@ -147,15 +130,12 @@ class ClassBuilder
     }
 
     /**
-     * @param string $className
-     * @param string $namespace
-     * @param string $extends
      * @return string[]
      */
     protected static function buildClassSignature(
         string $className,
         string $namespace = '',
-        string $extends = ''
+        string $extends = '',
     ): array {
         $preparedClassName = $className;
         $preparedNamespace = $namespace;
@@ -167,7 +147,7 @@ class ClassBuilder
             $preparedClassName = substr($className, $lastSlashPos + 1);
 
             // If called like `createClass('\Vendor\Namespace\MyClass', 'ExtendMe')`
-            if ($extends === '') {
+            if ('' === $extends) {
                 $preparedExtends = $namespace;
             }
         }

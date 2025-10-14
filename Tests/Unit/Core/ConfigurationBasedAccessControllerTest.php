@@ -6,7 +6,6 @@ namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request;
@@ -45,7 +44,7 @@ class ConfigurationBasedAccessControllerTest extends TestCase
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildTestRequest($uri, 'GET');
         $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('my_ext-my_model', (string)$configuration->getResourceType());
+        $this->assertSame('my_ext-my_model', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isRequireLogin());
         $this->assertTrue($configuration->getWrite()->isAllowed());
 
@@ -76,12 +75,12 @@ class ConfigurationBasedAccessControllerTest extends TestCase
         $this->assertTrue($fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
     }
 
-    private function buildAccessController(callable $configureObjectManager = null): ConfigurationBasedAccessController
+    private function buildAccessController(?callable $configureObjectManager = null): ConfigurationBasedAccessController
     {
         $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [
-                    'all'             => [
+                    'all' => [
                         'path'  => 'all',
                         'read'  => 'allow',
                         'write' => 'deny',
@@ -91,7 +90,7 @@ class ConfigurationBasedAccessControllerTest extends TestCase
                         'read'  => 'require',
                         'write' => 'allow',
                     ],
-                    'my_secondext-*'  => [
+                    'my_secondext-*' => [
                         'path'  => 'my_secondext-*',
                         'read'  => 'deny',
                         'write' => 'require',
@@ -131,7 +130,7 @@ class ConfigurationBasedAccessControllerTest extends TestCase
             }
         );
         $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
+        $this->assertSame('my_secondext-*', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isRequireLogin());
 
@@ -177,7 +176,7 @@ class ConfigurationBasedAccessControllerTest extends TestCase
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildTestRequest($uri, 'GET');
         $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('all', (string)$configuration->getResourceType());
+        $this->assertSame('all', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isAllowed());
         $this->assertTrue($configuration->getWrite()->isDenied());
     }

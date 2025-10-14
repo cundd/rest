@@ -10,7 +10,7 @@ return [
                 'typo3/cms-frontend/base-redirect-resolver',
                 'typo3/cms-frontend/page-resolver',
             ],
-            'after'  => [
+            'after' => [
                 'typo3/cms-frontend/authentication',
             ],
         ],

@@ -22,12 +22,12 @@ class Bootstrap
         class_alias(Route::class, 'Route');
         $eventDispatcher->register(
             TestRunnerInterface::EVENT_TEST_WILL_RUN,
-            function (Event $event) use ($eventDispatcher) {
+            function (Event $event) {
                 $prophet = new Prophet();
                 $prophet->prophesize(RestRequestInterface::class);
                 $event->getContext()->addVariables(
                     [
-                        'router' => new Router(),
+                        'router'  => new Router(),
                         'request' => RequestBuilderTrait::buildTestRequest('some/path'),
                     ]
                 );
@@ -36,5 +36,5 @@ class Bootstrap
     }
 }
 
-/** @var EventDispatcherInterface $eventDispatcher */
+/* @var EventDispatcherInterface $eventDispatcher */
 (new Bootstrap())->run($eventDispatcher);

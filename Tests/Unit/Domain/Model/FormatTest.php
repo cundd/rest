@@ -7,33 +7,32 @@ namespace Cundd\Rest\Tests\Unit\Domain\Model;
 use Cundd\Rest\Domain\Model\Format;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class FormatTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider validFormatDataProvider
-     * @param $input
      */
     public function validFormatTest($input)
     {
-        $this->assertEquals($input, (string)new Format($input));
+        $this->assertEquals($input, (string) new Format($input));
     }
 
     public function validFormatDataProvider(): array
     {
         return [
-            ['json',],
-            ['html',],
-            ['xml',],
+            ['json'],
+            ['html'],
+            ['xml'],
         ];
     }
 
     /**
      * @test
+     *
      * @dataProvider invalidFormatDataProvider
-     * @param $input
      */
     public function invalidFormatTest($input)
     {
@@ -44,8 +43,8 @@ class FormatTest extends TestCase
     public function invalidFormatDataProvider(): array
     {
         return [
-            ['blur',],
-            ['',],
+            ['blur'],
+            [''],
         ];
     }
 }

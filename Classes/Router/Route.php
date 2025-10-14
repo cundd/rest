@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -65,8 +64,6 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Creates a new Route with the given pattern and callback for the method GET
      *
-     * @param string|ResourceType $pattern
-     * @param callable            $callback
      * @return static
      */
     public static function routeWithPattern(ResourceType|string $pattern, callable $callback): RouteInterface
@@ -78,8 +75,7 @@ class Route implements RouteInterface, RouteFactoryInterface
      * Creates a new Route with the given pattern, method and callback
      *
      * @param string|ResourceType $pattern
-     * @param string              $method
-     * @param callable            $callback
+     *
      * @return static
      */
     public static function routeWithPatternAndMethod($pattern, string $method, callable $callback): RouteInterface
@@ -89,8 +85,6 @@ class Route implements RouteInterface, RouteFactoryInterface
 
     /**
      * Returns the normalized path pattern
-     *
-     * @return string
      */
     public function getPattern(): string
     {
@@ -99,8 +93,6 @@ class Route implements RouteInterface, RouteFactoryInterface
 
     /**
      * Returns the request method for this route
-     *
-     * @return string
      */
     public function getMethod(): string
     {
@@ -120,8 +112,8 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Process the route
      *
-     * @param RestRequestInterface $request
-     * @param array                $parameters
+     * @param array $parameters
+     *
      * @return ResponseInterface|mixed
      */
     public function process(RestRequestInterface $request, ...$parameters)
@@ -134,10 +126,9 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * The __invoke method is called when a script tries to call an object as a function.
      *
-     * @param RestRequestInterface $request
-     * @param array                $arguments
-     * @return mixed
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
+     * @param array $arguments
+     *
+     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
      */
     public function __invoke(RestRequestInterface $request, ...$arguments)
     {
@@ -148,8 +139,6 @@ class Route implements RouteInterface, RouteFactoryInterface
      * Returns the priority of this route
      *
      * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
-     *
-     * @return int
      */
     public function getPriority(): int
     {
@@ -162,13 +151,10 @@ class Route implements RouteInterface, RouteFactoryInterface
 
     /**
      * Normalize the path pattern
-     *
-     * @param string|ResourceType $inputPattern
-     * @return string
      */
     private function normalizePattern(ResourceType|string $inputPattern): string
     {
-        $pattern = '/' . ltrim((string)$inputPattern, '/');
+        $pattern = '/' . ltrim((string) $inputPattern, '/');
         $patternParts = explode('/', $pattern);
         $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);
 

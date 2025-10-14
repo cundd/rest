@@ -106,10 +106,10 @@ class DataProviderTest extends AbstractCase
         $objectManagerProphecy = $this->prophesize(ObjectManagerInterface::class);
 
         $propertyMapper = $propertyMapperMock->reveal();
-        /** @var MethodProphecy $methodProphecy */
+        /* @var MethodProphecy $methodProphecy */
         $objectManagerProphecy->get(Argument::type('string'))->will(
             function ($args) use ($propertyMapper, $concreteObjectManager) {
-                if ($args[0] === PropertyMapper::class) {
+                if (PropertyMapper::class === $args[0]) {
                     return $propertyMapper;
                 } else {
                     return $concreteObjectManager->get($args[0]);
@@ -323,16 +323,15 @@ class DataProviderTest extends AbstractCase
                 0 => 'http://res/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
-                       'base'  => 'Base',
-                       'date'  => $testDate->format(DateTime::ATOM),
-                       'uid'   => 2,
-                       'pid'   => null,
-                       'child' => [
-                           'name' => 'Initial value',
-                           'uid'  => null,
-                           'pid'  => null,
-
-                       ],
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(DateTime::ATOM),
+                    'uid'   => 2,
+                    'pid'   => null,
+                    'child' => [
+                        'name' => 'Initial value',
+                        'uid'  => null,
+                        'pid'  => null,
+                    ],
                 ],
             ],
         ];

@@ -18,12 +18,11 @@ class DummyAuthenticationProvider implements AuthenticationProviderInterface
      */
     public function __construct($isAuthenticated)
     {
-        $this->isAuthenticated = (bool)$isAuthenticated;
+        $this->isAuthenticated = (bool) $isAuthenticated;
     }
 
     public function authenticate(RestRequestInterface $request): bool
     {
         return $this->isAuthenticated;
     }
-
 }

@@ -31,7 +31,7 @@ class Person extends AbstractEntity
      *
      * @var DateTime
      */
-    protected $birthday = null;
+    protected $birthday;
 
     /**
      * Returns the firstName
@@ -47,6 +47,7 @@ class Person extends AbstractEntity
      * Sets the firstName
      *
      * @param string $firstName
+     *
      * @return void
      */
     public function setFirstName($firstName)
@@ -68,6 +69,7 @@ class Person extends AbstractEntity
      * Sets the lastName
      *
      * @param string $lastName
+     *
      * @return void
      */
     public function setLastName($lastName)
@@ -88,7 +90,6 @@ class Person extends AbstractEntity
     /**
      * Sets the birthday
      *
-     * @param DateTime $birthday
      * @return void
      */
     public function setBirthday(DateTime $birthday)

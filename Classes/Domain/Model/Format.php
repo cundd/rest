@@ -19,22 +19,22 @@ class Format
         'json'  => 'application/json',
         'csv'   => 'text/csv',
         // images
-        'png'   => 'image/png',
-        'jpe'   => 'image/jpeg',
-        'jpeg'  => 'image/jpeg',
-        'jpg'   => 'image/jpeg',
-        'gif'   => 'image/gif',
-        'bmp'   => 'image/bmp',
-        'ico'   => 'image/vnd.microsoft.icon',
-        'tiff'  => 'image/tiff',
-        'tif'   => 'image/tiff',
-        'svg'   => 'image/svg+xml',
-        'svgz'  => 'image/svg+xml',
+        'png'  => 'image/png',
+        'jpe'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'jpg'  => 'image/jpeg',
+        'gif'  => 'image/gif',
+        'bmp'  => 'image/bmp',
+        'ico'  => 'image/vnd.microsoft.icon',
+        'tiff' => 'image/tiff',
+        'tif'  => 'image/tiff',
+        'svg'  => 'image/svg+xml',
+        'svgz' => 'image/svg+xml',
         // archives
-        'zip'   => 'application/zip',
-        'rar'   => 'application/x-rar-compressed',
+        'zip' => 'application/zip',
+        'rar' => 'application/x-rar-compressed',
         // adobe
-        'pdf'   => 'application/pdf',
+        'pdf' => 'application/pdf',
     ];
 
     private string $format;
@@ -47,8 +47,6 @@ class Format
 
     /**
      * Return an instance of the default format
-     *
-     * @return Format
      */
     public static function defaultFormat(): Format
     {
@@ -57,8 +55,6 @@ class Format
 
     /**
      * Return HTML Format instance
-     *
-     * @return Format
      */
     public static function formatHtml(): Format
     {
@@ -67,8 +63,6 @@ class Format
 
     /**
      * Return a JSON Format instance
-     *
-     * @return Format
      */
     public static function formatJson(): Format
     {
@@ -82,9 +76,6 @@ class Format
 
     /**
      * Return if the given format is valid
-     *
-     * @param $format
-     * @return bool
      */
     public static function isValidFormat($format): bool
     {

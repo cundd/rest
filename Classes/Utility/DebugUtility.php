@@ -26,6 +26,7 @@ class DebugUtility
 
     /**
      * @param array $variables
+     *
      * @see debug()
      */
     public static function var_dump(...$variables)
@@ -35,8 +36,6 @@ class DebugUtility
 
     /**
      * Returns the caller of the previous method
-     *
-     * @return array
      */
     public static function getCaller(): array
     {
@@ -47,15 +46,13 @@ class DebugUtility
 
     /**
      * Return if the output of debugging information is allowed
-     *
-     * @return bool
      */
     public static function allowDebugInformation(): bool
     {
-        if ('' !== (string)getenv('TEST_MODE')) {
+        if ('' !== (string) getenv('TEST_MODE')) {
             return false;
         }
-        if (php_sapi_name() === 'cli') {
+        if ('cli' === php_sapi_name()) {
             return true;
         }
         $clientAddress = $_SERVER['REMOTE_ADDR'] ?? '';
@@ -67,9 +64,6 @@ class DebugUtility
         return in_array($clientAddress, $devIpMask);
     }
 
-    /**
-     * @param array $variables
-     */
     private static function debugInternal(array $variables)
     {
         $caller = static::getCaller();
@@ -95,7 +89,7 @@ class DebugUtility
         }
         echo "see $file @ $line";
         if ($htmlOutput) {
-            echo "</a></span>";
+            echo '</a></span>';
         }
 
         if ($htmlOutput) {

@@ -30,15 +30,11 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     /**
      * Handler constructor
-     *
-     * @param ObjectManagerInterface   $objectManager
-     * @param ResponseFactoryInterface $responseFactory
-     * @param LoggerInterface          $logger
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ResponseFactoryInterface $responseFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->objectManager = $objectManager;
         $this->responseFactory = $responseFactory;
@@ -169,9 +165,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         return $this->getDataProvider($request)->countAllModels($resourceType);
     }
 
-    /**
-     * @return bool
-     */
     public function options(): bool
     {
         // TODO: Respond with the correct preflight headers
@@ -195,9 +188,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     /**
      * Return the Data Provider
-     *
-     * @param RestRequestInterface $request
-     * @return DataProviderInterface
      */
     protected function getDataProvider(RestRequestInterface $request): DataProviderInterface
     {
@@ -207,9 +197,8 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     /**
      * Add the root object key if configured
      *
-     * @param RestRequestInterface $request
-     * @param mixed                $result
-     * @param bool                 $singularize
+     * @param bool $singularize
+     *
      * @return mixed|array
      */
     protected function prepareResult(RestRequestInterface $request, $result, $singularize = true)
@@ -225,16 +214,15 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     /**
      * Return if the root object key should be added to the response data
-     *
-     * @return bool
      */
     protected function getAddRootObjectForCollection(): bool
     {
-        return (bool)$this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
+        return (bool) $this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
     }
 
     /**
      * @param iterable|array $models
+     *
      * @return array|LimitIterator
      */
     protected function sliceResults($models)
@@ -255,8 +243,6 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
 
     /**
      * Specifies the maximum number of models that should be output in `listAll()`
-     *
-     * @return int
      */
     protected function getListLimit(): int
     {

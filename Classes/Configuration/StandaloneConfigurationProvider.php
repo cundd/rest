@@ -6,6 +6,7 @@ namespace Cundd\Rest\Configuration;
 
 /**
  * Standalone Configuration Provider
+ *
  * @phpstan-import-type Settings from AbstractConfigurationProvider
  */
 class StandaloneConfigurationProvider extends AbstractConfigurationProvider

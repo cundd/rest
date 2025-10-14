@@ -17,7 +17,7 @@ class ResourceType
     public function __construct(ResourceType|string $resourceType)
     {
         $this->assertValidResourceType($resourceType);
-        $this->resourceType = (string)$resourceType;
+        $this->resourceType = (string) $resourceType;
     }
 
     public function __toString()
@@ -27,7 +27,7 @@ class ResourceType
 
     public static function assertValidResourceType(ResourceType|string $resourceType): void
     {
-        if (str_contains((string)$resourceType, '/')) {
+        if (str_contains((string) $resourceType, '/')) {
             throw new InvalidArgumentException('Resource Type must not contain a slash');
         }
     }

@@ -49,10 +49,11 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @dataProvider getPreparedParametersDataProvider
+     *
      * @param string $pattern
      * @param string $path
-     * @param array  $expectedParameters
      * @param bool   $noResult
      */
     public function dispatchTest($pattern, $path, array $expectedParameters, $noResult = false)
@@ -73,10 +74,11 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @dataProvider getPreparedParametersDataProvider
+     *
      * @param string $pattern
      * @param string $path
-     * @param array  $expectedParameters
      */
     public function getPreparedParametersTest($pattern, $path, array $expectedParameters)
     {
@@ -137,7 +139,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function getMatchingRoutesSortedTest($method)
@@ -167,7 +171,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function dispatchMatchingRoutesSortedTest($method)
@@ -245,7 +251,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function getMatchingRoutesSlugTest($method)
@@ -273,7 +281,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function getMatchingRoutesIntegerTest($method)
@@ -324,7 +334,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function getMatchingRoutesFloatTest($method)
@@ -357,7 +369,9 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesMethodDataProvider
      */
     public function getMatchingRoutesBooleanNotMatchesTest($method)
@@ -385,8 +399,10 @@ class RouterTest extends AbstractRequestBasedCase
 
     /**
      * @test
+     *
      * @param string $path
      * @param string $method
+     *
      * @dataProvider getMatchingRoutesBooleanMatchesDataProvider
      */
     public function getMatchingRoutesBooleanMatchesTest($path, $method)

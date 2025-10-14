@@ -69,7 +69,6 @@ class ExtractorTest extends TestCase
         $this->fixture = new Extractor(
             $configurationProvider,
             $logger
-
         );
     }
 
@@ -81,8 +80,7 @@ class ExtractorTest extends TestCase
 
     /**
      * @test
-     * @param mixed $input
-     * @param array $expected
+     *
      * @dataProvider extractSimpleDataProvider
      */
     public function extractSimpleTest($input, array $expected)
@@ -90,9 +88,6 @@ class ExtractorTest extends TestCase
         $this->assertEquals($expected, $this->fixture->extract($input));
     }
 
-    /**
-     * @return array
-     */
     public function extractSimpleDataProvider(): array
     {
         $this->prepareClasses();
@@ -109,8 +104,7 @@ class ExtractorTest extends TestCase
 
     /**
      * @test
-     * @param mixed $input
-     * @param array $expected
+     *
      * @dataProvider extractCollectionDataProvider
      */
     public function extractCollectionTest($input, array $expected)
@@ -118,9 +112,6 @@ class ExtractorTest extends TestCase
         $this->assertEquals($expected, $this->fixture->extract($input));
     }
 
-    /**
-     * @return array
-     */
     public function extractCollectionDataProvider(): array
     {
         $this->setUpBeforeClass();
@@ -131,19 +122,19 @@ class ExtractorTest extends TestCase
             $input = $simpleTestSet[0];
             $expected = [$simpleTestSet[1]];
 
-            $testSets[] = [[$input], $expected,];
+            $testSets[] = [[$input], $expected];
 
-            $testSets[] = [new ArrayIterator([$input]), $expected,];
+            $testSets[] = [new ArrayIterator([$input]), $expected];
 
             // Use the Object Storage only if the input is an object
             if (is_object($input)) {
                 $os = new SplObjectStorage();
                 $os->attach($input);
-                $testSets[] = [$os, $expected,];
+                $testSets[] = [$os, $expected];
 
                 $os = new ObjectStorage();
                 $os->attach($input);
-                $testSets[] = [$os, $expected,];
+                $testSets[] = [$os, $expected];
             }
         }
 
@@ -152,8 +143,7 @@ class ExtractorTest extends TestCase
 
     /**
      * @test
-     * @param mixed $input
-     * @param array $expected
+     *
      * @dataProvider extractCollectionDataProvider
      */
     public function extractModelWithCollectionPropertyTest($input, array $expected)
@@ -205,12 +195,6 @@ class ExtractorTest extends TestCase
         $this->assertEquals($expectedOutput, $this->fixture->extract($model));
     }
 
-    /**
-     * @param int      $currentDepth
-     * @param int      $maxDepth
-     * @param DateTime $testDate
-     * @return MyNestedModel
-     */
     protected function buildNestedModels(int $currentDepth, int $maxDepth, DateTime $testDate): MyNestedModel
     {
         $model = new MyNestedModel();
@@ -248,8 +232,8 @@ class ExtractorTest extends TestCase
                     'uid'   => 3,
                     'pid'   => null,
                 ],
-                'uid'   => 2,
-                'pid'   => null,
+                'uid' => 2,
+                'pid' => null,
             ],
 
             'uid' => 1,
@@ -420,10 +404,6 @@ class ExtractorTest extends TestCase
         );
     }
 
-    /**
-     * @param $testDate
-     * @return array
-     */
     protected function getExpectedOutputForRecursion(DateTimeInterface $testDate): array
     {
         return [
@@ -441,15 +421,15 @@ class ExtractorTest extends TestCase
                 0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
-                       'base'  => 'Base',
-                       'date'  => $testDate->format(DateTime::ATOM),
-                       'uid'   => 2,
-                       'pid'   => null,
-                       'child' => [
-                           'name' => 'Initial value',
-                           'uid'  => null,
-                           'pid'  => null,
-                       ],
+                    'base'  => 'Base',
+                    'date'  => $testDate->format(DateTime::ATOM),
+                    'uid'   => 2,
+                    'pid'   => null,
+                    'child' => [
+                        'name' => 'Initial value',
+                        'uid'  => null,
+                        'pid'  => null,
+                    ],
                 ],
             ],
         ];

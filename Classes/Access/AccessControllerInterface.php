@@ -11,17 +11,11 @@ interface AccessControllerInterface
 {
     /**
      * Returns if the current request's client has access to the requested resource
-     *
-     * @param RestRequestInterface $request
-     * @return Access
      */
     public function getAccess(RestRequestInterface $request): Access;
 
     /**
      * Returns if the given request needs authentication
-     *
-     * @param RestRequestInterface $request
-     * @return bool
      */
     public function requestNeedsAuthentication(RestRequestInterface $request): bool;
 }

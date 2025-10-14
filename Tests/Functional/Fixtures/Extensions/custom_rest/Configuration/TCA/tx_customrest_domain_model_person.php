@@ -3,37 +3,36 @@
 defined('TYPO3') or die();
 
 return [
-    'ctrl' =>
-        [
-            'title'         => 'LLL:EXT:custom_rest/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person',
-            'label'         => 'first_name',
-            'tstamp'        => 'tstamp',
-            'crdate'        => 'crdate',
-            'cruser_id'     => 'cruser_id',
-            'dividers2tabs' => true,
+    'ctrl' => [
+        'title'         => 'LLL:EXT:custom_rest/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person',
+        'label'         => 'first_name',
+        'tstamp'        => 'tstamp',
+        'crdate'        => 'crdate',
+        'cruser_id'     => 'cruser_id',
+        'dividers2tabs' => true,
 
-            'versioningWS' => true,
+        'versioningWS' => true,
 
-            'languageField'            => 'sys_language_uid',
-            'transOrigPointerField'    => 'l10n_parent',
-            'transOrigDiffSourceField' => 'l10n_diffsource',
-            'delete'                   => 'deleted',
-            'enablecolumns'            => [
-                'disabled'  => 'hidden',
-                'starttime' => 'starttime',
-                'endtime'   => 'endtime',
-            ],
-            'searchFields'             => 'first_name,last_name,birthday,',
-            'iconfile'                 => 'EXT:custom_rest/Resources/Public/Icons/tx_customrest_domain_model_person.gif',
+        'languageField'            => 'sys_language_uid',
+        'transOrigPointerField'    => 'l10n_parent',
+        'transOrigDiffSourceField' => 'l10n_diffsource',
+        'delete'                   => 'deleted',
+        'enablecolumns'            => [
+            'disabled'  => 'hidden',
+            'starttime' => 'starttime',
+            'endtime'   => 'endtime',
         ],
+        'searchFields' => 'first_name,last_name,birthday,',
+        'iconfile'     => 'EXT:custom_rest/Resources/Public/Icons/tx_customrest_domain_model_person.gif',
+    ],
 
     'interface' => [
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, first_name, last_name, birthday',
     ],
-    'types'     => [
+    'types' => [
         '1' => ['showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, first_name, last_name, birthday, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'],
     ],
-    'palettes'  => [
+    'palettes' => [
         '1' => ['showitem' => ''],
     ],
 
@@ -52,30 +51,30 @@ return [
                         'flags-multiple',
                     ],
                 ],
-                'default'    => 0,
+                'default' => 0,
             ],
         ],
-        'l10n_parent'      => [
+        'l10n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
             'exclude'     => true,
             'label'       => 'LLL:EXT:lang/locallang_general.xlf:LGL.l18n_parent',
             'config'      => [
-                'type'                => 'select',
-                'renderType'          => 'selectSingle',
-                'default'             => 0,
-                'items'               => [
+                'type'       => 'select',
+                'renderType' => 'selectSingle',
+                'default'    => 0,
+                'items'      => [
                     ['', 0],
                 ],
                 'foreign_table'       => 'tx_customrest_domain_model_person',
                 'foreign_table_where' => 'AND tx_customrest_domain_model_person.pid=###CURRENT_PID### AND tx_customrest_domain_model_person.sys_language_uid IN (-1,0)',
             ],
         ],
-        'l10n_diffsource'  => [
+        'l10n_diffsource' => [
             'config' => [
                 'type' => 'passthrough',
             ],
         ],
-        't3ver_label'      => [
+        't3ver_label' => [
             'label'  => 'LLL:EXT:lang/locallang_general.xlf:LGL.versionLabel',
             'config' => [
                 'type' => 'input',
@@ -83,7 +82,7 @@ return [
                 'max'  => 255,
             ],
         ],
-        'hidden'           => [
+        'hidden' => [
             'exclude' => true,
             'label'   => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
             'config'  => [
@@ -95,13 +94,13 @@ return [
                 ],
             ],
         ],
-        'starttime'        => [
+        'starttime' => [
             'exclude'   => true,
             'behaviour' => [
                 'allowLanguageSynchronization' => true,
             ],
-            'label'     => 'LLL:EXT:lang/locallang_general.xlf:LGL.starttime',
-            'config'    => [
+            'label'  => 'LLL:EXT:lang/locallang_general.xlf:LGL.starttime',
+            'config' => [
                 'type'       => 'input',
                 'renderType' => 'inputDateTime',
                 'size'       => 13,
@@ -109,13 +108,13 @@ return [
                 'default'    => 0,
             ],
         ],
-        'endtime'          => [
+        'endtime' => [
             'exclude'   => true,
             'behaviour' => [
                 'allowLanguageSynchronization' => true,
             ],
-            'label'     => 'LLL:EXT:lang/locallang_general.xlf:LGL.endtime',
-            'config'    => [
+            'label'  => 'LLL:EXT:lang/locallang_general.xlf:LGL.endtime',
+            'config' => [
                 'type'       => 'input',
                 'renderType' => 'inputDateTime',
                 'size'       => 13,
@@ -126,7 +125,7 @@ return [
                 ],
             ],
         ],
-        'first_name'       => [
+        'first_name' => [
             'exclude' => 1,
             'label'   => 'LLL:EXT:custom_rest/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.first_name',
             'config'  => [
@@ -135,7 +134,7 @@ return [
                 'eval' => 'trim',
             ],
         ],
-        'last_name'        => [
+        'last_name' => [
             'exclude' => 1,
             'label'   => 'LLL:EXT:custom_rest/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.last_name',
             'config'  => [
@@ -144,7 +143,7 @@ return [
                 'eval' => 'trim',
             ],
         ],
-        'birthday'         => [
+        'birthday' => [
             'exclude' => true,
             'label'   => 'LLL:EXT:custom_rest2/Resources/Private/Language/locallang_db.xlf:tx_customrest_domain_model_person.birthday',
             'config'  => [

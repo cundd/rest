@@ -20,8 +20,6 @@ class VirtualObject
 
     /**
      * VirtualObject constructor.
-     *
-     * @param array $data
      */
     public function __construct(array $data = [])
     {
@@ -31,7 +29,6 @@ class VirtualObject
     /**
      * Sets the data
      *
-     * @param array $data
      * @return $this
      */
     public function setData(array $data): self
@@ -43,8 +40,6 @@ class VirtualObject
 
     /**
      * Returns the data
-     *
-     * @return array
      */
     public function getData(): array
     {
@@ -53,9 +48,6 @@ class VirtualObject
 
     /**
      * Returns the value for the given key
-     *
-     * @param string $key
-     * @return mixed
      */
     public function valueForKey(string $key)
     {
@@ -65,8 +57,6 @@ class VirtualObject
     /**
      * Sets the value for the given key
      *
-     * @param string $key
-     * @param mixed  $value
      * @return $this
      */
     public function setValueForKey(string $key, $value): self
@@ -78,8 +68,6 @@ class VirtualObject
 
     /**
      * Return the data if transformed to JSON
-     *
-     * @return array
      */
     public function jsonSerialize(): array
     {

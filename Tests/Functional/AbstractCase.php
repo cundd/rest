@@ -74,16 +74,11 @@ class AbstractCase extends FunctionalTestCase
 
     /**
      * Build a new request with the given URI
-     *
-     * @param string      $uri
-     * @param string|null $format
-     * @param string|null $method
-     * @return RestRequestInterface
      */
     public function buildRequestWithUri(
         string $uri,
         ?string $format = null,
-        ?string $method = null
+        ?string $method = null,
     ): RestRequestInterface {
         return $this->buildTestRequest(
             $uri,

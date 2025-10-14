@@ -16,7 +16,7 @@ abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
 {
     public function prepareRequest(
         TypoScriptFrontendController $frontendController,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ServerRequestInterface {
         $requestedLanguage = $request->getAttribute('language');
         if ($requestedLanguage) {

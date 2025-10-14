@@ -48,7 +48,7 @@ class AbstractIntegrationCase extends AbstractCase
     protected function configurePath(
         ContainerInterface $objectManager,
         string $path,
-        array $pathConfiguration
+        array $pathConfiguration,
     ): void {
         /** @var TypoScriptConfigurationProvider $configurationProvider */
         $configurationProvider = $objectManager->get(ConfigurationProviderInterface::class);
@@ -64,14 +64,10 @@ class AbstractIntegrationCase extends AbstractCase
      *
      * Limitations:
      *  - This will bypass TYPO3's routing
-     *
-     * @param ContainerInterface   $container
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     public function dispatch(
         ContainerInterface $container,
-        RestRequestInterface $request
+        RestRequestInterface $request,
     ): ResponseInterface {
         $dispatcher = new Dispatcher(
             $container->get(ObjectManager::class),
@@ -88,13 +84,8 @@ class AbstractIntegrationCase extends AbstractCase
     /**
      * Build a request and dispatch it using the REST Dispatcher
      *
-     * @param ContainerInterface $objectManager
-     * @param string             $path
-     * @param string             $method
-     * @param array|string|null  $body
-     * @param array              $headers
-     * @param null               $basicAuth Ignored
-     * @return ResponseInterface
+     * @param null $basicAuth Ignored
+     *
      * @see dispatch()
      */
     public function buildRequestAndDispatch(
@@ -104,7 +95,7 @@ class AbstractIntegrationCase extends AbstractCase
         array|string|null $body = null,
         array $headers = [],
         /** @noinspection PhpUnusedParameterInspection */
-        $basicAuth = null
+        $basicAuth = null,
     ): ResponseInterface {
         $uri = 'http://localhost:8888/' . ltrim($path, '/');
         $request = $this->buildTestRequest(
@@ -121,9 +112,9 @@ class AbstractIntegrationCase extends AbstractCase
 
     protected function getErrorDescription(ResponseInterface $response): string
     {
-        $body = (string)(clone $response->getBody());
+        $body = (string) (clone $response->getBody());
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr($body, 0, (int)getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+            . substr($body, 0, (int) getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
             . '------------------------------------';
 
         return sprintf(
@@ -135,7 +126,7 @@ class AbstractIntegrationCase extends AbstractCase
     protected function getParsedBody(ResponseInterface|string $response): mixed
     {
         if ($response instanceof ResponseInterface) {
-            return $this->getParsedBody((string)$response->getBody());
+            return $this->getParsedBody((string) $response->getBody());
         } else {
             return json_decode($response, true);
         }

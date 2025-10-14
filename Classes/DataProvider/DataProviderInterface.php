@@ -14,6 +14,7 @@ interface DataProviderInterface
      * Return all Domain Models for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
+     *
      * @return object[]|DomainObjectInterface[]|QueryResultInterface
      */
     public function fetchAllModels(ResourceType $resourceType): iterable;
@@ -22,7 +23,6 @@ interface DataProviderInterface
      * Return the number of all Domain Models for the given API resource type
      *
      * @param ResourceType $resourceType API resource type to get the repository for
-     * @return int
      */
     public function countAllModels(ResourceType $resourceType): int;
 
@@ -33,6 +33,7 @@ interface DataProviderInterface
      *
      * @param int|array|string $identifier   Data of the new model or it's UID
      * @param ResourceType     $resourceType API resource type to get the repository for
+     *
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
     public function fetchModel(int|array|string $identifier, ResourceType $resourceType): ?object;
@@ -46,6 +47,7 @@ interface DataProviderInterface
      *
      * @param array        $data         Data of the new model
      * @param ResourceType $resourceType API resource type to get the repository for
+     *
      * @return object|null Return the created Model on success otherwise an Exception
      */
     public function createModel(array $data, ResourceType $resourceType): ?object;
@@ -53,8 +55,6 @@ interface DataProviderInterface
     /**
      * Converts the data into an instance of the Domain Model for the Resource Type
      *
-     * @param array        $data
-     * @param ResourceType $resourceType
      * @return object|DomainObjectInterface|null
      */
     public function convertIntoModel(array $data, ResourceType $resourceType): ?object;
@@ -62,8 +62,7 @@ interface DataProviderInterface
     /**
      * Extract the data from the given Model or one of it's properties
      *
-     * @param mixed $model
-     * @return array|null|int|bool|string|float
+     * @return array|int|bool|string|float|null
      */
     public function getModelData(mixed $model): mixed;
 
@@ -71,8 +70,6 @@ interface DataProviderInterface
      * Return the property data from the given Model
      *
      * @param object|DomainObjectInterface $model
-     * @param string                       $propertyParameter
-     * @return mixed
      */
     public function getModelProperty(object $model, string $propertyParameter): mixed;
 
@@ -81,7 +78,6 @@ interface DataProviderInterface
      *
      * @param object|DomainObjectInterface $model
      * @param ResourceType                 $resourceType The API resource type
-     * @return void
      */
     public function saveModel(object $model, ResourceType $resourceType): void;
 
@@ -90,7 +86,6 @@ interface DataProviderInterface
      *
      * @param object|DomainObjectInterface $model
      * @param ResourceType                 $resourceType The API resource type
-     * @return void
      */
     public function removeModel(object $model, ResourceType $resourceType): void;
 }

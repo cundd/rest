@@ -20,12 +20,10 @@ class TypoScriptConfigurationProvider extends AbstractConfigurationProvider
 
     /**
      * Returns the settings read from the TypoScript
-     *
-     * @return array
      */
     public function getSettings(): array
     {
-        if ($this->settings === null) {
+        if (null === $this->settings) {
             $this->settings = [];
 
             $typoScript = $this->configurationManager->getConfiguration(

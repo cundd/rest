@@ -31,9 +31,9 @@ trait FeUserCaseTrait
                 return;
             }
             $containsDuplicateColumnErrorMessage = false !== strpos(
-                    $exception->getMessage(),
-                    'SQLSTATE[HY000]: General error: 1 duplicate column name: tx_rest_apikey'
-                );
+                $exception->getMessage(),
+                'SQLSTATE[HY000]: General error: 1 duplicate column name: tx_rest_apikey'
+            );
             if ($containsDuplicateColumnErrorMessage) {
                 return;
             }

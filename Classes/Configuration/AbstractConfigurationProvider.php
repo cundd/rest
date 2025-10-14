@@ -35,10 +35,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
     /**
      * Return the setting with the given key
-     *
-     * @param string $keyPath
-     * @param mixed  $defaultValue
-     * @return mixed
      */
     public function getSetting(string $keyPath, $defaultValue = null)
     {
@@ -72,7 +68,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      */
     public function getSettings(): array
     {
-        if ($this->settings === null) {
+        if (null === $this->settings) {
             throw new InvalidConfigurationException('No settings provided');
         }
 
@@ -83,6 +79,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * Overwrite the settings
      *
      * @param Settings $settings
+     *
      * @internal
      */
     public function setSettings(array $settings): void
@@ -93,9 +90,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
     /**
      * Return the configuration matching the given resource type
-     *
-     * @param ResourceType $resourceType
-     * @return ResourceConfiguration|null
      */
     public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration
     {
@@ -113,7 +107,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         }
 
         foreach ($configuredPaths as $configuration) {
-            $currentResourceTypeString = (string)$configuration->getResourceType();
+            $currentResourceTypeString = (string) $configuration->getResourceType();
             if ('all' === $currentResourceTypeString && !$matchingConfiguration) {
                 $matchingConfiguration = $configuration;
             } elseif ($this->checkIfPatternMatchesResourceType($currentResourceTypeString, $resourceTypeString)) {
@@ -137,7 +131,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      */
     public function getConfiguredResources(): array
     {
-        if(empty($this->configurationCollection)) {
+        if (empty($this->configurationCollection)) {
             $configurationCollection = [];
             foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
                 [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
@@ -177,10 +171,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
 
     /**
      * Check if the given pattern matches the resource type
-     *
-     * @param string $pattern
-     * @param string $resourceTypeString
-     * @return bool
      */
     private function checkIfPatternMatchesResourceType(string $pattern, string $resourceTypeString): bool
     {
@@ -196,12 +186,11 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Fetch aliases for the given Resource Type
      *
-     * @param ResourceType $resourceType
      * @return string[]
      */
     private function getAliasesForResourceType(ResourceType $resourceType): array
     {
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
 
         return array_keys(
             array_filter(
@@ -231,7 +220,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
      * If no explicit path is configured use the current key
      *
      * @param RawConfiguration $configuration
-     * @param string $path
+     *
      * @return array{0:RawConfiguration,1:string}
      */
     private function preparePath(array $configuration, string $path): array
@@ -249,23 +238,23 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     private function detectCacheLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['cacheLifetime']) && is_numeric($configuration['cacheLifetime'])) {
-            return (int)$configuration['cacheLifetime'];
+            return (int) $configuration['cacheLifetime'];
         }
 
         if (isset($configuration['cacheLifeTime']) && is_numeric($configuration['cacheLifeTime'])) {
-            return (int)$configuration['cacheLifeTime'];
+            return (int) $configuration['cacheLifeTime'];
         }
 
         return -1;
     }
 
     /**
-       * @param RawConfiguration $configuration
-       */
+     * @param RawConfiguration $configuration
+     */
     private function detectExpiresHeaderLifetimeConfiguration(array $configuration): int
     {
         if (isset($configuration['expiresHeaderLifetime']) && is_numeric($configuration['expiresHeaderLifetime'])) {
-            return (int)$configuration['expiresHeaderLifetime'];
+            return (int) $configuration['expiresHeaderLifetime'];
         }
 
         return -1;

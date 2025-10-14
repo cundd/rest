@@ -48,7 +48,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         ObjectManagerInterface $objectManager,
         ExtractorInterface $extractor,
         IdentityProviderInterface $identityProvider,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
     ) {
         $this->objectManager = $objectManager;
         $this->extractor = $extractor;
@@ -73,7 +73,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         $repository = null;
         $exception = null;
-        /** @var RepositoryInterface|null $repository */
+        /* @var RepositoryInterface|null $repository */
         try {
             $repository = $this->objectManager->get($repositoryClass);
         } catch (Exception $exception) {
@@ -189,13 +189,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    /**
-     * @param object       $updatedModel
-     * @param ResourceType $resourceType
-     */
     public function updateModel(
         object $updatedModel,
-        ResourceType $resourceType
+        ResourceType $resourceType,
     ): void {
         $repository = $this->getRepositoryForResourceType($resourceType);
         $repository->update($updatedModel);
@@ -250,6 +246,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * @param mixed        $identifier   The identifier
      * @param ResourceType $resourceType The resource type
+     *
      * @return int|string|null Returns the UID or NULL if the object couldn't be found
      */
     protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
@@ -264,9 +261,6 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * Example:
      *  'dog-name' => 'dogName'
-     *
-     * @param string $propertyParameter
-     * @return string
      */
     protected function convertPropertyParameterToKey(string $propertyParameter): string
     {
@@ -276,22 +270,17 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     /**
      * Return the configuration for property mapping
      *
-     * @param ResourceType $resourceType
      * @return PropertyMappingConfiguration
      */
     protected function getPropertyMappingConfigurationForResourceType(
-        /** @noinspection PhpUnusedParameterInspection */
-        ResourceType $resourceType
+        /* @noinspection PhpUnusedParameterInspection */
+        ResourceType $resourceType,
     ): object {
         return $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
     }
 
     /**
      * Load the model with the given identifier
-     *
-     * @param mixed        $identifier
-     * @param ResourceType $resourceType
-     * @return null|object
      */
     protected function getModelWithIdentityForResourceType(mixed $identifier, ResourceType $resourceType): ?object
     {
@@ -308,11 +297,11 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         );
 
         $typeMatching = match ($type) {
-            'string' => is_string($identifier),
+            'string'  => is_string($identifier),
             'boolean' => is_bool($identifier),
             'integer' => is_int($identifier),
-            'float' => is_float($identifier),
-            default => false,
+            'float'   => is_float($identifier),
+            default   => false,
         };
 
         if ($typeMatching) {
@@ -326,9 +315,6 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     /**
      * Prepares the given data before transforming it to a model
-     *
-     * @param array $data
-     * @return array
      */
     protected function prepareModelData(array $data): array
     {
@@ -337,8 +323,6 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     /**
      * Return the logger
-     *
-     * @return LoggerInterface
      */
     protected function getLogger(): LoggerInterface
     {
@@ -359,7 +343,6 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * Return if the given instance is not yet stored in the database
      *
      * @param object|DomainObjectInterface $model
-     * @return bool
      */
     protected function isModelNew(object $model): bool
     {
@@ -367,7 +350,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             return $model->_isNew();
         }
         if (is_callable([$model, 'getUid'])) {
-            return $model->getUid() === null;
+            return null === $model->getUid();
         }
 
         return true;

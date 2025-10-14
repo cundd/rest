@@ -39,19 +39,17 @@ class PersonController extends ActionController
 
     /**
      * Person Controller constructor
-     *
-     * @param PersonRepository $personRepository
      */
     public function __construct(PersonRepository $personRepository)
     {
         if (method_exists(get_parent_class($this), '__construct')) {
-            /** @noinspection PhpUndefinedMethodInspection */
+            /* @noinspection PhpUndefinedMethodInspection */
             parent::__construct();
         }
         $this->personRepository = $personRepository;
     }
 
-    /* ----------------- GET -------------*/
+    /* ----------------- GET ------------- */
 
     /**
      * action list
@@ -66,7 +64,8 @@ class PersonController extends ActionController
     /**
      * action show
      *
-     * @param integer $uid
+     * @param int $uid
+     *
      * @return void
      */
     public function showAction($uid)
@@ -78,6 +77,7 @@ class PersonController extends ActionController
      * action firstName
      *
      * @param string $firstName
+     *
      * @return void
      */
     public function firstNameAction($firstName)
@@ -89,6 +89,7 @@ class PersonController extends ActionController
      * action lastName
      *
      * @param string $lastName
+     *
      * @return void
      */
     public function lastNameAction($lastName)
@@ -100,6 +101,7 @@ class PersonController extends ActionController
      * action birthday
      *
      * @param string $date
+     *
      * @return void
      */
     public function birthdayAction($date)
@@ -107,8 +109,7 @@ class PersonController extends ActionController
         $this->view->assign('value', $this->personRepository->findByBirthday($date));
     }
 
-
-    /* ----------------- POST -------------*/
+    /* ----------------- POST ------------- */
 
     /**
      * initialize action create
@@ -123,8 +124,6 @@ class PersonController extends ActionController
 
     /**
      * action create
-     *
-     * @param Person $person
      */
     public function createAction(Person $person)
     {
@@ -133,7 +132,7 @@ class PersonController extends ActionController
         $this->view->assign('value', ['success' => 1]);
     }
 
-    /* ----------------- PATCH -------------*/
+    /* ----------------- PATCH ------------- */
 
     /**
      * initialize action update
@@ -148,8 +147,6 @@ class PersonController extends ActionController
 
     /**
      * action update
-     *
-     * @param Person $person
      */
     public function updateAction(Person $person)
     {
@@ -158,7 +155,7 @@ class PersonController extends ActionController
         $this->view->assign('value', ['success' => 1]);
     }
 
-    /*-----------------------------------------------------------------*/
+    /* ----------------------------------------------------------------- */
 
     /**
      * error action
@@ -191,12 +188,12 @@ class PersonController extends ActionController
                 true
             );
 
-            /** @noinspection PhpUnhandledExceptionInspection */
-            foreach ((array)$this->request->getArgument('person') as $propertyName => $value) {
+            /* @noinspection PhpUnhandledExceptionInspection */
+            foreach ((array) $this->request->getArgument('person') as $propertyName => $value) {
                 $propertyMappingConfiguration->allowProperties($propertyName);
             }
 
-            /** @noinspection PhpUnhandledExceptionInspection */
+            /* @noinspection PhpUnhandledExceptionInspection */
             $this->arguments->getArgument('person')->injectPropertyMappingConfiguration($propertyMappingConfiguration);
         }
     }

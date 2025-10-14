@@ -6,7 +6,6 @@ namespace Cundd\Rest\Handler;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\SessionManager;
@@ -35,14 +34,12 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Provider that will check the user credentials
-     *
-     * @var UserProviderInterface
      */
     protected UserProviderInterface $userProvider;
 
     public function __construct(
         SessionManager $sessionManager,
-        UserProviderInterface $userProvider
+        UserProviderInterface $userProvider,
     ) {
         $this->sessionManager = $sessionManager;
         $this->userProvider = $userProvider;
@@ -50,8 +47,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Return the description of the handler
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -60,13 +55,11 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Return the current status
-     *
-     * @return array
      */
     public function getStatus(): array
     {
         $loginStatus = $this->sessionManager->valueForKey('loginStatus');
-        if ($loginStatus === null) {
+        if (null === $loginStatus) {
             $loginStatus = self::STATUS_LOGGED_OUT;
         }
 
@@ -78,8 +71,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
     /**
      * Check the given login data
      *
-     * @param RestRequestInterface $request
-     * @return array
      * @internal param array $sentData
      */
     public function checkLogin(RestRequestInterface $request): array
@@ -105,8 +96,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Log out
-     *
-     * @return array
      */
     public function logout(): array
     {
@@ -117,9 +106,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
         ];
     }
 
-    /**
-     * @return bool
-     */
     public function options(): bool
     {
         // TODO: Respond with the correct preflight headers
@@ -128,9 +114,6 @@ class AuthHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Let the handler configure the routes
-     *
-     * @param RouterInterface      $router
-     * @param RestRequestInterface $request
      */
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {

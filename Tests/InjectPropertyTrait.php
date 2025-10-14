@@ -9,9 +9,9 @@ use ReflectionProperty;
 trait InjectPropertyTrait
 {
     /**
-     * @param mixed  $propertyValue
      * @param string $propertyKey
      * @param object $object
+     *
      * @return object
      */
     public static function injectPropertyIntoObject($propertyValue, $propertyKey, $object)

@@ -22,8 +22,6 @@ class ConfigurationFactory implements SingletonInterface
 
     /**
      * Configuration Factory constructor
-     *
-     * @param ConfigurationProviderInterface $configurationProvider
      */
     public function __construct(ConfigurationProviderInterface $configurationProvider)
     {
@@ -32,8 +30,6 @@ class ConfigurationFactory implements SingletonInterface
 
     /**
      * Returns a new "empty" Configuration instance
-     *
-     * @return ConfigurationInterface
      */
     public function create(): ConfigurationInterface
     {
@@ -43,13 +39,11 @@ class ConfigurationFactory implements SingletonInterface
     /**
      * Tries to read the configuration from the given array
      *
-     * @param array        $configurationArray
-     * @param ResourceType $resourceType
      * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createFromArrayForResourceType(
         array $configurationArray,
-        ResourceType $resourceType
+        ResourceType $resourceType,
     ): ?ConfigurationInterface {
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
         if (
@@ -67,8 +61,8 @@ class ConfigurationFactory implements SingletonInterface
     /**
      * Tries to read the configuration from TypoScript
      *
-     * @param ResourceType $resourceType
      * @return ConfigurationInterface Returns the Configuration object
+     *
      * @throws MissingConfigurationException
      */
     public function createFromTypoScriptForResourceType(ResourceType $resourceType): ConfigurationInterface
@@ -81,21 +75,21 @@ class ConfigurationFactory implements SingletonInterface
 
         if (!isset($normalizedConfiguration[$normalizeResourceType])) {
             throw new MissingConfigurationException(
-                sprintf('Could not find configuration for Resource Type "%s"', (string)$resourceType)
+                sprintf('Could not find configuration for Resource Type "%s"', (string) $resourceType)
             );
         }
         $configurationData = $normalizedConfiguration[$normalizeResourceType];
 
         if (!isset($configurationData['mapping.'])) {
             throw new MissingConfigurationException(
-                sprintf('Key "mapping." not found in configuration for Resource Type "%s"', (string)$resourceType)
+                sprintf('Key "mapping." not found in configuration for Resource Type "%s"', (string) $resourceType)
             );
         }
         $mapping = $configurationData['mapping.'];
 
         if (!isset($mapping['properties.'])) {
             throw new MissingConfigurationException(
-                sprintf('Key "properties." not found in the mapping for Resource Type "%s"', (string)$resourceType)
+                sprintf('Key "properties." not found in the mapping for Resource Type "%s"', (string) $resourceType)
             );
         }
 
@@ -115,13 +109,11 @@ class ConfigurationFactory implements SingletonInterface
     /**
      * Tries to read the configuration from the given JSON string
      *
-     * @param string $jsonString
-     * @param        $resourceType
      * @return ConfigurationInterface|null Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createFromJsonForResourceType(
         string $jsonString,
-        ResourceType $resourceType
+        ResourceType $resourceType,
     ): ?ConfigurationInterface {
         $configurationData = json_decode($jsonString, true);
         if ($configurationData) {
@@ -137,7 +129,6 @@ class ConfigurationFactory implements SingletonInterface
     /**
      * Returns a new Configuration instance with the given data
      *
-     * @param array $configurationData
      * @return ConfigurationInterface Returns the Configuration object or NULL if no matching configuration was found
      */
     public function createWithConfigurationData(array $configurationData): ConfigurationInterface
@@ -145,7 +136,7 @@ class ConfigurationFactory implements SingletonInterface
         $configurationObject = new Configuration(self::preparePropertyMapping($configurationData));
 
         if (isset($configurationData['skipUnknownProperties'])) {
-            $configurationObject->setSkipUnknownProperties((bool)$configurationData['skipUnknownProperties']);
+            $configurationObject->setSkipUnknownProperties((bool) $configurationData['skipUnknownProperties']);
         }
 
         return $configurationObject;
@@ -153,9 +144,6 @@ class ConfigurationFactory implements SingletonInterface
 
     /**
      * Normalizes the Resource-Type-keys in the given configuration
-     *
-     * @param array $rawConfiguration
-     * @return array
      */
     private function normalizedVirtualObjectConfigurations(array $rawConfiguration): array
     {
@@ -169,16 +157,13 @@ class ConfigurationFactory implements SingletonInterface
 
     /**
      * Prepares the given property mapping
-     *
-     * @param array $mapping
-     * @return array
      */
     public static function preparePropertyMapping(array $mapping): array
     {
         /**
          * Remove the last character form the property key (used when imported from TypoScript)
          *
-         * @var boolean $removeLastCharacter
+         * @var bool $removeLastCharacter
          */
         $removeLastCharacter = -1;
 
@@ -193,8 +178,8 @@ class ConfigurationFactory implements SingletonInterface
             $propertyMappingPrepared = [];
             foreach ($propertyMapping as $propertyKey => $propertyConfiguration) {
                 // If the last character is a dot (".") remove the last character of all property keys
-                if ($removeLastCharacter === -1) {
-                    $removeLastCharacter = substr($propertyKey, -1) === '.';
+                if (-1 === $removeLastCharacter) {
+                    $removeLastCharacter = '.' === substr($propertyKey, -1);
                 }
 
                 if ($removeLastCharacter) {

@@ -14,15 +14,9 @@ trait ServerRequestProxyTrait
 {
     /**
      * Returns the original request
-     *
-     * @return ServerRequestInterface
      */
     abstract public function getOriginalRequest(): ServerRequestInterface;
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return Request
-     */
     abstract protected function setOriginalRequest(ServerRequestInterface $request): Request;
 
     protected function copy(): self
@@ -35,7 +29,7 @@ trait ServerRequestProxyTrait
      *
      * The string MUST contain only the HTTP version number (e.g., "1.1", "1.0").
      *
-     * @return string HTTP protocol version.
+     * @return string HTTP protocol version
      */
     public function getProtocolVersion(): string
     {
@@ -64,8 +58,8 @@ trait ServerRequestProxyTrait
      * exact case in which headers were originally specified.
      *
      * @return string[][] Returns an associative array of the message's headers. Each
-     *     key MUST be a header name, and each value MUST be an array of strings
-     *     for that header.
+     *                    key MUST be a header name, and each value MUST be an array of strings
+     *                    for that header.
      */
     public function getHeaders(): array
     {
@@ -75,10 +69,11 @@ trait ServerRequestProxyTrait
     /**
      * Checks if a header exists by the given case-insensitive name.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
+     *
      * @return bool Returns true if any header names match the given header
-     *                     name using a case-insensitive string comparison. Returns false if
-     *                     no matching header name is found in the message.
+     *              name using a case-insensitive string comparison. Returns false if
+     *              no matching header name is found in the message.
      */
     public function hasHeader(string $name): bool
     {
@@ -94,10 +89,11 @@ trait ServerRequestProxyTrait
      * If the header does not appear in the message, this method MUST return an
      * empty array.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
+     *
      * @return string[] An array of string values as provided for the given
-     *                     header. If the header does not appear in the message, this method MUST
-     *                     return an empty array.
+     *                  header. If the header does not appear in the message, this method MUST
+     *                  return an empty array.
      */
     public function getHeader(string $name): array
     {
@@ -118,10 +114,11 @@ trait ServerRequestProxyTrait
      * If the header does not appear in the message, this method MUST return
      * an empty string.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $name case-insensitive header field name
+     *
      * @return string A string of values as provided for the given header
-     *                     concatenated together using a comma. If the header does not appear in
-     *                     the message, this method MUST return an empty string.
+     *                concatenated together using a comma. If the header does not appear in
+     *                the message, this method MUST return an empty string.
      */
     public function getHeaderLine(string $name): string
     {
@@ -131,7 +128,7 @@ trait ServerRequestProxyTrait
     /**
      * Gets the body of the message.
      *
-     * @return StreamInterface Returns the body as a stream.
+     * @return StreamInterface returns the body as a stream
      */
     public function getBody(): StreamInterface
     {
@@ -151,8 +148,6 @@ trait ServerRequestProxyTrait
      *
      * If no URI is available, and no request-target has been specifically
      * provided, this method MUST return the string "/".
-     *
-     * @return string
      */
     public function getRequestTarget(): string
     {
@@ -162,7 +157,7 @@ trait ServerRequestProxyTrait
     /**
      * Retrieves the HTTP method of the request.
      *
-     * @return string Returns the request method.
+     * @return string returns the request method
      */
     public function getMethod(): string
     {
@@ -174,9 +169,10 @@ trait ServerRequestProxyTrait
      *
      * This method MUST return a UriInterface instance.
      *
-     * @link http://tools.ietf.org/html/rfc3986#section-4.3
-     * @return UriInterface Returns a UriInterface instance
-     *     representing the URI of the request.
+     * @see http://tools.ietf.org/html/rfc3986#section-4.3
+     *
+     * @return UriInterface returns a UriInterface instance
+     *                      representing the URI of the request
      */
     public function getUri(): UriInterface
     {
@@ -189,8 +185,6 @@ trait ServerRequestProxyTrait
      * Retrieves data related to the incoming request environment,
      * typically derived from PHP's $_SERVER superglobal. The data IS NOT
      * REQUIRED to originate from $_SERVER.
-     *
-     * @return array
      */
     public function getServerParams(): array
     {
@@ -204,8 +198,6 @@ trait ServerRequestProxyTrait
      *
      * The data MUST be compatible with the structure of the $_COOKIE
      * superglobal.
-     *
-     * @return array
      */
     public function getCookieParams(): array
     {
@@ -221,8 +213,6 @@ trait ServerRequestProxyTrait
      * params. If you need to ensure you are only getting the original
      * values, you may need to parse the query string from `getUri()->getQuery()`
      * or from the `QUERY_STRING` server param.
-     *
-     * @return array
      */
     public function getQueryParams(): array
     {
@@ -238,8 +228,8 @@ trait ServerRequestProxyTrait
      * These values MAY be prepared from $_FILES or the message body during
      * instantiation, or MAY be injected via withUploadedFiles().
      *
-     * @return array An array tree of UploadedFileInterface instances; an empty
-     *     array MUST be returned if no data is present.
+     * @return array an array tree of UploadedFileInterface instances; an empty
+     *               array MUST be returned if no data is present
      */
     public function getUploadedFiles(): array
     {
@@ -258,8 +248,8 @@ trait ServerRequestProxyTrait
      * potential types MUST be arrays or objects only. A null value indicates
      * the absence of body content.
      *
-     * @return null|array|object The deserialized body parameters, if any.
-     *     These will typically be an array or object.
+     * @return array|object|null The deserialized body parameters, if any.
+     *                           These will typically be an array or object.
      */
     public function getParsedBody()
     {
@@ -275,7 +265,7 @@ trait ServerRequestProxyTrait
      * deserializing non-form-encoded message bodies; etc. Attributes
      * will be application and request specific, and CAN be mutable.
      *
-     * @return array Attributes derived from the request.
+     * @return array attributes derived from the request
      */
     public function getAttributes(): array
     {
@@ -292,9 +282,9 @@ trait ServerRequestProxyTrait
      * This method obviates the need for a hasAttribute() method, as it allows
      * specifying a default value to return if the attribute is not found.
      *
-     * @param string $name    The attribute name.
-     * @param mixed  $default Default value to return if the attribute does not exist.
-     * @return mixed
+     * @param string $name    the attribute name
+     * @param mixed  $default default value to return if the attribute does not exist
+     *
      * @see getAttributes()
      */
     public function getAttribute(string $name, $default = null): mixed
@@ -313,7 +303,6 @@ trait ServerRequestProxyTrait
      * new protocol version.
      *
      * @param string $version HTTP protocol version
-     * @return ServerRequestInterface
      */
     public function withProtocolVersion(string $version): ServerRequestInterface
     {
@@ -330,10 +319,10 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * new and/or updated header and value.
      *
-     * @param string          $name  Case-insensitive header field name.
-     * @param string|string[] $value Header value(s).
-     * @return ServerRequestInterface
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @param string          $name  case-insensitive header field name
+     * @param string|string[] $value header value(s)
+     *
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withHeader(string $name, $value): ServerRequestInterface
     {
@@ -351,10 +340,10 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * new header and/or value.
      *
-     * @param string          $name  Case-insensitive header field name to add.
-     * @param string|string[] $value Header value(s).
-     * @return ServerRequestInterface
-     * @throws InvalidArgumentException for invalid header names or values.
+     * @param string          $name  case-insensitive header field name to add
+     * @param string|string[] $value header value(s)
+     *
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader(string $name, $value): ServerRequestInterface
     {
@@ -370,8 +359,7 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that removes
      * the named header.
      *
-     * @param string $name Case-insensitive header field name to remove.
-     * @return ServerRequestInterface
+     * @param string $name case-insensitive header field name to remove
      */
     public function withoutHeader(string $name): ServerRequestInterface
     {
@@ -387,9 +375,9 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return a new instance that has the
      * new body stream.
      *
-     * @param StreamInterface $body Body.
-     * @return ServerRequestInterface
-     * @throws InvalidArgumentException When the body is not valid.
+     * @param StreamInterface $body body
+     *
+     * @throws InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body): ServerRequestInterface
     {
@@ -408,10 +396,8 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * changed request target.
      *
-     * @link http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
+     * @see http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
      *     request-target forms allowed in request messages)
-     * @param mixed $requestTarget
-     * @return ServerRequestInterface
      */
     public function withRequestTarget($requestTarget): ServerRequestInterface
     {
@@ -429,9 +415,9 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * changed request method.
      *
-     * @param string $method Case-sensitive method.
-     * @return ServerRequestInterface
-     * @throws InvalidArgumentException for invalid HTTP methods.
+     * @param string $method case-sensitive method
+     *
+     * @throws InvalidArgumentException for invalid HTTP methods
      */
     public function withMethod(string $method): ServerRequestInterface
     {
@@ -463,10 +449,10 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * new UriInterface instance.
      *
-     * @link http://tools.ietf.org/html/rfc3986#section-4.3
-     * @param UriInterface $uri          New request URI to use.
-     * @param bool         $preserveHost Preserve the original state of the Host header.
-     * @return ServerRequestInterface
+     * @see http://tools.ietf.org/html/rfc3986#section-4.3
+     *
+     * @param UriInterface $uri          new request URI to use
+     * @param bool         $preserveHost preserve the original state of the Host header
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface
     {
@@ -487,8 +473,7 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated cookie values.
      *
-     * @param array $cookies Array of key/value pairs representing cookies.
-     * @return ServerRequestInterface
+     * @param array $cookies array of key/value pairs representing cookies
      */
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
@@ -513,9 +498,8 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated query string arguments.
      *
-     * @param array $query Array of query string arguments, typically from
-     *                     $_GET.
-     * @return ServerRequestInterface
+     * @param array $query array of query string arguments, typically from
+     *                     $_GET
      */
     public function withQueryParams(array $query): ServerRequestInterface
     {
@@ -529,9 +513,9 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated body parameters.
      *
-     * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
-     * @return ServerRequestInterface
-     * @throws InvalidArgumentException if an invalid structure is provided.
+     * @param array $uploadedFiles an array tree of UploadedFileInterface instances
+     *
+     * @throws InvalidArgumentException if an invalid structure is provided
      */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
@@ -560,11 +544,11 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated body parameters.
      *
-     * @param null|array|object $data The deserialized body data. This will
+     * @param array|object|null $data The deserialized body data. This will
      *                                typically be in an array or object.
-     * @return ServerRequestInterface
+     *
      * @throws InvalidArgumentException if an unsupported argument type is
-     *                                provided.
+     *                                  provided
      */
     public function withParsedBody($data): ServerRequestInterface
     {
@@ -581,9 +565,9 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that has the
      * updated attribute.
      *
-     * @param string $name  The attribute name.
-     * @param mixed  $value The value of the attribute.
-     * @return ServerRequestInterface
+     * @param string $name  the attribute name
+     * @param mixed  $value the value of the attribute
+     *
      * @see getAttributes()
      */
     public function withAttribute(string $name, $value): ServerRequestInterface
@@ -601,8 +585,8 @@ trait ServerRequestProxyTrait
      * immutability of the message, and MUST return an instance that removes
      * the attribute.
      *
-     * @param string $name The attribute name.
-     * @return ServerRequestInterface
+     * @param string $name the attribute name
+     *
      * @see getAttributes()
      */
     public function withoutAttribute(string $name): ServerRequestInterface

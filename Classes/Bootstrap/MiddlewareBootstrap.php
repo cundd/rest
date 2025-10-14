@@ -26,9 +26,6 @@ class MiddlewareBootstrap
 
     /**
      * Bootstrap the TYPO3 environment
-     *
-     * @param ServerRequestInterface $request
-     * @return ServerRequestInterface
      */
     public function bootstrapCore(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -46,14 +43,10 @@ class MiddlewareBootstrap
 
     /**
      * Initialize the system language
-     *
-     * @param TypoScriptFrontendController $frontendController
-     * @param ServerRequestInterface       $request
-     * @return ServerRequestInterface
      */
     public function bootstrapLanguage(
         TypoScriptFrontendController $frontendController,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ServerRequestInterface {
         $languageBootstrapFactory = new LanguageBootstrapFactory();
         $languageEnhancedRequest = $languageBootstrapFactory->build()->prepareRequest($frontendController, $request);
@@ -74,8 +67,6 @@ class MiddlewareBootstrap
 
     /**
      * Initialize the Configuration Manager instance
-     *
-     * @param array $configuration
      */
     private function initializeConfiguration(array $configuration): void
     {
@@ -87,8 +78,6 @@ class MiddlewareBootstrap
      * Register singulars to the plural
      *
      * TODO: Move this to a better place
-     *
-     * @param ObjectManagerInterface $objectManager
      */
     private function registerSingularToPlural(ObjectManagerInterface $objectManager): void
     {

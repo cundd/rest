@@ -12,16 +12,10 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 trait DomainModelProphetTrait
 {
     /**
-     * @param string|null $classOrInterface
-     * @return ObjectProphecy
      * @throws LogicException
      */
     abstract protected function prophesize(?string $classOrInterface = null): ObjectProphecy;
 
-    /**
-     * @param array $properties
-     * @return DomainObjectInterface
-     */
     protected function createDomainModelFixture(array $properties = []): DomainObjectInterface
     {
         /** @var DomainObjectInterface|ObjectProphecy $domainModelProphecy */

@@ -8,7 +8,7 @@ use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 
 class TypoScriptConfigurationProviderTest extends AbstractConfigurationProviderCase
 {
-    function getConfigurationProviderToTest()
+    public function getConfigurationProviderToTest()
     {
         return new TypoScriptConfigurationProvider();
     }

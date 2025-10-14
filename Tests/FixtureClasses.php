@@ -55,6 +55,7 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
          *
          * @param string $propertyName
          * @param mixed  $propertyValue
+         *
          * @return bool
          */
         $_setProperty = function ($propertyName, $propertyValue) {
@@ -75,7 +76,7 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
         $_getProperties = function () {
             $properties = get_object_vars($this);
             foreach ($properties as $propertyName => $propertyValue) {
-                if ($propertyName[0] === '_') {
+                if ('_' === $propertyName[0]) {
                     unset($properties[$propertyName]);
                 }
             }
@@ -83,13 +84,13 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
             return $properties;
         };
 
-        if ($name === 'getUid') {
+        if ('getUid' === $name) {
             return $getUid();
         }
-        if ($name === '_setProperty') {
+        if ('_setProperty' === $name) {
             return $_setProperty(...$arguments);
         }
-        if ($name === '_getProperties') {
+        if ('_getProperties' === $name) {
             return $_getProperties();
         }
         throw new BadMethodCallException();
@@ -104,7 +105,7 @@ class MyModel extends BaseModel
     protected $uid;
 
     /**
-     * @var int The id of the page the record is "stored".
+     * @var int the id of the page the record is "stored"
      */
     protected $pid;
 
@@ -144,12 +145,12 @@ class MyNestedModel extends BaseModel
     /**
      * @var DateTime
      */
-    protected $date = null;
+    protected $date;
 
     /**
      * @var MyModel
      */
-    protected $child = null;
+    protected $child;
 
     public function __construct()
     {
@@ -264,13 +265,13 @@ class SimpleClass
 
 class SimpleClassJsonSerializable extends SimpleClass implements JsonSerializable
 {
-    function jsonSerialize(): array
+    public function jsonSerialize(): array
     {
         return [
-            "firstName" => $this->firstName,
-            "lastName"  => $this->lastName,
-            "uid"       => $this->uid,
-            "pid"       => $this->pid,
+            'firstName' => $this->firstName,
+            'lastName'  => $this->lastName,
+            'uid'       => $this->uid,
+            'pid'       => $this->pid,
         ];
     }
 }

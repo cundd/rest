@@ -216,7 +216,7 @@ class WhereClauseBuilderTest extends TestCase
 
     /**
      * @param string|int $input
-     * @param            $expected
+     *
      * @dataProvider resolveOperatorDataProvider
      */
     public function testResolveOperator($input, string $expected)
@@ -251,7 +251,6 @@ class WhereClauseBuilderTest extends TestCase
     }
 
     /**
-     * @param $input
      * @dataProvider resolveOperatorWithInvalidValuesDataProvider
      */
     public function testResolveOperatorWithInvalidValues($input)

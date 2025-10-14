@@ -36,15 +36,11 @@ class PersistenceManager implements PersistenceManagerInterface
 
     /**
      * Persistence Manager constructor
-     *
-     * @param ObjectManagerInterface      $objectManager
-     * @param BackendInterface            $backend
-     * @param ConfigurationInterface|null $configuration
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         BackendInterface $backend,
-        ?ConfigurationInterface $configuration = null
+        ?ConfigurationInterface $configuration = null,
     ) {
         $this->objectManager = $objectManager;
         $this->backend = $backend;
@@ -185,8 +181,6 @@ class PersistenceManager implements PersistenceManagerInterface
 
     /**
      * Returns the Object Converter for the current configuration
-     *
-     * @return ObjectConverter
      */
     protected function getObjectConverter(): ObjectConverter
     {

@@ -17,8 +17,6 @@ class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider
 
     /**
      * Credentials Authentication Provider constructor
-     *
-     * @param SessionManager $sessionManager
      */
     public function __construct(SessionManager $sessionManager)
     {
@@ -28,11 +26,10 @@ class CredentialsAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * Tries to authenticate the current request
      *
-     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
     public function authenticate(RestRequestInterface $request): bool
     {
-        return $this->sessionManager->valueForKey('loginStatus') === AuthHandler::STATUS_LOGGED_IN;
+        return AuthHandler::STATUS_LOGGED_IN === $this->sessionManager->valueForKey('loginStatus');
     }
 }

@@ -41,7 +41,7 @@ class RestMiddleware implements MiddlewareInterface
     {
         $requestUri = $request->getUri()->getPath();
 
-        $restRequestBasePath = (string)(getenv(
+        $restRequestBasePath = (string) (getenv(
             'TYPO3_REST_REQUEST_BASE_PATH'
         ) ?: getenv(
             'REDIRECT_TYPO3_REST_REQUEST_BASE_PATH'

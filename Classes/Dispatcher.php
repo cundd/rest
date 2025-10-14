@@ -14,6 +14,7 @@ use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Utility\DebugUtility;
+use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,7 +46,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         ResponseFactoryInterface $responseFactory,
         LoggerInterface $logger,
         RouterInterface $router,
-        ?EventDispatcherInterface $eventDispatcher
+        ?EventDispatcherInterface $eventDispatcher,
     ) {
         $this->objectManager = $objectManager;
         $this->requestFactory = $requestFactory;
@@ -60,9 +61,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * Entry point for the PSR 7 middleware
      *
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Exception
+     * @throws Exception
      */
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
@@ -71,9 +70,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
     /**
      * Dispatch the REST request
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     public function dispatch(RestRequestInterface $request): ResponseInterface
     {
@@ -96,9 +92,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
     /**
      * Checks the cache for an entry for the current request and returns it, or calls the handler if nothing is found
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     private function getCachedResponseOrCallHandler(RestRequestInterface $request): ResponseInterface
     {
@@ -128,9 +121,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
     /**
      * Call the handler for the current request
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     private function callHandler(RestRequestInterface $request): ResponseInterface
     {
@@ -150,9 +140,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
     /**
      * Add additional custom response headers
-     *
-     * @param ResponseInterface $response
-     * @return ResponseInterface
      */
     private function addAdditionalHeaders(ResponseInterface $response): ResponseInterface
     {
@@ -184,14 +171,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         return $response;
     }
 
-    /**
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
-     */
     private function dispatchInternal(RestRequestInterface $request): ResponseInterface
     {
         $requestPath = $request->getPath();
-        if (!$requestPath || $requestPath === '/') {
+        if (!$requestPath || '/' === $requestPath) {
             $request = $request->withResourceType(new ResourceType('greeting'));
         }
 
@@ -204,7 +187,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
 
                 $this->logger->logResponse(
                     'response: ' . $newResponse->getStatusCode(),
-                    ['response' => (string)$newResponse->getBody()]
+                    ['response' => (string) $newResponse->getBody()]
                 );
 
                 return $newResponse;
@@ -218,18 +201,12 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
     }
 
-    /**
-     * @param ResponseInterface $response
-     * @param array|null        $defaultResponseHeaders
-     * @param bool              $overwrite
-     * @return ResponseInterface
-     */
     private function addHeaders(
         ResponseInterface $response,
         ?array $defaultResponseHeaders,
-        bool $overwrite
+        bool $overwrite,
     ): ResponseInterface {
-        foreach ((array)$defaultResponseHeaders as $responseHeaderType => $value) {
+        foreach ((array) $defaultResponseHeaders as $responseHeaderType => $value) {
             // If the header is already set skip it unless `$overwrite` is TRUE
             if (!$overwrite && $response->getHeaderLine($responseHeaderType)) {
                 continue;
@@ -266,8 +243,8 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         return $response
-            ->withAddedHeader(Header::CUNDD_REST_RESOURCE_TYPE, (string)$request->getResourceType())
-            ->withAddedHeader(Header::CUNDD_REST_PATH, (string)$request->getPath())
+            ->withAddedHeader(Header::CUNDD_REST_RESOURCE_TYPE, (string) $request->getResourceType())
+            ->withAddedHeader(Header::CUNDD_REST_PATH, (string) $request->getPath())
             ->withAddedHeader(Header::CUNDD_REST_HANDLER, $resourceConfiguration->getHandlerClass())
             ->withAddedHeader(Header::CUNDD_REST_DATA_PROVIDER, $resourceConfiguration->getDataProviderClass())
             ->withAddedHeader(Header::CUNDD_REST_ALIASES, $resourceConfiguration->getAliases());

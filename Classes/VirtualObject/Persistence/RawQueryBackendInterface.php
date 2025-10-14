@@ -14,8 +14,6 @@ interface RawQueryBackendInterface
     /**
      * Perform a raw query on the database
      *
-     * @param string $query
-     * @return mixed
      * @throws SqlErrorException if the query failed
      */
     public function executeQuery(string $query);

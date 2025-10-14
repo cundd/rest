@@ -40,8 +40,6 @@ abstract class AbstractLogger extends \Psr\Log\AbstractLogger implements LoggerI
 
     /**
      * Logs the given exception
-     *
-     * @param Throwable $exception
      */
     public function logException(Throwable $exception): void
     {

@@ -10,7 +10,7 @@ defined('TYPO3') or die();
         'Configuration/TypoScript/Page',
         'Virtual Object - Page'
     );
-    
+
     ExtensionManagementUtility::addStaticFile(
         'rest',
         'Configuration/TypoScript/Content',

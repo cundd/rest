@@ -14,15 +14,11 @@ interface RouteInterface
 {
     /**
      * Returns the normalized path pattern
-     *
-     * @return string
      */
     public function getPattern(): string;
 
     /**
      * Returns the request method for this route
-     *
-     * @return string
      */
     public function getMethod(): string;
 
@@ -37,16 +33,14 @@ interface RouteInterface
      * Returns the priority of this route
      *
      * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
-     *
-     * @return int
      */
     public function getPriority(): int;
 
     /**
      * Process the route
      *
-     * @param RestRequestInterface $request
-     * @param array                $parameters
+     * @param array $parameters
+     *
      * @return ResponseInterface|mixed
      */
     public function process(RestRequestInterface $request, ...$parameters);

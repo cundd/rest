@@ -44,17 +44,15 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
     /**
      * Returns a response with the given message and status code
      *
-     * @param string|array         $data       Data to send
-     * @param int                  $status     Status code of the response
-     * @param bool                 $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
+     * @param string|array $data       Data to send
+     * @param int          $status     Status code of the response
+     * @param bool         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
      */
     private function createFormattedResponse(
         $data,
         int $status,
         bool $forceError,
-        RestRequestInterface $request
+        RestRequestInterface $request,
     ): ResponseInterface {
         $responseClass = $this->getResponseImplementationClass();
         /** @var ResponseInterface $response */
@@ -102,7 +100,7 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
             case 'txt':
             case 'html':
                 if (is_scalar($data)) {
-                    $response->getBody()->write((string)$data);
+                    $response->getBody()->write((string) $data);
                 } elseif (DebugUtility::allowDebugInformation()) {
                     $response->getBody()->write(var_export($data, true));
                 }
@@ -123,9 +121,6 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
         }
     }
 
-    /**
-     * @return string
-     */
     private function getResponseImplementationClass(): string
     {
         if (class_exists(TYPO3Response::class)) {

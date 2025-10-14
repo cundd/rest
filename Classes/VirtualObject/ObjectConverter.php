@@ -20,7 +20,7 @@ class ObjectConverter
      */
     protected $configuration;
 
-    public function __construct(ConfigurationInterface $configuration = null)
+    public function __construct(?ConfigurationInterface $configuration = null)
     {
         $this->configuration = $configuration;
     }
@@ -30,9 +30,9 @@ class ObjectConverter
      *
      * @param array|null $virtualObjectData Raw data in the schema defined by the current mapping
      * @param bool       $replace           If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
-     * @return array
+     *
      * @throws InvalidConverterTypeException
-     * @throws InvalidPropertyException if a property is not defined in the mapping
+     * @throws InvalidPropertyException      if a property is not defined in the mapping
      * @throws MissingConfigurationException if the configuration is not set
      */
     public function prepareDataFromVirtualObjectData(?array $virtualObjectData, bool $replace = true): array
@@ -48,7 +48,7 @@ class ObjectConverter
         }
 
         foreach ($virtualObjectData as $propertyKey => $propertyValue) {
-            if ($propertyKey === '__identity') {
+            if ('__identity' === $propertyKey) {
                 $propertyKey = $configuration->getIdentifier();
             }
 
@@ -70,9 +70,9 @@ class ObjectConverter
      * Converts the given Virtual Object into it's source representation
      *
      * @param VirtualObject|array $virtualObject Either a Virtual Object instance or raw data in the schema defined by the current mapping
-     * @return array
-     * @throws Exception\MissingConfigurationException if the configuration is not set
-     * @throws InvalidPropertyException if a property is not defined in the mapping
+     *
+     * @throws MissingConfigurationException if the configuration is not set
+     * @throws InvalidPropertyException      if a property is not defined in the mapping
      */
     public function convertFromVirtualObject($virtualObject): array
     {
@@ -89,11 +89,10 @@ class ObjectConverter
     /**
      * Converts the given source array into the configured Virtual Object data
      *
-     * @param array $source
-     * @param bool  $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
-     * @return array
+     * @param bool $replace If TRUE the converted data will contain each property with a NULL value. If FALSE the result will only contain the keys defined in the source
+     *
      * @throws MissingConfigurationException if the configuration is not set
-     * @throws InvalidPropertyException if a property is not defined in the mapping
+     * @throws InvalidPropertyException      if a property is not defined in the mapping
      */
     public function prepareForVirtualObjectData(array $source, bool $replace = true): array
     {
@@ -125,10 +124,8 @@ class ObjectConverter
     /**
      * Converts the given source array into a Virtual Object
      *
-     * @param array $source
-     * @return VirtualObject
      * @throws MissingConfigurationException if the configuration is not set
-     * @throws InvalidPropertyException if a property is not defined in the mapping
+     * @throws InvalidPropertyException      if a property is not defined in the mapping
      */
     public function convertToVirtualObject(array $source): VirtualObject
     {
@@ -138,10 +135,9 @@ class ObjectConverter
     /**
      * Convert the given value to the specified type
      *
-     * @param mixed  $value
-     * @param string $type
      * @return mixed Returns the converted value
-     * @throws Exception\InvalidConverterTypeException if the given type is not valid
+     *
+     * @throws InvalidConverterTypeException if the given type is not valid
      */
     public function convertToType($value, string $type)
     {
@@ -154,17 +150,17 @@ class ObjectConverter
 
             case 'boolean':
             case 'bool':
-                return (bool)$value;
+                return (bool) $value;
 
             case 'float':
                 return floatval($value);
 
             case 'string':
-                return (string)$value;
+                return (string) $value;
 
-            // Special types
+                // Special types
             case 'slug':
-                return (preg_match('/^[a-zA-Z0-9-_]+$/', (string)$value) > 0 ? (string)$value : null);
+                return (preg_match('/^[a-zA-Z0-9-_]+$/', (string) $value) > 0 ? (string) $value : null);
 
             case 'url':
                 return filter_var($value, FILTER_SANITIZE_URL);
@@ -173,7 +169,7 @@ class ObjectConverter
                 return filter_var($value, FILTER_SANITIZE_EMAIL);
 
             case 'trim':
-                return trim((string)$value);
+                return trim((string) $value);
 
             default:
                 throw new InvalidConverterTypeException('Can not convert to type ' . $type, 1395661844);
@@ -182,9 +178,6 @@ class ObjectConverter
 
     /**
      * Sets the configuration to use when converting
-     *
-     * @param ConfigurationInterface $configuration
-     * @return self
      */
     public function setConfiguration(ConfigurationInterface $configuration): self
     {
@@ -196,7 +189,6 @@ class ObjectConverter
     /**
      * Returns the configuration to use when converting
      *
-     * @return ConfigurationInterface
      * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ConfigurationInterface

@@ -48,7 +48,7 @@ class Profiler
     private $defaultLabel = '';
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $collectCaller = true;
 
@@ -64,6 +64,7 @@ class Profiler
      * Start the profiling
      *
      * @param array|string $options Additional options to pass to the profiler. If a string is given it will be used as name
+     *
      * @return $this
      */
     public function start($options = []): self
@@ -90,9 +91,8 @@ class Profiler
      * Collect and returns profiling data of the current run
      *
      * @param string|null $label Optional label for the run
-     * @return Run
      */
-    public function collect(string $label = null): Run
+    public function collect(?string $label = null): Run
     {
         $runEndTime = microtime(true);
         $runId = count($this->profilingData);
@@ -130,6 +130,7 @@ class Profiler
      * Output a profiling message using the output handler
      *
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
+     *
      * @return string Returns the message
      */
     public function output($outputHandler = null): string
@@ -144,6 +145,7 @@ class Profiler
      * Output a profiling message using the output handler
      *
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
+     *
      * @return string Returns the message
      */
     public function outputLast($outputHandler = null): string
@@ -169,9 +171,10 @@ class Profiler
      *
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @param string|null                 $label         Optional label for the run
+     *
      * @return Run Returns data of the last run
      */
-    public function collectAndOutput($outputHandler = null, string $label = null): Run
+    public function collectAndOutput($outputHandler = null, ?string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->output($outputHandler);
@@ -184,9 +187,10 @@ class Profiler
      *
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @param string|null                 $label         Optional label for the run
+     *
      * @return Run Returns data of the last run
      */
-    public function collectAndOutputLast($outputHandler = null, string $label = null): Run
+    public function collectAndOutputLast($outputHandler = null, ?string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->outputLast($outputHandler);
@@ -199,9 +203,10 @@ class Profiler
      *
      * @param resource|object|string|null $outputHandler Optionally specify the output handler
      * @param string|null                 $label         Optional label for the run
+     *
      * @return Run Returns data of the last run
      */
-    public function collectClearAndOutput($outputHandler = null, string $label = null): Run
+    public function collectClearAndOutput($outputHandler = null, ?string $label = null): Run
     {
         $currentRunData = $this->collect($label);
         $this->output($outputHandler);
@@ -248,7 +253,6 @@ class Profiler
      * Formats the given memory size
      *
      * @param float|int $size
-     * @return string
      */
     protected function formatMemory($size): string
     {
@@ -259,8 +263,6 @@ class Profiler
 
     /**
      * Return the information about the caller of the debug output
-     *
-     * @return array
      */
     protected function getCaller(): array
     {
@@ -268,7 +270,7 @@ class Profiler
         array_shift($backtrace);
         array_shift($backtrace);
         $backtraceEntry = current($backtrace);
-        while (isset($backtraceEntry['class']) && $backtraceEntry['class'] === __CLASS__) {
+        while (isset($backtraceEntry['class']) && __CLASS__ === $backtraceEntry['class']) {
             $backtraceEntry = next($backtrace);
         }
 
@@ -281,7 +283,6 @@ class Profiler
      * Starts and returns a new profiler instance
      *
      * @param resource|object|bool $defaultOutputHandler
-     * @return Profiler
      */
     public static function create($defaultOutputHandler = STDOUT): self
     {
@@ -295,7 +296,6 @@ class Profiler
      * Return a shared profiler instance
      *
      * @param resource|object|bool $defaultOutputHandler
-     * @return Profiler
      */
     public static function sharedInstance($defaultOutputHandler = STDOUT): self
     {
@@ -311,7 +311,6 @@ class Profiler
     /**
      * @param Run[]                       $profilingData
      * @param resource|object|string|null $outputHandler
-     * @return string
      */
     private function outputProfilingData(array $profilingData, $outputHandler): string
     {
@@ -352,7 +351,7 @@ class Profiler
         }
         $message = implode(PHP_EOL, $messageParts) . PHP_EOL;
 
-        $effectiveOutputHandler = $outputHandler !== null ? $outputHandler : $this->defaultOutputHandler;
+        $effectiveOutputHandler = null !== $outputHandler ? $outputHandler : $this->defaultOutputHandler;
         if (is_resource($effectiveOutputHandler)) {
             fwrite($effectiveOutputHandler, $message);
         } elseif (self::OUTPUT_ECHO === $effectiveOutputHandler) {

@@ -28,9 +28,6 @@ class PersonValidator extends AbstractValidator
 
     /**
      * Custom validation
-     *
-     * @param Person $person
-     * @return bool
      */
     protected function validateCustom(Person $person): bool
     {

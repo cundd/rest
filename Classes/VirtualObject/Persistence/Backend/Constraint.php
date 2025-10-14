@@ -13,9 +13,6 @@ class Constraint implements OperatorInterface, ConstraintInterface
      */
     private $operator;
 
-    /**
-     * @var mixed
-     */
     private $value;
 
     /**
@@ -26,9 +23,7 @@ class Constraint implements OperatorInterface, ConstraintInterface
     /**
      * Constraint constructor
      *
-     * @param string     $property
      * @param int|string $operator
-     * @param mixed      $value
      */
     public function __construct(string $property, $operator, $value)
     {
@@ -92,9 +87,6 @@ class Constraint implements OperatorInterface, ConstraintInterface
         return new static($property, self::OPERATOR_IS_EMPTY, null);
     }
 
-    /**
-     * @return string
-     */
     public function getProperty(): string
     {
         return $this->property;
@@ -108,9 +100,6 @@ class Constraint implements OperatorInterface, ConstraintInterface
         return $this->operator;
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue()
     {
         return $this->value;

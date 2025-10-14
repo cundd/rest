@@ -138,6 +138,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
 
     /**
      * @param VirtualObject[] $collection
+     *
      * @return array
      */
     protected function getTestDataFromObjectCollection($collection)
@@ -152,6 +153,7 @@ class PersistenceManagerTest extends AbstractDatabaseCase
 
     /**
      * @param VirtualObject $virtualObject
+     *
      * @return array
      */
     protected function getTestDataFromObject($virtualObject)

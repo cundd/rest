@@ -26,9 +26,10 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider objectCountByQueryDataProvider
-     * @param array $query
-     * @param int   $expected
+     *
+     * @param int $expected
      */
     public function getObjectCountByQuery(array $query, $expected)
     {
@@ -38,9 +39,10 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider objectCountByQueryDataProvider
-     * @param array $query
-     * @param int   $expected
+     *
+     * @param int $expected
      */
     public function getObjectCountByQueryWithConstraint(array $query, $expected)
     {
@@ -65,9 +67,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider objectDataByQueryDataProvider
-     * @param array $query
-     * @param array $expected
      */
     public function getObjectDataByQuery(array $query, array $expected)
     {
@@ -77,9 +78,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider objectDataByQueryDataProvider
-     * @param array $query
-     * @param array $expected
      */
     public function getObjectDataByQueryWithConstraints(array $query, array $expected)
     {
@@ -104,9 +104,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider objectDataByQueryDataProvider
-     * @param array $query
-     * @param array $expected
      */
     public function getObjectDataByQueryWithLogicConstraint(array $query, array $expected)
     {
@@ -133,8 +132,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider emptyResultQueryDataProvider
-     * @param array $query
      */
     public function getObjectCountByQueryWithZeroResult(array $query)
     {
@@ -144,8 +143,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
 
     /**
      * @test
+     *
      * @dataProvider emptyResultQueryDataProvider
-     * @param array $query
      */
     public function getObjectDataByQueryWithEmptyResult(array $query)
     {
@@ -237,9 +236,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                     'content_time' => [
                         'value'    => time(),
                         'operator' => OperatorInterface::OPERATOR_GREATER_THAN,
-
                     ],
-                    'title'        => 'Test entry',
+                    'title' => 'Test entry',
                 ],
             ],
             [
@@ -247,9 +245,8 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                     'content_time' => [
                         'value'    => time(),
                         'operator' => OperatorInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
-
                     ],
-                    'title'        => 'Test entry',
+                    'title' => 'Test entry',
                 ],
             ],
         ];
@@ -296,7 +293,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                         'value'    => 1395678400,
                         'operator' => OperatorInterface::OPERATOR_GREATER_THAN,
                     ],
-                    'title'        => 'Test entry',
+                    'title' => 'Test entry',
                 ],
                 self::$testData,
             ],
@@ -306,7 +303,7 @@ abstract class AbstractBackendTest extends AbstractDatabaseCase
                         'value'    => 1395678480,
                         'operator' => OperatorInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
                     ],
-                    'title'        => 'Test entry',
+                    'title' => 'Test entry',
                 ],
                 self::$testData,
             ],

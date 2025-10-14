@@ -10,9 +10,6 @@ interface CoreBootstrapInterface
 {
     /**
      * Initializes the TYPO3 environment
-     *
-     * @param ServerRequestInterface $request
-     * @return ServerRequestInterface
      */
     public function initialize(ServerRequestInterface $request): ServerRequestInterface;
 }

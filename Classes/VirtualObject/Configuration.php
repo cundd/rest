@@ -16,6 +16,7 @@ class Configuration implements ConfigurationInterface
      * The array that hold the configuration data
      *
      * @see "Resources/Private/Development/Virtual Object Configuration example.json" for the abstract schema
+     *
      * @var array
      */
     protected $configurationData = [];
@@ -30,7 +31,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
      *
-     * @var boolean
+     * @var bool
      */
     protected $skipUnknownProperties = false;
 
@@ -75,9 +76,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Returns the source property (column) name for the given property name, or NULL if it isn't defined
-     *
-     * @param string $propertyName
-     * @return string
      */
     public function getSourceKeyForProperty(string $propertyName): ?string
     {
@@ -92,9 +90,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Returns the property for the given source property (column)
-     *
-     * @param string $sourceKey
-     * @return string
      */
     public function getPropertyForSourceKey(string $sourceKey): ?string
     {
@@ -108,7 +103,6 @@ class Configuration implements ConfigurationInterface
     /**
      * Returns the data type for the given property name
      *
-     * @param string $propertyName
      * @return string Returns one of the following: "string", "float", "int", "integer", "bool", "boolean"
      */
     public function getTypeForProperty(string $propertyName): ?string
@@ -124,8 +118,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Returns the source identifier (the database table name)
-     *
-     * @return string
      */
     public function getSourceIdentifier(): ?string
     {
@@ -136,8 +128,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Returns a map of all the source keys and the associated property names
-     *
-     * @return array
      */
     public function getSourceKeyToPropertyMap(): array
     {
@@ -153,7 +143,6 @@ class Configuration implements ConfigurationInterface
     /**
      * Set whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
      *
-     * @param boolean $skipUnknownProperties
      * @return $this
      */
     public function setSkipUnknownProperties(bool $skipUnknownProperties): ConfigurationInterface
@@ -165,8 +154,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Return whether unknown (un-configured) properties should be skipped during mapping, or throw an exception
-     *
-     * @return boolean
      */
     public function shouldSkipUnknownProperties(): bool
     {
@@ -175,8 +162,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Returns the name of the property which uniquely identifies an object
-     *
-     * @return string
      */
     public function getIdentifier(): ?string
     {

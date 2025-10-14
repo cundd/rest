@@ -15,12 +15,10 @@ class Parentheses
 
     /**
      * Parentheses constructor
-     *
-     * @param string $value
      */
     private function __construct(string $value)
     {
-        if ($value !== self::OPEN && $value !== self::CLOSE) {
+        if (self::OPEN !== $value && self::CLOSE !== $value) {
             throw new InvalidArgumentException(sprintf('Invalid parentheses "%s"', $value));
         }
         $this->value = $value;
@@ -29,7 +27,7 @@ class Parentheses
     public static function open(): self
     {
         static $instance = null;
-        if ($instance === null) {
+        if (null === $instance) {
             $instance = new static(self::OPEN);
         }
 
@@ -39,16 +37,13 @@ class Parentheses
     public static function close(): self
     {
         static $instance = null;
-        if ($instance === null) {
+        if (null === $instance) {
             $instance = new static(self::CLOSE);
         }
 
         return $instance;
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;

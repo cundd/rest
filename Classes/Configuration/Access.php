@@ -54,12 +54,12 @@ class Access
             throw InvalidArgumentException::buildException($value, 'string|' . Access::class, 'value');
         }
 
-        $valueString = (string)$value;
-        if ($valueString !== self::ACCESS_ALLOW
-            && $valueString !== self::ACCESS_DENY
-            && $valueString !== self::ACCESS_REQUIRE_LOGIN
-            && $valueString !== self::ACCESS_AUTHORIZED
-            && $valueString !== self::ACCESS_UNAUTHORIZED) {
+        $valueString = (string) $value;
+        if (self::ACCESS_ALLOW !== $valueString
+            && self::ACCESS_DENY !== $valueString
+            && self::ACCESS_REQUIRE_LOGIN !== $valueString
+            && self::ACCESS_AUTHORIZED !== $valueString
+            && self::ACCESS_UNAUTHORIZED !== $valueString) {
             throw new InvalidArgumentException('Argument value must be one of the ACCESS constants');
         }
 
@@ -68,8 +68,6 @@ class Access
 
     /**
      * Return a new instance with `ACCESS_DENY` state
-     *
-     * @return Access
      */
     public static function denied(): self
     {
@@ -78,8 +76,6 @@ class Access
 
     /**
      * Return a new instance with `ACCESS_ALLOW` state
-     *
-     * @return Access
      */
     public static function allowed(): self
     {
@@ -88,8 +84,6 @@ class Access
 
     /**
      * Return a new instance with `ACCESS_REQUIRE_LOGIN` state
-     *
-     * @return Access
      */
     public static function requiresLogin(): self
     {
@@ -98,8 +92,6 @@ class Access
 
     /**
      * Return a new instance with `ACCESS_AUTHORIZED` state
-     *
-     * @return Access
      */
     public static function authorized(): self
     {
@@ -108,8 +100,6 @@ class Access
 
     /**
      * Return a new instance with `ACCESS_UNAUTHORIZED` state
-     *
-     * @return Access
      */
     public static function unauthorized(): self
     {
@@ -118,27 +108,27 @@ class Access
 
     public function isAllowed(): bool
     {
-        return $this->value === self::ACCESS_ALLOW;
+        return self::ACCESS_ALLOW === $this->value;
     }
 
     public function isDenied(): bool
     {
-        return $this->value === self::ACCESS_DENY;
+        return self::ACCESS_DENY === $this->value;
     }
 
     public function isRequireLogin(): bool
     {
-        return $this->value === self::ACCESS_REQUIRE_LOGIN;
+        return self::ACCESS_REQUIRE_LOGIN === $this->value;
     }
 
     public function isAuthorized(): bool
     {
-        return $this->value === self::ACCESS_AUTHORIZED;
+        return self::ACCESS_AUTHORIZED === $this->value;
     }
 
     public function isUnauthorized(): bool
     {
-        return $this->value === self::ACCESS_UNAUTHORIZED;
+        return self::ACCESS_UNAUTHORIZED === $this->value;
     }
 
     public function __toString()

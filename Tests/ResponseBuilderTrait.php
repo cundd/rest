@@ -13,16 +13,13 @@ use function rewind;
 trait ResponseBuilderTrait
 {
     /**
-     * @param int   $status
-     * @param array $headers
-     * @param mixed $rawBody
-     * @return ResponseInterface
+     * @param int $status
      */
     public static function buildTestResponse($status, array $headers = [], $rawBody = null): ResponseInterface
     {
         if ($rawBody) {
             $stream = fopen('php://temp', 'a+');
-            if (false === fputs($stream, (string)$rawBody)) {
+            if (false === fputs($stream, (string) $rawBody)) {
                 throw new UnexpectedValueException('Could not write to stream');
             }
             rewind($stream);

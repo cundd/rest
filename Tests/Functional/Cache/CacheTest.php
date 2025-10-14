@@ -45,9 +45,7 @@ class CacheTest extends AbstractCase
 
     /**
      * @test
-     * @param $uri
-     * @param $format
-     * @param $expectedKey
+     *
      * @dataProvider getCacheKeyDataProvider
      */
     public function getCacheKeyTest($expectedKey, $uri, $format = null)
@@ -158,7 +156,7 @@ class CacheTest extends AbstractCase
         $this->fixture->setCacheInstance($cacheInstance);
         $response = $this->fixture->getCachedValueForRequest($request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame($responseArray['content'], (string)$response->getBody());
+        $this->assertSame($responseArray['content'], (string) $response->getBody());
         $this->assertSame($responseArray['status'], $response->getStatusCode());
     }
 
@@ -188,8 +186,8 @@ class CacheTest extends AbstractCase
 
     /**
      * @test
+     *
      * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
-     * @param array $header
      */
     public function setCachedValueForRequestWillNotCacheTest(array $header)
     {
@@ -212,9 +210,8 @@ class CacheTest extends AbstractCase
 
     /**
      * @test
+     *
      * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
-     * @param array $header
-     * @param bool  $expected
      */
     public function canBeCachedTest(array $header, bool $expected)
     {
@@ -252,18 +249,13 @@ class CacheTest extends AbstractCase
      */
     private function getFrontendCacheProphecy()
     {
-        /** @var ObjectProphecy|AbstractFrontend $cacheProphecy */
+        /* @var ObjectProphecy|AbstractFrontend $cacheProphecy */
         return $this->prophesize(AbstractFrontend::class);
     }
 
-    /**
-     * @param RestRequestInterface $request
-     * @param int                  $cacheLifetime
-     * @return ResourceConfiguration
-     */
     private function buildResourceConfiguration(
         RestRequestInterface $request,
-        int $cacheLifetime = -1
+        int $cacheLifetime = -1,
     ): ResourceConfiguration {
         return new ResourceConfiguration(
             $request->getResourceType(),

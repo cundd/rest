@@ -15,9 +15,10 @@ abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
     /**
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
+     *
      * @return HttpResponse
      */
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
@@ -28,9 +29,10 @@ abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
     /**
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
+     *
      * @return HttpResponse
      */
     public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)

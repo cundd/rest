@@ -36,7 +36,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
 
     protected ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container = null)
+    public function __construct(?ContainerInterface $container = null)
     {
         $this->container = $container ?: GeneralUtility::makeInstance(ContainerInterface::class);
     }
@@ -68,7 +68,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return $dataProvider;
         }
 
-        [, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
+        [, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check for a specific builtin Data Provider
         $specialDataProvider = sprintf('Cundd\\Rest\\DataProvider\\%sDataProvider', $extension);
@@ -87,7 +87,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     public function getAuthenticationProvider(RestRequestInterface $request): AuthenticationProviderInterface
     {
         $resourceType = $request->getResourceType();
-        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides a Authentication Provider
         $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
@@ -113,7 +113,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     public function getAccessController(RestRequestInterface $request): AccessControllerInterface
     {
         $resourceType = $request->getResourceType();
-        [$vendor, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
+        [$vendor, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check if an extension provides an Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
@@ -133,7 +133,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return $handler;
         }
 
-        [, $extension,] = Utility::getClassNamePartsForResourceType($resourceType);
+        [, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check for a specific builtin Handler
         $specialHandler = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
@@ -168,18 +168,13 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return call_user_func_array([$this->container, $name], $arguments);
     }
 
-    /**
-     * @param ResourceType $resourceType
-     * @param string       $type
-     * @return mixed
-     */
     private function getImplementationFromResourceConfiguration(ResourceType $resourceType, string $type)
     {
         $resourceConfiguration = $this->getConfigurationProvider()->getResourceConfiguration($resourceType);
         if (!$resourceConfiguration) {
             // This case should not occur in reality, since at least the `all` Resource should have been configured
             throw new InvalidConfigurationException(
-                sprintf('Resource "%s" is not configured', (string)$resourceType)
+                sprintf('Resource "%s" is not configured', (string) $resourceType)
             );
         }
 

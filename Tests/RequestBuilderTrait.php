@@ -20,16 +20,6 @@ use function substr;
 
 trait RequestBuilderTrait
 {
-    /**
-     * @param string      $url
-     * @param string|null $method
-     * @param array       $params
-     * @param array       $headers
-     * @param mixed       $rawBody
-     * @param array|null  $parsedBody
-     * @param string|null $format
-     * @return RestRequestInterface
-     */
     public static function buildTestRequest(
         string $url,
         ?string $method = null,
@@ -37,14 +27,14 @@ trait RequestBuilderTrait
         array $headers = [],
         $rawBody = null,
         ?array $parsedBody = null,
-        ?string $format = null
+        ?string $format = null,
     ): RestRequestInterface {
         $path = self::getPathFromUri($url);
-        $resourceType = new ResourceType((string)strtok($path, '/'));
+        $resourceType = new ResourceType((string) strtok($path, '/'));
 
         if (null === $format) {
             $resourceName = basename($path);
-            if (strrpos($resourceName, '.') === false) {
+            if (false === strrpos($resourceName, '.')) {
                 $format = Format::DEFAULT_FORMAT;
             } else {
                 $pathParts = explode('.', $path);
@@ -58,7 +48,7 @@ trait RequestBuilderTrait
         }
         if ($rawBody) {
             $stream = fopen('php://temp', 'a+');
-            fputs($stream, (string)$rawBody);
+            fputs($stream, (string) $rawBody);
         } else {
             $stream = 'php://input';
         }
@@ -83,7 +73,7 @@ trait RequestBuilderTrait
     private static function getPathFromUri(string $url): string
     {
         if ('http://' === substr($url, 0, 7) || 'https://' === substr($url, 0, 8)) {
-            return (string)substr(strstr(substr($url, 8), '/'), 0);
+            return (string) substr(strstr(substr($url, 8), '/'), 0);
         } else {
             return $url;
         }

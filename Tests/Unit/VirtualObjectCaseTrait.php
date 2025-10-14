@@ -30,8 +30,6 @@ trait VirtualObjectCaseTrait
 
     /**
      * Returns the configuration data
-     *
-     * @return array
      */
     protected function getTestConfigurationData(): array
     {
@@ -43,9 +41,6 @@ trait VirtualObjectCaseTrait
         return $this->testConfiguration;
     }
 
-    /**
-     * @return string
-     */
     protected function getTestConfigurationJSONString(): string
     {
         return <<<CONFIGURATION

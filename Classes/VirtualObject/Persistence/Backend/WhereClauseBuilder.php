@@ -44,19 +44,17 @@ class WhereClauseBuilder
      *
      * The current WHERE-clause will be reset
      *
-     * @param QueryInterface $query
-     * @param callable|null  $prepareValue     `mixed function(mixed $queryValue)`
-     * @param callable|null  $escapeColumnName `string function(string $propertyName)`
-     * @param string         $bindingPrefix
-     * @return self
+     * @param callable|null $prepareValue     `mixed function(mixed $queryValue)`
+     * @param callable|null $escapeColumnName `string function(string $propertyName)`
+     *
      * @throws MissingConfigurationException
      * @throws InvalidColumnNameException
      */
     public function build(
         QueryInterface $query,
-        callable $prepareValue = null,
-        callable $escapeColumnName = null,
-        string $bindingPrefix = ''
+        ?callable $prepareValue = null,
+        ?callable $escapeColumnName = null,
+        string $bindingPrefix = '',
     ): self {
         $this->reset();
 
@@ -73,28 +71,25 @@ class WhereClauseBuilder
     /**
      * Add multiple constraints to the WHERE-clause
      *
-     * @param array                       $constraints Map of property => value pairs to add constraints
-     * @param callable|null               $prepareValue
-     * @param callable|null               $escapeColumnName
-     * @param string                      $bindingPrefix
-     * @param string                      $combinator
-     * @param ConfigurationInterface|null $configuration
+     * @param array $constraints Map of property => value pairs to add constraints
+     *
      * @return $this
+     *
      * @throws InvalidColumnNameException
      * @throws InvalidOperatorException
      */
     public function addConstraints(
         array $constraints,
-        callable $prepareValue = null,
-        callable $escapeColumnName = null,
+        ?callable $prepareValue = null,
+        ?callable $escapeColumnName = null,
         string $bindingPrefix = '',
         string $combinator = QueryInterface::COMBINATOR_AND,
-        ConfigurationInterface $configuration = null
+        ?ConfigurationInterface $configuration = null,
     ): self {
         WhereClause::assertCombinator($combinator);
         foreach ($constraints as $property => $value) {
             $this->addConstraint(
-                is_int($property) ? (string)$property : $property,
+                is_int($property) ? (string) $property : $property,
                 $value,
                 $prepareValue,
                 $escapeColumnName,
@@ -110,25 +105,21 @@ class WhereClauseBuilder
     /**
      * Add a constraint to the WHERE-clause
      *
-     * @param string                                            $property
      * @param int|float|string|array|ConstraintInterface|object $value
      * @param callable|null                                     $prepareValue     `mixed function(mixed $queryValue)`
      * @param callable|null                                     $escapeColumnName `string function(string $propertyName)`
-     * @param string                                            $bindingPrefix
-     * @param string                                            $combinator
-     * @param ConfigurationInterface|null                       $configuration
-     * @return WhereClauseBuilder
+     *
      * @throws InvalidColumnNameException
      * @throws InvalidOperatorException
      */
     public function addConstraint(
         string $property,
         $value,
-        callable $prepareValue = null,
-        callable $escapeColumnName = null,
+        ?callable $prepareValue = null,
+        ?callable $escapeColumnName = null,
         string $bindingPrefix = '',
         string $combinator = QueryInterface::COMBINATOR_AND,
-        ConfigurationInterface $configuration = null
+        ?ConfigurationInterface $configuration = null,
     ): self {
         WhereClause::assertCombinator($combinator);
 
@@ -163,14 +154,14 @@ class WhereClauseBuilder
         InvalidColumnNameException::assertValidColumnName($column);
         ['operator' => $operator, 'value' => $comparisonValue] = $this->extractOperatorAndValue($value);
 
-        if ($prepareValue === null) {
+        if (null === $prepareValue) {
             $prepareValue = $this->getDefaultPrepareValueCallback();
         }
-        if ($escapeColumnName === null) {
+        if (null === $escapeColumnName) {
             $escapeColumnName = $this->getDefaultEscapeColumnNameCallback();
         }
 
-        if ($operator === OperatorInterface::OPERATOR_IN) {
+        if (OperatorInterface::OPERATOR_IN === $operator) {
             $this->addInConstraint(
                 $prepareValue($comparisonValue),
                 $column,
@@ -198,12 +189,11 @@ class WhereClauseBuilder
     /**
      * Insert opening parentheses into the SQL query
      *
-     * @param string $combinator
      * @return $this
      */
     public function openParentheses(string $combinator = QueryInterface::COMBINATOR_AND): self
     {
-        $this->openedParenthesesLevel += 1;
+        ++$this->openedParenthesesLevel;
         $this->where->appendSql(Parentheses::open(), $combinator);
 
         return $this;
@@ -216,7 +206,7 @@ class WhereClauseBuilder
      */
     public function closeParentheses(): self
     {
-        $this->openedParenthesesLevel -= 1;
+        --$this->openedParenthesesLevel;
         $this->where->appendSql(Parentheses::close(), null);
 
         return $this;
@@ -224,8 +214,6 @@ class WhereClauseBuilder
 
     /**
      * Reset the WHERE-clause
-     *
-     * @return self
      */
     public function reset(): self
     {
@@ -237,7 +225,6 @@ class WhereClauseBuilder
     /**
      * Return the configured WHERE-clause
      *
-     * @return WhereClause
      * @throws WhereClauseException if parentheses are opened that are not closed
      */
     public function getWhere(): WhereClause
@@ -253,7 +240,9 @@ class WhereClauseBuilder
      * Returns the SQL operator for the given operator
      *
      * @param string|int $operator One of the OPERATOR_* constants
+     *
      * @return string an SQL operator
+     *
      * @throws InvalidOperatorException
      */
     public static function resolveOperator($operator): string
@@ -284,7 +273,9 @@ class WhereClauseBuilder
      * Returns the SQL operator constant for the given operator
      *
      * @param string|int $operator One of the OPERATOR_* constants
+     *
      * @return int One of the OPERATOR_* constants
+     *
      * @throws InvalidOperatorException
      */
     public static function normalizeOperator($operator): int
@@ -335,8 +326,8 @@ class WhereClauseBuilder
     /**
      * Append the string to the SQL WHERE-clause
      *
-     * @param string $clause
      * @param string $combinator
+     *
      * @return $this
      */
     protected function appendSql(string $clause, $combinator = QueryInterface::COMBINATOR_AND): self
@@ -349,8 +340,8 @@ class WhereClauseBuilder
     /**
      * Bind the variable to the SQL WHERE-clause
      *
-     * @param string           $key
      * @param string|int|float $value
+     *
      * @return $this
      */
     protected function bindVariable(string $key, $value): self
@@ -367,9 +358,6 @@ class WhereClauseBuilder
         };
     }
 
-    /**
-     * @return Closure
-     */
     protected function getDefaultEscapeColumnNameCallback(): Closure
     {
         return function ($propertyName): string {
@@ -377,10 +365,6 @@ class WhereClauseBuilder
         };
     }
 
-    /**
-     * @param $value
-     * @return array
-     */
     private function extractOperatorAndValue($value): array
     {
         if ($value instanceof Constraint) {
@@ -390,7 +374,7 @@ class WhereClauseBuilder
             ];
         }
 
-        if (is_scalar($value) || $value === null || is_object($value)) {
+        if (is_scalar($value) || null === $value || is_object($value)) {
             return [
                 'operator' => OperatorInterface::OPERATOR_EQUAL_TO,
                 'value'    => $value,
@@ -418,19 +402,14 @@ class WhereClauseBuilder
     }
 
     /**
-     * @param array       $values
      * @param string|null $column
-     * @param string      $bindingPrefix
-     * @param string      $combinator
-     * @param callable    $escapeColumnName
-     * @return WhereClauseBuilder
      */
     private function addInConstraint(
         array $values,
         string $column,
         string $bindingPrefix,
         string $combinator,
-        callable $escapeColumnName
+        callable $escapeColumnName,
     ): self {
         $bindingKeyBase = ':' . $bindingPrefix . $column;
 
@@ -451,7 +430,7 @@ class WhereClauseBuilder
             $bindings[$currentKey] = $value;
 
             $this->bindVariable($currentKey, $value);
-            $i += 1;
+            ++$i;
         }
 
         return $this->appendSql(

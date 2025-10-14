@@ -32,7 +32,6 @@ use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\SessionManager;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Fixtures\UserProvider;
-use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\InjectPropertyTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\Unit\Fixtures\Container;
@@ -72,15 +71,10 @@ class ObjectManagerTest extends TestCase
         $this->injectConfigurationProvider();
     }
 
-    /**
-     * @param array $settings
-     * @param string $handler
-     * @param string $dataProvider
-     */
     private function injectConfigurationProvider(
         array $settings = [],
         string $handler = '',
-        string $dataProvider = ''
+        string $dataProvider = '',
     ) {
         /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
         $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
@@ -105,7 +99,7 @@ class ObjectManagerTest extends TestCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(fn($args) => $settings[$args[0]] ?? null);
+        $getSettingsProphecy->will(fn ($args) => $settings[$args[0]] ?? null);
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 
@@ -203,9 +197,9 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider dataProviderTestGenerator
-     * @param string $url
-     * @param string $expectedClass
+     *
      * @throws Exception
      */
     public function getDataProviderTest(string $url, string $expectedClass)
@@ -270,6 +264,7 @@ class ObjectManagerTest extends TestCase
 
     /**
      * @test
+     *
      * @throws Exception
      */
     public function getDataProviderFromResourceTest()
@@ -284,7 +279,7 @@ class ObjectManagerTest extends TestCase
         );
 
         $resourceType = new ResourceType('some_extension-my_model');
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         $configurationProvider = new StandaloneConfigurationProvider([]);
         $configurationProvider->setSettings(
             [
@@ -306,8 +301,7 @@ class ObjectManagerTest extends TestCase
      * @test
      *
      * @dataProvider handlerTestGenerator
-     * @param string $url
-     * @param string $expectedClass
+     *
      * @throws Exception
      */
     public function getHandlerTest(string $url, string $expectedClass)
@@ -376,7 +370,7 @@ class ObjectManagerTest extends TestCase
         );
 
         $resourceType = new ResourceType('some_extension-my_model');
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         $configurationProvider = new StandaloneConfigurationProvider([]);
         $configurationProvider->setSettings(
             [

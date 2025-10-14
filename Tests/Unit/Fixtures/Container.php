@@ -37,10 +37,6 @@ class Container implements ContainerInterface
         return isset($this->container[$id]);
     }
 
-    /**
-     * @param string $id
-     * @param object $impl
-     */
     public function set(string $id, object $impl): void
     {
         $this->container[$id] = $impl;

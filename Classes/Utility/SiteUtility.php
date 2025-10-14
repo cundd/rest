@@ -11,9 +11,6 @@ class SiteUtility
 {
     /**
      * Fetch the Site's from the Request
-     *
-     * @param ServerRequestInterface $request
-     * @return Site|null
      */
     public static function detectSite(ServerRequestInterface $request): ?Site
     {
@@ -22,15 +19,12 @@ class SiteUtility
 
     /**
      * Return the URI prefix for the current Site
-     *
-     * @param ServerRequestInterface $request
-     * @return string
      */
     public static function detectSitePrefix(ServerRequestInterface $request): string
     {
         $site = self::detectSite($request);
         if ($site) {
-            return (string)$site->getBase()->getPath();
+            return (string) $site->getBase()->getPath();
         } else {
             return '/';
         }

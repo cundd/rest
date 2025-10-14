@@ -22,17 +22,11 @@ interface ConfigurationProviderInterface
 
     /**
      * Return the setting with the given key
-     *
-     * @param string $keyPath
-     * @param mixed  $defaultValue
-     * @return mixed
      */
     public function getSetting(string $keyPath, $defaultValue = null);
 
     /**
      * Return the settings read from the TypoScript
-     *
-     * @return array
      */
     public function getSettings(): array;
 
@@ -45,9 +39,6 @@ interface ConfigurationProviderInterface
 
     /**
      * Return the configuration matching the given resource type
-     *
-     * @param ResourceType $resourceType
-     * @return ResourceConfiguration|null
      */
     public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration;
 }

@@ -47,8 +47,8 @@ class CustomRestTest extends AbstractIntegrationCase
                     $this->prepareFrontendTypoScriptPath(
                         __DIR__ . '/../../Configuration/TypoScript/Configuration.typoscript'
                     ),
-                    'EXT:custom_rest/Configuration/TypoScript/setup.typoscript'
-                ]
+                    'EXT:custom_rest/Configuration/TypoScript/setup.typoscript',
+                ],
             ]
         );
         $this->setUpFrontendSite(self::ROOT_PAGE_ID);
@@ -105,7 +105,7 @@ class CustomRestTest extends AbstractIntegrationCase
         $this->assertNotEmpty($this->getParsedBody($response), $this->getErrorDescription($response));
         $this->assertSame(
             '{"error":"Route \"\/cundd-custom_rest-route\/\" not found for method \"GET\""}',
-            (string)$response->getBody(),
+            (string) $response->getBody(),
             $this->getErrorDescription($response)
         );
     }
@@ -207,8 +207,8 @@ class CustomRestTest extends AbstractIntegrationCase
 
     /**
      * @test
+     *
      * @dataProvider getWithParameterFloatDataProvider
-     * @param string $suffix
      */
     public function getWithParameterFloatTest(string $suffix)
     {
@@ -233,9 +233,8 @@ class CustomRestTest extends AbstractIntegrationCase
 
     /**
      * @test
+     *
      * @dataProvider boolSuffixDataProvider
-     * @param $suffix
-     * @param $expected
      */
     public function getWithParameterBoolTest($suffix, $expected)
     {
@@ -275,7 +274,7 @@ class CustomRestTest extends AbstractIntegrationCase
     {
         $path = 'cundd-custom_rest-route/subpath';
         $data = [
-            'user' => 'Daniel',
+            'user'  => 'Daniel',
             'hobby' => 'playing guitar',
         ];
         $response = $this->buildRequestAndDispatch(
@@ -320,15 +319,14 @@ class CustomRestTest extends AbstractIntegrationCase
         $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
         $this->assertSame(
             '{"error":"Unauthorized"}',
-            (string)$response->getBody(),
+            (string) $response->getBody(),
             $this->getErrorDescription($response)
         );
     }
 
     /**
      * @test
-     * @param string $path
-     * @param int    $expectedStatus
+     *
      * @dataProvider differentTestsDataProvider
      */
     public function differentTests(string $path, int $expectedStatus)
@@ -337,9 +335,6 @@ class CustomRestTest extends AbstractIntegrationCase
         $this->assertSame($expectedStatus, $response->getStatusCode(), $this->getErrorDescription($response));
     }
 
-    /**
-     * @return array
-     */
     public function differentTestsDataProvider(): array
     {
         return [

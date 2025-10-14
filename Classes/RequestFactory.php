@@ -53,9 +53,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     /**
      * Check for an alias for the given path
-     *
-     * @param string $path
-     * @return string|null
      */
     protected function getAliasForPath(string $path): ?string
     {
@@ -64,16 +61,13 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     /**
      * Returns the path and original path for the given input path respecting configured aliases
-     *
-     * @param ServerRequestInterface $request
-     * @return stdClass
      */
     protected function determineAndAnalyseInputPath(ServerRequestInterface $request): stdClass
     {
         $pathAndFormat = $this->determinePathAndFormat($request);
         $inputPath = $pathAndFormat->path;
 
-        $pathInfo = (object)[
+        $pathInfo = (object) [
             'path'         => '',
             'originalPath' => '',
             'resourceType' => '',
@@ -93,7 +87,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         // Get the first part of the path
         $resourceType = strtok($path, '/');
         if (!$resourceType) {
-            return (object)[
+            return (object) [
                 'path'         => $path,
                 'originalPath' => '',
                 'resourceType' => '',
@@ -104,7 +98,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         // Check for path aliases
         $resourceTypeAlias = $this->getAliasForPath($resourceType);
         if ($resourceTypeAlias) {
-            return (object)[
+            return (object) [
                 'path'         => preg_replace('!' . $resourceType . '!', $resourceTypeAlias, $path, 1),
                 'originalPath' => $path,
                 'resourceType' => $resourceTypeAlias,
@@ -112,7 +106,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             ];
         }
 
-        return (object)[
+        return (object) [
             'path'         => $path,
             'originalPath' => $path,
             'resourceType' => $resourceType,
@@ -120,22 +114,17 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         ];
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param string                 $path
-     * @return string
-     */
     private function removePathPrefixes(ServerRequestInterface $request, string $path): string
     {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH') ?: getenv('REDIRECT_TYPO3_REST_REQUEST_BASE_PATH');
-        if ($pathPrefix === false) {
+        if (false === $pathPrefix) {
             $pathPrefix = $this->configurationProvider->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
         }
-        if ($pathPrefix === false) {
+        if (false === $pathPrefix) {
             $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
         }
 
-        $path = $this->removePathPrefix($path, '/' . trim((string)$pathPrefix, '/'));
+        $path = $this->removePathPrefix($path, '/' . trim((string) $pathPrefix, '/'));
         $path = $this->removePathPrefix($path, '/rest/');
 
         $sitePrefix = SiteUtility::detectSitePrefix($request);
@@ -147,14 +136,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         return $path;
     }
 
-    /**
-     * @param string $path
-     * @param string $pathPrefix
-     * @return string
-     */
     private function removePathPrefix(string $path, string $pathPrefix): string
     {
-        if ($pathPrefix && $pathPrefix !== 'auto' && $pathPrefix !== '/') {
+        if ($pathPrefix && 'auto' !== $pathPrefix && '/' !== $pathPrefix) {
             if ($this->stringHasPrefix($path, $pathPrefix)) {
                 $path = substr($path, strlen($pathPrefix));
             }
@@ -163,11 +147,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         return $path;
     }
 
-    /**
-     * @param string $input
-     * @param string $prefix
-     * @return bool
-     */
     private function stringHasPrefix(string $input, string $prefix): bool
     {
         return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
@@ -175,9 +154,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     /**
      * Split path and format
-     *
-     * @param string $path
-     * @return object
      */
     private function splitPathAndFormat(string $path): object
     {
@@ -186,7 +162,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         // Strip the format from the path
         $resourceName = basename($path);
         $lastDotPosition = strrpos($resourceName, '.');
-        if ($lastDotPosition !== false) {
+        if (false !== $lastDotPosition) {
             $directory = '';
             if ($resourceName !== $path) {
                 $directory = rtrim(dirname($path), '/') . '/';
@@ -206,29 +182,25 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $format = Format::DEFAULT_FORMAT;
         }
 
-        return (object)[
+        return (object) [
             'path'   => $path,
             'format' => $format,
         ];
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return object
-     */
     private function determinePathAndFormat(ServerRequestInterface $request): object
     {
         $path = $this->getRawPath($request);
 
         // Make sure the path starts with a slash
         if ($path) {
-            $path = '/' . ltrim((string)$path, '/');
+            $path = '/' . ltrim((string) $path, '/');
         }
 
         // Strip the query
         $path = strtok($path, '?');
         if (!$path) {
-            return (object)[
+            return (object) [
                 'path'   => '',
                 'format' => Format::DEFAULT_FORMAT,
             ];
@@ -240,9 +212,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     /**
      * Returns if the given format is valid
-     *
-     * @param $format
-     * @return boolean
      */
     public static function isValidFormat($format): bool
     {
@@ -254,10 +223,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         return isset($mimeTypes[$format]);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return string
-     */
     private function getRawPath(ServerRequestInterface $request): string
     {
         $path = '';
@@ -269,6 +234,6 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $path = filter_var($this->removePathPrefixes($request, $request->getUri()->getPath()), FILTER_SANITIZE_URL);
         }
 
-        return (string)$path;
+        return (string) $path;
     }
 }

@@ -14,10 +14,9 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 trait FileBuilderTrait
 {
     /**
-     * @param Prophet|null $prophet
      * @return File
      */
-    public function createFileMock(Prophet $prophet = null)
+    public function createFileMock(?Prophet $prophet = null)
     {
         if (null === $prophet) {
             $prophet = new Prophet();
@@ -39,12 +38,7 @@ trait FileBuilderTrait
         return $fileProphecy->reveal();
     }
 
-    /**
-     * @param array        $fileReferenceProperties
-     * @param Prophet|null $prophet
-     * @return FileReference
-     */
-    public function createFileReferenceMock(array $fileReferenceProperties = [], Prophet $prophet = null): FileReference
+    public function createFileReferenceMock(array $fileReferenceProperties = [], ?Prophet $prophet = null): FileReference
     {
         if (null === $prophet) {
             $prophet = new Prophet();

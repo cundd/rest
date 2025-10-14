@@ -42,13 +42,14 @@ class HttpClient
         if (!is_string($baseUrl) && !(is_object($baseUrl) && method_exists($baseUrl, '__toString'))) {
             throw new InvalidArgumentException('Expected argument "baseUrl" to be of type string');
         }
-        $this->verbose = (bool)$verbose;
-        $this->baseUrl = (string)$baseUrl;
+        $this->verbose = (bool) $verbose;
+        $this->baseUrl = (string) $baseUrl;
     }
 
     /**
      * @param bool   $verbose
      * @param string $baseUrl
+     *
      * @return HttpClient
      */
     public static function client($verbose = false, $baseUrl = '')
@@ -59,9 +60,10 @@ class HttpClient
     /**
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
+     *
      * @return HttpResponse
      */
     public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
@@ -69,9 +71,9 @@ class HttpClient
         $response = $this->request($path, $method, $body, $headers, $basicAuth);
 
         $response = $response->withParsedBody(json_decode($response->getBody(), true));
-        if ($response->getParsedBody() === null) {
+        if (null === $response->getParsedBody()) {
             $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-                . substr($response->getBody(), 0, (int)getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+                . substr($response->getBody(), 0, (int) getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
                 . '------------------------------------' . PHP_EOL
                 . $this->buildCurlCommand($path, $method, $body, $headers, $basicAuth);
             throw new UnexpectedValueException(json_last_error_msg() . ' for content: ' . $bodyPart);
@@ -83,9 +85,10 @@ class HttpClient
     /**
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
+     *
      * @return HttpResponse
      */
     public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
@@ -99,7 +102,7 @@ class HttpClient
             CURLOPT_HEADER         => true,
             CURLOPT_VERBOSE        => $this->verbose,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING       => "",
+            CURLOPT_ENCODING       => '',
             CURLOPT_MAXREDIRS      => 10,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
@@ -107,7 +110,7 @@ class HttpClient
             CURLOPT_HTTPHEADER     => $this->flattenRequestHeaders($headers),
         ];
 
-        if ($basicAuth !== null) {
+        if (null !== $basicAuth) {
             if (is_string($basicAuth)) {
                 $options[CURLOPT_USERPWD] = $basicAuth;
             } else {
@@ -115,7 +118,7 @@ class HttpClient
             }
         }
 
-        if ($body !== null) {
+        if (null !== $body) {
             $body = $this->prepareBody($body, $headers);
             $options[CURLOPT_POSTFIELDS] = $body;
         }
@@ -130,9 +133,9 @@ class HttpClient
 
         $this->debugCurl($path, $method, $body, $headers, $basicAuth);
 
-        $this->statistics['numberOfRequestsTotal'] += 1;
+        ++$this->statistics['numberOfRequestsTotal'];
         if (isset($this->statistics['numberOfRequestsPerMethod'][$method])) {
-            $this->statistics['numberOfRequestsPerMethod'][$method] += 1;
+            ++$this->statistics['numberOfRequestsPerMethod'][$method];
         } else {
             $this->statistics['numberOfRequestsPerMethod'][$method] = 1;
         }
@@ -155,7 +158,7 @@ class HttpClient
      *
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
      */
@@ -171,9 +174,10 @@ class HttpClient
     /**
      * @param string            $path
      * @param string            $method
-     * @param null|string|mixed $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
+     * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
      * @param string[]          $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
+     *
      * @return string
      */
     private function buildCurlCommand($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
@@ -212,6 +216,7 @@ class HttpClient
     /**
      * @param string $headerString
      * @param int    $statusCode
+     *
      * @return array
      */
     private function parseResponseHeaders($headerString, &$statusCode)
@@ -224,7 +229,7 @@ class HttpClient
         $headers = [];
 
         foreach ($headerLines as $i => $line) {
-            if ($i === 0) {
+            if (0 === $i) {
                 [$httpCode, $rawStatusCode, $statusPhrase] = explode(' ', $line, 3);
                 $statusCode = intval($rawStatusCode);
                 $headers['status_code'] = [$statusCode];
@@ -259,7 +264,6 @@ class HttpClient
     }
 
     /**
-     * @param array $headers
      * @return array
      */
     private function flattenRequestHeaders(array $headers)
@@ -275,7 +279,9 @@ class HttpClient
     /**
      * @param resource       $curlClient
      * @param array|stdClass $requestData
+     *
      * @return HttpResponse
+     *
      * @throws RuntimeException
      */
     private function send($curlClient, $requestData)
@@ -306,13 +312,14 @@ class HttpClient
             $responseBody,
             $responseBody,
             $responseHeaders,
-            (object)$requestData
+            (object) $requestData
         );
     }
 
     /**
      * @param string|mixed $body
      * @param string[]     $headers Reference to the headers array
+     *
      * @return string
      */
     protected function prepareBody($body, array &$headers)
@@ -329,7 +336,6 @@ class HttpClient
     }
 
     /**
-     * @param $path
      * @return string
      */
     private function getUrlForPath($path)

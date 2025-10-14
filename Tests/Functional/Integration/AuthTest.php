@@ -31,7 +31,7 @@ class AuthTest extends AbstractIntegrationCase
     {
         FrontendUserAuthentication::reset();
 
-        $GLOBALS['TSFE'] = (object)['fe_user' => new FrontendUserAuthentication()];
+        $GLOBALS['TSFE'] = (object) ['fe_user' => new FrontendUserAuthentication()];
     }
 
     /**
@@ -48,7 +48,7 @@ class AuthTest extends AbstractIntegrationCase
         );
         $this->assertSame(
             '{"status":"logged-out"}',
-            (string)$response->getBody(),
+            (string) $response->getBody(),
             $this->getErrorDescription($response)
         );
     }
@@ -63,7 +63,7 @@ class AuthTest extends AbstractIntegrationCase
         $response = $this->buildRequestAndDispatch($objectManager, 'auth/login', 'POST');
         $this->assertSame(
             '{"status":"logged-out"}',
-            (string)$response->getBody(),
+            (string) $response->getBody(),
             $this->getErrorDescription($response)
         );
 
@@ -71,7 +71,7 @@ class AuthTest extends AbstractIntegrationCase
             $objectManager,
             'auth/login',
             'POST',
-            ['username' => $this->getApiUser(), 'apikey' => $this->getApiKey()],
+            ['username'     => $this->getApiUser(), 'apikey' => $this->getApiKey()],
             ['Content-Type' => 'multipart/form-data']
         );
         $this->assertSame(
@@ -81,7 +81,7 @@ class AuthTest extends AbstractIntegrationCase
         );
         $this->assertSame(
             '{"status":"logged-in"}',
-            (string)$response->getBody(),
+            (string) $response->getBody(),
             $this->getErrorDescription($response)
         );
     }

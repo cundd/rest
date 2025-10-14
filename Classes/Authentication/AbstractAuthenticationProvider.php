@@ -11,7 +11,6 @@ abstract class AbstractAuthenticationProvider implements AuthenticationProviderI
     /**
      * Tries to authenticate the current request
      *
-     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
     public function authenticate(RestRequestInterface $request): bool

@@ -16,11 +16,10 @@ class RequestAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * Tries to authenticate the current request
      *
-     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
     public function authenticate(RestRequestInterface $request): bool
     {
-        return !!($GLOBALS['TSFE']->fe_user->user);
+        return (bool) ($GLOBALS['TSFE']->fe_user->user);
     }
 }

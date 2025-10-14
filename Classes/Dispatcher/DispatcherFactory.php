@@ -12,7 +12,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DispatcherFactory
 {
-    public function __construct(readonly private ObjectManagerInterface $objectManager)
+    public function __construct(private readonly ObjectManagerInterface $objectManager)
     {
     }
 

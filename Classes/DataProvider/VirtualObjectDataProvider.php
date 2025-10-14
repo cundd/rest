@@ -33,7 +33,7 @@ class VirtualObjectDataProvider extends DataProvider
         ObjectManagerInterface $objectManager,
         ExtractorInterface $extractor,
         IdentityProviderInterface $identityProvider,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
     ) {
         parent::__construct($objectManager, $extractor, $identityProvider, $logger);
         $this->configurationFactory = $configurationFactory;
@@ -42,13 +42,11 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Return the Object Converter with the matching configuration
      *
-     * @param ResourceType $resourceType
-     * @return ObjectConverter
      * @throws MissingConfigurationException
      */
     public function getObjectConverterForResourceType(ResourceType $resourceType): ObjectConverter
     {
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         if (!isset($this->objectConverterMap[$resourceTypeString])) {
             $objectConverter = $this->objectManager->get(ObjectConverter::class);
             $objectConverter->setConfiguration($this->getConfigurationForResourceType($resourceType));
@@ -64,13 +62,11 @@ class VirtualObjectDataProvider extends DataProvider
     /**
      * Return the Configuration for the given resource type
      *
-     * @param ResourceType $resourceType
-     * @return ConfigurationInterface|null
      * @throws MissingConfigurationException
      */
     public function getConfigurationForResourceType(ResourceType $resourceType): ?ConfigurationInterface
     {
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         $virtualResourceTypeString = substr(
             $resourceTypeString,
             strpos($resourceTypeString, '-') + 1

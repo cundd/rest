@@ -11,13 +11,10 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
  */
 class SessionManager implements SingletonInterface
 {
-    const KEY_PREFIX = 'rest-';
+    public const KEY_PREFIX = 'rest-';
 
     /**
      * Returns the value for the given key
-     *
-     * @param string $key
-     * @return mixed
      */
     public function valueForKey(string $key)
     {
@@ -27,8 +24,6 @@ class SessionManager implements SingletonInterface
     /**
      * Sets the value for the given key
      *
-     * @param string $key
-     * @param mixed  $value
      * @return $this
      */
     public function setValueForKey(string $key, $value): self

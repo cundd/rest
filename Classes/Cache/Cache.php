@@ -50,7 +50,7 @@ class Cache implements CacheInterface
          * Use caching if the cache lifetime configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifetime !== -1) && $request->getPath();
+        $useCaching = (-1 !== $cacheLifetime) && $request->getPath();
         if (!$useCaching) {
             return null;
         }
@@ -86,7 +86,7 @@ class Cache implements CacheInterface
     public function setCachedValueForRequest(
         RestRequestInterface $request,
         ResponseInterface $response,
-        ResourceConfiguration $resourceConfiguration
+        ResourceConfiguration $resourceConfiguration,
     ): void {
         if (false === $this->canBeCached($request, $response)) {
             return;
@@ -98,7 +98,7 @@ class Cache implements CacheInterface
          * Use caching if the cache lifetime configuration is not -1, an API
          * path is given and the request is a read request
          */
-        $useCaching = ($cacheLifetime !== -1) && $request->getPath();
+        $useCaching = (-1 !== $cacheLifetime) && $request->getPath();
         if (!$useCaching) {
             return;
         }
@@ -110,8 +110,8 @@ class Cache implements CacheInterface
             array_merge(
                 $response->getHeaders(),
                 [
-                    'content' => (string)$response->getBody(),
-                    'status' => $response->getStatusCode(),
+                    'content'             => (string) $response->getBody(),
+                    'status'              => $response->getStatusCode(),
                     Header::LAST_MODIFIED => $this->getHttpDate(time()),
                 ]
             ),
@@ -124,7 +124,7 @@ class Cache implements CacheInterface
     {
         $cacheKey = sha1($request->getUri() . '_' . $request->getFormat() . '_' . $request->getMethod());
         $params = $request->getQueryParams();
-        if ($request->getMethod() === 'GET' && count($params)) {
+        if ('GET' === $request->getMethod() && count($params)) {
             $cacheKey = sha1($cacheKey . serialize($params));
         }
 
@@ -158,7 +158,6 @@ class Cache implements CacheInterface
     /**
      * Set the concrete Cache instance
      *
-     * @param FrontendInterface $cacheInstance
      * @internal
      */
     public function setCacheInstance(FrontendInterface $cacheInstance): void
@@ -168,9 +167,6 @@ class Cache implements CacheInterface
 
     /**
      * Return a date in the format for a HTTP header
-     *
-     * @param int $date
-     * @return string
      */
     private function getHttpDate(int $date): string
     {
@@ -193,8 +189,6 @@ class Cache implements CacheInterface
 
     /**
      * Clear the cache for the current request
-     *
-     * @param RestRequestInterface $request
      */
     private function clearCache(RestRequestInterface $request): void
     {
@@ -206,7 +200,6 @@ class Cache implements CacheInterface
     /**
      * Return the tags for the current request
      *
-     * @param RestRequestInterface $request
      * @return string[]
      */
     private function getTags(RestRequestInterface $request): array
@@ -224,7 +217,7 @@ class Cache implements CacheInterface
                     $vendor . '_' . $extension . '_' . $model,
                     $extension . '_' . $model,
                     $currentPath,
-                    (string)$resourceType,
+                    (string) $resourceType,
                 ]
             )
         );
@@ -233,9 +226,6 @@ class Cache implements CacheInterface
     /**
      * Return if the given Request-Response combination can be cached
      *
-     * @param RestRequestInterface $request
-     * @param ResponseInterface    $response
-     * @return bool
      * @internal
      */
     public function canBeCached(RestRequestInterface $request, ResponseInterface $response): bool
@@ -249,17 +239,11 @@ class Cache implements CacheInterface
             return false;
         }
 
-        if ($response->getHeader(Header::CUNDD_REST_NO_CACHE)) {
-            return false;
-        }
+        return !($response->getHeader(Header::CUNDD_REST_NO_CACHE))
 
-        return true;
+        ;
     }
 
-    /**
-     * @param ResponseInterface $response
-     * @return bool
-     */
     private function cacheControlPreventsCaching(ResponseInterface $response): bool
     {
         $cacheControlHeaders = $response->getHeader(Header::CACHE_CONTROL);
@@ -270,7 +254,7 @@ class Cache implements CacheInterface
             'must-revalidate',
         ];
         foreach ($cacheControlHeaders as $cacheControlHeader) {
-            if (0 < count(array_intersect(explode(',', (string)$cacheControlHeader), $noCacheValues))) {
+            if (0 < count(array_intersect(explode(',', (string) $cacheControlHeader), $noCacheValues))) {
                 return true;
             }
         }

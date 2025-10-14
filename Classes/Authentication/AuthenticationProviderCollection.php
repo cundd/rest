@@ -41,7 +41,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Loops through each Authentication Provider in the collection and tries to authenticate the current request
      *
-     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
     public function authenticate(RestRequestInterface $request): bool
@@ -59,7 +58,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Sets the used Authentication Providers
      *
-     * @param SplObjectStorage $providers
      * @return $this
      */
     public function setProviders(SplObjectStorage $providers): self
@@ -71,8 +69,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
 
     /**
      * Returns the used Authentication Providers
-     *
-     * @return SplObjectStorage
      */
     public function getProviders(): SplObjectStorage
     {
@@ -82,7 +78,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Adds the given Authentication Provider
      *
-     * @param AuthenticationProviderInterface $provider
      * @return $this
      */
     public function addProvider(AuthenticationProviderInterface $provider): self
@@ -95,7 +90,6 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Removes the given Authentication Provider
      *
-     * @param AuthenticationProviderInterface $provider
      * @return $this
      */
     public function removeProvider(AuthenticationProviderInterface $provider): self

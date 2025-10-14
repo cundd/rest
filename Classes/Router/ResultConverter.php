@@ -34,15 +34,11 @@ class ResultConverter implements RouterInterface
 
     /**
      * Result converter constructor
-     *
-     * @param RouterInterface          $router
-     * @param ResponseFactoryInterface $responseFactory
-     * @param callable                 $exceptionHandler
      */
     public function __construct(
         RouterInterface $router,
         ResponseFactoryInterface $responseFactory,
-        callable $exceptionHandler
+        callable $exceptionHandler,
     ) {
         $this->router = $router;
         $this->responseFactory = $responseFactory;
@@ -51,9 +47,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Dispatch the request to the router and convert the result
-     *
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     public function dispatch(RestRequestInterface $request): ResponseInterface
     {
@@ -78,9 +71,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Add the given Route
-     *
-     * @param RouteInterface $route
-     * @return RouterInterface
      */
     public function add(RouteInterface $route): RouterInterface
     {
@@ -91,10 +81,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method GET
-     *
-     * @param string|ResourceType $pattern
-     * @param callable            $callback
-     * @return RouterInterface
      */
     public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface
     {
@@ -105,10 +91,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method POST
-     *
-     * @param string|ResourceType $pattern
-     * @param callable            $callback
-     * @return RouterInterface
      */
     public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface
     {
@@ -119,10 +101,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method PUT
-     *
-     * @param string|ResourceType $pattern
-     * @param callable            $callback
-     * @return RouterInterface
      */
     public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface
     {
@@ -133,10 +111,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Creates and registers a new Route with the given pattern and callback for the method DELETE
-     *
-     * @param string|ResourceType $pattern
-     * @param callable            $callback
-     * @return RouterInterface
      */
     public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface
     {
@@ -147,10 +121,6 @@ class ResultConverter implements RouterInterface
 
     /**
      * Convert exceptions that occurred during the dispatching
-     *
-     * @param Exception            $exception
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     private function exceptionToResponse(Exception $exception, RestRequestInterface $request): ResponseInterface
     {
@@ -169,10 +139,6 @@ class ResultConverter implements RouterInterface
         return $this->responseFactory->createErrorResponse($exceptionDetails, 501, $request);
     }
 
-    /**
-     * @param $exception
-     * @return array
-     */
     private function getDebugTrace(Exception $exception): array
     {
         return array_map(
@@ -209,10 +175,6 @@ class ResultConverter implements RouterInterface
      *
      * If debugging information is allowed for the client and alternative Route suggestions where provided by the
      * Router, they will be sent as additional header
-     *
-     * @param NotFoundException    $result
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
      */
     private function notFoundToResponse(NotFoundException $result, RestRequestInterface $request): ResponseInterface
     {
@@ -240,7 +202,7 @@ class ResultConverter implements RouterInterface
         );
 
         $alternativePatterns = str_replace(["\r", "\n"], '', $alternativePatterns);
-        $alternativePatterns = (string)preg_replace('/[^\x20-\x7e]/', '', $alternativePatterns);
+        $alternativePatterns = (string) preg_replace('/[^\x20-\x7e]/', '', $alternativePatterns);
 
         $maxByteLength = 1024;
         if (strlen($alternativePatterns) > $maxByteLength) {
@@ -253,9 +215,6 @@ class ResultConverter implements RouterInterface
         );
     }
 
-    /**
-     * @return bool
-     */
     private function getShowDebugInformation(): bool
     {
         return DebugUtility::allowDebugInformation();

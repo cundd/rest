@@ -18,8 +18,6 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
 
     /**
      * BasicAuth Provider constructor
-     *
-     * @param UserProviderInterface $userProvider
      */
     public function __construct(UserProviderInterface $userProvider)
     {
@@ -29,7 +27,6 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * Tries to authenticate the current request
      *
-     * @param RestRequestInterface $request
      * @return bool Returns if the authentication was successful
      */
     public function authenticate(RestRequestInterface $request): bool
@@ -59,7 +56,7 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     {
         if (isset($_SERVER[$key])) {
             $value = $_SERVER[$key];
-            if (strpos(strtolower($value), 'basic') === 0) {
+            if (0 === strpos(strtolower($value), 'basic')) {
                 return explode(':', base64_decode(substr($value, 6)));
             }
         }

@@ -20,36 +20,25 @@ abstract class AbstractCoreBootstrap implements CoreBootstrapInterface
 
     /**
      * Build the TSFE object
-     *
-     * @param int                    $pageUid
-     * @param ServerRequestInterface $request
-     * @return TypoScriptFrontendController
      */
     abstract protected function buildFrontendController(
         int $pageUid,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): TypoScriptFrontendController;
 
     /**
      * Configure the given frontend controller
-     *
-     * @param TypoScriptFrontendController $frontendController
-     * @param ServerRequestInterface       $request
      */
     abstract protected function configureFrontendController(
         TypoScriptFrontendController $frontendController,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ServerRequestInterface;
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return int
-     */
     protected function getPageUid(ServerRequestInterface $request): int
     {
         $queryParams = $request->getQueryParams();
         if (isset($queryParams['pid'])) {
-            return (int)$queryParams['pid'];
+            return (int) $queryParams['pid'];
         }
         /** @var Site|null $site */
         $site = $request->getAttribute('site');

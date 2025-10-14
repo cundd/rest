@@ -18,8 +18,10 @@ class FrontendUserAuthentication
      * or current-session based (not available when browse is closed, but does not require login)
      *
      * @param string $type Session data type; Either "user" (persistent, bound to fe_users profile) or "ses" (temporary, bound to current session cookie)
-     * @param string $key  Key from the data array to return; The session data (in either case) is an array (static::$uc / static::$sessionData) and this value determines which key to return the value for.
+     * @param string $key  key from the data array to return; The session data (in either case) is an array (static::$uc / static::$sessionData) and this value determines which key to return the value for
+     *
      * @return mixed Returns whatever value there was in the array for the key, $key
+     *
      * @see setKey()
      */
     public function getKey($type, $key)
@@ -34,8 +36,9 @@ class FrontendUserAuthentication
      * Notice: Simply calling this function will not save the data to the database! The actual saving is done in storeSessionData() which is called as some of the last things in \TYPO3\CMS\Frontend\Http\RequestHandler. So if you exit before this point, nothing gets saved of course! And the solution is to call $GLOBALS['TSFE']->storeSessionData(); before you exit.
      *
      * @param string $type Session data type; Either "user" (persistent, bound to fe_users profile) or "ses" (temporary, bound to current session cookie)
-     * @param string $key  Key from the data array to store incoming data in; The session data (in either case) is an array (static::$uc / static::$sessionData) and this value determines in which key the $data value will be stored.
+     * @param string $key  key from the data array to store incoming data in; The session data (in either case) is an array (static::$uc / static::$sessionData) and this value determines in which key the $data value will be stored
      * @param mixed  $data The data value to store in $key
+     *
      * @see setKey(), storeSessionData(), record_registration()
      */
     public function setKey($type, $key, $data)

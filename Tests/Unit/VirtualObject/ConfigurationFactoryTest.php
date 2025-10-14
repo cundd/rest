@@ -30,27 +30,27 @@ class ConfigurationFactoryTest extends TestCase
                     'identifier'  => 'property1',
                     'tableName'   => 'my_resource_table',
                     'properties.' => [
-                        'property1.'      => [
+                        'property1.' => [
                             'type'   => 'string',
                             'column' => 'property_one',
                         ],
-                        'property2.'      => [
+                        'property2.' => [
                             'type'   => 'float',
                             'column' => 'property_two',
                         ],
-                        'property3.'      => [
+                        'property3.' => [
                             'type'   => 'int',
                             'column' => 'property_three',
                         ],
-                        'property4.'      => [
+                        'property4.' => [
                             'type'   => 'integer',
                             'column' => 'property_four',
                         ],
-                        'property5.'      => [
+                        'property5.' => [
                             'type'   => 'bool',
                             'column' => 'property_five',
                         ],
-                        'property6.'      => [
+                        'property6.' => [
                             'type'   => 'boolean',
                             'column' => 'property_six',
                         ],

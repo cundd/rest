@@ -40,31 +40,19 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     private $format;
 
-    /**
-     * @var
-     */
     private $originalPath;
 
-    /**
-     * @var
-     */
     private $sentData;
 
     /**
      * Constructor for a new request with the given Server Request, resource type and format
-     *
-     * @param ServerRequestInterface $originalRequest
-     * @param UriInterface           $internalUri
-     * @param string                 $originalPath
-     * @param ResourceType           $resourceType
-     * @param Format                 $format
      */
     public function __construct(
         ServerRequestInterface $originalRequest,
         UriInterface $internalUri,
         string $originalPath,
         ResourceType $resourceType,
-        Format $format
+        Format $format,
     ) {
         $this->originalRequest = $originalRequest;
         $this->originalPath = $originalPath;
@@ -75,8 +63,6 @@ class Request implements ServerRequestInterface, RestRequestInterface
 
     /**
      * Returns the original request
-     *
-     * @return ServerRequestInterface
      */
     public function getOriginalRequest(): ServerRequestInterface
     {
@@ -117,7 +103,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
 
     public function isPreflight(): bool
     {
-        return strtoupper($this->getMethod()) === 'OPTIONS';
+        return 'OPTIONS' === strtoupper($this->getMethod());
     }
 
     public function isWrite(): bool
@@ -142,22 +128,19 @@ class Request implements ServerRequestInterface, RestRequestInterface
             $this->internalUri,
             $this->originalPath,
             $this->resourceType,
-            new Format((string)$format)
+            new Format((string) $format)
         );
     }
 
     /**
      * Returns the request path before mapping aliases
-     *
-     * @return string
      */
     public function getOriginalResourceType(): string
     {
-        return (string)strtok(strtok($this->originalPath, '?'), '/');
+        return (string) strtok(strtok($this->originalPath, '?'), '/');
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return $this
      */
     protected function setOriginalRequest(ServerRequestInterface $request): self
@@ -180,8 +163,8 @@ class Request implements ServerRequestInterface, RestRequestInterface
                     return true;
                 }
 
-                return strpos($contentType, 'application/x-www-form-urlencoded') !== false
-                    || strpos($contentType, 'multipart/form-data') !== false;
+                return false !== strpos($contentType, 'application/x-www-form-urlencoded')
+                    || false !== strpos($contentType, 'multipart/form-data');
             },
             false
         );
@@ -192,13 +175,13 @@ class Request implements ServerRequestInterface, RestRequestInterface
         }
 
         // We expect the content to be a JSON payload
-        $body = (string)$this->getBody();
+        $body = (string) $this->getBody();
         if ('' === $body || 'null' === $body) {
             return null;
         }
 
         $decodedData = json_decode($body, true);
-        if ($decodedData === null) {
+        if (null === $decodedData) {
             // Decoding failed -> fall back to the parsed body
             return $this->getParsedBody();
         } else {

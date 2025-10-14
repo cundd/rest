@@ -14,9 +14,6 @@ class SqlErrorException extends Exception
 {
     /**
      * Return a new SQL error from the given exception
-     *
-     * @param Throwable $exception
-     * @return SqlErrorException
      */
     public static function fromException(Throwable $exception): self
     {

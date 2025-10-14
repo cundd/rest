@@ -46,7 +46,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider routeShouldTrimSlashesDataProvider
+     *
      * @param string $inputPattern
      * @param string $outputPattern
      */
@@ -102,7 +104,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider getMethodTestDataProvider
+     *
      * @param string $method
      * @param string $expected
      */
@@ -135,7 +139,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider deeperPathsHaveHigherPriorityDataProvider
+     *
      * @param string $patternLowPriority
      * @param string $patternHighPriority
      */
@@ -166,7 +172,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider patternsWithExpressionsHaveLowerPriorityDataProvider
+     *
      * @param string $patternLowPriority
      * @param string $patternHighPriority
      */
@@ -200,8 +208,10 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $inputPattern
      * @param string $expectedPattern
+     *
      * @dataProvider getNormalizedPatternDataProvider
      */
     public function getNormalizedPatternTest($inputPattern, $expectedPattern)
@@ -227,8 +237,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $pattern
-     * @param array  $expectedParameters
+     *
      * @dataProvider getParametersDataProvider
      */
     public function getParametersTest($pattern, array $expectedParameters)
@@ -309,7 +320,9 @@ class RouteTest extends TestCase
 
     /**
      * @test
+     *
      * @param string $pattern
+     *
      * @dataProvider shouldThrowForInvalidParametersDataProvider
      */
     public function shouldThrowForInvalidParametersTest($pattern)

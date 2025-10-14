@@ -151,6 +151,7 @@ class RepositoryTest extends AbstractDatabaseCase
 
     /**
      * @param VirtualObject[] $collection
+     *
      * @return array
      */
     protected function getTestDataFromObjectCollection($collection)
@@ -165,6 +166,7 @@ class RepositoryTest extends AbstractDatabaseCase
 
     /**
      * @param VirtualObject $virtualObject
+     *
      * @return array
      */
     protected function getTestDataFromObject($virtualObject)

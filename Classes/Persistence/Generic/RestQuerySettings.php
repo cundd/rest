@@ -10,8 +10,6 @@ class RestQuerySettings extends TYPO3Generic\Typo3QuerySettings implements TYPO3
 {
     /**
      * Flag if the storage page should be respected for the query.
-     *
-     * @var bool
      */
     protected bool $respectStoragePage = false;
 }

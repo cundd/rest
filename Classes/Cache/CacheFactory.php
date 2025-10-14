@@ -12,16 +12,11 @@ class CacheFactory
 {
     /**
      * Return a Cache instance for the Resource Type
-     *
-     * @param ResourceType                   $resourceType
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManager                  $objectManager
-     * @return CacheInterface
      */
     public function buildCache(
         ResourceType $resourceType,
         ConfigurationProviderInterface $configurationProvider,
-        ObjectManager $objectManager
+        ObjectManager $objectManager,
     ): CacheInterface {
         $cacheInstance = $this->getCacheInstance($configurationProvider, $objectManager);
 
@@ -35,31 +30,21 @@ class CacheFactory
         return $cacheInstance;
     }
 
-    /**
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param ObjectManager                  $objectManager
-     * @return CacheInterface
-     */
     private function getCacheInstance(
         ConfigurationProviderInterface $configurationProvider,
-        ObjectManager $objectManager
+        ObjectManager $objectManager,
     ): CacheInterface {
         $cacheImplementation = $configurationProvider->getSetting('cacheClass');
         if ($cacheImplementation && class_exists($cacheImplementation)) {
-            return $objectManager->get($cacheImplementation);// @phpstan-ignore return.type
+            return $objectManager->get($cacheImplementation); // @phpstan-ignore return.type
         }
 
         return $objectManager->get(Cache::class); // @phpstan-ignore return.type
     }
 
-    /**
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param ResourceType                   $resourceType
-     * @return int
-     */
     private function getCacheLifetime(
         ConfigurationProviderInterface $configurationProvider,
-        ResourceType $resourceType
+        ResourceType $resourceType,
     ): int {
         $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
         $cacheLifetime = $resourceConfiguration?->getCacheLifetime();
@@ -68,26 +53,21 @@ class CacheFactory
         }
 
         $cacheLifetime = $configurationProvider->getSetting('cacheLifetime');
-        if ($cacheLifetime !== null && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
-            return (int)$cacheLifetime;
+        if (null !== $cacheLifetime && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
+            return (int) $cacheLifetime;
         }
 
         $cacheLifetime = $configurationProvider->getSetting('cacheLifeTime');
-        if ($cacheLifetime !== null && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
-            return (int)$cacheLifetime;
+        if (null !== $cacheLifetime && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
+            return (int) $cacheLifetime;
         }
 
         return -1;
     }
 
-    /**
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param ResourceType                   $resourceType
-     * @return int
-     */
     private function getExpiresHeaderLifetime(
         ConfigurationProviderInterface $configurationProvider,
-        ResourceType $resourceType
+        ResourceType $resourceType,
     ): int {
         $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
         $expiresHeaderLifetime = $resourceConfiguration->getExpiresHeaderLifetime();
@@ -96,13 +76,13 @@ class CacheFactory
         }
 
         $expiresHeaderLifetime = $configurationProvider->getSetting('expiresHeaderLifetime');
-        if ($expiresHeaderLifetime !== null) {
-            return (int)$expiresHeaderLifetime;
+        if (null !== $expiresHeaderLifetime) {
+            return (int) $expiresHeaderLifetime;
         }
 
         $expiresHeaderLifetime = $configurationProvider->getSetting('expiresHeaderLifeTime');
-        if ($expiresHeaderLifetime !== null) {
-            return (int)$expiresHeaderLifetime;
+        if (null !== $expiresHeaderLifetime) {
+            return (int) $expiresHeaderLifetime;
         }
 
         return $this->getCacheLifetime($configurationProvider, $resourceType);

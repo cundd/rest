@@ -40,9 +40,6 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function options(): bool
     {
         // TODO: Respond with the correct preflight headers
@@ -55,10 +52,6 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
         $router->add(Route::options('/?', [$this, 'options']));
     }
 
-    /**
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
-     */
     protected function showTYPO3Greeting(RestRequestInterface $request): ResponseInterface
     {
         // A cleaner way would be to pass the language as argument to the LocalizationUtility, but that may
@@ -75,10 +68,6 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
         return $this->responseFactory->createSuccessResponse($greeting, 200, $request);
     }
 
-    /**
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
-     */
     protected function showBuiltinGreeting(RestRequestInterface $request): ResponseInterface
     {
         $greeting = 'What\'s up?';

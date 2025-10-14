@@ -52,14 +52,7 @@ class ResourceConfiguration
     /**
      * ResourceConfiguration constructor
      *
-     * @param ResourceType $resourceType
-     * @param Access       $read
-     * @param Access       $write
-     * @param int          $cacheLifetime
-     * @param string       $handlerClass
-     * @param string       $dataProviderClass
-     * @param string[]     $aliases
-     * @param int          $expiresHeaderLifetime
+     * @param string[] $aliases
      */
     public function __construct(
         ResourceType $resourceType,
@@ -69,7 +62,7 @@ class ResourceConfiguration
         string $handlerClass,
         string $dataProviderClass,
         array $aliases,
-        int $expiresHeaderLifetime = -1
+        int $expiresHeaderLifetime = -1,
     ) {
         $this->resourceType = $resourceType;
         $this->read = $read;
@@ -82,57 +75,36 @@ class ResourceConfiguration
         $this->expiresHeaderLifetime = $expiresHeaderLifetime;
     }
 
-    /**
-     * @return ResourceType
-     */
     public function getResourceType(): ResourceType
     {
         return $this->resourceType;
     }
 
-    /**
-     * @return Access
-     */
     public function getRead(): Access
     {
         return $this->read;
     }
 
-    /**
-     * @return Access
-     */
     public function getWrite(): Access
     {
         return $this->write;
     }
 
-    /**
-     * @return int
-     */
     public function getCacheLifetime(): int
     {
         return $this->cacheLifetime;
     }
 
-    /**
-     * @return string
-     */
     public function getHandlerClass(): string
     {
         return $this->handlerClass;
     }
 
-    /**
-     * @return string
-     */
     public function getDataProviderClass(): string
     {
         return $this->dataProviderClass;
     }
 
-    /**
-     * @return int
-     */
     public function getExpiresHeaderLifetime(): int
     {
         return $this->expiresHeaderLifetime;

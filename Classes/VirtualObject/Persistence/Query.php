@@ -55,11 +55,6 @@ class Query implements QueryInterface
      * Query constructor
      *
      * @param ConstraintInterface[]|ConstraintInterface $constraint
-     * @param array                                     $orderings
-     * @param int                                       $limit
-     * @param int                                       $offset
-     * @param string                                    $sourceIdentifier
-     * @param PersistenceManager|null                   $persistenceManager
      */
     public function __construct(
         $constraint = [],
@@ -67,7 +62,7 @@ class Query implements QueryInterface
         int $limit = 0,
         int $offset = 0,
         string $sourceIdentifier = '',
-        ?PersistenceManager $persistenceManager = null
+        ?PersistenceManager $persistenceManager = null,
     ) {
         $this->setConstraint($constraint);
         $this->persistenceManager = $persistenceManager;

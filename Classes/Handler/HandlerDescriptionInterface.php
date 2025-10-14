@@ -8,8 +8,6 @@ interface HandlerDescriptionInterface
 {
     /**
      * Return the description of the handler
-     *
-     * @return string
      */
     public function getDescription(): string;
 }

@@ -19,8 +19,6 @@ abstract class AbstractAccessController implements AccessControllerInterface
     /**
      * Checks if a valid user is logged in
      *
-     * @param RestRequestInterface $request
-     * @return Access
      * @throws Exception
      */
     protected function checkAuthentication(RestRequestInterface $request): Access
@@ -32,6 +30,6 @@ abstract class AbstractAccessController implements AccessControllerInterface
             throw $exception;
         }
 
-        return $isAuthenticated === false ? Access::unauthorized() : Access::authorized();
+        return false === $isAuthenticated ? Access::unauthorized() : Access::authorized();
     }
 }

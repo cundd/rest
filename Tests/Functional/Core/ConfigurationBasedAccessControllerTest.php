@@ -28,7 +28,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [
-                    'all'             => [
+                    'all' => [
                         'path'  => 'all',
                         'read'  => 'allow',
                         'write' => 'deny',
@@ -38,7 +38,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
                         'read'  => 'require',
                         'write' => 'allow',
                     ],
-                    'my_secondext-*'  => [
+                    'my_secondext-*' => [
                         'path'  => 'my_secondext-*',
                         'read'  => 'deny',
                         'write' => 'require',
@@ -63,7 +63,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
     {
         FrontendUserAuthentication::reset();
 
-        $GLOBALS['TSFE'] = (object)['fe_user' => new FrontendUserAuthentication()];
+        $GLOBALS['TSFE'] = (object) ['fe_user' => new FrontendUserAuthentication()];
     }
 
     /**
@@ -74,7 +74,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildRequestWithUri($uri, null, 'GET');
         $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('my_ext-my_model', (string)$configuration->getResourceType());
+        $this->assertSame('my_ext-my_model', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isRequireLogin());
         $this->assertTrue($configuration->getWrite()->isAllowed());
 
@@ -94,7 +94,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $uri = 'my_secondext-my_model/2/';
         $request = $this->buildRequestWithUri($uri, null, 'GET');
         $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('my_secondext-*', (string)$configuration->getResourceType());
+        $this->assertSame('my_secondext-*', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isDenied());
         $this->assertTrue($configuration->getWrite()->isRequireLogin());
 
@@ -113,7 +113,7 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildRequestWithUri($uri, null, 'GET');
         $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
-        $this->assertSame('all', (string)$configuration->getResourceType());
+        $this->assertSame('all', (string) $configuration->getResourceType());
         $this->assertTrue($configuration->getRead()->isAllowed());
         $this->assertTrue($configuration->getWrite()->isDenied());
     }

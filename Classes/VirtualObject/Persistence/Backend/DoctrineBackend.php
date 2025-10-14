@@ -25,9 +25,6 @@ class DoctrineBackend extends AbstractBackend
 
     /**
      * DoctrineConnection constructor
-     *
-     * @param ConnectionPool     $connectionPool
-     * @param WhereClauseBuilder $whereClauseBuilder
      */
     public function __construct(ConnectionPool $connectionPool, WhereClauseBuilder $whereClauseBuilder)
     {
@@ -43,7 +40,7 @@ class DoctrineBackend extends AbstractBackend
         try {
             $connection->insert($tableName, $row);
 
-            return (int)$connection->lastInsertId();
+            return (int) $connection->lastInsertId();
         } catch (DBALException|DoctrineException $exception) {
             throw SqlErrorException::fromException($exception);
         }
@@ -86,7 +83,7 @@ class DoctrineBackend extends AbstractBackend
 
             try {
                 $statement = $this->getConnection($tableName)->executeQuery(
-                    $baseQuery . " WHERE " . $whereClause->getExpression(),
+                    $baseQuery . ' WHERE ' . $whereClause->getExpression(),
                     $whereClause->getBoundVariables()
                 );
             } catch (DBALException|DoctrineException $exception) {
@@ -99,7 +96,7 @@ class DoctrineBackend extends AbstractBackend
             throw SqlErrorException::fromException($exception);
         }
 
-        return (int)$result['count'];
+        return (int) $result['count'];
     }
 
     public function getObjectDataByQuery(string $tableName, QueryInterface $query): array
@@ -124,7 +121,7 @@ class DoctrineBackend extends AbstractBackend
             $this->whereClauseBuilder->build($query);
             $whereClause = $this->whereClauseBuilder->getWhere();
 
-            $sql = $baseSql . " WHERE " . $whereClause->getExpression();
+            $sql = $baseSql . ' WHERE ' . $whereClause->getExpression();
             if ($query instanceof QueryInterface) {
                 $sql = $this->addOrderingAndLimit($sql, $query);
             }

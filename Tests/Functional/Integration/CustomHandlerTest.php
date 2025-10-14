@@ -21,8 +21,8 @@ class CustomHandlerTest extends AbstractIntegrationCase
 
         $this->assertSame(
             '{"message":"GET Index"}',
-            (string)$response->getBody(),
-            sprintf('Response "%s" was not expected', (string)$response->getBody())
+            (string) $response->getBody(),
+            sprintf('Response "%s" was not expected', (string) $response->getBody())
         );
         $this->assertSame(200, $response->getStatusCode());
     }
@@ -38,8 +38,8 @@ class CustomHandlerTest extends AbstractIntegrationCase
 
         $this->assertSame(
             '{"message":"GET Foo"}',
-            (string)$response->getBody(),
-            sprintf('Response "%s" was not expected', (string)$response->getBody())
+            (string) $response->getBody(),
+            sprintf('Response "%s" was not expected', (string) $response->getBody())
         );
         $this->assertSame(200, $response->getStatusCode());
     }
@@ -55,8 +55,8 @@ class CustomHandlerTest extends AbstractIntegrationCase
 
         $this->assertSame(
             '{"message":"POST Bar"}',
-            (string)$response->getBody(),
-            sprintf('Response "%s" was not expected', (string)$response->getBody())
+            (string) $response->getBody(),
+            sprintf('Response "%s" was not expected', (string) $response->getBody())
         );
         $this->assertSame(200, $response->getStatusCode());
     }
@@ -72,8 +72,8 @@ class CustomHandlerTest extends AbstractIntegrationCase
 
         $this->assertSame(
             '{"error":"Not Found"}',
-            (string)$response->getBody(),
-            sprintf('Response "%s" was not expected', (string)$response->getBody())
+            (string) $response->getBody(),
+            sprintf('Response "%s" was not expected', (string) $response->getBody())
         );
         $this->assertSame(404, $response->getStatusCode());
     }
@@ -89,15 +89,14 @@ class CustomHandlerTest extends AbstractIntegrationCase
 
         $this->assertSame(
             '{"error":"Not Found"}',
-            (string)$response->getBody(),
-            sprintf('Response "%s" was not expected', (string)$response->getBody())
+            (string) $response->getBody(),
+            sprintf('Response "%s" was not expected', (string) $response->getBody())
         );
         $this->assertSame(404, $response->getStatusCode());
     }
 
     /**
      * @param ContainerInterface|Container $objectManager
-     * @return void
      */
     protected function configureHandlerPath(ContainerInterface $objectManager): void
     {
@@ -106,10 +105,10 @@ class CustomHandlerTest extends AbstractIntegrationCase
             $objectManager,
             'cust',
             [
-                "path"         => "cust",
-                "read"         => "allow",
-                "write"        => "allow",
-                "handlerClass" => CustHandler::class,
+                'path'         => 'cust',
+                'read'         => 'allow',
+                'write'        => 'allow',
+                'handlerClass' => CustHandler::class,
             ]
         );
     }

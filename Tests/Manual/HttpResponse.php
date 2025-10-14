@@ -7,22 +7,22 @@ namespace Cundd\Rest\Tests\Manual;
 /**
  * PSR-7 inspired HTTP Response
  *
- * @link https://www.php-fig.org/psr/psr-7/
+ * @see https://www.php-fig.org/psr/psr-7/
  */
 class HttpResponse
 {
-    private $body = null;
-    private $parsedBody = null;
+    private $body;
+    private $parsedBody;
     private $headers = [];
-    private $statusCode = null;
-    private $requestData = null;
+    private $statusCode;
+    private $requestData;
 
     /**
      * HTTP Response constructor
      *
      * @param int                      $status
      * @param string                   $body
-     * @param string|null|array|object $parsedBody
+     * @param string|array|object|null $parsedBody
      * @param string[][]               $headers
      * @param object                   $requestData
      */
@@ -36,7 +36,7 @@ class HttpResponse
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getBody()
     {
@@ -44,7 +44,7 @@ class HttpResponse
     }
 
     /**
-     * @return string|null|array|object
+     * @return string|array|object|null
      */
     public function getParsedBody()
     {
@@ -52,7 +52,8 @@ class HttpResponse
     }
 
     /**
-     * @param string|null|array|object $parsedBody
+     * @param string|array|object|null $parsedBody
+     *
      * @return HttpResponse
      */
     public function withParsedBody($parsedBody)
@@ -64,7 +65,7 @@ class HttpResponse
     }
 
     /**
-     * @return \string[][]
+     * @return string[][]
      */
     public function getHeaders()
     {
@@ -73,6 +74,7 @@ class HttpResponse
 
     /**
      * @param string $name
+     *
      * @return string[]
      */
     public function getHeader($name)
@@ -84,6 +86,7 @@ class HttpResponse
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public function getHeaderLine($name)
@@ -100,7 +103,7 @@ class HttpResponse
     }
 
     /**
-     * @return null|object
+     * @return object|null
      */
     public function getRequestData()
     {

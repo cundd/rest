@@ -12,7 +12,7 @@ trait FrontendRequestTrait
     protected function fetchFrontendResponse(
         string $path,
         ?int $pageId = null,
-        array $queryParameters = []
+        array $queryParameters = [],
     ): ResponseInterface {
         $internalRequest = (new InternalRequest('http://localhost' . $path))
             ->withQueryParameters($queryParameters);

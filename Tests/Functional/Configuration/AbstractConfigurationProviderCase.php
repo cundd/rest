@@ -13,7 +13,7 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
 
     protected array $settings = [
         'paths' => [
-            'all'             => [
+            'all' => [
                 'path'  => 'all',
                 'read'  => 'allow',
                 'write' => 'deny',
@@ -23,7 +23,7 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
                 'read'  => 'require',
                 'write' => 'allow',
             ],
-            'my_secondext-*'  => [
+            'my_secondext-*' => [
                 'path'  => 'my_secondext-*',
                 'read'  => 'deny',
                 'write' => 'require',
@@ -45,7 +45,7 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
         $settings = $this->fixture->getSettings();
         $this->assertIsArray($settings);
 
-        if (count($this->fixture->getSettings()) !== 0) {
+        if (0 !== count($this->fixture->getSettings())) {
             $this->assertTrue(isset($settings['paths']) || isset($settings['paths.']));
         }
     }

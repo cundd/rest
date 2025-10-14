@@ -29,13 +29,10 @@ class HandlerDescriptor
 
     /**
      * Handler Descriptor constructor
-     *
-     * @param ObjectManagerInterface         $objectManager
-     * @param ConfigurationProviderInterface $configurationProvider
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ConfigurationProviderInterface $configurationProvider
+        ConfigurationProviderInterface $configurationProvider,
     ) {
         $this->objectManager = $objectManager;
         $this->configurationProvider = $configurationProvider;
@@ -43,8 +40,6 @@ class HandlerDescriptor
 
     /**
      * Return information about all registered Handlers and their configured Routes
-     *
-     * @return array
      */
     public function getInformation(): array
     {
@@ -58,10 +53,6 @@ class HandlerDescriptor
         return $information;
     }
 
-    /**
-     * @param ResourceConfiguration $configuration
-     * @return array
-     */
     private function fetchInformationForHandler(ResourceConfiguration $configuration): array
     {
         $className = $configuration->getHandlerClass();
@@ -73,7 +64,7 @@ class HandlerDescriptor
 
             return $this->buildError($error, $className, $configuration);
         }
-        if ($className[0] === '\\') {
+        if ('\\' === $className[0]) {
             $className = substr($className, 1);
         }
 
@@ -124,7 +115,6 @@ class HandlerDescriptor
     }
 
     /**
-     * @param $router
      * @return RouteInterface[][]
      */
     private function filterEmptyMethods(DescriptiveRouter $router): array

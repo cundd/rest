@@ -31,21 +31,15 @@ class Handler implements HandlerInterface
 
     /**
      * Handler constructor
-     *
-     * @param ObjectManagerInterface   $objectManager
-     * @param ResponseFactoryInterface $responseFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        ResponseFactoryInterface $responseFactory
+        ResponseFactoryInterface $responseFactory,
     ) {
         $this->objectManager = $objectManager;
         $this->responseFactory = $responseFactory;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {
         /*------------------------------------------------------
@@ -57,50 +51,50 @@ class Handler implements HandlerInterface
          * extbase controller functions. (For that, see PersonController and Routes below.)
          */
 
-        # curl -X GET http://localhost:8888/rest/customhandler
+        // curl -X GET http://localhost:8888/rest/customhandler
         $router->add(
             Route::get(
                 $request->getResourceType(),
                 function (RestRequestInterface $request) {
                     return [
                         'path'         => $request->getPath(),
-                        'uri'          => (string)$request->getUri(),
-                        'resourceType' => (string)$request->getResourceType(),
+                        'uri'          => (string) $request->getUri(),
+                        'resourceType' => (string) $request->getResourceType(),
                     ];
                 }
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/subpath
+        // curl -X GET http://localhost:8888/rest/customhandler/subpath
         $router->add(
             Route::get(
                 $request->getResourceType() . '/subpath',
                 function (RestRequestInterface $request) {
                     return [
                         'path'         => $request->getPath(),
-                        'uri'          => (string)$request->getUri(),
-                        'resourceType' => (string)$request->getResourceType(),
+                        'uri'          => (string) $request->getUri(),
+                        'resourceType' => (string) $request->getResourceType(),
                     ];
                 }
             )
         );
 
-        # curl -X POST -d '{"username":"johndoe","password":"123456"}' http://localhost:8888/rest/customhandler/subpath
+        // curl -X POST -d '{"username":"johndoe","password":"123456"}' http://localhost:8888/rest/customhandler/subpath
         $router->add(
             Route::post(
                 $request->getResourceType() . '/subpath',
                 function (RestRequestInterface $request) {
                     return [
                         'path'         => $request->getPath(),
-                        'uri'          => (string)$request->getUri(),
-                        'resourceType' => (string)$request->getResourceType(),
+                        'uri'          => (string) $request->getUri(),
+                        'resourceType' => (string) $request->getResourceType(),
                         'data'         => $request->getSentData(),
                     ];
                 }
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/parameter/slug
+        // curl -X GET http://localhost:8888/rest/customhandler/parameter/slug
         $router->add(
             Route::get(
                 $request->getResourceType() . '/parameter/{slug}',
@@ -108,14 +102,14 @@ class Handler implements HandlerInterface
                     return [
                         'slug'         => $slug,
                         'path'         => $request->getPath(),
-                        'uri'          => (string)$request->getUri(),
-                        'resourceType' => (string)$request->getResourceType(),
+                        'uri'          => (string) $request->getUri(),
+                        'resourceType' => (string) $request->getResourceType(),
                     ];
                 }
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/translate/tx_customrest_domain_model_person.first_name.json
+        // curl -X GET http://localhost:8888/rest/customhandler/translate/tx_customrest_domain_model_person.first_name.json
         $router->add(
             Route::get(
                 $request->getResourceType() . '/translate/{slug}',
@@ -134,7 +128,7 @@ class Handler implements HandlerInterface
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/12
+        // curl -X GET http://localhost:8888/rest/customhandler/12
         $router->add(
             Route::get(
                 $request->getResourceType() . '/{int}',
@@ -143,14 +137,14 @@ class Handler implements HandlerInterface
                         'value'         => $parameter,
                         'parameterType' => gettype($parameter),
                         'path'          => $request->getPath(),
-                        'uri'           => (string)$request->getUri(),
-                        'resourceType'  => (string)$request->getResourceType(),
+                        'uri'           => (string) $request->getUri(),
+                        'resourceType'  => (string) $request->getResourceType(),
                     ];
                 }
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/decimal/10.8
+        // curl -X GET http://localhost:8888/rest/customhandler/decimal/10.8
         $router->add(
             Route::get(
                 $request->getResourceType() . '/decimal/{float}',
@@ -159,15 +153,15 @@ class Handler implements HandlerInterface
                         'value'         => $parameter,
                         'parameterType' => gettype($parameter),
                         'path'          => $request->getPath(),
-                        'uri'           => (string)$request->getUri(),
-                        'resourceType'  => (string)$request->getResourceType(),
+                        'uri'           => (string) $request->getUri(),
+                        'resourceType'  => (string) $request->getResourceType(),
                     ];
                 }
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/customhandler/bool/yes
-        # curl -X GET http://localhost:8888/rest/customhandler/bool/no
+        // curl -X GET http://localhost:8888/rest/customhandler/bool/yes
+        // curl -X GET http://localhost:8888/rest/customhandler/bool/no
         $router->add(
             Route::get(
                 $request->getResourceType() . '/bool/{bool}',
@@ -176,8 +170,8 @@ class Handler implements HandlerInterface
                         'value'         => $parameter,
                         'parameterType' => gettype($parameter),
                         'path'          => $request->getPath(),
-                        'uri'           => (string)$request->getUri(),
-                        'resourceType'  => (string)$request->getResourceType(),
+                        'uri'           => (string) $request->getUri(),
+                        'resourceType'  => (string) $request->getResourceType(),
                     ];
                 }
             )
@@ -190,7 +184,7 @@ class Handler implements HandlerInterface
         /*
          * To access this route a valid login is required.
          */
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-require
+        // curl -X GET http://localhost:8888/rest/cundd-custom_rest-require
         $router->add(
             Route::get(
                 'cundd-custom_rest-require',
@@ -209,7 +203,7 @@ class Handler implements HandlerInterface
          * class ist implemented in rest anyway... overwrite/extend that?
          */
 
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/show
+        // curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/show
         $router->add(
             Route::get(
                 '/cundd-custom_rest-person/show/?',
@@ -221,7 +215,7 @@ class Handler implements HandlerInterface
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/lastname
+        // curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/lastname
         $router->add(
             Route::get(
                 '/cundd-custom_rest-person/lastname/?',
@@ -235,7 +229,7 @@ class Handler implements HandlerInterface
             )
         );
 
-        # curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/firstname
+        // curl -X GET http://localhost:8888/rest/cundd-custom_rest-person/firstname
         $router->add(
             Route::get(
                 '/cundd-custom_rest-person/firstname/?',

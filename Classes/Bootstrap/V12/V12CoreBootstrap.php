@@ -36,7 +36,7 @@ class V12CoreBootstrap extends AbstractCoreBootstrap
 
     protected function buildFrontendController(
         int $pageUid,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): TypoScriptFrontendController {
         $context = $this->buildContext();
         $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
@@ -66,7 +66,7 @@ class V12CoreBootstrap extends AbstractCoreBootstrap
 
     protected function configureFrontendController(
         TypoScriptFrontendController $frontendController,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ServerRequestInterface {
         if (!is_array($frontendController->page)) {
             $frontendController->page = [];

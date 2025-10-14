@@ -31,50 +31,35 @@ use function is_callable;
  */
 class Extractor implements ExtractorInterface
 {
-    /**
-     * @var ConfigurationProviderInterface
-     */
     protected ConfigurationProviderInterface $configurationProvider;
 
     /**
      * Logger instance
-     *
-     * @var LoggerInterface|null
      */
     protected ?LoggerInterface $logger;
 
     /**
      * The current depth when preparing model data for output
-     *
-     * @var int
      */
     protected int $depthOfObjectTreeTraversal = 0;
 
     /**
      * The maximum depth when preparing model data for output
-     *
-     * @var int
      */
     protected int $maxDepthOfObjectTreeTraversal;
 
     /**
      * Dictionary of handled models to their count
-     *
-     * @var array
      */
     protected static array $handledModels = [];
 
     /**
      * Extractor constructor
-     *
-     * @param ConfigurationProviderInterface $configurationProvider
-     * @param LoggerInterface|null           $logger
-     * @param int                            $maxDepthOfObjectTreeTraversal
      */
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
-        LoggerInterface $logger = null,
-        int $maxDepthOfObjectTreeTraversal = 6
+        ?LoggerInterface $logger = null,
+        int $maxDepthOfObjectTreeTraversal = 6,
     ) {
         $this->configurationProvider = $configurationProvider;
         $this->logger = $logger;
@@ -89,15 +74,14 @@ class Extractor implements ExtractorInterface
     /**
      * Returns the data from the given input
      *
-     * @param mixed           $input
      * @param string|int|null $key
-     * @param object|null     $owner
-     * @return string|int|bool|float|null|array
+     *
+     * @return string|int|bool|float|array|null
      */
     private function extractData(
         $input,
         $key,
-        ?object $owner
+        ?object $owner,
     ) {
         InvalidArgumentException::assertObjectOrNull($owner);
         $this->assertValidKey($key);
@@ -141,15 +125,14 @@ class Extractor implements ExtractorInterface
     }
 
     /**
-     * @param object          $input
      * @param string|int|null $key
-     * @param object|null     $owner
+     *
      * @return array|string
      */
     private function extractObjectDataIfNotRecursion(
         object $input,
         $key,
-        ?object $owner
+        ?object $owner,
     ) {
         InvalidArgumentException::assertObject($input);
         InvalidArgumentException::assertObjectOrNull($owner);
@@ -168,7 +151,7 @@ class Extractor implements ExtractorInterface
             if ($key && $owner) {
                 // If a key and owner are given, this is a nested resource and we return an URI relative to the
                 // owner/parent object
-                $result = $this->getUriToNestedResource((string)$key, $owner);
+                $result = $this->getUriToNestedResource((string) $key, $owner);
             } else {
                 $result = $this->getUriToResource($input);
             }
@@ -179,8 +162,8 @@ class Extractor implements ExtractorInterface
     }
 
     /**
-     * @param object          $input
      * @param string|int|null $key
+     *
      * @return mixed
      */
     private function extractObjectData(object $input, $key): array
@@ -192,7 +175,7 @@ class Extractor implements ExtractorInterface
             $properties = $input->jsonSerialize();
         } elseif ($input instanceof FileInterface) {
             return $this->addClassProperty($input, $this->transformFileReference($input));
-        } elseif ($input instanceof AbstractFileFolder) {
+        } elseif ($input instanceof AbstractFile) {
             return $this->addClassProperty($input, $this->transformFileReference($input->getOriginalResource()));
         } elseif ($input instanceof DomainObjectInterface) {
             $properties = $input->_getProperties();
@@ -209,12 +192,10 @@ class Extractor implements ExtractorInterface
      * Transform the properties
      *
      * @param DomainObjectInterface|object $model
-     * @param array                        $properties
-     * @return array
      */
     private function transformObjectProperties(
         object $model,
-        array $properties
+        array $properties,
     ): array {
         assert(is_object($model), sprintf('Input must be an object %s given', gettype($model)));
         $transformedCollection = [];
@@ -229,9 +210,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Transform the values of a collection type
-     *
-     * @param array $collection
-     * @return array
      */
     private function transformCollection(array $collection): array
     {
@@ -246,10 +224,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Adds the __class property to the export data if configured
-     *
-     * @param mixed $model
-     * @param array $properties
-     * @return array
      */
     protected function addClassProperty($model, array $properties): array
     {
@@ -257,7 +231,7 @@ class Extractor implements ExtractorInterface
             return $properties;
         }
 
-        if (true === (bool)$this->configurationProvider->getSetting('addClass', 0)) {
+        if (true === (bool) $this->configurationProvider->getSetting('addClass', 0)) {
             $properties['__class'] = is_object($model) ? get_class($model) : gettype($model);
         }
 
@@ -267,25 +241,20 @@ class Extractor implements ExtractorInterface
     /**
      * Returns the URI of a nested resource
      *
-     * @param string                       $resourceKey
      * @param object|DomainObjectInterface $model
-     * @return string
      */
     private function getUriToNestedResource(
         string $resourceKey,
-        object $model
+        object $model,
     ): string {
         return $this->getUriToResource($model) . $resourceKey;
     }
 
-    /**
-     * @return string
-     */
     private function getUriRequestBase(): string
     {
         if (getenv('CUNDD_TEST') || !class_exists(GeneralUtility::class, false)) {
             $host = filter_var((isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''), FILTER_SANITIZE_URL);
-            $protocol = ((!isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on') ? 'http' : 'https');
+            $protocol = ((!isset($_SERVER['HTTPS']) || 'on' != strtolower($_SERVER['HTTPS'])) ? 'http' : 'https');
 
             return $protocol . '://' . $host . '/';
         }
@@ -297,7 +266,6 @@ class Extractor implements ExtractorInterface
      * Returns the URI of a resource
      *
      * @param object|DomainObjectInterface $model
-     * @return string
      */
     private function getUriToResource(object $model): string
     {
@@ -320,18 +288,17 @@ class Extractor implements ExtractorInterface
      * Retrieve data from a file reference
      *
      * @param ResourceInterface|Folder|AbstractFile $originalResource
-     * @return array
      */
     protected function transformFileReference($originalResource): array
     {
         static $depth = 0;
         if ($originalResource instanceof AbstractFileFolder) {
-            $depth += 1;
+            ++$depth;
             if ($depth > 10) {
                 throw new RuntimeException('Max nesting level');
             }
             $result = $this->transformFileReference($originalResource->getOriginalResource());
-            $depth -= 1;
+            --$depth;
 
             return $result;
         }
@@ -385,9 +352,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Get the title and description of a File
-     *
-     * @param FileReference $fileReference
-     * @return array
      */
     private function getTitleAndDescription(FileReference $fileReference): array
     {
@@ -411,8 +375,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Returns the logger
-     *
-     * @return LoggerInterface
      */
     protected function getLogger(): LoggerInterface
     {
@@ -426,7 +388,6 @@ class Extractor implements ExtractorInterface
     /**
      * Returns the recursion value of the object
      *
-     * @param object $object
      * @return int Returns 0 if the object has not been processed before
      */
     private function getObjectRecursionValue(object $object): int
@@ -439,9 +400,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Increase the recursion value for the given object
-     *
-     * @param object $object
-     * @return int
      */
     private function increaseObjectRecursionValue(object $object): int
     {
@@ -449,7 +407,7 @@ class Extractor implements ExtractorInterface
         $objectHash = spl_object_hash($object);
 
         $value = static::$handledModels[$objectHash] ?? 0;
-        $value += 1;
+        ++$value;
         static::$handledModels[$objectHash] = $value;
 
         return $value;
@@ -457,9 +415,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Decrease the recursion value for the given object
-     *
-     * @param object $object
-     * @return int
      */
     private function decreaseObjectRecursionValue(object $object): int
     {
@@ -467,7 +422,7 @@ class Extractor implements ExtractorInterface
         $objectHash = spl_object_hash($object);
 
         $value = static::$handledModels[$objectHash] ?? 0;
-        $value -= 1;
+        --$value;
         static::$handledModels[$objectHash] = $value;
 
         return $value;
@@ -475,8 +430,6 @@ class Extractor implements ExtractorInterface
 
     /**
      * Returns the current depth of object tree traversal
-     *
-     * @return int
      */
     private function getDepthOfObjectTreeTraversal(): int
     {
@@ -485,32 +438,26 @@ class Extractor implements ExtractorInterface
 
     /**
      * Increases the current depth of object tree traversal
-     *
-     * @return int
      */
     private function increaseDepthOfObjectTreeTraversal(): int
     {
-        $this->depthOfObjectTreeTraversal += 1;
+        ++$this->depthOfObjectTreeTraversal;
 
         return $this->depthOfObjectTreeTraversal;
     }
 
     /**
      * Decreases the current depth of object tree traversal
-     *
-     * @return int
      */
     private function decreaseDepthOfObjectTreeTraversal(): int
     {
-        $this->depthOfObjectTreeTraversal -= 1;
+        --$this->depthOfObjectTreeTraversal;
 
         return $this->depthOfObjectTreeTraversal;
     }
 
     /**
      * Tests if the given input can be transformed
-     *
-     * @param $input
      */
     private function assertExtractableType($input)
     {
@@ -519,9 +466,6 @@ class Extractor implements ExtractorInterface
         }
     }
 
-    /**
-     * @param $key
-     */
     private function assertValidKey($key): void
     {
         if (false === (is_null($key) || is_scalar($key))) {

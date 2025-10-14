@@ -34,15 +34,13 @@ class Utility
      *     MyModel
      *   )
      *
-     * @param ResourceType $resourceType
-     * @param bool         $convertPlural Indicates if plural resource names should be converted
-     * @return array
+     * @param bool $convertPlural Indicates if plural resource names should be converted
      */
     public static function getClassNamePartsForResourceType(
         ResourceType $resourceType,
-        bool $convertPlural = true
+        bool $convertPlural = true,
     ): array {
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         if ('' === $resourceTypeString) {
             return ['', '', ''];
         }
@@ -70,14 +68,10 @@ class Utility
 
     /**
      * Return the Domain Model class or interface name for the given API resource type
-     *
-     * @param ResourceType $resourceType
-     * @param bool         $convertPlural
-     * @return string|null
      */
     public static function getModelEntityForResourceType(
         ResourceType $resourceType,
-        bool $convertPlural = true
+        bool $convertPlural = true,
     ): ?string {
         [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType, $convertPlural);
         $namespaceVersion = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
@@ -99,7 +93,6 @@ class Utility
     /**
      * Tries to generate the API resource type for the given class name
      *
-     * @param string $className
      * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
      */
     public static function getResourceTypeForClassName(string $className): ResourceType|bool
@@ -126,18 +119,15 @@ class Utility
 
     /**
      * Tries to convert an english plural into it's singular.
-     *
-     * @param string $word
-     * @return string
      */
     public static function singularize(string $word): string
     {
         $customMapping = array_search($word, static::$singularToPlural, true);
-        if ($customMapping !== false) {
+        if (false !== $customMapping) {
             return $customMapping;
         }
         $customMapping = array_search(strtolower($word), static::$singularToPlural, true);
-        if ($customMapping !== false) {
+        if (false !== $customMapping) {
             return $customMapping;
         }
 
@@ -172,9 +162,10 @@ class Utility
             }
             // If the value of the key is false, stop looping
             // and return the original version of the word.
-            if ($key === false) {
+            if (false === $key) {
                 return $word;
             }
+
             // We've made it this far, so we can do the
             // replacement.
             return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
@@ -185,9 +176,6 @@ class Utility
 
     /**
      * Add a mapping from singular to plural
-     *
-     * @param string $singular
-     * @param string $plural
      */
     public static function registerSingularForPlural(string $singular, string $plural): void
     {
@@ -196,19 +184,16 @@ class Utility
 
     /**
      * Transforms UpperCamelCase Resource Types into lower_case_underscore
-     *
-     * @param string|ResourceType $resourceType
-     * @return string
      */
     public static function normalizeResourceType(ResourceType|string $resourceType): string
     {
-        $resourceTypeString = trim((string)$resourceType, '.');
+        $resourceTypeString = trim((string) $resourceType, '.');
 
         return implode(
             '-',
             array_map(
                 function (string $part): string {
-                    if ($part === '*') {
+                    if ('*' === $part) {
                         return '*';
                     }
 
@@ -219,10 +204,6 @@ class Utility
         );
     }
 
-    /**
-     * @param string $string
-     * @return string
-     */
     private static function underscoredToUpperCamelCase(string $string): string
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
@@ -230,9 +211,6 @@ class Utility
 
     /**
      * Convert a camelCase string to lowercase_underscore
-     *
-     * @param string $input
-     * @return string
      */
     private static function camelCaseToLowerCaseUnderscored(string $input): string
     {

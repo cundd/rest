@@ -68,7 +68,7 @@ class ResultConverterTest extends TestCase
      */
     public function dispatchTest()
     {
-        /** @var ResponseInterface|ObjectProphecy $response */
+        /* @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
             $this->buildRouter('some result'),
             $this->responseFactory,
@@ -78,7 +78,7 @@ class ResultConverterTest extends TestCase
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(200, $result->getStatusCode());
-        $this->assertSame('{"message":"some result"}', (string)$result->getBody());
+        $this->assertSame('{"message":"some result"}', (string) $result->getBody());
     }
 
     /**
@@ -86,7 +86,7 @@ class ResultConverterTest extends TestCase
      */
     public function dispatchNotFoundTest()
     {
-        /** @var ResponseInterface|ObjectProphecy $response */
+        /* @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
             $this->buildRouter(new NotFoundException()),
             $this->responseFactory,
@@ -96,7 +96,7 @@ class ResultConverterTest extends TestCase
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(404, $result->getStatusCode());
-        $this->assertSame('{"error":"Not Found"}', (string)$result->getBody());
+        $this->assertSame('{"error":"Not Found"}', (string) $result->getBody());
     }
 
     /**
@@ -104,7 +104,7 @@ class ResultConverterTest extends TestCase
      */
     public function dispatchArrayTest()
     {
-        /** @var ResponseInterface|ObjectProphecy $response */
+        /* @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
             $this->buildRouter(['some' => 'data', 'key' => 'hello']),
             $this->responseFactory,
@@ -115,7 +115,7 @@ class ResultConverterTest extends TestCase
         $result = $this->fixture->dispatch($this->buildTestRequest(''));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(200, $result->getStatusCode());
-        $this->assertSame('{"some":"data","key":"hello"}', (string)$result->getBody());
+        $this->assertSame('{"some":"data","key":"hello"}', (string) $result->getBody());
     }
 
     /**
@@ -133,7 +133,7 @@ class ResultConverterTest extends TestCase
 
         $this->responseFactory = $responseFactoryProphecy->reveal();
 
-        /** @var ResponseInterface|ObjectProphecy $response */
+        /* @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
             $this->buildRouter('some result'),
             $this->responseFactory,
@@ -182,7 +182,7 @@ class ResultConverterTest extends TestCase
         $this->assertSame(501, $result->getStatusCode());
         $this->assertSame(
             '{"error":"Sorry! Something is wrong. Exception code #1483531241"}',
-            (string)$result->getBody()
+            (string) $result->getBody()
         );
     }
 
@@ -203,12 +203,11 @@ class ResultConverterTest extends TestCase
         $this->assertSame(501, $result->getStatusCode());
         $this->assertSame(
             '{"error":"Sorry! Something is wrong. Exception code #1483531241"}',
-            (string)$result->getBody()
+            (string) $result->getBody()
         );
     }
 
     /**
-     * @param $response
      * @return RouterInterface
      */
     private function buildRouter($response)

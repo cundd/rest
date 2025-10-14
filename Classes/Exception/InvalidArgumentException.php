@@ -7,15 +7,12 @@ namespace Cundd\Rest\Exception;
 class InvalidArgumentException extends \InvalidArgumentException
 {
     /**
-     * @param mixed  $actualValue
-     * @param string $expectType
-     * @param string $argumentName
      * @return static
      */
     public static function buildException(
         $actualValue,
         string $expectType,
-        string $argumentName
+        string $argumentName,
     ): InvalidArgumentException {
         return new static(
             sprintf(
@@ -29,9 +26,6 @@ class InvalidArgumentException extends \InvalidArgumentException
 
     /**
      * Assert that the input is either an object or NULL
-     *
-     * @param mixed       $value
-     * @param string|null $argumentName
      */
     public static function assertObjectOrNull($value, ?string $argumentName = null): void
     {
@@ -44,9 +38,6 @@ class InvalidArgumentException extends \InvalidArgumentException
 
     /**
      * Assert that the input is an object
-     *
-     * @param mixed       $value
-     * @param string|null $argumentName
      */
     public static function assertObject($value, ?string $argumentName = null): void
     {

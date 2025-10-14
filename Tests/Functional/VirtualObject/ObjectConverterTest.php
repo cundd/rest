@@ -439,7 +439,6 @@ class ObjectConverterTest extends AbstractVirtualObjectCase
 
     /**
      * @test
-     *
      */
     public function throwExceptionIfConfigurationIsNotSet()
     {

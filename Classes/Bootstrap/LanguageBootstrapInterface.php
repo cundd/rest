@@ -11,13 +11,9 @@ interface LanguageBootstrapInterface
 {
     /**
      * Enhance the Request with the major requested language
-     *
-     * @param TypoScriptFrontendController $frontendController
-     * @param ServerRequestInterface       $request
-     * @return ServerRequestInterface
      */
     public function prepareRequest(
         TypoScriptFrontendController $frontendController,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ServerRequestInterface;
 }

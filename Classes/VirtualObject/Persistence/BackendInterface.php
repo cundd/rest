@@ -18,9 +18,11 @@ interface BackendInterface
      *
      * @param string $tableName Database table name
      * @param array  $row       Data to insert
+     *
      * @return int the UID of the inserted row
+     *
      * @throws InvalidTableNameException if the table name is not valid
-     * @throws SqlErrorException on SQL errors
+     * @throws SqlErrorException         on SQL errors
      */
     public function addRow(string $tableName, array $row): int;
 
@@ -30,6 +32,7 @@ interface BackendInterface
      * @param string $tableName  Database table name
      * @param array  $identifier A map of key value pairs to identify the record to update
      * @param array  $row        Data to update the row
+     *
      * @return int the number of affected rows
      */
     public function updateRow(string $tableName, array $identifier, array $row): int;
@@ -39,10 +42,12 @@ interface BackendInterface
      *
      * @param string $tableName  Database table name
      * @param array  $identifier A map of key value pairs to identify the record to update
+     *
      * @return int the number of affected rows
+     *
      * @throws InvalidTableNameException if the table name is not valid
-     * @throws InvalidOperatorException if the where clause could not be built
-     * @throws SqlErrorException on SQL errors
+     * @throws InvalidOperatorException  if the where clause could not be built
+     * @throws SqlErrorException         on SQL errors
      */
     public function removeRow(string $tableName, array $identifier): int;
 
@@ -51,10 +56,10 @@ interface BackendInterface
      *
      * @param string         $tableName Database table name
      * @param QueryInterface $query     A Query instance to construct the WHERE clause
-     * @return integer
+     *
      * @throws InvalidTableNameException if the table name is not valid
-     * @throws InvalidOperatorException if the where clause could not be built
-     * @throws SqlErrorException on SQL errors
+     * @throws InvalidOperatorException  if the where clause could not be built
+     * @throws SqlErrorException         on SQL errors
      */
     public function getObjectCountByQuery(string $tableName, QueryInterface $query): int;
 
@@ -63,10 +68,10 @@ interface BackendInterface
      *
      * @param string         $tableName Database table name
      * @param QueryInterface $query     A Query instance to construct the WHERE clause
-     * @return array
+     *
      * @throws InvalidTableNameException if the table name is not valid
-     * @throws InvalidOperatorException if the where clause could not be built
-     * @throws SqlErrorException on SQL errors
+     * @throws InvalidOperatorException  if the where clause could not be built
+     * @throws SqlErrorException         on SQL errors
      */
     public function getObjectDataByQuery(string $tableName, QueryInterface $query): array;
 }

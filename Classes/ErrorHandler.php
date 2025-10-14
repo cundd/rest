@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Utility\DebugUtility;
+use Exception;
 
 use function error_get_last;
 use function header;
@@ -30,8 +31,6 @@ class ErrorHandler
 
     /**
      * Returns if debugging information should be printed
-     *
-     * @return bool
      */
     public static function getShowDebugInformation(): bool
     {
@@ -46,20 +45,18 @@ class ErrorHandler
     public static function checkForFatalError()
     {
         $error = error_get_last();
-        if ($error !== null) {
+        if (null !== $error) {
             $type = $error['type'];
             if ($type & E_ERROR) {
-                static::printError(new \Exception($error['message'], $error['type']));
+                static::printError(new Exception($error['message'], $error['type']));
             }
         }
     }
 
     /**
      * Print the error information
-     *
-     * @param \Exception $error
      */
-    private static function printError(\Exception $error)
+    private static function printError(Exception $error)
     {
         ob_end_clean();
         if (!headers_sent()) {

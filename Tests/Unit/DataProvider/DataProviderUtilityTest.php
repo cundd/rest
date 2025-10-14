@@ -102,8 +102,7 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @param $resourceType
-     * @param $expected
+     *
      * @dataProvider normalizeResourceTypeDataProvider
      */
     public function normalizeResourceTypeTest($resourceType, $expected)

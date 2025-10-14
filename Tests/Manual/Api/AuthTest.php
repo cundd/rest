@@ -28,7 +28,7 @@ class AuthTest extends AbstractApiCase
         $response = $this->request(
             'auth/login',
             'POST',
-            ['username' => $this->getApiUser(), 'apikey' => $this->getApiKey()],
+            ['username'     => $this->getApiUser(), 'apikey' => $this->getApiKey()],
             ['Content-Type' => 'application/json']
         );
         $errorDescription = $this->getErrorDescription($response);
@@ -113,9 +113,8 @@ class AuthTest extends AbstractApiCase
         $this->assertNotEmpty($response->getHeader('Set-Cookie'), $this->getErrorDescription($response));
 
         $cookie = $response->getHeaderLine('Set-Cookie');
-        [$sessionCookie,] = explode(';', $cookie);
+        [$sessionCookie] = explode(';', $cookie);
 
         return explode('=', $sessionCookie, 2);
     }
 }
-

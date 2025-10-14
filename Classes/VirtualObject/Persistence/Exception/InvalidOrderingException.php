@@ -10,8 +10,8 @@ class InvalidOrderingException extends InvalidQueryException
 {
     public static function assertValidOrdering($direction)
     {
-        if (strtoupper($direction) !== QueryInterface::ORDER_ASCENDING
-            && strtoupper($direction) !== QueryInterface::ORDER_DESCENDING
+        if (QueryInterface::ORDER_ASCENDING !== strtoupper($direction)
+            && QueryInterface::ORDER_DESCENDING !== strtoupper($direction)
         ) {
             throw new static('Invalid ordering direction');
         }

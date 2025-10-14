@@ -34,15 +34,11 @@ class Repository implements RepositoryInterface
 
     /**
      * Repository constructor.
-     *
-     * @param ObjectManager               $objectManager
-     * @param PersistenceManager          $persistenceManager
-     * @param ConfigurationInterface|null $configuration
      */
     public function __construct(
         ObjectManager $objectManager,
         PersistenceManager $persistenceManager,
-        ?ConfigurationInterface $configuration = null
+        ?ConfigurationInterface $configuration = null,
     ) {
         $this->objectManager = $objectManager;
         $this->configuration = $configuration;
@@ -111,8 +107,10 @@ class Repository implements RepositoryInterface
     /**
      * Finds an object matching the given identifier
      *
-     * @param integer $uid The identifier of the object to find
+     * @param int $uid The identifier of the object to find
+     *
      * @return object The matching object if found, otherwise NULL
+     *
      * @api
      */
     public function findByUid($uid)
@@ -129,7 +127,9 @@ class Repository implements RepositoryInterface
      * )
      *
      * @param array $defaultOrderings The property names to order by
+     *
      * @return void
+     *
      * @api
      */
     public function setDefaultOrderings(array $defaultOrderings)
@@ -141,7 +141,9 @@ class Repository implements RepositoryInterface
      * Sets the default query settings to be used in this repository
      *
      * @param QuerySettingsInterface $defaultQuerySettings The query settings to be used by default
+     *
      * @return void
+     *
      * @api
      */
     public function setDefaultQuerySettings(QuerySettingsInterface $defaultQuerySettings)
@@ -152,7 +154,6 @@ class Repository implements RepositoryInterface
     /**
      * Returns a query for objects of this repository
      *
-     * @return QueryInterface
      * @api
      */
     public function createQuery(): QueryInterface

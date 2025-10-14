@@ -18,6 +18,7 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
      * Checks if the given table name is valid
      *
      * @param mixed|string $tableName
+     *
      * @throws InvalidTableNameException
      */
     protected function assertValidTableName($tableName)
@@ -38,14 +39,11 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
 
     /**
      * Returns the offset and limit statement for the given query
-     *
-     * @param QueryInterface $query
-     * @return string
      */
     protected function createLimitStatementFromQuery(QueryInterface $query): string
     {
-        $offset = (int)$query->getOffset();
-        $limit = (int)$query->getLimit();
+        $offset = (int) $query->getOffset();
+        $limit = (int) $query->getLimit();
         if ($limit > 0) {
             return $offset . ',' . $limit;
         }
@@ -61,9 +59,6 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
 
     /**
      * Returns the order by statement for the given query
-     *
-     * @param QueryInterface $query
-     * @return string
      */
     protected function createOrderingStatementFromQuery(QueryInterface $query): string
     {
@@ -89,7 +84,6 @@ abstract class AbstractBackend implements BackendInterface, RawQueryBackendInter
      * Return if the query is empty
      *
      * @param array|QueryInterface $query
-     * @return bool
      */
     protected function isQueryEmpty($query): bool
     {

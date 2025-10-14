@@ -68,19 +68,6 @@ class Run
 
     /**
      * Run constructor.
-     *
-     * @param int    $runId
-     * @param string $name
-     * @param float  $profilingStartTime
-     * @param float  $profilingDuration
-     * @param float  $requestStartTime
-     * @param float  $requestDuration
-     * @param float  $runStartTime
-     * @param float  $runEndTime
-     * @param float  $runDuration
-     * @param float  $memory
-     * @param float  $memoryPeak
-     * @param array  $caller
      */
     public function __construct(
         int $runId,
@@ -94,7 +81,7 @@ class Run
         float $runDuration,
         float $memory,
         float $memoryPeak,
-        array $caller
+        array $caller,
     ) {
         $this->runId = $runId;
         $this->label = $name;

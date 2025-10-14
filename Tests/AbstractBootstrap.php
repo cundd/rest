@@ -6,6 +6,7 @@ namespace Cundd\Rest\Tests;
 
 use Composer\Autoload\ClassLoader;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 abstract class AbstractBootstrap
 {
@@ -37,7 +38,7 @@ abstract class AbstractBootstrap
             }
             \Cundd\CunddComposer\Autoloader::register();
         } else {
-            throw new \RuntimeException('No suitable autoloader found');
+            throw new RuntimeException('No suitable autoloader found');
         }
     }
 

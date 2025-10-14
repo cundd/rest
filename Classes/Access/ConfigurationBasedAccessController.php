@@ -27,15 +27,13 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
     public function __construct(
         ConfigurationProviderInterface $configurationProvider,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
     ) {
         parent::__construct($objectManager);
         $this->configurationProvider = $configurationProvider;
     }
 
     /**
-     * @param RestRequestInterface $request
-     * @return Access
      * @throws InvalidConfigurationException
      */
     public function getAccess(RestRequestInterface $request): Access
@@ -50,9 +48,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
     /**
      * Returns the configuration matching the given resource type
-     *
-     * @param ResourceType $resourceType
-     * @return ResourceConfiguration
      */
     public function getConfigurationForResourceType(ResourceType $resourceType): ResourceConfiguration
     {
@@ -62,8 +57,6 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     /**
      * Returns if the given request needs authentication
      *
-     * @param RestRequestInterface $request
-     * @return bool
      * @throws InvalidConfigurationException
      */
     public function requestNeedsAuthentication(RestRequestInterface $request): bool
@@ -73,19 +66,12 @@ class ConfigurationBasedAccessController extends AbstractAccessController
 
     /**
      * Returns if the given request requires authorization
-     *
-     * @param RestRequestInterface $request
-     * @return bool
      */
     protected function requiresAuthorization(RestRequestInterface $request): bool
     {
         return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
     }
 
-    /**
-     * @param RestRequestInterface $request
-     * @return Access
-     */
     protected function getAccessConfiguration(RestRequestInterface $request): Access
     {
         if (!$this->requiresAuthorization($request)) {

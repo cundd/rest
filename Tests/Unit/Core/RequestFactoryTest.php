@@ -374,21 +374,18 @@ class RequestFactoryTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider createRequestTestDataProvider
-     * @param $input
-     * @param $resourceType
-     * @param $path
-     * @param $format
      */
     public function createRequestTest(string $input, string $resourceType, string $path, string $format)
     {
         $_SERVER['REQUEST_URI'] = $input;
         $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertInstanceOf(ResourceType::class, $request->getResourceType());
-        $this->assertSame($resourceType, (string)$request->getResourceType());
+        $this->assertSame($resourceType, (string) $request->getResourceType());
         $this->assertSame($path, $request->getPath());
         $this->assertInstanceOf(Format::class, $request->getFormat());
-        $this->assertSame($format, (string)$request->getFormat());
+        $this->assertSame($format, (string) $request->getFormat());
     }
 
     public function createRequestTestDataProvider()
@@ -406,10 +403,6 @@ class RequestFactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @param array $configurationProviderSetting
-     * @return RequestFactoryInterface
-     */
     private function buildRequestFactory(array $configurationProviderSetting = []): RequestFactoryInterface
     {
         /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProviderMock */

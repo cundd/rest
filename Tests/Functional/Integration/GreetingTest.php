@@ -23,7 +23,7 @@ class GreetingTest extends AbstractGreetingCase
                     $this->prepareFrontendTypoScriptPath(
                         __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
                     ),
-                ]
+                ],
             ]
         );
         $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
@@ -31,8 +31,6 @@ class GreetingTest extends AbstractGreetingCase
 
     /**
      * @dataProvider dataProviderTestLanguage
-     * @param string $prefix
-     * @param string $expectedMessage
      */
     public function testLanguage(string $prefix, string $expectedMessage)
     {

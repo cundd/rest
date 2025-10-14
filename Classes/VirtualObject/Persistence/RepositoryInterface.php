@@ -15,25 +15,16 @@ interface RepositoryInterface
 {
     /**
      * Adds the given object to the database
-     *
-     * @param VirtualObject $object
-     * @return void
      */
     public function add(VirtualObject $object): void;
 
     /**
      * Removes the given object from the database
-     *
-     * @param VirtualObject $object
-     * @return void
      */
     public function remove(VirtualObject $object): void;
 
     /**
      * Updates the given object in the database
-     *
-     * @param VirtualObject $object
-     * @return void
      */
     public function update(VirtualObject $object): void;
 
@@ -47,7 +38,8 @@ interface RepositoryInterface
     /**
      * Returns the total number objects of this repository.
      *
-     * @return integer The object count
+     * @return int The object count
+     *
      * @api
      */
     public function countAll(): int;
@@ -56,7 +48,6 @@ interface RepositoryInterface
      * Removes all objects of this repository as if remove() was called for
      * all of them.
      *
-     * @return void
      * @api
      */
     public function removeAll(): void;
@@ -65,14 +56,12 @@ interface RepositoryInterface
      * Returns the object with the given identifier
      *
      * @param string|int $identifier
-     * @return VirtualObject|null
      */
     public function findByIdentifier($identifier): ?VirtualObject;
 
     /**
      * Sets the configuration to use when converting
      *
-     * @param ConfigurationInterface $configuration
      * @return $this
      */
     public function setConfiguration(ConfigurationInterface $configuration): self;
@@ -80,7 +69,6 @@ interface RepositoryInterface
     /**
      * Returns the configuration to use when converting
      *
-     * @return ConfigurationInterface
      * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ConfigurationInterface;
@@ -93,7 +81,6 @@ interface RepositoryInterface
      *    Yes -> update
      *    No -> add
      *
-     * @param VirtualObject $object
      * @return VirtualObject Returns the registered Document
      */
     public function registerObject(VirtualObject $object): VirtualObject;

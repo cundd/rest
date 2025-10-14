@@ -141,7 +141,9 @@ class CustomRestTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @dataProvider getWithParameterFloatDataProvider
+     *
      * @param string $suffix
      */
     public function getWithParameterFloatTest($suffix)
@@ -166,9 +168,8 @@ class CustomRestTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @dataProvider boolSuffixDataProvider
-     * @param $suffix
-     * @param $expected
      */
     public function getWithParameterBoolTest($suffix, $expected)
     {
@@ -247,7 +248,7 @@ class CustomRestTest extends AbstractApiCase
             'POST',
             http_build_query($data),
             [
-                "Content-Type" => "application/x-www-form-urlencoded",
+                'Content-Type' => 'application/x-www-form-urlencoded',
             ]
         );
 
@@ -308,8 +309,10 @@ class CustomRestTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $path
      * @param int    $expectedStatus
+     *
      * @dataProvider differentTestsDataProvider
      */
     public function differentTests($path, $expectedStatus)
@@ -340,9 +343,8 @@ class CustomRestTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @dataProvider getCorrectTranslationDataProvider
-     * @param $language
-     * @param $expected
      */
     public function getCorrectTranslationTest($language, $expected)
     {
@@ -359,7 +361,7 @@ class CustomRestTest extends AbstractApiCase
         $this->assertSame('tx_customrest_domain_model_person.first_name', $parsedBody['original'], $errorDescription);
         $this->assertSame($expected, $parsedBody['translated'], $errorDescription);
         $this->assertArrayHasKey('locale', $parsedBody, $errorDescription);
-        if ($parsedBody['locale'] === '') {
+        if ('' === $parsedBody['locale']) {
             // TYPO3 8
         } else {
             $this->assertSame(

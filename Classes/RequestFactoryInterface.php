@@ -14,9 +14,6 @@ interface RequestFactoryInterface
 {
     /**
      * Build the prepared REST Request for the given Server Request
-     *
-     * @param ServerRequestInterface $request
-     * @return RestRequestInterface
      */
     public function buildRequest(ServerRequestInterface $request): RestRequestInterface;
 }

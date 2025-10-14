@@ -8,7 +8,9 @@ class ContentTest extends AbstractApiCase
 {
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getContentsTest($suffix = '')
@@ -23,7 +25,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getContentTest($suffix = '')
@@ -39,7 +43,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getContentNotFoundTest($suffix = '')
@@ -52,7 +58,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addContentTest($suffix = '')
@@ -79,7 +87,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addContentWithIdTest($suffix = '')
@@ -107,7 +117,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function updateContentWithIdInUrlTest($suffix = '')
@@ -137,7 +149,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function updateContentWithIdTest($suffix = '')
@@ -168,7 +182,9 @@ class ContentTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function deleteContentWithIdInUrlTest($suffix = '')

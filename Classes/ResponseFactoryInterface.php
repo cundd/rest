@@ -17,7 +17,6 @@ interface ResponseFactoryInterface
      *
      * @param string|array $data   Data to send
      * @param int          $status Status code of the response
-     * @return ResponseInterface
      */
     public function createResponse($data, int $status): ResponseInterface;
 
@@ -26,10 +25,7 @@ interface ResponseFactoryInterface
      *
      * Some data (e.g. the format) will be read from the request.
      *
-     * @param string|array         $data
-     * @param int                  $status
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
+     * @param string|array $data
      */
     public function createErrorResponse($data, int $status, RestRequestInterface $request): ResponseInterface;
 
@@ -38,10 +34,7 @@ interface ResponseFactoryInterface
      *
      * Some data (e.g. the format) will be read from the request.
      *
-     * @param string|array         $data
-     * @param int                  $status
-     * @param RestRequestInterface $request
-     * @return ResponseInterface
+     * @param string|array $data
      */
     public function createSuccessResponse($data, int $status, RestRequestInterface $request): ResponseInterface;
 }

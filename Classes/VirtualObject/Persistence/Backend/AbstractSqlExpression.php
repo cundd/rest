@@ -21,9 +21,6 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
 
     /**
      * Expression constructor
-     *
-     * @param string $sqlExpression
-     * @param array  $boundVariables
      */
     public function __construct(string $sqlExpression = '', array $boundVariables = [])
     {
@@ -34,7 +31,7 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
     public function setExpression($expression): SqlExpressionInterface
     {
         $this->assertExpression($expression);
-        if (trim($expression) !== '') {
+        if ('' !== trim($expression)) {
             $this->expressionParts = [$expression];
         } else {
             $this->expressionParts = [];
@@ -45,7 +42,7 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
 
     public function appendSql(
         $expression,
-        ?string $combinator = QueryInterface::COMBINATOR_AND
+        ?string $combinator = QueryInterface::COMBINATOR_AND,
     ): SqlExpressionInterface {
         $this->assertExpression($expression);
         if (null !== $combinator) {
@@ -58,7 +55,7 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
             && (
                 $lastExpressionPart !== $parenthesesOpen
                 || (is_string($lastExpressionPart)
-                    && substr((string)$lastExpressionPart, -1) !== (string)$parenthesesOpen)
+                    && substr((string) $lastExpressionPart, -1) !== (string) $parenthesesOpen)
             );
         if ($addCombinator) {
             $this->expressionParts[] = strtoupper($combinator);
@@ -91,7 +88,6 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
     }
 
     /**
-     * @param $combinator
      * @throws WhereClauseException
      */
     public static function assertCombinator($combinator)
@@ -116,7 +112,6 @@ abstract class AbstractSqlExpression implements SqlExpressionInterface
     }
 
     /**
-     * @param $expression
      * @throws WhereClauseException
      */
     private function assertExpression($expression)

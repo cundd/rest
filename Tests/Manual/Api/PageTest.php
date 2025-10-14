@@ -8,7 +8,9 @@ class PageTest extends AbstractApiCase
 {
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getPagesTest($suffix = '')
@@ -23,7 +25,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getPageTest($suffix = '')
@@ -38,7 +42,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getPageNotFoundTest($suffix = '')
@@ -51,7 +57,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addPageTest($suffix = '')
@@ -76,7 +84,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addPageWithIdTest($suffix = '')
@@ -103,7 +113,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function updatePageWithIdInUrlTest($suffix = '')
@@ -132,7 +144,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function updatePageWithIdTest($suffix = '')
@@ -162,7 +176,9 @@ class PageTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function deletePageWithIdInUrlTest($suffix = '')

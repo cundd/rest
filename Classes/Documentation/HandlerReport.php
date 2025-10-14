@@ -18,7 +18,7 @@ class HandlerReport implements ReportInterface
 
     public function __construct(HandlerDescriptor $handlerDescriptor)
     {
-        $this->view = GeneralUtility::makeInstance(StandaloneView::class);;
+        $this->view = GeneralUtility::makeInstance(StandaloneView::class);
         $this->handlerDescriptor = $handlerDescriptor;
     }
 

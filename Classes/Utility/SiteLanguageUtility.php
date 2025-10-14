@@ -11,9 +11,6 @@ class SiteLanguageUtility
 {
     /**
      * Fetch the Site's Language from the Request
-     *
-     * @param ServerRequestInterface $request
-     * @return SiteLanguage|null
      */
     public static function detectSiteLanguage(ServerRequestInterface $request): ?SiteLanguage
     {
@@ -22,9 +19,6 @@ class SiteLanguageUtility
 
     /**
      * Return the language URI prefix for the current Site Language
-     *
-     * @param ServerRequestInterface $request
-     * @return string
      */
     public static function detectSiteLanguagePrefix(ServerRequestInterface $request): string
     {

@@ -15,9 +15,7 @@ interface ExtractorInterface
     /**
      * Returns the data from the given input
      *
-     * @param mixed $input
-     * @return mixed
-     * @throws RuntimeException if the data nesting is too deep
+     * @throws RuntimeException         if the data nesting is too deep
      * @throws InvalidArgumentException if the input type is not supported
      */
     public function extract($input);

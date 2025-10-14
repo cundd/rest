@@ -10,7 +10,6 @@ use Cundd\Rest\Documentation\HandlerDescriptor;
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\ObjectManager;
-use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 
 class HandlerDescriptorTest extends AbstractCase
@@ -28,7 +27,7 @@ class HandlerDescriptorTest extends AbstractCase
         $configurationProvider->setSettings(
             [
                 'paths' => [
-                    'all'  => [
+                    'all' => [
                         'path'         => 'all',
                         'handlerClass' => CrudHandler::class,
                     ],

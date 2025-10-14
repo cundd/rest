@@ -123,9 +123,9 @@ class ObjectManagerTest extends AbstractCase
 
     /**
      * @test
+     *
      * @dataProvider dataProviderTestGenerator
-     * @param string $url
-     * @param string $expectedClass
+     *
      * @throws Exception
      */
     public function getDataProviderTest(string $url, string $expectedClass)
@@ -178,8 +178,7 @@ class ObjectManagerTest extends AbstractCase
      * @test
      *
      * @dataProvider handlerTestGenerator
-     * @param string $url
-     * @param string $expectedClass
+     *
      * @throws Exception
      */
     public function getHandlerTest(string $url, string $expectedClass)
@@ -228,7 +227,7 @@ class ObjectManagerTest extends AbstractCase
         );
 
         $resourceType = new ResourceType('some_extension-my_model');
-        $resourceTypeString = (string)$resourceType;
+        $resourceTypeString = (string) $resourceType;
         $configurationProvider = new StandaloneConfigurationProvider([]);
         $configurationProvider->setSettings(
             [
@@ -274,7 +273,7 @@ class ObjectManagerTest extends AbstractCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(fn($args) => $settings[$args[0]] ?? null);
+        $getSettingsProphecy->will(fn ($args) => $settings[$args[0]] ?? null);
         $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
     }
 }

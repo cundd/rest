@@ -37,6 +37,7 @@ interface QueryInterface extends OperatorInterface
      * Executes the query and returns the result
      *
      * @return array Return the result
+     *
      * @api
      */
     public function execute(): iterable;
@@ -45,6 +46,7 @@ interface QueryInterface extends OperatorInterface
      * Return a copy of the Query with the given constraint
      *
      * @param ConstraintInterface[]|ConstraintInterface $constraint
+     *
      * @return Query
      */
     public function withConstraint($constraint): self;
@@ -59,7 +61,6 @@ interface QueryInterface extends OperatorInterface
      *  ]
      * ```
      *
-     * @param array $orderings
      * @return Query
      */
     public function withOrderings(array $orderings): self;
@@ -67,7 +68,6 @@ interface QueryInterface extends OperatorInterface
     /**
      * Return a copy of the Query with the given limit
      *
-     * @param int $limit
      * @return Query
      */
     public function withLimit(int $limit): self;
@@ -75,7 +75,6 @@ interface QueryInterface extends OperatorInterface
     /**
      * Return a copy of the Query with the given offset
      *
-     * @param int $offset
      * @return Query
      */
     public function withOffset(int $offset): self;
@@ -83,7 +82,8 @@ interface QueryInterface extends OperatorInterface
     /**
      * Return the query result count
      *
-     * @return integer The query result count
+     * @return int The query result count
+     *
      * @api
      */
     public function count(): int;
@@ -98,7 +98,6 @@ interface QueryInterface extends OperatorInterface
      *  ]
      * ```
      *
-     * @return array
      * @api
      */
     public function getOrderings(): array;
@@ -108,7 +107,6 @@ interface QueryInterface extends OperatorInterface
      *
      * Return zero if no limit should be applied
      *
-     * @return integer
      * @api
      */
     public function getLimit(): int;
@@ -116,7 +114,6 @@ interface QueryInterface extends OperatorInterface
     /**
      * Return the start offset of the result set
      *
-     * @return integer
      * @api
      */
     public function getOffset(): int;
@@ -125,29 +122,24 @@ interface QueryInterface extends OperatorInterface
      * Gets the constraint for this query
      *
      * @return ConstraintInterface[]
+     *
      * @api
      */
     public function getConstraint(): array;
 
     /**
      * Return the source identifier for the new query
-     *
-     * @return string
      */
     public function getSourceIdentifier(): string;
 
     /**
      * Set the configuration to use when converting
-     *
-     * @param ConfigurationInterface $configuration
-     * @return self
      */
     public function setConfiguration(ConfigurationInterface $configuration): self;
 
     /**
      * Return the configuration to use when converting
      *
-     * @return ConfigurationInterface|null
      * @throws MissingConfigurationException if the configuration is not set
      */
     public function getConfiguration(): ?ConfigurationInterface;

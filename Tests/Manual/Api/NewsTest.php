@@ -13,7 +13,9 @@ class NewsTest extends AbstractApiCase
 {
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getNewsCollectionTest($suffix = '')
@@ -33,7 +35,9 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getNewsTest($suffix = '')
@@ -49,7 +53,9 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function getNewsNotFoundTest($suffix = '')
@@ -62,7 +68,9 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addNewsTest($suffix = '')
@@ -88,7 +96,9 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
      */
     public function addNewsWithIdShouldFailTest($suffix = '')
@@ -113,8 +123,11 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
+     *
      * @throws Exception
      */
     public function updateNewsWithIdInUrlTest($suffix = '')
@@ -140,8 +153,11 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
+     *
      * @throws Exception
      */
     public function updateNewsWithIdShouldFailTest($suffix = '')
@@ -170,8 +186,11 @@ class NewsTest extends AbstractApiCase
 
     /**
      * @test
+     *
      * @param string $suffix
+     *
      * @dataProvider suffixDataProvider
+     *
      * @throws Exception
      */
     public function deleteNewsWithIdInUrlTest($suffix = '')
@@ -192,7 +211,6 @@ class NewsTest extends AbstractApiCase
     }
 
     /**
-     * @return mixed
      * @throws Exception
      */
     private function addNewsAndGetId()

@@ -20,7 +20,6 @@ trait FrontendSiteSetupTrait
 {
     /**
      * Default Site Configuration
-     * @var array
      */
     protected array $siteLanguageConfiguration = [
         1 => [

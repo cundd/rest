@@ -26,10 +26,9 @@ class NotFoundException extends RuntimeException
      *
      * @param string           $message
      * @param int              $code
-     * @param Throwable|null   $previous
      * @param RouteInterface[] $alternativeRoutes
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null, array $alternativeRoutes = [])
+    public function __construct($message = '', $code = 0, ?Throwable $previous = null, array $alternativeRoutes = [])
     {
         parent::__construct($message, $code, $previous);
         $this->alternativeRoutes = $alternativeRoutes;
@@ -38,9 +37,6 @@ class NotFoundException extends RuntimeException
     /**
      * Build a new NotFound Exception
      *
-     * @param string $route
-     * @param string $method
-     * @param array  $alternativeRoutes
      * @return static
      */
     public static function exceptionWithAlternatives(string $route, string $method, array $alternativeRoutes): self

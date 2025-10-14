@@ -16,8 +16,6 @@ class CustHandler implements HandlerInterface, HandlerDescriptionInterface
 {
     /**
      * Return the description of the handler
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -41,9 +39,6 @@ class CustHandler implements HandlerInterface, HandlerDescriptionInterface
 
     /**
      * Let the handler configure the routes
-     *
-     * @param RouterInterface      $router
-     * @param RestRequestInterface $request
      */
     public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
     {

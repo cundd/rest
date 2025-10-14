@@ -26,7 +26,7 @@ class DummyRequest implements RestRequestInterface
 
     public function getPath(): string
     {
-        return (string)$this->resourceType;
+        return (string) $this->resourceType;
     }
 
     public function getResourceType(): ResourceType
@@ -151,7 +151,7 @@ class DummyRequest implements RestRequestInterface
 
     public function getUri(): UriInterface
     {
-        return new Uri((string)$this->resourceType);
+        return new Uri((string) $this->resourceType);
     }
 
     public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface

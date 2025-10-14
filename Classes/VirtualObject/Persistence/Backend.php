@@ -6,17 +6,9 @@ namespace Cundd\Rest\VirtualObject\Persistence;
 
 class Backend implements BackendInterface, RawQueryBackendInterface
 {
-    /**
-     * @var BackendInterface
-     */
-    private $concreteBackend;
+    private BackendInterface $concreteBackend;
 
-    /**
-     * Backend constructor.
-     *
-     * @param BackendInterface|null $concreteBackend
-     */
-    public function __construct(BackendInterface $concreteBackend = null)
+    public function __construct(?BackendInterface $concreteBackend = null)
     {
         $this->concreteBackend = $concreteBackend ? $concreteBackend : BackendFactory::getBackend();
     }
