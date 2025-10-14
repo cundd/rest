@@ -1,8 +1,6 @@
-Page via REST
-=============
+# Page via REST
 
-Setup
------
+## Setup
 
 Include the static TypoScript file `Virtual Object - Page (rest)` through the Template editor and configure the access.
 
@@ -18,14 +16,11 @@ plugin.tx_rest.settings {
 }
 ```
 
-Retrieving pages
-----------------
+## Retrieving pages
 
 Send a GET request to `http://your-domain.com/rest/virtual_object-page/`.
 
-
-Creating a new page
--------------------
+## Creating a new page
 
 The following displays the request body to create a new page element with `title` and `doktype` on the parent page with UID `pageIdentifer`.
 

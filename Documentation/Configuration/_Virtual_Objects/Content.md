@@ -1,8 +1,6 @@
-Content via REST
-================
+# Content via REST
 
-Setup
------
+## Setup
 
 Include the static TypoScript file `Virtual Object - Content (rest)` through the Template editor and configure the access.
 
@@ -18,14 +16,11 @@ plugin.tx_rest.settings {
 }
 ```
 
-Retrieving content
-------------------
+## Retrieving content
 
 Send a GET request to `http://your-domain.com/rest/VirtualObject-Content/`.
 
-
-Creating a new content
-----------------------
+## Creating a new content
 
 The following displays the request body to create a new content element with `header` and `bodytext` on the page with UID `pageIdentifer`.
 

@@ -1,5 +1,4 @@
-Imprint
-=======
+# Imprint
 
 Open source project by Daniel Corn
 

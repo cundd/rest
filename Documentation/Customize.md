@@ -1,8 +1,7 @@
 Sometimes the builtin resources do not cover all requirements of a project. But REST also allows the creation of custom
 `Handler`s, which enables the developer to take full control.
 
-Building custom Handlers
-========================
+# Building custom Handlers
 
 This tutorial will show how the extension can be used as a starting point for custom web services. The core of the web
 service is the Handler. The Handler implements `\Cundd\Rest\Handler\HandlerInterface` which provides the method
@@ -12,9 +11,7 @@ You can find the tutorial extension
 under [./Tests/Functional/Fixtures/Extensions/custom_rest](https://github.com/cundd/rest/tree/v5/Tests/Functional/Fixtures/Extensions/custom_rest)
 .
 
-
-Configure the access
---------------------
+## Configure the access
 
 The following lines configure read and write access to all paths matching
 `cundd-custom_rest-*`. This allows calls to `your-domain.com/rest/cundd-custom_rest-route`,
@@ -35,9 +32,7 @@ plugin.tx_rest.settings.paths {
 
 File: [ext_typoscript_setup.txt](https://github.com/cundd/rest/tree/v5/Tests/Functional/Fixtures/Extensions/custom_rest/Configuration/TypoScript/setup.typoscript)
 
-
-Configure an alias
-------------------
+## Configure an alias
 
 The paths shown above are not esthetic, but enable the extensions flexibility. To still provide pretty URLs aliases can
 be registered.
@@ -53,9 +48,7 @@ File: [ext_typoscript_setup.txt](https://github.com/cundd/rest/tree/v5/Tests/Fun
 This allows us to call `your-domain.com/rest/customhandler` instead of
 `your-domain.com/rest/cundd-custom_rest-custom_handler`.
 
-
-Creating the Handler
---------------------
+## Creating the Handler
 
 Now lets have a look at the core of the custom extension: the Handler. To ship a Handler with your extension create a
 class in the format `\YourVendor\YourExtensionName\Rest\Handler` and make it implement
@@ -65,16 +58,14 @@ the [resource types](/FAQ/) matching `cundd-custom_rest-*`.
 The more interesting method is `configureRoutes(RouterInterface $router, RestRequestInterface $request)`. REST provides
 a custom routing implementation since version 3.0 and this is the place where the actual routing is configured.
 
-
-Building a route
-----------------
+## Building a route
 
 A route is an instance of `\Cundd\Rest\Router\Route`. It encapsulates the necessary information to be compared to the
 current request and a callback that will be invoked if the route matches. One required information is the pattern that
 will be compared against the request URI. The second important part is the request method a route belongs to.
 
 > Important thing about the route: The extension suffix will be removed from the sent URL. E.g.
-`http://localhost:8888/rest/customhandler.json` will be treated as `http://localhost:8888/rest/customhandler`.
+> `http://localhost:8888/rest/customhandler.json` will be treated as `http://localhost:8888/rest/customhandler`.
 
 Lets create a route:
 
@@ -166,8 +157,7 @@ new Route($request->getResourceType(), $method, function(\Cundd\Rest\Http\RestRe
 });
 ```
 
-Registering a route
--------------------
+## Registering a route
 
 Finally the created routes must be given to the router instance:
 
@@ -177,8 +167,7 @@ $myRoute = Route::get($request->getResourceType(), function(\Cundd\Rest\Http\Res
 $router->add($myRoute);
 ```
 
-Parameters
-----------
+## Parameters
 
 A routing system would be incomplete without the ability to pass variable parts to the callback. The REST router allows
 you to use a set of parameter expressions inside the route's pattern.
@@ -248,9 +237,7 @@ Route::get($request->getResourceType() . '/{raw}', function(\Cundd\Rest\Http\Res
 
 > The parameter value will not be decoded before being passed to the route callback
 
-
-Response
---------
+## Response
 
 The extension utilizes the `\Cundd\Rest\ResponseFactory` class to transform raw handler results into a presentation
 fitting the format from the request's `getFormat()` method.
@@ -259,9 +246,7 @@ If a specific response should be sent to the client, without additional formatti
 instance of `\Psr\Http\Message\ResponseInterface` (e.g. built
 using `\Cundd\Rest\ResponseFactory::createResponse($data, int $status)`).
 
-
-Putting it together
--------------------
+## Putting it together
 
 > See [custom_rest/Classes/Rest/Handler.php](https://github.com/cundd/rest/blob/v5/Tests/Functional/Fixtures/Extensions/custom_rest/Classes/Rest/Handler.php) for the full implementation.
 
@@ -275,7 +260,7 @@ use Cundd\Rest\Router\RouterInterface;
 class Handler implements \Cundd\Rest\Handler\HandlerInterface
 {
     // (…)
-    
+
     /**
      * @var \Cundd\CustomRest\Rest\Helper
      */

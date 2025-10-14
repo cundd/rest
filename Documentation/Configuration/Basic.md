@@ -1,8 +1,6 @@
-Configuration
-=============
+# Configuration
 
-Basic configuration
--------------------
+## Basic configuration
 
 Configure the access rules for different URI paths. `path` defines the URI path for the current rule. The `read` configuration belongs to the HTTP methods GET and HEAD. Any other method will be treated as `write`.
 
@@ -70,9 +68,7 @@ vendor-my_ext-my_model {
 #...
 ```
 
-
-Advanced configuration
-----------------------
+## Advanced configuration
 
 ### Aliases
 
@@ -84,7 +80,6 @@ plugin.tx_rest.settings.aliases {
 }
 ```
 
-
 ### Root object for collection
 
 Some clients expect a returned data collection to have a root object, others don't. If an array output like the one below meets your demands no further configuration is required.
@@ -92,13 +87,13 @@ Some clients expect a returned data collection to have a root object, others don
 ```json5
 [
     {
-        "uid": 9,
-        "name": "Daniel"
+        uid: 9,
+        name: "Daniel",
     },
     {
-        "uid": 10,
-        "name": "Paul"
-    }
+        uid: 10,
+        name: "Paul",
+    },
     /* ... */
 ]
 ```
@@ -108,17 +103,17 @@ If you require an output like the following you can enable `plugin.tx_rest.setti
 
 ```json5
 {
-    "users": [
+    users: [
         {
-            "uid": 9,
-            "name": "Daniel"
+            uid: 9,
+            name: "Daniel",
         },
         {
-            "uid": 10,
-            "name": "Paul"
-        }
+            uid: 10,
+            name: "Paul",
+        },
         /* ... */
-    ]
+    ],
 }
 ```
 
