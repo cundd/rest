@@ -9,14 +9,18 @@ use RuntimeException;
 
 /**
  * Class to prepare/extract the data to be sent from objects
+ *
+ * @phpstan-type Data string|int|bool|float|array<mixed,mixed>|null
  */
 interface ExtractorInterface
 {
     /**
-     * Returns the data from the given input
+     * Extract the data from the given input
+     *
+     * @return Data
      *
      * @throws RuntimeException         if the data nesting is too deep
      * @throws InvalidArgumentException if the input type is not supported
      */
-    public function extract($input);
+    public function extract(mixed $input): string|int|bool|float|array|null;
 }

@@ -61,7 +61,7 @@ class Extractor implements ExtractorInterface
         $this->maxDepthOfObjectTreeTraversal = $maxDepthOfObjectTreeTraversal;
     }
 
-    public function extract($input)
+    public function extract(mixed $input): string|int|bool|float|array|null
     {
         return $this->extractData($input, null, null);
     }
