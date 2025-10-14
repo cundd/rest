@@ -62,16 +62,6 @@ implements JsonSerializable {
 }
 ```
 
-### Show information about the models using \_\_class property
-
-The extension can add a property to the JSON output that provides the object's class name. This can easily be enabled with TypoScript:
-
-```typo3_typoscript
-plugin.tx_rest.settings {
-    addClass = 1
-}
-```
-
 ### Add additional headers
 
 ```typo3_typoscript

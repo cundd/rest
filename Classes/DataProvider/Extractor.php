@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
 
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use DateTime;
 use DateTimeInterface;
@@ -31,8 +30,6 @@ use function is_callable;
  */
 class Extractor implements ExtractorInterface
 {
-    protected ConfigurationProviderInterface $configurationProvider;
-
     /**
      * Logger instance
      */
@@ -57,11 +54,9 @@ class Extractor implements ExtractorInterface
      * Extractor constructor
      */
     public function __construct(
-        ConfigurationProviderInterface $configurationProvider,
         ?LoggerInterface $logger = null,
         int $maxDepthOfObjectTreeTraversal = 6,
     ) {
-        $this->configurationProvider = $configurationProvider;
         $this->logger = $logger;
         $this->maxDepthOfObjectTreeTraversal = $maxDepthOfObjectTreeTraversal;
     }
@@ -174,18 +169,16 @@ class Extractor implements ExtractorInterface
             // jsonSerialize() can return anything but `resource`
             $properties = $input->jsonSerialize();
         } elseif ($input instanceof FileInterface) {
-            return $this->addClassProperty($input, $this->transformFileReference($input));
+            return $this->transformFileReference($input);
         } elseif ($input instanceof AbstractFile) {
-            return $this->addClassProperty($input, $this->transformFileReference($input->getOriginalResource()));
+            return $this->transformFileReference($input->getOriginalResource());
         } elseif ($input instanceof DomainObjectInterface) {
             $properties = $input->_getProperties();
         } else {
             $properties = get_object_vars($input);
         }
 
-        $properties = $this->transformObjectProperties($input, $properties);
-
-        return $this->addClassProperty($input, $properties);
+        return $this->transformObjectProperties($input, $properties);
     }
 
     /**
@@ -220,22 +213,6 @@ class Extractor implements ExtractorInterface
         }
 
         return $transformedCollection;
-    }
-
-    /**
-     * Adds the __class property to the export data if configured
-     */
-    protected function addClassProperty($model, array $properties): array
-    {
-        if (isset($properties['__class'])) {
-            return $properties;
-        }
-
-        if (true === (bool) $this->configurationProvider->getSetting('addClass', 0)) {
-            $properties['__class'] = is_object($model) ? get_class($model) : gettype($model);
-        }
-
-        return $properties;
     }
 
     /**

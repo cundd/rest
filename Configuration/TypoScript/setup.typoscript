@@ -49,7 +49,6 @@ plugin.tx_rest.settings {
     # This is not defined here to allow easy customization in third party extensions TypoScript setup
     # cacheLifetime = -1
     # expiresHeaderLifetime =
-    # doNotAddClass = 1
 
     # Define words that should not be converted to singular
     singularToPlural {
