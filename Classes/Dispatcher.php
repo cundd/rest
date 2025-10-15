@@ -223,6 +223,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                     rtrim($responseHeaderType, '.'),
                     GeneralUtility::callUserFunction($value['userFunc'], $value, $this)
                 );
+            } elseif (true === $value) {
+                $response = $response->withHeader(
+                    $responseHeaderType,
+                    'true'
+                );
             }
         }
 
