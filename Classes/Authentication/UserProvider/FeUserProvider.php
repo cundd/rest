@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Cundd\Rest\Authentication\UserProvider;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
-use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
-use Cundd\Rest\VirtualObject\Persistence\Query;
-use Cundd\Rest\VirtualObject\Persistence\QueryInterface;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * User Provider implementation for FeUsers
@@ -28,29 +27,24 @@ class FeUserProvider implements UserProviderInterface
             return false;
         }
 
-        $backend = BackendFactory::getBackend();
-        $query = [
-            'username'                 => $username,
-            self::PASSWORD_COLUMN_NAME => $password,
-            'disable'                  => 0,
-            'deleted'                  => 0,
-            'starttime'                => [
-                'value'    => time(),
-                'operator' => QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
-            ],
-        ];
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $queryBuilder = $connectionPool->getQueryBuilderForTable('fe_users');
 
-        $endtimeZero = [
-            'endtime' => 0,
-        ];
-        $endtimeGtNow = [
-            'endtime' => [
-                'value'    => time(),
-                'operator' => QueryInterface::OPERATOR_GREATER_THAN,
-            ],
-        ];
-
-        return 0 < $backend->getObjectCountByQuery('fe_users', new Query(array_merge($query, $endtimeZero)))
-            || 0 < $backend->getObjectCountByQuery('fe_users', new Query(array_merge($query, $endtimeGtNow)));
+        return 0 !== $queryBuilder
+            ->count('*')
+            ->from('fe_users')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'username',
+                    $queryBuilder->createNamedParameter($username)
+                ),
+                $queryBuilder->expr()->eq(
+                    self::PASSWORD_COLUMN_NAME,
+                    $queryBuilder->createNamedParameter($password)
+                )
+            )
+            ->executeQuery()
+            ->fetchOne();
     }
 }
