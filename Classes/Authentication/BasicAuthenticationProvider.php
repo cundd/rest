@@ -12,16 +12,10 @@ use Cundd\Rest\Http\RestRequestInterface;
 class BasicAuthenticationProvider extends AbstractAuthenticationProvider
 {
     /**
-     * Provider that will check the user credentials
+     * @param UserProviderInterface $userProvider Provider that will check the user credentials
      */
-    protected UserProviderInterface $userProvider;
-
-    /**
-     * BasicAuth Provider constructor
-     */
-    public function __construct(UserProviderInterface $userProvider)
+    public function __construct(private readonly UserProviderInterface $userProvider)
     {
-        $this->userProvider = $userProvider;
     }
 
     /**
@@ -34,6 +28,7 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
         $username = null;
         $password = null;
 
+        // TODO: Rate limit failed attempts
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $username = $_SERVER['PHP_AUTH_USER'];
             $password = $_SERVER['PHP_AUTH_PW'];
@@ -52,15 +47,21 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
         return $this->userProvider->checkCredentials($username, $password);
     }
 
-    private function checkServerData($key)
+    /**
+     * @return array{0:string,1:string}
+     */
+    private function checkServerData(string $key): array
     {
         if (isset($_SERVER[$key])) {
             $value = $_SERVER[$key];
             if (0 === strpos(strtolower($value), 'basic')) {
-                return explode(':', base64_decode(substr($value, 6)));
+                $parts = explode(':', base64_decode(substr($value, 6)), 2);
+                if (2 === count($parts)) {
+                    return $parts;
+                }
             }
         }
 
-        return [];
+        return ['', ''];
     }
 }
