@@ -15,7 +15,6 @@ use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
-use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
@@ -155,42 +154,31 @@ class ObjectManagerTest extends AbstractCase
                 'Vendor-NotExistingExt-MyModel/1.json',
                 DataProvider::class,
             ],
-            [
-                'virtual_object-page',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page.json',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page/1',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page/1.json',
-                VirtualObjectDataProvider::class,
-            ],
         ];
     }
 
     /**
-     * @test
-     *
-     * @dataProvider handlerTestGenerator
-     *
-     * @throws Exception
+     * @param class-string $expectedClass
      */
-    public function getHandlerTest(string $url, string $expectedClass)
+    #[Test]
+    #[PHPUnitDataProvider('handlerTestGenerator')]
+    public function getHandlerTest(string $url, string $expectedClass): void
     {
-        $_GET['u'] = $url;
+        $container = $this->getContainer();
+
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider($container);
+        // $_GET['u'] = $url;
 
         $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
     }
 
-    public function handlerTestGenerator(): array
+    /**
+     * @return array<int,array<int,mixed>>
+     */
+    public static function handlerTestGenerator(): array
     {
         return [
             // URL,

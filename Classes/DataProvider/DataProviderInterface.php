@@ -42,8 +42,7 @@ interface DataProviderInterface
      * Create a new Domain Model with the given data
      *
      * Implementations are free to decide if identifiers are accepted (e.g. an exception will be thrown for Extbase
-     * Models if the property `uid` or `__identity` is given. `Virtual Objects` on the other hand accept identifier
-     * properties)
+     * Models if the property `uid` or `__identity` is given)
      *
      * @param array        $data         Data of the new model
      * @param ResourceType $resourceType API resource type to get the repository for

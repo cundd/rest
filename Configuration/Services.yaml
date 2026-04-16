@@ -81,18 +81,3 @@ services:
     public: true
   Cundd\Rest\SessionManager:
     public: true
-
-  Cundd\Rest\VirtualObject\ConfigurationFactory:
-    public: true
-  Cundd\Rest\VirtualObject\Persistence\BackendInterface:
-    alias: 'Cundd\Rest\VirtualObject\Persistence\Backend\DoctrineBackend'
-    public: true
-  Cundd\Rest\VirtualObject\Persistence\PersistenceManagerInterface:
-    alias: 'Cundd\Rest\VirtualObject\Persistence\PersistenceManager'
-    public: true
-  Cundd\Rest\VirtualObject\Persistence\QueryInterface:
-    alias: 'Cundd\Rest\VirtualObject\Persistence\Query'
-    public: true
-  Cundd\Rest\VirtualObject\Persistence\RepositoryInterface:
-    alias: 'Cundd\Rest\VirtualObject\Persistence\Repository'
-    public: true

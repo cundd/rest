@@ -18,7 +18,6 @@ use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\DataProvider\IdentityProviderInterface;
-use Cundd\Rest\DataProvider\VirtualObjectDataProvider;
 use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
@@ -37,7 +36,6 @@ use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\Unit\Fixtures\Container;
 use Cundd\Rest\Tests\Unit\Fixtures\DummyDataProvider;
 use Cundd\Rest\Tests\Unit\Fixtures\DummyHandler;
-use Cundd\Rest\VirtualObject\ConfigurationFactory;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -208,15 +206,6 @@ class ObjectManagerTest extends TestCase
         $extractor = $this->prophesize(ExtractorInterface::class)->reveal();
         /** @var IdentityProviderInterface $identityProvider */
         $identityProvider = $this->prophesize(IdentityProviderInterface::class)->reveal();
-        $this->container->set(
-            VirtualObjectDataProvider::class,
-            new VirtualObjectDataProvider(
-                new ConfigurationFactory(new ConfigurationProvider()),
-                $this->fixture,
-                $extractor,
-                $identityProvider
-            )
-        );
         $dataProviderFixture = new DataProvider($this->fixture, $extractor, $identityProvider);
         $this->container->set(DataProvider::class, $dataProviderFixture);
         $this->container->set(DataProviderInterface::class, $dataProviderFixture);
@@ -243,32 +232,13 @@ class ObjectManagerTest extends TestCase
                 'Vendor-NotExistingExt-MyModel/1.json',
                 DataProvider::class,
             ],
-            [
-                'virtual_object-page',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page.json',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page/1',
-                VirtualObjectDataProvider::class,
-            ],
-            [
-                'virtual_object-page/1.json',
-                VirtualObjectDataProvider::class,
-            ],
         ];
     }
 
-    /**
-     * @test
-     *
-     * @throws Exception
-     */
-    public function getDataProviderFromResourceTest()
+    #[Test]
+    public function getDataProviderFromResourceTest(): void
     {
+        /** @var class-string<DataProviderInterface> $expectedDataProvider */
         $expectedDataProvider = 'Vendor\\Ext' . time() . '\\Rest\\DataProvider';
         $this->buildClass($expectedDataProvider, '', DummyDataProvider::class, true);
         $this->container->set(

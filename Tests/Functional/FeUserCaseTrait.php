@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
 
-use Cundd\Rest\VirtualObject\Persistence\BackendFactory;
-use Cundd\Rest\VirtualObject\Persistence\Exception\SqlErrorException;
 use Doctrine\DBAL\Exception\NonUniqueFieldNameException;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
@@ -17,12 +17,14 @@ trait FeUserCaseTrait
      *
      * @throws SqlErrorException
      */
-    public static function addApiKeyColumn()
+    public static function addApiKeyColumn(): void
     {
-        $databaseConnection = BackendFactory::getBackend();
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connection = $connectionPool->getConnectionForTable('fe_users');
         try {
-            $databaseConnection->executeQuery('ALTER TABLE fe_users ADD tx_rest_apikey TINYTEXT;');
-        } catch (SqlErrorException $exception) {
+            $connection->executeQuery('ALTER TABLE fe_users ADD tx_rest_apikey TINYTEXT;');
+        } catch (\Doctrine\DBAL\Exception $exception) {
             if ($exception->getPrevious() instanceof NonUniqueFieldNameException) {
                 return;
             }

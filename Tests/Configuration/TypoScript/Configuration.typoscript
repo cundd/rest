@@ -1,21 +1,5 @@
-### Include this file to configure TYPO3 for the manual tests and the correct Virtual Object Page setup
-# @import 'EXT:rest/Configuration/TypoScript/Page/setup.typoscript'
-@import 'EXT:rest/Configuration/TypoScript/Content/setup.typoscript'
-
 plugin.tx_rest.settings {
     paths {
-        virtual_object-content {
-            path = virtual_object-content
-            read = allow
-            write = allow
-        }
-
-        virtual_object-page {
-            path = virtual_object-page
-            read = allow
-            write = allow
-        }
-
         cundd-custom_rest {
             path = cundd-custom_rest-*
             read = allow
