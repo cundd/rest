@@ -13,35 +13,41 @@ use Psr\Http\Message\ResponseInterface;
 interface RouteInterface
 {
     /**
-     * Returns the normalized path pattern
+     * Return the normalized path pattern
      */
     public function getPattern(): string;
 
     /**
-     * Returns the request method for this route
+     * Return the request method for this route
+     *
+     * @return non-empty-string
      */
     public function getMethod(): string;
 
     /**
-     * Returns the requested parameters
+     * Return the requested parameters
      *
      * @return string[]
      */
     public function getParameters(): array;
 
     /**
-     * Returns the priority of this route
+     * Return the priority of this route
      *
-     * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
+     * Deeper nested paths have a higher priority. Fixed paths have precedence
+     * over paths with parameter expressions.
      */
     public function getPriority(): int;
 
     /**
      * Process the route
      *
-     * @param array $parameters
+     * @param mixed[] $parameters
      *
      * @return ResponseInterface|mixed
      */
-    public function process(RestRequestInterface $request, ...$parameters);
+    public function process(
+        RestRequestInterface $request,
+        mixed ...$parameters,
+    ): mixed;
 }

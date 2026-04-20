@@ -5,17 +5,27 @@ declare(strict_types=1);
 namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class Route implements RouteInterface, RouteFactoryInterface
+final class Route implements RouteInterface, RouteFactoryInterface
 {
+    /**
+     * @var non-empty-string
+     */
     private string $pattern;
 
     private int $priority;
 
+    /**
+     * @var non-empty-string[]
+     */
     private array $parameters;
 
+    /**
+     * @var non-empty-string
+     */
     private string $method;
 
     /**
@@ -23,68 +33,115 @@ class Route implements RouteInterface, RouteFactoryInterface
      */
     private $callback;
 
-    public function __construct(ResourceType|string $pattern, string $method, callable $callback)
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     * @param non-empty-string              $method
+     */
+    public function __construct(
+        ResourceType|string $pattern,
+        string $method,
+        callable $callback,
+    ) {
+        if (!$method) {
+            throw new InvalidArgumentException('Argument "method" must not be empty');
+        }
         $this->pattern = $this->normalizePattern($pattern);
         $this->method = strtoupper($method);
+
         $this->callback = $callback;
-        $this->parameters = ParameterType::extractParameterTypesFromPattern($this->pattern);
+        $this->parameters = ParameterType::extractParameterTypesFromPattern(
+            $this->pattern
+        );
     }
 
-    public static function get(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function get(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'GET', $callback);
     }
 
-    public static function post(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function post(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'POST', $callback);
     }
 
-    public static function put(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function put(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'PUT', $callback);
     }
 
-    public static function delete(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function delete(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'DELETE', $callback);
     }
 
-    public static function options(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function options(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'OPTIONS', $callback);
     }
 
-    public static function patch(string|ResourceType $pattern, callable $callback): RouteInterface
-    {
+    /**
+     * @param non-empty-string|ResourceType $pattern
+     */
+    public static function patch(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'PATCH', $callback);
     }
 
     /**
-     * Creates a new Route with the given pattern and callback for the method GET
+     * Create a new Route with the given pattern and callback for the method GET
      *
-     * @return static
+     * @param non-empty-string|ResourceType $pattern
      */
-    public static function routeWithPattern(ResourceType|string $pattern, callable $callback): RouteInterface
-    {
+    public static function routeWithPattern(
+        ResourceType|string $pattern,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, 'GET', $callback);
     }
 
     /**
-     * Creates a new Route with the given pattern, method and callback
+     * Create a new Route with the given pattern, method and callback
      *
-     * @param string|ResourceType $pattern
-     *
-     * @return static
+     * @param non-empty-string|ResourceType $pattern
+     * @param non-empty-string              $method
      */
-    public static function routeWithPatternAndMethod($pattern, string $method, callable $callback): RouteInterface
-    {
+    public static function routeWithPatternAndMethod(
+        ResourceType|string $pattern,
+        string $method,
+        callable $callback,
+    ): RouteInterface {
         return new static($pattern, $method, $callback);
     }
 
     /**
-     * Returns the normalized path pattern
+     * Return the normalized path pattern
      */
     public function getPattern(): string
     {
@@ -92,7 +149,7 @@ class Route implements RouteInterface, RouteFactoryInterface
     }
 
     /**
-     * Returns the request method for this route
+     * Return the request method for this route
      */
     public function getMethod(): string
     {
@@ -100,7 +157,7 @@ class Route implements RouteInterface, RouteFactoryInterface
     }
 
     /**
-     * Returns the requested parameters
+     * Return the requested parameters
      *
      * @return string[]
      */
@@ -112,31 +169,31 @@ class Route implements RouteInterface, RouteFactoryInterface
     /**
      * Process the route
      *
-     * @param array $parameters
+     * @param mixed[] $parameters
      *
      * @return ResponseInterface|mixed
      */
-    public function process(RestRequestInterface $request, ...$parameters)
-    {
+    public function process(
+        RestRequestInterface $request,
+        mixed ...$parameters,
+    ): mixed {
         $callback = $this->callback;
 
         return $callback($request, ...$parameters);
     }
 
     /**
-     * The __invoke method is called when a script tries to call an object as a function.
-     *
-     * @param array $arguments
-     *
-     * @see http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.invoke
+     * @param mixed[] $arguments
      */
-    public function __invoke(RestRequestInterface $request, ...$arguments)
-    {
+    public function __invoke(
+        RestRequestInterface $request,
+        mixed ...$arguments,
+    ): mixed {
         return $this->process($request, ...$arguments);
     }
 
     /**
-     * Returns the priority of this route
+     * Return the priority of this route
      *
      * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
      */
@@ -151,9 +208,14 @@ class Route implements RouteInterface, RouteFactoryInterface
 
     /**
      * Normalize the path pattern
+     *
+     * @return non-empty-string
      */
     private function normalizePattern(ResourceType|string $inputPattern): string
     {
+        if ('' === (string) $inputPattern) {
+            throw new InvalidArgumentException('Argument "pattern" must not be empty');
+        }
         $pattern = '/' . ltrim((string) $inputPattern, '/');
         $patternParts = explode('/', $pattern);
         $parameterTypes = ParameterType::extractParameterTypesFromPattern($pattern);

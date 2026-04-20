@@ -156,7 +156,6 @@ class RouteTest extends TestCase
     public function deeperPathsHaveHigherPriorityDataProvider()
     {
         return [
-            ['', 'path'],
             ['path', 'path/sub-path'],
             ['path/sub-path', 'path/sub-path/another'],
             ['path/sub-path/', 'path/sub-path/another/'],
