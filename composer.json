@@ -28,14 +28,15 @@
         "ext-curl": "*",
         "ext-simplexml": "*",
         "cundd/test-flight": "^0.1.5",
+        "jangregor/phpstan-prophecy": "^2.2.0",
         "laminas/laminas-diactoros": "^3.0.0",
         "phpspec/prophecy": "*",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpunit/phpunit": "^9.5.21",
+        "phpunit/phpunit": "^11.2.5",
         "psr/container": "^2.0",
         "psr/http-message": "^2.0",
-        "psr/log": "^2.0",
-        "typo3/testing-framework": "^7 || ^8"
+        "psr/log": "^2.0 || ^3.0",
+        "typo3/testing-framework": "^9.0.1"
     },
     "autoload": {
         "psr-4": {
