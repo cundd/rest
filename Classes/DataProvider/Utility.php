@@ -10,19 +10,12 @@ use InvalidArgumentException;
 /**
  * A utility class with static methods for Data Providers
  */
-class Utility
+final class Utility
 {
     /**
      * Separator between vendor, extension and model in the API resource type
      */
     private const API_RESOURCE_TYPE_PART_SEPARATOR = '-';
-
-    /**
-     * Mapping from singular to plural
-     *
-     * @var array<string, string>
-     */
-    protected static array $singularToPlural = [];
 
     /**
      * Returns an array of class name parts including vendor, extension and domain model
@@ -34,11 +27,10 @@ class Utility
      *     MyModel
      *   )
      *
-     * @param bool $convertPlural Indicates if plural resource names should be converted
+     * @return array{0:string,1:string,2:string}
      */
     public static function getClassNamePartsForResourceType(
         ResourceType $resourceType,
-        bool $convertPlural = true,
     ): array {
         $resourceTypeString = (string) $resourceType;
         if ('' === $resourceTypeString) {
@@ -52,11 +44,6 @@ class Utility
             array_unshift($parts, '');
         }
 
-        if ($convertPlural && $parts) {
-            $lastPartIndex = count($parts) - 1;
-            $parts[$lastPartIndex] = static::singularize($parts[$lastPartIndex]);
-        }
-
         return [
             ucfirst($parts[0]),
             ucfirst($parts[1]),
@@ -68,13 +55,19 @@ class Utility
 
     /**
      * Return the Domain Model class or interface name for the given API resource type
+     *
+     * @return class-string<object>
      */
     public static function getModelEntityForResourceType(
         ResourceType $resourceType,
-        bool $convertPlural = true,
     ): ?string {
-        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType, $convertPlural);
-        $namespaceVersion = ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Model\\' . $model;
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType(
+            $resourceType,
+        );
+        $namespaceVersion = ($vendor ? $vendor . '\\' : '')
+            . $extension
+            . '\\Domain\\Model\\'
+            . $model;
         $underscoreVersion = 'Tx_' . $extension . '_Domain_Model_' . $model;
 
         if (class_exists($namespaceVersion)) {
@@ -85,9 +78,9 @@ class Utility
             return $namespaceVersion;
         } elseif (interface_exists($underscoreVersion)) {
             return $underscoreVersion;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -106,7 +99,7 @@ class Utility
 
         $className = str_replace('\\Domain\\Model\\', '\\', $className);
         $classNameParts = array_map(
-            [get_called_class(), 'camelCaseToLowerCaseUnderscored'],
+            self::camelCaseToLowerCaseUnderscored(...),
             explode('\\', $className)
         );
 
@@ -115,71 +108,6 @@ class Utility
         } catch (InvalidArgumentException) {
             return false;
         }
-    }
-
-    /**
-     * Tries to convert an english plural into it's singular.
-     */
-    public static function singularize(string $word): string
-    {
-        $customMapping = array_search($word, static::$singularToPlural, true);
-        if (false !== $customMapping) {
-            return $customMapping;
-        }
-        $customMapping = array_search(strtolower($word), static::$singularToPlural, true);
-        if (false !== $customMapping) {
-            return $customMapping;
-        }
-
-        // Here is the list of rules. To add a scenario,
-        // Add the plural ending as the key and the singular
-        // ending as the value for that key. This could be
-        // turned into a preg_replace and probably will be
-        // eventually, but for now, this is what it is.
-        //
-        // Note: The first rule has a value of false since
-        // we don't want to mess with words that end with
-        // double 's'. We normally wouldn't have to create
-        // rules for words we don't want to mess with, but
-        // the last rule (s) would catch double (ss) words
-        // if we didn't stop before it got to that rule.
-        $rules = [
-            'ss'  => false,
-            'os'  => 'o',
-            'ies' => 'y',
-            'xes' => 'x',
-            'oes' => 'o',
-            'ves' => 'f',
-            's'   => '',
-        ];
-        // Loop through all the rules and do the replacement.
-        foreach (array_keys($rules) as $key) {
-            // If the end of the word doesn't match the key,
-            // it's not a candidate for replacement. Move on
-            // to the next plural ending.
-            if (substr($word, (strlen($key) * -1)) != $key) {
-                continue;
-            }
-            // If the value of the key is false, stop looping
-            // and return the original version of the word.
-            if (false === $key) {
-                return $word;
-            }
-
-            // We've made it this far, so we can do the
-            // replacement.
-            return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
-        }
-
-        return $word;
-    }
-
-    /**
-     * Add a mapping from singular to plural
-     */
-    public static function registerSingularForPlural(string $singular, string $plural): void
-    {
-        static::$singularToPlural[$singular] = $plural;
     }
 
     /**
@@ -216,6 +144,6 @@ class Utility
     {
         $value = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $input);
 
-        return is_callable('mb_strtolower') ? mb_strtolower($value, 'utf-8') : strtolower($value);
+        return mb_strtolower($value, 'utf-8');
     }
 }

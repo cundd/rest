@@ -6,16 +6,17 @@ namespace Cundd\Rest\Tests\Unit\DataProvider;
 
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Domain\Model\ResourceType;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test case for class new \Cundd\Rest\App
  */
-class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
+class DataProviderUtilityTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function getClassNamePartsForPathTest()
+    #[Test]
+    public function getClassNamePartsForPathTest(): void
     {
         $this->assertEquals(
             ['', 'MyExt', 'MyModel'],
@@ -43,10 +44,8 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getPathForClassNameTest()
+    #[Test]
+    public function getPathForClassNameTest(): void
     {
         $this->assertEquals(
             'my_ext-my_model',
@@ -100,20 +99,17 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider normalizeResourceTypeDataProvider
-     */
-    public function normalizeResourceTypeTest($resourceType, $expected)
+    #[Test]
+    #[DataProvider('normalizeResourceTypeDataProvider')]
+    public function normalizeResourceTypeTest(string $resourceType, string $expected): void
     {
         $this->assertEquals($expected, Utility::normalizeResourceType($resourceType));
     }
 
     /**
-     * @return array
+     * @return array{0:string,1:string}[]
      */
-    public function normalizeResourceTypeDataProvider()
+    public static function normalizeResourceTypeDataProvider(): array
     {
         return [
             ['Document-MyExt-MyModel', 'document-my_ext-my_model'],
@@ -126,52 +122,5 @@ class DataProviderUtilityTest extends \PHPUnit\Framework\TestCase
             ['D', 'd'],
             ['d', 'd'],
         ];
-    }
-
-    /**
-     * @test
-     */
-    public function singularizeTest()
-    {
-        $this->assertEquals('tree', Utility::singularize('trees'));
-        $this->assertEquals('friend', Utility::singularize('friends'));
-        $this->assertEquals('hobby', Utility::singularize('hobbies'));
-
-        $this->assertEquals('Tree', Utility::singularize('Trees'));
-        $this->assertEquals('Friend', Utility::singularize('Friends'));
-        $this->assertEquals('Hobby', Utility::singularize('Hobbies'));
-    }
-
-    /**
-     * @test
-     */
-    public function registerSingularForPluralTest()
-    {
-        $singularToPlural = [
-            'news'      => 'news',
-            'equipment' => 'equipment',
-            'species'   => 'species',
-            'series'    => 'series',
-            'News'      => 'News',
-            'Equipment' => 'Equipment',
-            'Species'   => 'Species',
-            'Series'    => 'Series',
-            'Singular'  => 'Plural',
-        ];
-        foreach ($singularToPlural as $singular => $plural) {
-            Utility::registerSingularForPlural($singular, $plural);
-        }
-
-        $this->assertEquals('tree', Utility::singularize('trees'));
-        $this->assertEquals('friend', Utility::singularize('friends'));
-        $this->assertEquals('hobby', Utility::singularize('hobbies'));
-        $this->assertEquals('Tree', Utility::singularize('Trees'));
-        $this->assertEquals('Friend', Utility::singularize('Friends'));
-        $this->assertEquals('Hobby', Utility::singularize('Hobbies'));
-        $this->assertEquals('Singular', Utility::singularize('Plural'));
-
-        foreach ($singularToPlural as $singular => $plural) {
-            $this->assertEquals($singular, Utility::singularize($plural));
-        }
     }
 }

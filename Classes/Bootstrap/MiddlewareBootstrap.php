@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap;
 
-use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\ObjectManagerInterface;
@@ -36,7 +35,6 @@ class MiddlewareBootstrap
         $this->initializeConfiguration($this->configuration);
 
         $GLOBALS['TYPO3_REQUEST'] = $request;
-        $this->registerSingularToPlural($this->objectManager);
 
         return $request;
     }
@@ -71,21 +69,5 @@ class MiddlewareBootstrap
     private function initializeConfiguration(array $configuration): void
     {
         $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
-        $configurationManager->setConfiguration($configuration);
-    }
-
-    /**
-     * Register singulars to the plural
-     *
-     * TODO: Move this to a better place
-     */
-    private function registerSingularToPlural(ObjectManagerInterface $objectManager): void
-    {
-        $singularToPlural = $objectManager->getConfigurationProvider()->getSetting('singularToPlural');
-        if ($singularToPlural) {
-            foreach ($singularToPlural as $singular => $plural) {
-                Utility::registerSingularForPlural($singular, $plural);
-            }
-        }
     }
 }
