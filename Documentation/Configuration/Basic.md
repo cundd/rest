@@ -98,25 +98,6 @@ Some clients expect a returned data collection to have a root object, others don
 ]
 ```
 
-If you require an output like the following you can enable `plugin.tx_rest.settings.addRootObjectForCollection = 1`
-(This setting will **NOT** apply to custom handlers)
-
-```json5
-{
-    users: [
-        {
-            uid: 9,
-            name: "Daniel",
-        },
-        {
-            uid: 10,
-            name: "Paul",
-        },
-        /* ... */
-    ],
-}
-```
-
 This wraps the whole response array into an object with the key read from the request path (i.e. `users`).
 
 Tip: The request path will be used as root key, so you may want to configure aliases.

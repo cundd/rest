@@ -195,29 +195,13 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
     }
 
     /**
-     * Add the root object key if configured
-     *
-     * @param bool $singularize
-     *
      * @return mixed|array
      */
-    protected function prepareResult(RestRequestInterface $request, $result, $singularize = true)
-    {
-        if ($this->getAddRootObjectForCollection()) {
-            $key = $singularize ? Utility::singularize($request->getRootObjectKey()) : $request->getRootObjectKey();
-
-            return [$key => $result];
-        }
-
+    protected function prepareResult(
+        RestRequestInterface $request,
+        mixed $result,
+    ): mixed {
         return $result;
-    }
-
-    /**
-     * Return if the root object key should be added to the response data
-     */
-    protected function getAddRootObjectForCollection(): bool
-    {
-        return (bool) $this->objectManager->getConfigurationProvider()->getSetting('addRootObjectForCollection');
     }
 
     /**
