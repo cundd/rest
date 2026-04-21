@@ -19,7 +19,6 @@ use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\DataProvider\IdentityProviderInterface;
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Log\LoggerInterface;
@@ -28,7 +27,6 @@ use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
-use Cundd\Rest\SessionManager;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Fixtures\UserProvider;
 use Cundd\Rest\Tests\InjectPropertyTrait;
@@ -162,10 +160,16 @@ class ObjectManagerTest extends TestCase
     public function getAuthenticationProviderFromConfigurationTest()
     {
         $userProvider = new UserProvider();
-        $sessM = new SessionManager();
-        $this->container->set(BasicAuthenticationProvider::class, new BasicAuthenticationProvider($userProvider));
-        $this->container->set(RequestAuthenticationProvider::class, new RequestAuthenticationProvider());
-        $this->container->set(CredentialsAuthenticationProvider::class, new CredentialsAuthenticationProvider($sessM));
+        $this->container->set(
+            BasicAuthenticationProvider::class,
+            new BasicAuthenticationProvider($userProvider)
+        );
+        $this->container->set(
+            RequestAuthenticationProvider::class,
+            new RequestAuthenticationProvider(
+                $this->prophesize(Context::class)->reveal()
+            )
+        );
         $this->container->set(
             AuthenticationProviderCollection::class,
             function ($a): AuthenticationProviderCollection {
@@ -176,21 +180,20 @@ class ObjectManagerTest extends TestCase
             [
                 'authenticationProvider' => [
                     30 => RequestAuthenticationProvider::class,
-                    50 => CredentialsAuthenticationProvider::class,
                     10 => BasicAuthenticationProvider::class,
                 ],
             ],
             '',
             ''
         );
-        /** @var AuthenticationProviderCollection $object */
+
         $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
-        $this->assertCount(3, $object->getProviders());
+        $this->assertInstanceOf(AuthenticationProviderCollection::class, $object);
+        $this->assertCount(2, $object->getProviders());
         $providers = array_values(iterator_to_array($object->getProviders()));
         $this->assertInstanceOf(BasicAuthenticationProvider::class, $providers[0]);
         $this->assertInstanceOf(RequestAuthenticationProvider::class, $providers[1]);
-        $this->assertInstanceOf(CredentialsAuthenticationProvider::class, $providers[2]);
     }
 
     /**
@@ -288,18 +291,6 @@ class ObjectManagerTest extends TestCase
             }
         );
 
-        $this->container->set(
-            AuthHandler::class,
-            function (): AuthHandler {
-                /** @var SessionManager $sessionManager */
-                $sessionManager = $this->prophesize(SessionManager::class)->reveal();
-                /** @var UserProviderInterface $userProvider */
-                $userProvider = $this->prophesize(UserProviderInterface::class)->reveal();
-
-                return new AuthHandler($sessionManager, $userProvider);
-            }
-        );
-
         $handler = $this->fixture->getHandler($this->buildTestRequest($url, 'something'));
         $this->assertInstanceOf($expectedClass, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
@@ -317,10 +308,6 @@ class ObjectManagerTest extends TestCase
             [
                 'Vendor-NotExistingExt-MyModel/1.json',
                 CrudHandler::class,
-            ],
-            [
-                'auth/1.json',
-                AuthHandler::class,
             ],
         ];
     }

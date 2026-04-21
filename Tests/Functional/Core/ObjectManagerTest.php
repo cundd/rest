@@ -7,7 +7,6 @@ namespace Cundd\Rest\Tests\Functional\Core;
 use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
-use Cundd\Rest\Authentication\CredentialsAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -16,7 +15,6 @@ use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Domain\Model\ResourceType;
-use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Log\LoggerInterface;
@@ -101,11 +99,13 @@ class ObjectManagerTest extends AbstractCase
      */
     public function getAuthenticationProviderFromConfigurationTest()
     {
-        $this->injectConfigurationProviderUsingHandlerClass(
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider(
+            $container,
             [
                 'authenticationProvider' => [
                     30 => RequestAuthenticationProvider::class,
-                    50 => CredentialsAuthenticationProvider::class,
                     10 => BasicAuthenticationProvider::class,
                 ],
             ]
@@ -113,11 +113,10 @@ class ObjectManagerTest extends AbstractCase
         /** @var AuthenticationProviderCollection $object */
         $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
-        $this->assertCount(3, $object->getProviders());
+        $this->assertCount(2, $object->getProviders());
         $providers = array_values(iterator_to_array($object->getProviders()));
         $this->assertInstanceOf(BasicAuthenticationProvider::class, $providers[0]);
         $this->assertInstanceOf(RequestAuthenticationProvider::class, $providers[1]);
-        $this->assertInstanceOf(CredentialsAuthenticationProvider::class, $providers[2]);
     }
 
     /**
@@ -191,21 +190,21 @@ class ObjectManagerTest extends AbstractCase
                 'Vendor-NotExistingExt-MyModel/1.json',
                 CrudHandler::class,
             ],
-            [
-                'auth/1.json',
-                AuthHandler::class,
-            ],
         ];
     }
 
-    /**
-     * @test
-     */
-    public function getHandlerFromResourceTest()
+    #[Test]
+    public function getHandlerFromResourceTest(): void
     {
+        /** @var class-string<HandlerInterface> $expectedHandler */
         $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
         $this->buildClass($expectedHandler, '', CrudHandler::class);
-        $this->getContainer()->set(
+
+        $resourceType = new ResourceType('some_extension-my_model' . time());
+
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $container->set(
             $expectedHandler,
             new $expectedHandler(
                 $this->fixture,

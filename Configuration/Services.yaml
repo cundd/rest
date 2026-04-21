@@ -60,8 +60,6 @@ services:
     public: true
 
   Cundd\Rest\Handler\HandlerInterface: '@Cundd\Rest\Handler\CrudHandler'
-  Cundd\Rest\Handler\AuthHandler:
-    public: true
   Cundd\Rest\Handler\CrudHandler:
     public: true
   Cundd\Rest\Handler\GreetingHandler:
@@ -78,6 +76,4 @@ services:
     public: true
 
   Cundd\Rest\Persistence\Generic\RestQuerySettings:
-    public: true
-  Cundd\Rest\SessionManager:
     public: true
