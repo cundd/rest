@@ -1,0 +1,58 @@
+.resources pre {
+    margin-bottom: 10px;
+}
+
+.resources .fa {
+    font-size: 0.8em;
+}
+
+.resources .meta th,
+.resources .meta td {
+    padding: 0 3px 0 0;
+}
+
+.resources table .minimize {
+    width: 10px;
+}
+
+.resources table code {
+    background: transparent;
+    color: #5a5a5a;
+}
+
+.resources table a {
+    color: #8b8b8b;
+}
+
+.resources table a:hover {
+    color: #5a5a5a;
+}
+
+.resources .aliases-container::before,
+.resources .aliases-container::after {
+    content: "";
+    clear: both;
+}
+
+.resources .aliases-container h3 {
+    color: #5a5a5a;
+    display: inline-block;
+    line-height: 1em;
+    font-size: 1em;
+    margin: 0;
+}
+
+.resources .aliases {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+}
+
+.resources .aliases li {
+    display: inline-block;
+}
+
+.resources .aliases code {
+    background: #f7f7f7;
+    color: #5a5a5a;
+}

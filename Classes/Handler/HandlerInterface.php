@@ -15,5 +15,8 @@ interface HandlerInterface
     /**
      * Let the handler configure the routes
      */
-    public function configureRoutes(RouterInterface $router, RestRequestInterface $request);
+    public function configureRoutes(
+        RouterInterface $router,
+        RestRequestInterface $request,
+    ): void;
 }

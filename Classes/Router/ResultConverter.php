@@ -33,7 +33,7 @@ class ResultConverter implements RouterInterface
     private $exceptionHandler;
 
     /**
-     * Result converter constructor
+     * @param callable(Exception, RestRequestInterface): void $exceptionHandler
      */
     public function __construct(
         RouterInterface $router,
@@ -122,8 +122,10 @@ class ResultConverter implements RouterInterface
     /**
      * Convert exceptions that occurred during the dispatching
      */
-    private function exceptionToResponse(Exception $exception, RestRequestInterface $request): ResponseInterface
-    {
+    private function exceptionToResponse(
+        Exception $exception,
+        RestRequestInterface $request,
+    ): ResponseInterface {
         try {
             $exceptionHandler = $this->exceptionHandler;
             $exceptionHandler($exception, $request);
@@ -133,30 +135,39 @@ class ResultConverter implements RouterInterface
         if ($this->getShowDebugInformation()) {
             $exceptionDetails = $this->getDebugDetails($exception);
         } else {
-            $exceptionDetails = sprintf('Sorry! Something is wrong. Exception code #%d', $exception->getCode());
+            $exceptionDetails = sprintf(
+                'Sorry! Something is wrong. Exception code #%d',
+                $exception->getCode()
+            );
         }
 
         return $this->responseFactory->createErrorResponse($exceptionDetails, 501, $request);
     }
 
+    /**
+     * @return string[]
+     */
     private function getDebugTrace(Exception $exception): array
     {
         return array_map(
-            function ($step): string {
-                $arguments = count($step['args']) > 0 ? sprintf('(%d Arguments)', count($step['args'])) : '()';
+            function (array $step): string {
+                $arguments = count($step['args'] ?? []) > 0
+                    ? sprintf('(%d Arguments)', count($step['args']))
+                    : '()';
+
                 if (isset($step['class'])) {
-                    return $step['class'] . $step['type'] . $step['function'] . $arguments;
-                }
-                if (isset($step['function'])) {
-                    return $step['function'] . $arguments;
+                    return $step['class'] . ($step['type'] ?? '') . $step['function'] . $arguments;
                 }
 
-                return '';
+                return $step['function'] . $arguments;
             },
             $exception->getTrace()
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     private function getDebugDetails(Exception $exception): array
     {
         return [
@@ -173,11 +184,14 @@ class ResultConverter implements RouterInterface
     /**
      * Handle cases where no matching Route was found
      *
-     * If debugging information is allowed for the client and alternative Route suggestions where provided by the
-     * Router, they will be sent as additional header
+     * If debugging information is allowed for the client and alternative Route
+     * suggestions where provided by the Router, they will be sent as additional
+     * header
      */
-    private function notFoundToResponse(NotFoundException $result, RestRequestInterface $request): ResponseInterface
-    {
+    private function notFoundToResponse(
+        NotFoundException $result,
+        RestRequestInterface $request,
+    ): ResponseInterface {
         $response = $this->responseFactory->createErrorResponse(
             $result->getMessage() ?: null,
             404,

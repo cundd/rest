@@ -33,7 +33,7 @@ interface RestRequestInterface extends ServerRequestInterface
     /**
      * Return the sent data
      */
-    public function getSentData();
+    public function getSentData(): mixed;
 
     /**
      * Return the requested format

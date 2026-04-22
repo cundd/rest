@@ -1,0 +1,14 @@
+categories:
+  Rest:
+    label: Rest configuration
+  Rest.advanced:
+    label: Advanced
+    parent: Rest
+
+settings:
+  developmentMode:
+    type: bool
+    default: true
+    label: Development mode
+    # description: R
+    category: Rest.advanced

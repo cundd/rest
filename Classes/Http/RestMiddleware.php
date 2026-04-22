@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cundd\Rest\Http;
 
 use Cundd\Rest\Bootstrap\MiddlewareBootstrap;
-use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Utility\SiteLanguageUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,18 +22,18 @@ class RestMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isRestRequest($request)) {
-            $GLOBALS['TYPO3_REQUEST'] = $request;
-            $middlewareBootstrap = new MiddlewareBootstrap(GeneralUtility::makeInstance(ObjectManagerInterface::class));
-            $request = $middlewareBootstrap->bootstrapCore($request);
+            $middlewareBootstrap = GeneralUtility::makeInstance(MiddlewareBootstrap::class);
             $languageEnhancedRequest = $middlewareBootstrap->bootstrapLanguage(
-                $request->getAttribute('frontend.controller'),
                 $request
             );
+            // $GLOBALS['TYPO3_REQUEST'] = $languageEnhancedRequest; //dontcommit
 
-            return $middlewareBootstrap->buildDispatcher()->processRequest($languageEnhancedRequest);
-        } else {
-            return $handler->handle($request);
+            return $middlewareBootstrap
+                ->buildDispatcher()
+                ->processRequest($languageEnhancedRequest);
         }
+
+        return $handler->handle($request);
     }
 
     private function isRestRequest(ServerRequestInterface $request): bool

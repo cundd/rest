@@ -6,11 +6,18 @@ namespace Cundd\Rest\Tests\Functional\Configuration;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use PHPUnit\Framework\Attributes\Test;
 
+/**
+ * @phpstan-import-type Settings from \Cundd\Rest\Configuration\AbstractConfigurationProvider
+ */
 abstract class AbstractConfigurationProviderCase extends AbstractCase
 {
     protected ConfigurationProviderInterface $fixture;
 
+    /**
+     * @var Settings
+     */
     protected array $settings = [
         'paths' => [
             'all' => [
@@ -33,30 +40,23 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
 
     public function tearDown(): void
     {
-        unset($this->fixture);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function getSettingsTest()
+    #[Test]
+    public function getSettingsTest(): void
     {
         $settings = $this->fixture->getSettings();
-        $this->assertIsArray($settings);
 
         if (0 !== count($this->fixture->getSettings())) {
             $this->assertTrue(isset($settings['paths']) || isset($settings['paths.']));
         }
     }
 
-    /**
-     * @test
-     */
-    public function getSettingTest()
+    #[Test]
+    public function getSettingTest(): void
     {
         $settings = $this->fixture->getSettings();
-        $this->assertIsArray($settings);
         if (count($settings) > 0) {
             $this->assertIsArray($this->fixture->getSetting('paths'));
             $this->assertIsArray($this->fixture->getSetting('paths.all'));
@@ -64,10 +64,8 @@ abstract class AbstractConfigurationProviderCase extends AbstractCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function getSettingDefaultTest()
+    #[Test]
+    public function getSettingDefaultTest(): void
     {
         $this->assertEquals('defaultValue', $this->fixture->getSetting('paths.NO.path', 'defaultValue'));
     }

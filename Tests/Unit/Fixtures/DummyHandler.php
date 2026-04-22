@@ -10,7 +10,7 @@ use Cundd\Rest\Router\RouterInterface;
 
 class DummyHandler implements HandlerInterface
 {
-    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
+    public function configureRoutes(RouterInterface $router, RestRequestInterface $request): void
     {
     }
 }

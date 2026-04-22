@@ -12,30 +12,28 @@ use function php_sapi_name;
 /**
  * Debug utility
  */
-class DebugUtility
+final class DebugUtility
 {
     /**
      * Print debug information about the given values (arg0, arg1, ... argN)
-     *
-     * @param array $variables
      */
-    public static function debug(...$variables)
+    public static function debug(mixed ...$variables): void
     {
         self::debugInternal($variables);
     }
 
     /**
-     * @param array $variables
-     *
      * @see debug()
      */
-    public static function var_dump(...$variables)
+    public static function var_dump(mixed ...$variables): void
     {
         self::debugInternal($variables);
     }
 
     /**
-     * Returns the caller of the previous method
+     * Return the caller of the previous method
+     *
+     * @return array{function:string,line?:int,file?:string,class?:string}
      */
     public static function getCaller(): array
     {
@@ -64,7 +62,10 @@ class DebugUtility
         return in_array($clientAddress, $devIpMask);
     }
 
-    private static function debugInternal(array $variables)
+    /**
+     * @param array<string|int,mixed> $variables
+     */
+    private static function debugInternal(array $variables): void
     {
         $caller = static::getCaller();
         $htmlOutput = PHP_SAPI !== 'cli';
@@ -82,8 +83,8 @@ class DebugUtility
         }
 
         // Debug info
-        $file = $caller['file'];
-        $line = $caller['line'];
+        $file = $caller['file'] ?? '';
+        $line = $caller['line'] ?? '';
         if ($htmlOutput) {
             echo "<span class='rest-debug-path' style='font-size:9px'><a href='file:$file'>";
         }
@@ -105,10 +106,7 @@ class DebugUtility
      */
     private static function getDevIpMask(): array
     {
-        if (isset($GLOBALS['TYPO3_CONF_VARS'])
-            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS'])
-            && isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])
-        ) {
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
             return explode(',', $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
         }
 

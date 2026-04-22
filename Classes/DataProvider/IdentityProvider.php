@@ -8,11 +8,8 @@ use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 
 class IdentityProvider implements IdentityProviderInterface
 {
-    protected ReflectionService $reflectionService;
-
-    public function __construct(ReflectionService $reflectionService)
+    public function __construct(protected readonly ReflectionService $reflectionService)
     {
-        $this->reflectionService = $reflectionService;
     }
 
     /**

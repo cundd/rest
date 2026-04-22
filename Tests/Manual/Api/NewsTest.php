@@ -5,75 +5,70 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Manual\Api;
 
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test the default Data Provider using the News extension (https://github.com/georgringer/news)
  */
 class NewsTest extends AbstractApiCase
 {
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     */
-    public function getNewsCollectionTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function getNewsCollectionTest(string $suffix = ''): void
     {
         $response = $this->requestJson('georg_ringer-news-news' . $suffix);
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertSame(200, $response->getStatusCode(), $errorDescription);
         $parsedBodyLowerCase = $response->getParsedBody();
-        $this->assertNotEmpty($parsedBodyLowerCase, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', reset($parsedBodyLowerCase), $this->getErrorDescription($response));
+        $this->assertIsArray($parsedBodyLowerCase, $errorDescription);
+        $this->assertNotEmpty($parsedBodyLowerCase, $errorDescription);
+        $this->assertArrayHasKey('uid', reset($parsedBodyLowerCase), $errorDescription);
 
         $response = $this->requestJson('GeorgRinger-News-news' . $suffix);
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $this->assertSame(200, $response->getStatusCode(), $errorDescription);
         $parsedBodyUpperCase = $response->getParsedBody();
-        $this->assertNotEmpty($parsedBodyUpperCase, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', reset($parsedBodyUpperCase), $this->getErrorDescription($response));
+        $this->assertIsArray($parsedBodyUpperCase, $errorDescription);
+        $this->assertNotEmpty($parsedBodyUpperCase, $errorDescription);
+        $this->assertArrayHasKey('uid', reset($parsedBodyUpperCase), $errorDescription);
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     */
-    public function getNewsTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function getNewsTest(string $suffix = ''): void
     {
         $response = $this->requestJson('georg_ringer-news-news/1' . $suffix);
 
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('bodytext', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame(1, $response->getParsedBody()['uid'], $this->getErrorDescription($response));
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertSame(200, $response->getStatusCode(), $errorDescription);
+        $this->assertNotEmpty($response->getParsedBody(), $errorDescription);
+        $this->assertIsArray($response->getParsedBody(), $errorDescription);
+        $this->assertArrayHasKey('bodytext', $response->getParsedBody(), $errorDescription);
+        $this->assertArrayHasKey('uid', $response->getParsedBody(), $errorDescription);
+        $this->assertSame(1, $response->getParsedBody()['uid'], $errorDescription);
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     */
-    public function getNewsNotFoundTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function getNewsNotFoundTest(string $suffix = ''): void
     {
         $response = $this->requestJson('georg_ringer-news-news/2300' . $suffix);
 
-        $this->assertSame(404, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertSame('{"error":"Not Found"}', $response->getBody(), $this->getErrorDescription($response));
+        $this->assertSame(
+            404,
+            $response->getStatusCode(),
+            $this->getErrorDescription($response)
+        );
+        $this->assertSame(
+            '{"error":"Not Found"}',
+            $response->getBody(),
+            $this->getErrorDescription($response)
+        );
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     */
-    public function addNewsTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function addNewsTest(string $suffix = ''): void
     {
         $header = 'A new Content ' . date('Y-m-d H:i:s');
         $content = $this->getNewsData();
@@ -85,23 +80,20 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertSame(200, $response->getStatusCode(), $errorDescription);
         $parsedBody = $response->getParsedBody();
-        $this->assertNotEmpty($parsedBody, $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', $parsedBody, $this->getErrorDescription($response));
-        $this->assertIsInt($parsedBody['uid'], $this->getErrorDescription($response));
-        $this->assertArrayHasKey('title', $parsedBody, $this->getErrorDescription($response));
-        $this->assertSame($header, $parsedBody['title'], $this->getErrorDescription($response));
+        $this->assertIsArray($parsedBody, $errorDescription);
+        $this->assertNotEmpty($parsedBody, $errorDescription);
+        $this->assertArrayHasKey('uid', $parsedBody, $errorDescription);
+        $this->assertIsInt($parsedBody['uid'], $errorDescription);
+        $this->assertArrayHasKey('title', $parsedBody, $errorDescription);
+        $this->assertSame($header, $parsedBody['title'], $errorDescription);
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     */
-    public function addNewsWithIdShouldFailTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function addNewsWithIdShouldFailTest(string $suffix = ''): void
     {
         $content = $this->getNewsData();
         $content['uid'] = 1;
@@ -112,25 +104,19 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(400, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertSame(400, $response->getStatusCode(), $errorDescription);
+        $this->assertNotEmpty($response->getParsedBody(), $errorDescription);
         $this->assertSame(
             '{"error":"Invalid property \"uid\""}',
             $response->getBody(),
-            $this->getErrorDescription($response)
+            $errorDescription
         );
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     *
-     * @throws Exception
-     */
-    public function updateNewsWithIdInUrlTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function updateNewsWithIdInUrlTest(string $suffix = ''): void
     {
         $id = $this->addNewsAndGetId();
         $header = 'Updated Content ' . date('Y-m-d H:i:s');
@@ -144,23 +130,18 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
-        $this->assertSame(200, $response->getStatusCode(), $this->getErrorDescription($response));
-        $this->assertNotEmpty($response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertArrayHasKey('uid', $response->getParsedBody(), $this->getErrorDescription($response));
-        $this->assertSame($id, $response->getParsedBody()['uid'], $this->getErrorDescription($response));
-        $this->assertSame($header, $response->getParsedBody()['title'], $this->getErrorDescription($response));
+        $errorDescription = $this->getErrorDescription($response);
+        $this->assertSame(200, $response->getStatusCode(), $errorDescription);
+        $this->assertIsArray($response->getParsedBody(), $errorDescription);
+        $this->assertNotEmpty($response->getParsedBody(), $errorDescription);
+        $this->assertArrayHasKey('uid', $response->getParsedBody(), $errorDescription);
+        $this->assertSame($id, $response->getParsedBody()['uid'], $errorDescription);
+        $this->assertSame($header, $response->getParsedBody()['title'], $errorDescription);
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     *
-     * @throws Exception
-     */
-    public function updateNewsWithIdShouldFailTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function updateNewsWithIdShouldFailTest(string $suffix = ''): void
     {
         $id = $this->addNewsAndGetId();
         $header = 'Updated Content ' . date('Y-m-d H:i:s');
@@ -184,16 +165,9 @@ class NewsTest extends AbstractApiCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @param string $suffix
-     *
-     * @dataProvider suffixDataProvider
-     *
-     * @throws Exception
-     */
-    public function deleteNewsWithIdInUrlTest($suffix = '')
+    #[Test]
+    #[DataProvider('suffixDataProvider')]
+    public function deleteNewsWithIdInUrlTest(string $suffix = ''): void
     {
         // Make sure the News entry exists
         $id = $this->addNewsAndGetId();
@@ -213,7 +187,7 @@ class NewsTest extends AbstractApiCase
     /**
      * @throws Exception
      */
-    private function addNewsAndGetId()
+    private function addNewsAndGetId(): int
     {
         $content = $this->getNewsData();
         $content['title'] = 'New added news entry from ' . date('Y-m-d H:i:s');
@@ -224,6 +198,9 @@ class NewsTest extends AbstractApiCase
             ['Content-Type' => 'application/json']
         );
 
+        if (!is_array($response->getParsedBody())) {
+            throw new Exception('Expected parsed body to be an array');
+        }
         if (!isset($response->getParsedBody()['uid'])) {
             throw new Exception('Content does not contain key "uid"');
         }
@@ -231,7 +208,10 @@ class NewsTest extends AbstractApiCase
         return $response->getParsedBody()['uid'];
     }
 
-    private function getNewsData()
+    /**
+     * @return array<string,false|string|int|null>
+     */
+    private function getNewsData(): array
     {
         return [
             'hidden'           => false,

@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Documentation;
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Reports\ReportInterface;
-use TYPO3Fluid\Fluid\View\ViewInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Reports\RequestAwareReportInterface;
 
-class HandlerReport implements ReportInterface
+/**
+ * Custom report
+ *
+ * Version for TYPO3 v13
+ */
+class HandlerReport implements RequestAwareReportInterface
 {
-    private ViewInterface $view;
-
-    private HandlerDescriptor $handlerDescriptor;
-
-    public function __construct(HandlerDescriptor $handlerDescriptor)
-    {
-        $this->view = GeneralUtility::makeInstance(StandaloneView::class);
-        $this->handlerDescriptor = $handlerDescriptor;
+    public function __construct(
+        private readonly SiteFinder $siteFinder,
+        private readonly HandlerDescriptor $handlerDescriptor,
+        private readonly ViewFactoryInterface $viewFactory,
+    ) {
     }
 
     /**
@@ -27,16 +29,27 @@ class HandlerReport implements ReportInterface
      *
      * @return string A reports rendered HTML
      */
-    public function getReport(): string
+    public function getReport(?ServerRequestInterface $request = null): string
     {
-        $this->view->setTemplatePathAndFilename(
-            ExtensionManagementUtility::extPath('rest') . 'Resources/Private/Templates/HandlerReport.html'
+        $viewFactoryData = new ViewFactoryData(
+            templateRootPaths: ['EXT:rest/Resources/Private/Templates'],
+            partialRootPaths: [],
+            layoutRootPaths: ['EXT:rest/Resources/Private/Fallback/Layouts'],
+            request: $request,
         );
-        $information = $this->handlerDescriptor->getInformation();
-        ksort($information);
-        $this->view->assign('information', $information);
 
-        return $this->view->render();
+        $view = $this->viewFactory->create($viewFactoryData);
+
+        $information = [];
+        foreach ($this->siteFinder->getAllSites() as $site) {
+            $information = array_merge(
+                $information,
+                $this->handlerDescriptor->getInformation($site)
+            );
+        }
+        $view->assign('information', $information);
+
+        return $view->render('HandlerReport');
     }
 
     public function getIdentifier(): string

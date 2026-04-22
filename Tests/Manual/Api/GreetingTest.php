@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Manual\Api;
 
+use PHPUnit\Framework\Attributes\Test;
+
 class GreetingTest extends AbstractApiCase
 {
-    /**
-     * @test
-     */
-    public function getGreetingTest()
+    #[Test]
+    public function getGreetingTest(): void
     {
         $response = $this->request('/');
 

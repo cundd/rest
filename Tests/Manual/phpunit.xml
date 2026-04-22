@@ -1,18 +1,4 @@
-<phpunit
-        backupGlobals="true"
-        backupStaticAttributes="false"
-        bootstrap="../Unit/Bootstrap.php"
-        colors="true"
-        convertErrorsToExceptions="true"
-        convertWarningsToExceptions="true"
-        forceCoversAnnotation="false"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        verbose="false"
->
+<phpunit backupGlobals="true" bootstrap="../Unit/Bootstrap.php">
     <testsuites>
         <testsuite name="Manual tests">
             <directory>./</directory>

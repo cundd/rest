@@ -5,18 +5,12 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\DataProvider;
 
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 use TYPO3\CMS\Core\Resource\File;
-use TYPO3\CMS\Core\Resource\FileReference;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 trait FileBuilderTrait
 {
-    /**
-     * @return File
-     */
-    public function createFileMock(?Prophet $prophet = null)
+    public function createFileMock(?Prophet $prophet = null): File
     {
         if (null === $prophet) {
             $prophet = new Prophet();
@@ -27,7 +21,6 @@ trait FileBuilderTrait
             'mimeType'   => 'MimeType',
         ];
 
-        /** @var File|ObjectProphecy $fileProphecy */
         $fileProphecy = $prophet->prophesize(File::class);
         $fileProphecy->getProperties()->willReturn($originalFileProperties);
         $fileProphecy->getName()->willReturn($originalFileProperties['name']);
@@ -36,28 +29,5 @@ trait FileBuilderTrait
         $fileProphecy->getSize()->willReturn(10);
 
         return $fileProphecy->reveal();
-    }
-
-    public function createFileReferenceMock(array $fileReferenceProperties = [], ?Prophet $prophet = null): FileReference
-    {
-        if (null === $prophet) {
-            $prophet = new Prophet();
-        }
-        $fileReferenceProperties = array_merge(
-            [
-                'uid_local'   => '1467702760',
-                'name'        => 'Test name',
-                'title'       => 'Test title',
-                'description' => 'The original files description',
-            ],
-            $fileReferenceProperties
-        );
-        $originalFileMock = $this->createFileMock();
-
-        /** @var ResourceFactory|ObjectProphecy $factoryProphecy */
-        $factoryProphecy = $prophet->prophesize(ResourceFactory::class);
-        $factoryProphecy->getFileObject(Argument::cetera())->willReturn($originalFileMock);
-
-        return new FileReference($fileReferenceProperties, $factoryProphecy->reveal());
     }
 }

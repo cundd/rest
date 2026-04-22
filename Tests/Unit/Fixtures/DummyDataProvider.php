@@ -5,52 +5,56 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Fixtures;
 
 use Cundd\Rest\DataProvider\DataProviderInterface;
-use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Http\RestRequestInterface;
 use RuntimeException;
 
 class DummyDataProvider implements DataProviderInterface
 {
-    public function fetchAllModels(ResourceType $resourceType): iterable
+    public function fetchAllModels(RestRequestInterface $request): iterable
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function countAllModels(ResourceType $resourceType): int
+    public function countAllModels(RestRequestInterface $request): int
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): object
+    public function fetchModel(RestRequestInterface $request, int|array|string $identifier): object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function createModel(array $data, ResourceType $resourceType): ?object
+    public function createModel(RestRequestInterface $request, array $data): ?object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
+    public function convertIntoModel(RestRequestInterface $request, array $data): ?object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function getModelData(mixed $model): mixed
+    public function getModelData(RestRequestInterface $request, mixed $model): mixed
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function getModelProperty($model, string $propertyParameter): mixed
+    public function getModelProperty(
+        RestRequestInterface $request,
+        $model,
+        string $propertyParameter
+    ): mixed
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function saveModel($model, ResourceType $resourceType): void
+    public function saveModel(RestRequestInterface $request, $model): void
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function removeModel($model, ResourceType $resourceType): void
+    public function removeModel(RestRequestInterface $request, $model): void
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }

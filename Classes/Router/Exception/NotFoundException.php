@@ -14,33 +14,32 @@ use function sprintf;
 /**
  * An exception to signal that a Route was Not Found
  */
-class NotFoundException extends RuntimeException
+final class NotFoundException extends RuntimeException
 {
     /**
-     * @var RouteInterface[]
-     */
-    private $alternativeRoutes;
-
-    /**
-     * NotFoundException constructor
-     *
-     * @param string           $message
-     * @param int              $code
      * @param RouteInterface[] $alternativeRoutes
      */
-    public function __construct($message = '', $code = 0, ?Throwable $previous = null, array $alternativeRoutes = [])
-    {
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        ?Throwable $previous = null,
+        private readonly array $alternativeRoutes = [],
+    ) {
         parent::__construct($message, $code, $previous);
-        $this->alternativeRoutes = $alternativeRoutes;
     }
 
     /**
      * Build a new NotFound Exception
      *
+     * @param RouteInterface[] $alternativeRoutes
+     *
      * @return static
      */
-    public static function exceptionWithAlternatives(string $route, string $method, array $alternativeRoutes): self
-    {
+    public static function exceptionWithAlternatives(
+        string $route,
+        string $method,
+        array $alternativeRoutes,
+    ): self {
         $message = DebugUtility::allowDebugInformation()
             ? sprintf('Route "%s" not found for method "%s"', $route, $method)
             : '';

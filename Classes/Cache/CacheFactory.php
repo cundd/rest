@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Cache;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request\ResourceType;
 
 class CacheFactory
@@ -16,7 +16,7 @@ class CacheFactory
     public function buildCache(
         ResourceType $resourceType,
         ConfigurationProviderInterface $configurationProvider,
-        ObjectManager $objectManager,
+        ObjectManagerInterface $objectManager,
     ): CacheInterface {
         $cacheInstance = $this->getCacheInstance($configurationProvider, $objectManager);
 
@@ -32,21 +32,24 @@ class CacheFactory
 
     private function getCacheInstance(
         ConfigurationProviderInterface $configurationProvider,
-        ObjectManager $objectManager,
+        ObjectManagerInterface $objectManager,
     ): CacheInterface {
+        /** @var class-string<CacheInterface> $cacheImplementation */
         $cacheImplementation = $configurationProvider->getSetting('cacheClass');
         if ($cacheImplementation && class_exists($cacheImplementation)) {
-            return $objectManager->get($cacheImplementation); // @phpstan-ignore return.type
+            return $objectManager->get($cacheImplementation);
         }
 
-        return $objectManager->get(Cache::class); // @phpstan-ignore return.type
+        return $objectManager->get(Cache::class);
     }
 
     private function getCacheLifetime(
         ConfigurationProviderInterface $configurationProvider,
         ResourceType $resourceType,
     ): int {
-        $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
+        $resourceConfiguration = $configurationProvider->getResourceConfiguration(
+            $resourceType
+        );
         $cacheLifetime = $resourceConfiguration?->getCacheLifetime();
         if ($cacheLifetime > -1) {
             return $cacheLifetime;
@@ -69,9 +72,11 @@ class CacheFactory
         ConfigurationProviderInterface $configurationProvider,
         ResourceType $resourceType,
     ): int {
-        $resourceConfiguration = $configurationProvider->getResourceConfiguration($resourceType);
-        $expiresHeaderLifetime = $resourceConfiguration->getExpiresHeaderLifetime();
-        if ($expiresHeaderLifetime > -1) {
+        $resourceConfiguration = $configurationProvider->getResourceConfiguration(
+            $resourceType
+        );
+        $expiresHeaderLifetime = $resourceConfiguration?->getExpiresHeaderLifetime();
+        if (null !== $expiresHeaderLifetime && $expiresHeaderLifetime > -1) {
             return $expiresHeaderLifetime;
         }
 

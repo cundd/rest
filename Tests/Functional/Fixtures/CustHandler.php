@@ -22,28 +22,27 @@ class CustHandler implements HandlerInterface, HandlerDescriptionInterface
         return 'Example Custom Handler';
     }
 
-    public function getIndex(RestRequestInterface $request)
+    public function getIndex(RestRequestInterface $request): string
     {
         return $request->getMethod() . ' Index';
     }
 
-    public function getFoo(RestRequestInterface $request)
+    public function getFoo(RestRequestInterface $request): string
     {
         return $request->getMethod() . ' Foo';
     }
 
-    public function postBar(RestRequestInterface $request)
+    public function postBar(RestRequestInterface $request): string
     {
         return $request->getMethod() . ' Bar';
     }
 
-    /**
-     * Let the handler configure the routes
-     */
-    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
-    {
-        $router->routeGet($request->getResourceType() . '/?', [$this, 'getIndex']);
-        $router->routeGet($request->getResourceType() . '/foo/?', [$this, 'getFoo']);
-        $router->routePost($request->getResourceType() . '/bar/?', [$this, 'postBar']);
+    public function configureRoutes(
+        RouterInterface $router,
+        RestRequestInterface $request,
+    ): void {
+        $router->routeGet($request->getResourceType() . '/?', $this->getIndex(...));
+        $router->routeGet($request->getResourceType() . '/foo/?', $this->getFoo(...));
+        $router->routePost($request->getResourceType() . '/bar/?', $this->postBar(...));
     }
 }

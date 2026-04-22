@@ -8,104 +8,106 @@ namespace Cundd\Rest\Tests\Manual;
  * PSR-7 inspired HTTP Response
  *
  * @see https://www.php-fig.org/psr/psr-7/
+ *
+ * @phpstan-type Headers array<non-empty-string, array<string>|string>
+ * @phpstan-type RequestData object{method:non-empty-string,url:string}
  */
-class HttpResponse
+final class HttpResponse
 {
-    private $body;
-    private $parsedBody;
-    private $headers = [];
-    private $statusCode;
-    private $requestData;
+    /**
+     * @var Headers
+     */
+    private array $headers = [];
 
     /**
      * HTTP Response constructor
      *
-     * @param int                      $status
-     * @param string                   $body
-     * @param string|array|object|null $parsedBody
-     * @param string[][]               $headers
-     * @param object                   $requestData
+     * @param Headers                                           $headers
+     * @param string|object|array<non-empty-string, mixed>|null $parsedBody
+     * @param RequestData                                       $requestData
      */
-    public function __construct($status, $body, $parsedBody, array $headers, $requestData)
-    {
-        $this->body = $body;
-        $this->parsedBody = $parsedBody;
-        $this->headers = array_combine(array_map('strtoupper', array_keys($headers)), $headers);
-        $this->statusCode = $status;
-        $this->requestData = $requestData;
+    public function __construct(
+        private readonly ?int $statusCode,
+        private readonly ?string $body,
+        private readonly string|array|object|null $parsedBody,
+        array $headers,
+        private readonly object $requestData,
+    ) {
+        $this->headers = array_combine(
+            array_map('strtoupper', array_keys($headers)),
+            $headers
+        );
     }
 
-    /**
-     * @return string|null
-     */
-    public function getBody()
+    public function getBody(): ?string
     {
         return $this->body;
     }
 
     /**
-     * @return string|array|object|null
+     * @return string|object|array<non-empty-string, mixed>|null
      */
-    public function getParsedBody()
+    public function getParsedBody(): string|array|object|null
     {
         return $this->parsedBody;
     }
 
     /**
-     * @param string|array|object|null $parsedBody
-     *
-     * @return HttpResponse
+     * @param string|object|array<non-empty-string, mixed>|null $parsedBody
      */
-    public function withParsedBody($parsedBody)
+    public function withParsedBody(string|array|object|null $parsedBody): self
     {
-        $clone = clone $this;
-        $clone->parsedBody = $parsedBody;
-
-        return $clone;
+        return new self(
+            statusCode: $this->statusCode,
+            body: $this->body,
+            parsedBody: $parsedBody,
+            headers: $this->headers,
+            requestData: $this->requestData
+        );
     }
 
     /**
-     * @return string[][]
+     * @return Headers
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
 
     /**
-     * @param string $name
+     * @param non-empty-string $name
      *
      * @return string[]
      */
-    public function getHeader($name)
+    public function getHeader(string $name): array
     {
         $name = strtoupper($name);
+        if (empty($this->headers[$name])) {
+            return [];
+        }
 
-        return isset($this->headers[$name]) ? $this->headers[$name] : [];
+        $headerValue = $this->headers[$name];
+
+        return is_array($headerValue) ? $headerValue : [$headerValue];
     }
 
     /**
-     * @param string $name
-     *
-     * @return string
+     * @param non-empty-string $name
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine(string $name): string
     {
         return implode(',', $this->getHeader($name));
     }
 
-    /**
-     * @return int|null
-     */
-    public function getStatusCode()
+    public function getStatusCode(): ?int
     {
         return $this->statusCode;
     }
 
     /**
-     * @return object|null
+     * @return RequestData
      */
-    public function getRequestData()
+    public function getRequestData(): object
     {
         return $this->requestData;
     }

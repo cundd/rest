@@ -8,19 +8,22 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetClassViewHelper extends AbstractViewHelper
 {
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
-        $this->registerArgument('object', 'object', 'Object to get the class name', false);
+        $this->registerArgument(
+            'object',
+            'object',
+            'Object to get the class name',
+            false
+        );
 
         parent::initializeArguments();
     }
 
     /**
      * Return the given object's class name
-     *
-     * @return string
      */
-    public function render()
+    public function render(): string
     {
         if (isset($this->arguments['object'])) {
             $object = $this->arguments['object'];

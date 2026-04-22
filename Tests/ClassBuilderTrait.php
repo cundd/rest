@@ -11,8 +11,6 @@ trait ClassBuilderTrait
     /**
      * Dynamically creates a class
      *
-     * @param string|array $className
-     *
      * @throws Exception
      */
     public static function buildClass(
@@ -20,7 +18,7 @@ trait ClassBuilderTrait
         string $namespace = '',
         string $extends = '',
         bool $silent = false,
-    ) {
+    ): void {
         ClassBuilder::buildClass($className, $namespace, $extends, $silent);
     }
 
@@ -29,8 +27,11 @@ trait ClassBuilderTrait
      *
      * @throws Exception
      */
-    public static function buildClassIfNotExists(string $className, string $namespace = '', string $extends = '')
-    {
+    public static function buildClassIfNotExists(
+        string $className,
+        string $namespace = '',
+        string $extends = '',
+    ): void {
         ClassBuilder::buildClassIfNotExists($className, $namespace, $extends);
     }
 
@@ -39,8 +40,11 @@ trait ClassBuilderTrait
      *
      * @throws Exception
      */
-    public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = '')
-    {
+    public static function buildInterface(
+        string $interfaceName,
+        string $namespace = '',
+        string $extends = '',
+    ): void {
         ClassBuilder::buildInterface($interfaceName, $namespace, $extends);
     }
 
@@ -49,8 +53,11 @@ trait ClassBuilderTrait
      *
      * @throws Exception
      */
-    public static function buildInterfaceIfNotExists($interfaceName, string $namespace = '', string $extends = ''): void
-    {
+    public static function buildInterfaceIfNotExists(
+        string $interfaceName,
+        string $namespace = '',
+        string $extends = '',
+    ): void {
         ClassBuilder::buildInterfaceIfNotExists($interfaceName, $namespace, $extends);
     }
 }

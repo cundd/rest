@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Request;
 
-use InvalidArgumentException;
+use Cundd\Rest\Exception\InvalidArgumentException;
 
 /**
  * The resource type is an identifier for a model class.

@@ -15,16 +15,16 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Collection of Authentication Providers
      *
-     * @var SplObjectStorage<AuthenticationProviderInterface>
+     * @var SplObjectStorage<AuthenticationProviderInterface,mixed>
      */
     protected SplObjectStorage $providers;
 
     /**
      * Create a new Authentication Provider collection with the given providers
      *
-     * @param AuthenticationProviderInterface[]|SplObjectStorage<AuthenticationProviderInterface> $providers
+     * @param AuthenticationProviderInterface[]|SplObjectStorage<AuthenticationProviderInterface,mixed> $providers
      */
-    public function __construct($providers)
+    public function __construct(array|SplObjectStorage|null $providers)
     {
         if (is_array($providers)) {
             $this->providers = new SplObjectStorage();
@@ -58,6 +58,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
     /**
      * Sets the used Authentication Providers
      *
+     * @param SplObjectStorage<AuthenticationProviderInterface,mixed> $providers
+     *
      * @return $this
      */
     public function setProviders(SplObjectStorage $providers): self
@@ -69,6 +71,8 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
 
     /**
      * Returns the used Authentication Providers
+     *
+     * @return SplObjectStorage<AuthenticationProviderInterface,mixed>
      */
     public function getProviders(): SplObjectStorage
     {
@@ -82,7 +86,7 @@ class AuthenticationProviderCollection implements AuthenticationProviderInterfac
      */
     public function addProvider(AuthenticationProviderInterface $provider): self
     {
-        $this->providers->attach($provider);
+        $this->providers->offsetSet($provider, null);
 
         return $this;
     }

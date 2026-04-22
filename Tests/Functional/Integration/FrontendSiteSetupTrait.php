@@ -20,6 +20,8 @@ trait FrontendSiteSetupTrait
 {
     /**
      * Default Site Configuration
+     *
+     * @var array<int,array<string,string|int|bool>>
      */
     protected array $siteLanguageConfiguration = [
         1 => [
@@ -47,6 +49,8 @@ trait FrontendSiteSetupTrait
     /**
      * Create a simple site config for the tests that
      * call a frontend page.
+     *
+     * @param array<int,mixed> $additionalLanguages
      */
     protected function setUpFrontendSite(int $pageId, array $additionalLanguages = []): void
     {
@@ -92,7 +96,7 @@ trait FrontendSiteSetupTrait
             );
         }
 
-        $extensionBasePath = realpath(__DIR__ . '/../../../');
+        $extensionBasePath = (string) realpath(__DIR__ . '/../../../');
         if (str_starts_with($path, $extensionBasePath)) {
             return 'EXT:rest/' . substr($path, strlen($extensionBasePath) + 1);
         } else {

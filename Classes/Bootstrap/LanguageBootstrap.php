@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap;
 
+use Cundd\Rest\Utility\SiteLanguageUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-abstract class AbstractLanguageBootstrap implements LanguageBootstrapInterface
+class LanguageBootstrap implements LanguageBootstrapInterface
 {
     public function prepareRequest(
-        TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request,
     ): ServerRequestInterface {
-        $requestedLanguage = $request->getAttribute('language');
+        $requestedLanguage = SiteLanguageUtility::detectSiteLanguage($request);
         if ($requestedLanguage) {
-            $this->setLanguageAspect($request->getAttribute('language'));
+            $this->setLanguageAspect($requestedLanguage);
 
             return $request;
         }

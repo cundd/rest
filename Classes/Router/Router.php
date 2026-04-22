@@ -15,6 +15,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router implements RouterInterface
 {
+    /**
+     * @var array<non-empty-string,RouteInterface[]>
+     */
     protected array $registeredRoutes = [
         'GET'  => [],
         'POST' => [],
@@ -26,7 +29,7 @@ class Router implements RouterInterface
      *
      * @return ResponseInterface|mixed
      */
-    public function dispatch(RestRequestInterface $request)
+    public function dispatch(RestRequestInterface $request): mixed
     {
         $route = $this->getMatchingRoute($request);
         if (!$route) {
@@ -58,47 +61,63 @@ class Router implements RouterInterface
     }
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method GET
+     * Create and register a new Route with the given pattern and callback for the method GET
+     *
+     * @param non-empty-string|\Cundd\Rest\Request\ResourceType $pattern
      */
-    public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routeGet(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->add(Route::get($pattern, $callback));
 
         return $this;
     }
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method POST
+     * Create and register a new Route with the given pattern and callback for the method POST
+     *
+     * @param non-empty-string|ResourceType $pattern
      */
-    public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routePost(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->add(Route::post($pattern, $callback));
 
         return $this;
     }
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method PUT
+     * Create and register a new Route with the given pattern and callback for the method PUT
+     *
+     * @param non-empty-string|\Cundd\Rest\Request\ResourceType $pattern
      */
-    public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routePut(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->add(Route::put($pattern, $callback));
 
         return $this;
     }
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method DELETE
+     * Create and register a new Route with the given pattern and callback for the method DELETE
+     *
+     * @param non-empty-string|ResourceType $pattern
      */
-    public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routeDelete(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->add(Route::delete($pattern, $callback));
 
         return $this;
     }
 
     /**
-     * @return Route[]
+     * @return RouteInterface[]
      */
     public function getMatchingRoutes(RestRequestInterface $request): array
     {
@@ -120,7 +139,9 @@ class Router implements RouterInterface
     }
 
     /**
-     * Returns the prepared parameters
+     * Return the prepared parameters
+     *
+     * @return array<mixed>
      */
     public function getPreparedParameters(RestRequestInterface $request): array
     {
@@ -133,7 +154,9 @@ class Router implements RouterInterface
     }
 
     /**
-     * Returns the prepared parameters
+     * Return the prepared parameters
+     *
+     * @return array<mixed>
      */
     private function getPreparedParametersForRoute(RestRequestInterface $request, RouteInterface $route): array
     {
@@ -147,9 +170,9 @@ class Router implements RouterInterface
     }
 
     /**
-     * Returns the prepared parameter
+     * Return the prepared parameter
      */
-    private function getPreparedParameter(string $type, string $segment)
+    private function getPreparedParameter(string $type, string $segment): mixed
     {
         switch ($type) {
             case ParameterTypeInterface::RAW:
@@ -162,7 +185,10 @@ class Router implements RouterInterface
             case ParameterTypeInterface::FLOAT:
                 return filter_var($segment, FILTER_VALIDATE_FLOAT);
             default:
-                throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type));
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid parameter type "%s"',
+                    $type
+                ));
         }
     }
 
@@ -184,18 +210,23 @@ class Router implements RouterInterface
         return '!^' . $outputPattern . '$!';
     }
 
-    private function getMatchingRoute(RestRequestInterface $request): ?Route
+    private function getMatchingRoute(RestRequestInterface $request): ?RouteInterface
     {
         $matchingRoutes = $this->getMatchingRoutes($request);
 
         return reset($matchingRoutes) ?: null;
     }
 
+    /**
+     * @param RouteInterface[] $matchingRoutes
+     *
+     * @return RouteInterface[]
+     */
     private function sortRoutesByPriority(array $matchingRoutes): array
     {
         uasort(
             $matchingRoutes,
-            function (Route $a, Route $b): int {
+            function (RouteInterface $a, RouteInterface $b): int {
                 $priorityA = $a->getPriority();
                 $priorityB = $b->getPriority();
                 if ($priorityA === $priorityB) {
@@ -209,6 +240,9 @@ class Router implements RouterInterface
         return $matchingRoutes;
     }
 
+    /**
+     * @return RouteInterface[]
+     */
     private function getRoutesForMethod(RestRequestInterface $request): array
     {
         return $this->registeredRoutes[$request->getMethod()] ?? [];

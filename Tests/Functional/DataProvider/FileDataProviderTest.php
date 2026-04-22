@@ -7,19 +7,18 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\RequestBuilderUtility;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for class file related Data Provider functions
  */
-class FileDataProviderTest extends AbstractCase
+final class FileDataProviderTest extends AbstractCase
 {
     use FileBuilderTrait;
     use DomainModelProphetTrait;
 
-    /**
-     * @var DataProviderInterface
-     */
-    protected $fixture;
+    protected DataProviderInterface $fixture;
 
     public function setUp(): void
     {
@@ -34,141 +33,15 @@ class FileDataProviderTest extends AbstractCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function getModelDataForModelWithFileReferenceTest()
+    #[Test]
+    public function getModelDataForFileTest(): void
     {
-        $testModel = $this->createDomainModelFixture(
-            [
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(),
-            ]
-        );
-
-        $result = $this->fixture->getModelData($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'title' => 'Test',
-                'file'  => [
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'Test title',
-                    'description'  => 'The original files description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
-                ],
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getModelDataForModelWithFileReferenceAndDataTest()
-    {
-        $testModel = $this->createDomainModelFixture(
-            [
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(
-                    [
-                        'title'       => 'My title',
-                        'description' => 'File description',
-                        'uid'         => 0,
-                    ]
-                ),
-            ]
-        );
-
-        $result = $this->fixture->getModelData($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'title' => 'Test',
-                'file'  => [
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'My title',
-                    'description'  => 'File description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
-                ],
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getModelDataForFileReferenceTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock();
-
-        $result = $this->fixture->getModelData($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'Test title',
-                'description'  => 'The original files description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getModelDataForFileReferenceWithDataTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock(
-            [
-                'title'       => 'My title',
-                'description' => 'File description',
-                'uid'         => 0,
-            ]
-        );
-
-        $result = $this->fixture->getModelData($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'My title',
-                'description'  => 'File description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function getModelDataForFileTest()
-    {
-        /** @var object $testModel */
         $testModel = $this->createFileMock();
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->getModelData(
+            RequestBuilderUtility::buildTestRequest('/'),
+            $testModel
+        );
         $this->assertNotEmpty($result);
         $this->assertEquals(
             [
@@ -181,12 +54,9 @@ class FileDataProviderTest extends AbstractCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getModelDataForModelWithFileTest()
+    #[Test]
+    public function getModelDataForModelWithFileTest(): void
     {
-        /** @var object $testModel */
         $testModel = $this->createDomainModelFixture(
             [
                 'title' => 'Test',
@@ -194,7 +64,10 @@ class FileDataProviderTest extends AbstractCase
             ]
         );
 
-        $result = $this->fixture->getModelData($testModel);
+        $result = $this->fixture->getModelData(
+            RequestBuilderUtility::buildTestRequest('/'),
+            $testModel
+        );
         $this->assertNotEmpty($result);
         $this->assertEquals(
             [

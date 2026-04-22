@@ -4,70 +4,37 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Bootstrap;
 
-use Cundd\Rest\Dispatcher;
+use Cundd\Rest\Dispatcher\DispatcherFactory;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\ObjectManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class MiddlewareBootstrap
+final readonly class MiddlewareBootstrap
 {
-    private ObjectManagerInterface $objectManager;
-
-    private array $configuration;
-
-    public function __construct(ObjectManagerInterface $objectManager, array $configuration = [])
-    {
-        $this->objectManager = $objectManager;
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * Bootstrap the TYPO3 environment
-     */
-    public function bootstrapCore(ServerRequestInterface $request): ServerRequestInterface
-    {
-        $coreBootstrapFactory = new CoreBootstrapFactory($this->objectManager);
-        $coreBootstrap = $coreBootstrapFactory->build();
-        $request = $coreBootstrap->initialize($request);
-
-        $this->initializeConfiguration($this->configuration);
-
-        $GLOBALS['TYPO3_REQUEST'] = $request;
-
-        return $request;
+    public function __construct(
+        private LanguageBootstrapFactory $languageBootstrapFactory,
+        private DispatcherFactory $dispatcherFactory,
+    ) {
     }
 
     /**
      * Initialize the system language
      */
     public function bootstrapLanguage(
-        TypoScriptFrontendController $frontendController,
         ServerRequestInterface $request,
     ): ServerRequestInterface {
-        $languageBootstrapFactory = new LanguageBootstrapFactory();
-        $languageEnhancedRequest = $languageBootstrapFactory->build()->prepareRequest($frontendController, $request);
+        $languageEnhancedRequest = $this->languageBootstrapFactory
+            ->build()
+            ->prepareRequest($request);
 
         // Store the enhanced/patched request so that e.g. the LocalizationUtility can read the requested
-        // language
-        $GLOBALS['TYPO3_REQUEST'] = $languageEnhancedRequest;
+        // language //dontcommit
+        // $GLOBALS['TYPO3_REQUEST'] = $languageEnhancedRequest;
 
         return $languageEnhancedRequest;
     }
 
     public function buildDispatcher(): DispatcherInterface
     {
-        $dispatcherFactory = new Dispatcher\DispatcherFactory($this->objectManager);
-
-        return $dispatcherFactory->build();
-    }
-
-    /**
-     * Initialize the Configuration Manager instance
-     */
-    private function initializeConfiguration(array $configuration): void
-    {
-        $configurationManager = $this->objectManager->get(ConfigurationManagerInterface::class);
+        return $this->dispatcherFactory->build();
     }
 }

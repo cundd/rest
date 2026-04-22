@@ -8,6 +8,17 @@ use Cundd\Rest\Request\ResourceType;
 
 /**
  * Interface for configuration providers
+ *
+ * @phpstan-type RawConfiguration array{
+ *     path?:string,
+ *     read?:'deny'|'require'|'allow',
+ *     write?:'deny'|'require'|'allow',
+ *     handlerClass?:class-string,
+ *     dataProviderClass?:class-string,
+ *     cacheLifetime?:int,
+ *     expiresHeaderLifetime?:int
+ * }
+ * @phpstan-type Settings array{paths?:array<string,RawConfiguration>}
  */
 interface ConfigurationProviderInterface
 {
@@ -23,10 +34,12 @@ interface ConfigurationProviderInterface
     /**
      * Return the setting with the given key
      */
-    public function getSetting(string $keyPath, $defaultValue = null);
+    public function getSetting(string $keyPath, mixed $defaultValue = null): mixed;
 
     /**
      * Return the settings read from the TypoScript
+     *
+     * @return Settings
      */
     public function getSettings(): array;
 
@@ -40,5 +53,7 @@ interface ConfigurationProviderInterface
     /**
      * Return the configuration matching the given resource type
      */
-    public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration;
+    public function getResourceConfiguration(
+        ResourceType $resourceType,
+    ): ?ResourceConfiguration;
 }

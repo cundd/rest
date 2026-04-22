@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Access\Exception\InvalidConfigurationException;
+use Cundd\Rest\Authentication\Exception\InvalidConfigurationException as CunddInvalidConfigurationException;
 use Cundd\Rest\Configuration\Access;
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use OutOfBoundsException;
@@ -23,14 +23,11 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public const ACCESS_NOT_REQUIRED = ['OPTIONS'];
 
-    protected ConfigurationProviderInterface $configurationProvider;
-
     public function __construct(
-        ConfigurationProviderInterface $configurationProvider,
+        private readonly ConfigurationProviderFactoryInterface $configurationProviderFactory,
         ObjectManagerInterface $objectManager,
     ) {
         parent::__construct($objectManager);
-        $this->configurationProvider = $configurationProvider;
     }
 
     /**
@@ -47,11 +44,21 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns the configuration matching the given resource type
+     * Return the configuration matching the given resource type
      */
-    public function getConfigurationForResourceType(ResourceType $resourceType): ResourceConfiguration
-    {
-        return $this->configurationProvider->getResourceConfiguration($resourceType);
+    public function getConfigurationForRequest(
+        RestRequestInterface $request,
+    ): ResourceConfiguration {
+        $configuration = $this->configurationProviderFactory
+            ->build($request)
+            ->getResourceConfiguration($request->getResourceType());
+        if (!$configuration) {
+            throw new CunddInvalidConfigurationException(
+                'Could not find resource configuration'
+            );
+        }
+
+        return $configuration;
     }
 
     /**

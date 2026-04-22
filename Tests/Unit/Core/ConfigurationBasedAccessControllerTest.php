@@ -5,78 +5,91 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
+use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Log\LoggerInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request;
 use Cundd\Rest\Tests\Functional\Fixtures\DummyAuthenticationProvider;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Site\Entity\Site;
 
 /**
  * Unit tests for ConfigurationBasedAccessController
  *
  * @see \Cundd\Rest\Tests\Functional\Core\ConfigurationBasedAccessControllerTest for Functional tests
  */
-class ConfigurationBasedAccessControllerTest extends TestCase
+final class ConfigurationBasedAccessControllerTest extends TestCase
 {
     use ProphecyTrait;
     use RequestBuilderTrait;
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithoutWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithoutWildcardTest(): void
     {
         $fixture = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(true));
             }
         );
 
         $uri = 'my_ext-my_model/3/';
         $request = $this->buildTestRequest($uri, 'GET');
-        $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
+        $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('my_ext-my_model', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isRequireLogin());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertTrue(Access::RequireLogin === $configuration->getRead());
+        $this->assertTrue(Access::Allowed === $configuration->getWrite());
 
         $this->assertFalse($fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($fixture->requestNeedsAuthentication($request->withMethod('GET')));
-        $this->assertTrue($fixture->getAccess($request->withMethod('GET'))->isAuthorized());
+        $this->assertTrue(Access::Authorized === $fixture->getAccess($request->withMethod('GET')));
 
-        $fixture = $this->buildAccessController(
+        $fixture2 = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(true));
             }
         );
-        $this->assertTrue($fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-        $this->assertFalse($fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
+        $this->assertTrue(Access::Authorized === $fixture2->getAccess($request->withMethod('GET')));
 
-        $fixture = $this->buildAccessController(
+        $fixture3 = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(false));
             }
         );
-        $this->assertFalse($fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-        $this->assertTrue($fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
+        $this->assertFalse(Access::Authorized === $fixture3->getAccess($request->withMethod('GET')));
+        $this->assertTrue(Access::Unauthorized === $fixture3->getAccess($request->withMethod('GET')));
     }
 
-    private function buildAccessController(?callable $configureObjectManager = null): ConfigurationBasedAccessController
-    {
+    private function buildAccessController(
+        ?callable $configureObjectManager = null,
+    ): ConfigurationBasedAccessController {
         $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [
@@ -102,7 +115,6 @@ class ConfigurationBasedAccessControllerTest extends TestCase
         /** @var LoggerInterface $logger */
         $logger = $this->prophesize(LoggerInterface::class)->reveal();
 
-        /** @var ObjectProphecy|ObjectManagerInterface $objectManagerProphecy */
         $objectManagerProphecy = $this->prophesize(ObjectManagerInterface::class);
         $objectManagerProphecy->get(LoggerInterface::class)->willReturn($logger);
         if ($configureObjectManager) {
@@ -111,73 +123,99 @@ class ConfigurationBasedAccessControllerTest extends TestCase
         /** @var ObjectManagerInterface $objectManager */
         $objectManager = $objectManagerProphecy->reveal();
 
-        return new ConfigurationBasedAccessController($configurationProvider, $objectManager);
+        $configurationProviderFactory = new class($configurationProvider) implements ConfigurationProviderFactoryInterface {
+            public function __construct(
+                private readonly ConfigurationProviderInterface $configurationProvider,
+            ) {
+            }
+
+            public function build(
+                ServerRequestInterface $request,
+            ): ConfigurationProviderInterface {
+                return $this->configurationProvider;
+            }
+
+            public function buildFromSite(
+                Site $site,
+            ): ConfigurationProviderInterface {
+                return $this->configurationProvider;
+            }
+        };
+
+        return new ConfigurationBasedAccessController($configurationProviderFactory, $objectManager);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithWildcardTest(): void
     {
         $uri = 'my_secondext-my_model/2/';
         $request = $this->buildTestRequest($uri, 'GET');
         $fixture = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(false));
             }
         );
-        $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
+        $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('my_secondext-*', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isDenied());
-        $this->assertTrue($configuration->getWrite()->isRequireLogin());
+        $this->assertTrue(Access::Denied === $configuration->getRead());
+        $this->assertTrue(Access::RequireLogin === $configuration->getWrite());
 
         $this->assertTrue($fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertFalse($fixture->requestNeedsAuthentication($request->withMethod('GET')));
 
-        $fixture = $this->buildAccessController(
+        $fixture2 = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(true));
             }
         );
-        $this->assertTrue($fixture->getAccess($request->withMethod('POST'))->isAuthorized());
-        $this->assertFalse($fixture->getAccess($request->withMethod('POST'))->isUnauthorized());
+        $this->assertTrue(Access::Authorized === $fixture2->getAccess($request->withMethod('POST')));
 
-        $fixture = $this->buildAccessController(
+        $fixture3 = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(false));
             }
         );
-        $this->assertFalse($fixture->getAccess($request->withMethod('POST'))->isAuthorized());
-        $this->assertTrue($fixture->getAccess($request->withMethod('POST'))->isUnauthorized());
+        $this->assertFalse(Access::Authorized === $fixture3->getAccess($request->withMethod('POST')));
+        $this->assertTrue(Access::Unauthorized === $fixture3->getAccess($request->withMethod('POST')));
     }
 
-    /**
-     * @test
-     */
-    public function getDefaultConfigurationForPathTest()
+    #[Test]
+    public function getDefaultConfigurationForPathTest(): void
     {
         $fixture = $this->buildAccessController(
             function ($om) {
                 /** @var ObjectProphecy|ObjectManagerInterface $om */
+                /** @var Request $type */
+                $type = Argument::type(Request::class);
+
                 /** @var MethodProphecy $authenticationProviderMethod */
-                $authenticationProviderMethod = $om->getAuthenticationProvider(Argument::type(Request::class));
+                $authenticationProviderMethod = $om->getAuthenticationProvider($type);
                 $authenticationProviderMethod->willReturn(new DummyAuthenticationProvider(false));
             }
         );
         $uri = 'my_ext-my_default_model/1/';
         $request = $this->buildTestRequest($uri, 'GET');
-        $configuration = $fixture->getConfigurationForResourceType($request->getResourceType());
+        $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('all', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isAllowed());
-        $this->assertTrue($configuration->getWrite()->isDenied());
+        $this->assertTrue(Access::Allowed === $configuration->getRead());
+        $this->assertTrue(Access::Denied === $configuration->getWrite());
     }
 }

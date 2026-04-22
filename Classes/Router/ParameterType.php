@@ -11,11 +11,15 @@ abstract class ParameterType
     /**
      * Extract the parameters from the given pattern
      *
-     * @return string[]
+     * @return non-empty-string[]
      */
-    public static function extractParameterTypesFromPattern(string $pattern): array
-    {
-        return array_filter(array_map([__CLASS__, 'createParameter'], self::splitPattern($pattern)));
+    public static function extractParameterTypesFromPattern(
+        string $pattern,
+    ): array {
+        return array_filter(array_map(
+            self::createParameter(...),
+            self::splitPattern($pattern)
+        ));
     }
 
     private static function createParameter(string $input): ?string
@@ -29,21 +33,29 @@ abstract class ParameterType
 
         $bracketsMatch = $startsWithBracket && $endsWithBracket;
         if (!$bracketsMatch) {
-            throw new InvalidArgumentException(sprintf('Unmatched brackets in path segment "%s"', $input));
+            throw new InvalidArgumentException(sprintf(
+                'Unmatched brackets in path segment "%s"',
+                $input
+            ));
         }
 
         $type = substr($input, 1, -1);
 
         return match (strtolower($type)) {
-            'integer', 'int' => ParameterTypeInterface::INTEGER,
-            'slug', 'string' => ParameterTypeInterface::SLUG,
-            'raw' => ParameterTypeInterface::RAW,
+            'integer', 'int'            => ParameterTypeInterface::INTEGER,
+            'slug', 'string'            => ParameterTypeInterface::SLUG,
+            'raw'                       => ParameterTypeInterface::RAW,
             'float', 'double', 'number' => ParameterTypeInterface::FLOAT,
-            'bool', 'boolean' => ParameterTypeInterface::BOOLEAN,
-            default => throw new InvalidArgumentException(sprintf('Invalid parameter type "%s"', $type)),
+            'bool', 'boolean'           => ParameterTypeInterface::BOOLEAN,
+            default                     => throw new InvalidArgumentException(
+                sprintf('Invalid parameter type "%s"', $type)
+            ),
         };
     }
 
+    /**
+     * @return string[]
+     */
     private static function splitPattern(string $pattern): array
     {
         return array_reduce(

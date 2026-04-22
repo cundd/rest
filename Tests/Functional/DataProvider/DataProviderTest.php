@@ -107,16 +107,21 @@ final class DataProviderTest extends AbstractCase
 
         $propertyMapperMock = $this->prophesize(PropertyMapper::class);
 
-        $this->buildClassIfNotExists('Tx_AnotherExt_Domain_Model_MyModel');
+        $uniqueTestId = time();
+        $modelClassSuffix = 'MyModel' . $uniqueTestId;
+        $classNamespace = 'AVendor\\AnotherExt\\Domain\\Model';
+        $this->buildClassIfNotExists($modelClassSuffix, $classNamespace);
+        $modelClass = $classNamespace . '\\' . $modelClassSuffix;
 
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $propertyMapperMock->convert(
             Argument::exact($data),
-            Argument::exact('Tx_AnotherExt_Domain_Model_MyModel'),
+            Argument::exact($modelClass),
             Argument::type(PropertyMappingConfigurationInterface::class)
         );
 
         $methodProphecy->shouldBeCalled();
+        $methodProphecy->will(fn ($args) => (object) $args[0]);
 
         $objectManagerProphecy = $this->prophesize(ObjectManagerInterface::class);
 
@@ -144,8 +149,9 @@ final class DataProviderTest extends AbstractCase
             $identityProvider
         );
 
+        $resourceType = new ResourceType('a_vendor-another_ext-my_model' . $uniqueTestId);
         $request = self::buildTestRequest(self::getUriRequestBase())
-            ->withResourceType(new ResourceType('a_vendor-another_ext-my_model'));
+            ->withResourceType($resourceType);
 
         $this->fixture->createModel(
             $request,

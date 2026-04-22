@@ -15,7 +15,7 @@ trait FeUserCaseTrait
     /**
      * Change the `fe_users` table to include the `tx_rest_apikey` column
      *
-     * @throws SqlErrorException
+     * @throws \Doctrine\DBAL\Exception
      */
     public static function addApiKeyColumn(): void
     {

@@ -1,0 +1,53 @@
+rest:
+  settings:
+    paths:
+      greeting:
+        path: greeting
+        read: allow
+        write: deny
+        cacheLifetime: -1
+        handlerClass: \Cundd\Rest\Handler\GreetingHandler
+        dataProviderClass: \Cundd\Rest\DataProvider\DataProviderInterface
+
+      all:
+        path: all
+        read: deny
+        write: deny
+        cacheLifetime: -1
+        handlerClass: \Cundd\Rest\Handler\CrudHandler
+        dataProviderClass: \Cundd\Rest\DataProvider\DataProviderInterface
+
+      #dontcommit auth:
+      #dontcommit   path: auth
+      #dontcommit   read: allow
+      #dontcommit   write: allow
+      #dontcommit   cacheLifetime: -1
+      #dontcommit   handlerClass: \Cundd\Rest\Handler\AuthHandler
+
+    # Configure a set of default response headers that will be set if the response does **not** already contain them
+    # defaultResponseHeaders:
+    #     Access-Control-Allow-Credentials: true
+    #     Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE
+    #
+
+    # Overwrite the response's headers with the following ones
+    # responseHeaders:
+    #     Access-Control-Allow-Credentials: true
+    #     Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE
+    #
+
+    # Define a list of allowed origins:
+    # If the request's `Origin`-header matches one of the listed origins, it will be whitelisted in the
+    # `Access-Control-Allow-Origin`-header of the response
+    # cors.allowedOrigins:
+    #     0: http://localhost:3000
+    #
+
+    # This is not defined here to allow easy customization in third party extension's setup
+    # cacheLifetime: -1
+    # expiresHeaderLifetime:
+
+    authenticationProvider:
+      10: Cundd\Rest\Authentication\BasicAuthenticationProvider
+      #dontcommit 20: Cundd\Rest\Authentication\CredentialsAuthenticationProvider
+      # 30: Cundd\Rest\Authentication\RequestAuthenticationProvider

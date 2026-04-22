@@ -19,12 +19,12 @@ use function sprintf;
 /**
  * Error handler to capture fatal errors
  */
-class ErrorHandler
+final class ErrorHandler
 {
     /**
      * Register a handler to capture fatal errors
      */
-    public static function registerHandler()
+    public static function registerHandler(): void
     {
         register_shutdown_function([__CLASS__, 'checkForFatalError']);
     }
@@ -42,7 +42,7 @@ class ErrorHandler
      *
      * @internal
      */
-    public static function checkForFatalError()
+    public static function checkForFatalError(): void
     {
         $error = error_get_last();
         if (null !== $error) {
@@ -56,7 +56,7 @@ class ErrorHandler
     /**
      * Print the error information
      */
-    private static function printError(Exception $error)
+    private static function printError(Exception $error): void
     {
         ob_end_clean();
         if (!headers_sent()) {

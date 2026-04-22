@@ -167,6 +167,20 @@ final class Route implements RouteInterface, RouteFactoryInterface
         return $this->parameters;
     }
 
+    /**
+     * Return the priority of this route
+     *
+     * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
+     */
+    public function getPriority(): int
+    {
+        if (!isset($this->priority)) {
+            $this->priority = $this->determinePriority();
+        }
+
+        return $this->priority;
+    }
+
     public function getRequestType(): RequestType
     {
         return RequestType::fromMethod($this->getMethod());
@@ -196,20 +210,6 @@ final class Route implements RouteInterface, RouteFactoryInterface
         mixed ...$arguments,
     ): mixed {
         return $this->process($request, ...$arguments);
-    }
-
-    /**
-     * Return the priority of this route
-     *
-     * Deeper nested paths have a higher priority. Fixed paths have precedence over paths with parameter expressions.
-     */
-    public function getPriority(): int
-    {
-        if (!isset($this->priority)) {
-            $this->priority = $this->determinePriority();
-        }
-
-        return $this->priority;
     }
 
     /**

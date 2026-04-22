@@ -8,10 +8,10 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
-use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Configuration\SiteSettingsConfigurationProvider;
 use Cundd\Rest\DataProvider\DataProvider;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Handler\CrudHandler;
@@ -24,17 +24,20 @@ use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Exception;
+use PHPUnit\Framework\Attributes\DataProvider as PHPUnitDataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
-use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\DependencyInjection\Container;
+use TYPO3\CMS\Core\Site\Entity\Site;
 
 /**
  * Functional tests for the ObjectManager
  *
  * @see \Cundd\Rest\Tests\Unit\Core\ObjectManagerTest for Unit tests
  */
-class ObjectManagerTest extends AbstractCase
+final class ObjectManagerTest extends AbstractCase
 {
     protected ObjectManager $fixture;
 
@@ -43,61 +46,64 @@ class ObjectManagerTest extends AbstractCase
         parent::setUp();
         require_once __DIR__ . '/../../FixtureClasses.php';
 
-        $this->fixture = new ObjectManager();
-        $this->injectConfigurationProviderUsingHandlerClass();
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->fixture = new ObjectManager($container);
     }
 
     public function tearDown(): void
     {
-        // Reset the last request
         unset($this->fixture);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function getRequestFactoryTest()
+    #[Test]
+    public function getRequestFactoryTest(): void
     {
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider($container);
         $object = $this->fixture->getRequestFactory();
         $this->assertInstanceOf(RequestFactoryInterface::class, $object);
         $this->assertInstanceOf(RequestFactory::class, $object);
     }
 
-    /**
-     * @test
-     */
-    public function getResponseFactoryTest()
+    #[Test]
+    public function getResponseFactoryTest(): void
     {
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider($container);
         $object = $this->fixture->getResponseFactory();
         $this->assertInstanceOf(ResponseFactoryInterface::class, $object);
         $this->assertInstanceOf(ResponseFactory::class, $object);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationProviderTest()
+    #[Test]
+    public function getConfigurationProviderTest(): void
     {
         $this->fixture = new ObjectManager();
-        $object = $this->fixture->getConfigurationProvider();
-        $this->assertInstanceOf(TypoScriptConfigurationProvider::class, $object);
+        $object = $this->fixture->getConfigurationProvider(
+            $this->buildTestRequestWithSite('/')
+        );
+        $this->assertInstanceOf(SiteSettingsConfigurationProvider::class, $object);
     }
 
-    /**
-     * @test
-     */
-    public function getAuthenticationProviderTest()
+    #[Test]
+    public function getAuthenticationProviderTest(): void
     {
-        $this->injectConfigurationProviderUsingHandlerClass(['authenticationProvider' => []]);
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider(
+            $container,
+            ['authenticationProvider' => []]
+        );
         $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
     }
 
-    /**
-     * @test
-     */
-    public function getAuthenticationProviderFromConfigurationTest()
+    #[Test]
+    public function getAuthenticationProviderFromConfigurationTest(): void
     {
         $container = $this->getContainer();
         assert($container instanceof Container);
@@ -120,15 +126,15 @@ class ObjectManagerTest extends AbstractCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider dataProviderTestGenerator
-     *
-     * @throws Exception
+     * @param class-string $expectedClass
      */
-    public function getDataProviderTest(string $url, string $expectedClass)
+    #[Test]
+    #[PHPUnitDataProvider('dataProviderTestGenerator')]
+    public function getDataProviderTest(string $url, string $expectedClass): void
     {
-        $_GET['u'] = $url;
+        $container = $this->getContainer();
+        assert($container instanceof Container);
+        $this->injectConfigurationProvider($container);
 
         $dataProvider = $this->fixture->getDataProvider($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $dataProvider);
@@ -136,7 +142,10 @@ class ObjectManagerTest extends AbstractCase
         $this->assertInstanceOf(DataProvider::class, $dataProvider);
     }
 
-    public function dataProviderTestGenerator(): array
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    public static function dataProviderTestGenerator(): array
     {
         return [
             // URL,
@@ -167,7 +176,6 @@ class ObjectManagerTest extends AbstractCase
 
         assert($container instanceof Container);
         $this->injectConfigurationProvider($container);
-        // $_GET['u'] = $url;
 
         $handler = $this->fixture->getHandler($this->buildTestRequest($url));
         $this->assertInstanceOf($expectedClass, $handler);
@@ -212,46 +220,35 @@ class ObjectManagerTest extends AbstractCase
                 $this->getContainer()->get(LoggerInterface::class)
             )
         );
+        $this->injectConfigurationProvider($container, [], $expectedHandler);
 
-        $resourceType = new ResourceType('some_extension-my_model');
-        $resourceTypeString = (string) $resourceType;
-        $configurationProvider = new StandaloneConfigurationProvider([]);
-        $configurationProvider->setSettings(
-            [
-                'paths' => [
-                    $resourceTypeString => [
-                        'handlerClass' => $expectedHandler,
-                    ],
-                ],
-            ]
+        $handler = $this->fixture->getHandler(
+            $this->buildTestRequestWithSite((string) $resourceType)
         );
-        $this->injectPropertyIntoObject($configurationProvider, 'configurationProvider', $this->fixture);
-
-        $_GET['u'] = $resourceTypeString;
-
-        $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString));
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
         $this->assertInstanceOf(CrudHandler::class, $handler);
     }
 
-    private function injectConfigurationProviderUsingHandlerClass(array $settings = []): void
-    {
-        /** @var ObjectProphecy|ResourceConfiguration $resourceConfiguration */
+    /**
+     * @param array<string,mixed>                   $settings
+     * @param class-string<HandlerInterface>|string $handlerClass
+     */
+    private function injectConfigurationProvider(
+        Container $container,
+        array $settings = [],
+        string $handlerClass = '',
+    ): void {
         $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
-        /** @var MethodProphecy|string $handlerClassMethod */
         $handlerClassMethod = $resourceConfiguration->getHandlerClass();
-        $handlerClassMethod->willReturn('');
+        $handlerClassMethod->willReturn($handlerClass);
 
-        /** @var MethodProphecy|string $dataProviderClassMethod */
         $dataProviderClassMethod = $resourceConfiguration->getDataProviderClass();
         $dataProviderClassMethod->willReturn('');
 
-        /** @var ObjectProphecy|ConfigurationProviderInterface $configurationProvider */
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
         /** @var ResourceType $resourceType */
         $resourceType = Argument::any();
-        /** @var MethodProphecy|ResourceConfiguration $methodProphecy */
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
         $methodProphecy
             ->willReturn($resourceConfiguration->reveal());
@@ -261,6 +258,26 @@ class ObjectManagerTest extends AbstractCase
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
         $getSettingsProphecy->will(fn ($args) => $settings[$args[0]] ?? null);
-        $this->injectPropertyIntoObject($configurationProvider->reveal(), 'configurationProvider', $this->fixture);
+
+        $container->set(
+            ConfigurationProviderFactoryInterface::class,
+            new class($configurationProvider->reveal()) implements ConfigurationProviderFactoryInterface {
+                public function __construct(
+                    private readonly ConfigurationProviderInterface $configurationProvider,
+                ) {
+                }
+
+                public function build(
+                    ServerRequestInterface $request,
+                ): ConfigurationProviderInterface {
+                    return $this->configurationProvider;
+                }
+
+                public function buildFromSite(Site $site): ConfigurationProviderInterface
+                {
+                    return $this->configurationProvider;
+                }
+            }
+        );
     }
 }

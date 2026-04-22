@@ -14,22 +14,28 @@ use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-ClassBuilder::buildClassIfNotExists(AbstractDomainObject::class);
-ClassBuilder::buildClassIfNotExists(Repository::class);
-ClassBuilder::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
-ClassBuilder::buildInterfaceIfNotExists(DomainObjectInterface::class);
+// ClassBuilder::buildClassIfNotExists(AbstractDomainObject::class);
+// ClassBuilder::buildClassIfNotExists(Repository::class);
+// ClassBuilder::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
+// ClassBuilder::buildInterfaceIfNotExists(DomainObjectInterface::class);
 
 /**
- * @method getUid()
- * @method _setProperty(string $name, $value)
- * @method array _getProperties()
+ * This file contains a collection of test classes
+ */
+class FixtureClasses
+{
+}
+
+/**
+ * @method ?int getUid()
+ * @method _setProperty(string $name,mixed $value)
+ * @method array<string,mixed> _getProperties()
  */
 class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 {
-    protected $uid;
-
-    protected $pid;
-
+    /**
+     * @param array<string,mixed> $properties
+     */
     public function __construct(array $properties = [])
     {
         foreach ($properties as $property => $value) {
@@ -39,12 +45,15 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
         }
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         // Prevent calling GeneralUtility::logDeprecatedFunction();
     }
 
-    public function __call($name, $arguments)
+    /**
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
     {
         $getUid = function () {
             return $this->uid;
@@ -99,58 +108,35 @@ class BaseModel extends AbstractDomainObject implements DomainObjectInterface
 
 class MyModel extends BaseModel
 {
-    /**
-     * @var int The uid of the record. The uid is only unique in the context of the database table.
-     */
-    protected $uid;
+    protected string $name = 'Initial value';
 
-    /**
-     * @var int the id of the page the record is "stored"
-     */
-    protected $pid;
-
-    /**
-     * @var string
-     */
-    protected $name = 'Initial value';
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 }
-
+/**
+ * @extends Repository<MyModel>
+ */
 class MyModelRepository extends Repository
 {
 }
 
 class MyNestedModel extends BaseModel
 {
-    /**
-     * @var string
-     */
-    protected $base = 'Base';
+    protected string $base = 'Base';
+
+    protected DateTime $date;
 
     /**
-     * @var DateTime
+     * @var BaseModel
      */
-    protected $date;
-
-    /**
-     * @var MyModel
-     */
-    protected $child;
+    protected mixed $child;
 
     public function __construct()
     {
@@ -159,50 +145,32 @@ class MyNestedModel extends BaseModel
         $this->date = new DateTime();
     }
 
-    /**
-     * @param string $base
-     */
-    public function setBase($base)
+    public function setBase(string $base): void
     {
         $this->base = $base;
     }
 
-    /**
-     * @return string
-     */
-    public function getBase()
+    public function getBase(): string
     {
         return $this->base;
     }
 
-    /**
-     * @param MyModel|MyNestedModel $child
-     */
-    public function setChild($child)
+    public function setChild(mixed $child): void
     {
         $this->child = $child;
     }
 
-    /**
-     * @return MyModel|MyNestedModel
-     */
-    public function getChild()
+    public function getChild(): BaseModel
     {
         return $this->child;
     }
 
-    /**
-     * @param DateTime $date
-     */
-    public function setDate($date)
+    public function setDate(DateTime $date): void
     {
         $this->date = $date;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getDate()
+    public function getDate(): DateTime
     {
         return $this->date;
     }
@@ -211,22 +179,22 @@ class MyNestedModel extends BaseModel
 class MyNestedModelWithObjectStorage extends MyNestedModel
 {
     /**
-     * @var ObjectStorage|array|Traversable
+     * @var ObjectStorage<BaseModel>|array<BaseModel>|Traversable<BaseModel>
      */
-    protected $children;
+    protected iterable $children;
 
     /**
-     * @return ObjectStorage|array|Traversable
+     * @return ObjectStorage<BaseModel>|array<BaseModel>|Traversable<BaseModel>
      */
-    public function getChildren()
+    public function getChildren(): iterable
     {
         return $this->children;
     }
 
     /**
-     * @param ObjectStorage|array|Traversable $children
+     * @param iterable<BaseModel>|ObjectStorage<BaseModel>|array<BaseModel>|Traversable<BaseModel> $children
      */
-    public function setChildren($children)
+    public function setChildren(iterable $children): void
     {
         $this->children = $children;
     }
@@ -234,7 +202,10 @@ class MyNestedModelWithObjectStorage extends MyNestedModel
 
 class MyNestedJsonSerializeModel extends MyNestedModel
 {
-    public function jsonSerialize()
+    /**
+     * @return array{base:string,child:BaseModel}
+     */
+    public function jsonSerialize(): array
     {
         return [
             'base'  => $this->base,
@@ -245,14 +216,17 @@ class MyNestedJsonSerializeModel extends MyNestedModel
 
 class SimpleClass
 {
-    public $firstName;
+    public mixed $firstName;
 
-    public $lastName;
+    public mixed $lastName;
 
-    protected $uid;
+    protected ?int $uid;
 
-    protected $pid;
+    protected ?int $pid;
 
+    /**
+     * @param array<string,mixed> $properties
+     */
     public function __construct(array $properties = [])
     {
         foreach ($properties as $property => $value) {
@@ -265,6 +239,9 @@ class SimpleClass
 
 class SimpleClassJsonSerializable extends SimpleClass implements JsonSerializable
 {
+    /**
+     * @return array{firstName:string,lastName:string,uid:?int,pid:?int}
+     */
     public function jsonSerialize(): array
     {
         return [

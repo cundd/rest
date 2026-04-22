@@ -15,51 +15,24 @@ use Psr\Http\Message\UriInterface;
 /**
  * Specialized Request
  */
-class Request implements ServerRequestInterface, RestRequestInterface
+final class Request implements ServerRequestInterface, RestRequestInterface
 {
     use ServerRequestProxyTrait;
 
-    /**
-     * @var ServerRequestInterface
-     */
-    private $originalRequest;
-
-    /**
-     * Resource type - The first part of the request after mapping aliases
-     *
-     * @var ResourceType
-     */
-    private $resourceType;
-
-    /**
-     * @var UriInterface
-     */
-    private $internalUri;
-
-    /**
-     * @var Format
-     */
-    private $format;
-
-    private $originalPath;
-
-    private $sentData;
+    private mixed $sentData;
 
     /**
      * Constructor for a new request with the given Server Request, resource type and format
+     *
+     * @param ResourceType $resourceType Resource type - The first part of the request after mapping aliases
      */
     public function __construct(
-        ServerRequestInterface $originalRequest,
-        UriInterface $internalUri,
-        string $originalPath,
-        ResourceType $resourceType,
-        Format $format,
+        private ServerRequestInterface $originalRequest,
+        private UriInterface $internalUri,
+        private string $originalPath,
+        private ResourceType $resourceType,
+        private Format $format,
     ) {
-        $this->originalRequest = $originalRequest;
-        $this->originalPath = $originalPath;
-        $this->resourceType = $resourceType;
-        $this->internalUri = $internalUri;
-        $this->format = $format;
     }
 
     /**
@@ -88,9 +61,9 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return $clone;
     }
 
-    public function getSentData()
+    public function getSentData(): mixed
     {
-        if (!$this->sentData) {
+        if (!isset($this->sentData)) {
             $this->sentData = $this->decodeSentData();
         }
 
@@ -138,7 +111,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
      */
     public function getOriginalResourceType(): string
     {
-        return (string) strtok(strtok($this->originalPath, '?'), '/');
+        return (string) strtok((string) strtok($this->originalPath, '?'), '/');
     }
 
     /**
@@ -154,7 +127,7 @@ class Request implements ServerRequestInterface, RestRequestInterface
     /**
      * @return array|mixed|object|null
      */
-    private function decodeSentData()
+    private function decodeSentData(): mixed
     {
         $contentTypes = $this->getHeader('content-type');
         $isFormEncoded = array_reduce(

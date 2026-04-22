@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests;
 
 use Exception;
+use InvalidArgumentException;
 
-class ClassBuilder
+final class ClassBuilder
 {
     /**
      * Dynamically creates a class
      *
      * @throws Exception
      */
-    public static function buildClass(array|string $className, string $namespace = '', string $extends = '', bool $silent = false): void
-    {
+    public static function buildClass(
+        string $className,
+        string $namespace = '',
+        string $extends = '',
+        bool $silent = false,
+    ): void {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $className,
             $namespace,
@@ -23,7 +28,10 @@ class ClassBuilder
 
         if (class_exists("$preparedNamespace\\$preparedClassName")) {
             if (!$silent) {
-                printf('Class %s already exists' . PHP_EOL, "$preparedNamespace\\$preparedClassName");
+                printf(
+                    'Class %s already exists' . PHP_EOL,
+                    "$preparedNamespace\\$preparedClassName"
+                );
             }
 
             return;
@@ -31,8 +39,11 @@ class ClassBuilder
 
         static::buildCode('class', $preparedClassName, $preparedNamespace, $preparedExtends);
 
-        if (!class_exists("$preparedNamespace\\$preparedClassName")) {
-            throw new Exception(sprintf('Could not create class %s', "$preparedNamespace\\$preparedClassName"));
+        if (!class_exists("$preparedNamespace\\$preparedClassName")) { // @phpstan-ignore booleanNot.alwaysTrue
+            throw new Exception(sprintf(
+                'Could not create class %s',
+                "$preparedNamespace\\$preparedClassName"
+            ));
         }
     }
 
@@ -41,8 +52,11 @@ class ClassBuilder
      *
      * @throws Exception
      */
-    public static function buildClassIfNotExists(string $className, string $namespace = '', string $extends = ''): void
-    {
+    public static function buildClassIfNotExists(
+        string $className,
+        string $namespace = '',
+        string $extends = '',
+    ): void {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $className,
             $namespace,
@@ -59,8 +73,11 @@ class ClassBuilder
      *
      * @throws Exception
      */
-    public static function buildInterface(string $interfaceName, string $namespace = '', string $extends = ''): void
-    {
+    public static function buildInterface(
+        string $interfaceName,
+        string $namespace = '',
+        string $extends = '',
+    ): void {
         [$preparedClassName, $preparedNamespace, $preparedExtends] = self::buildClassSignature(
             $interfaceName,
             $namespace,
@@ -68,15 +85,26 @@ class ClassBuilder
         );
 
         if (interface_exists("$preparedNamespace\\$preparedClassName")) {
-            printf('Interface %s already exists' . PHP_EOL, "$preparedNamespace\\$preparedClassName");
+            printf(
+                'Interface %s already exists' . PHP_EOL,
+                "$preparedNamespace\\$preparedClassName"
+            );
 
             return;
         }
 
-        static::buildCode('interface', $preparedClassName, $preparedNamespace, $preparedExtends);
+        static::buildCode(
+            'interface',
+            $preparedClassName,
+            $preparedNamespace,
+            $preparedExtends
+        );
 
-        if (!interface_exists("$preparedNamespace\\$preparedClassName")) {
-            throw new Exception(sprintf('Could not create interface %s', "$preparedNamespace\\$preparedClassName"));
+        if (!interface_exists("$preparedNamespace\\$preparedClassName")) { // @phpstan-ignore booleanNot.alwaysTrue
+            throw new Exception(sprintf(
+                'Could not create interface %s',
+                "$preparedNamespace\\$preparedClassName"
+            ));
         }
     }
 
@@ -106,12 +134,15 @@ class ClassBuilder
      *
      * @throws Exception
      */
-    protected static function buildCode(
+    private static function buildCode(
         string $type,
         string $preparedClassName,
         string $preparedNamespace,
         string $preparedExtends,
     ): void {
+        foreach (func_get_args() as $argument) {
+            static::assertCleanClassCode($argument);
+        }
         $code = [];
         if ($preparedNamespace) {
             $code[] = "namespace $preparedNamespace;";
@@ -132,7 +163,7 @@ class ClassBuilder
     /**
      * @return string[]
      */
-    protected static function buildClassSignature(
+    private static function buildClassSignature(
         string $className,
         string $namespace = '',
         string $extends = '',
@@ -143,6 +174,7 @@ class ClassBuilder
 
         if (str_contains($className, '\\')) {
             $lastSlashPos = strrpos($className, '\\');
+            assert(false !== $lastSlashPos);
             $preparedNamespace = substr($className, 0, $lastSlashPos);
             $preparedClassName = substr($className, $lastSlashPos + 1);
 
@@ -152,6 +184,20 @@ class ClassBuilder
             }
         }
 
-        return [$preparedClassName, trim($preparedNamespace, '\\'), trim($preparedExtends, '\\')];
+        return [
+            $preparedClassName,
+            trim($preparedNamespace, '\\'),
+            trim($preparedExtends, '\\'),
+        ];
+    }
+
+    private static function assertCleanClassCode(string $argument): void
+    {
+        if ('' === $argument) {
+            return;
+        }
+        if (!ctype_alnum(str_replace(['\\', '_'], '', $argument))) {
+            throw new InvalidArgumentException(sprintf('Invalid class code part "%s" given', $argument));
+        }
     }
 }

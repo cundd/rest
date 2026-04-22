@@ -14,64 +14,43 @@ use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Argument\Token\TypeToken;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
-use Prophecy\Prophecy\ObjectProphecy;
 
 class CacheFactoryTest extends TestCase
 {
     use ProphecyTrait;
     use RequestBuilderTrait;
 
-    /**
-     * @var CacheFactory
-     */
-    private $fixture;
+    private CacheFactory $fixture;
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->fixture = new CacheFactory();
     }
 
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     */
     protected function tearDown(): void
     {
         unset($this->fixture);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider buildCacheDataProvider
-     *
-     * @param int|null $cacheLifetime
-     * @param int|null $expiresHeaderLifetime
-     * @param int|null $resourceTypeExpiresHeaderLifetime
-     * @param int      $resourceTypeCacheLifetime
-     * @param int      $_
-     * @param int      $expectedExpiresHeaderLifetime
-     */
-    public function buildCacheCheckExpiresHeaderLifetimeTest(
-        $cacheLifetime,
-        $expiresHeaderLifetime,
-        $resourceTypeExpiresHeaderLifetime,
-        $resourceTypeCacheLifetime,
-        /* @noinspection PhpUnusedParameterInspection */
-        $_,
-        $expectedExpiresHeaderLifetime,
-    ) {
+    #[Test]
+    #[DataProvider('buildCacheDataProvider')]
+    public function buildCacheCheckExpiresHeaderLifetime(
+        ?int $cacheLifetime,
+        ?int $expiresHeaderLifetime,
+        ?int $resourceTypeExpiresHeaderLifetime,
+        int $resourceTypeCacheLifetime,
+        int $_,
+        int $expectedExpiresHeaderLifetime,
+    ): void {
         $cache = $this->fixture->buildCache(
             new ResourceType(''),
             $this->getConfigurationProvider(
@@ -85,27 +64,16 @@ class CacheFactoryTest extends TestCase
         $this->assertEquals($expectedExpiresHeaderLifetime, $cache->getExpiresHeaderLifetime());
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider buildCacheDataProvider
-     *
-     * @param int|null $cacheLifetime
-     * @param int|null $expiresHeaderLifetime
-     * @param int|null $_
-     * @param int      $resourceTypeCacheLifetime
-     * @param int      $expectedCacheLifetime
-     *
-     * @noinspection PhpUnusedParameterInspection
-     */
-    public function buildCacheCheckLifetimeTest(
-        $cacheLifetime,
-        $expiresHeaderLifetime,
-        /* @noinspection PhpUnusedParameterInspection */
-        $_,
-        $resourceTypeCacheLifetime,
-        $expectedCacheLifetime,
-    ) {
+    #[Test]
+    #[DataProvider('buildCacheDataProvider')]
+    public function buildCacheCheckLifetime(
+        ?int $cacheLifetime,
+        ?int $expiresHeaderLifetime,
+        ?int $_,
+        int $resourceTypeCacheLifetime,
+        int $expectedCacheLifetime,
+        mixed $_2,
+    ): void {
         $cache = $this->fixture->buildCache(
             new ResourceType(''),
             $this->getConfigurationProvider(
@@ -119,7 +87,10 @@ class CacheFactoryTest extends TestCase
         $this->assertEquals($expectedCacheLifetime, $cache->getCacheLifetime());
     }
 
-    public function buildCacheDataProvider()
+    /**
+     * @return array<int,list<int|null>>
+     */
+    public static function buildCacheDataProvider(): array
     {
         return [
             [10, 20, null, -1, 10, 20],
@@ -133,36 +104,24 @@ class CacheFactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @return ObjectManagerInterface|ObjectManager
-     */
-    private function getObjectManager()
+    private function getObjectManager(): ObjectManagerInterface
     {
-        /** @var ResponseFactoryInterface|ObjectProphecy $responseFactory */
         $responseFactory = $this->prophesize(ResponseFactoryInterface::class)->reveal();
 
-        /** @var ObjectManager|ObjectProphecy $objectManager */
         $objectManager = $this->prophesize(ObjectManager::class);
-        $objectManager->get(Argument::type('string'))->willReturn(new Cache($responseFactory));
+        /** @var string $argumentType */
+        $argumentType = Argument::type('string');
+        $objectManager->get($argumentType)->willReturn(new Cache($responseFactory));
 
         return $objectManager->reveal();
     }
 
-    /**
-     * @param int $cacheLifetime
-     * @param int $expiresHeaderLifetime
-     * @param int $resourceTypeCacheLifetime
-     * @param int $resourceTypeExpiresHeaderLifetime
-     *
-     * @return ConfigurationProviderInterface
-     */
     private function getConfigurationProvider(
-        $cacheLifetime,
-        $expiresHeaderLifetime,
-        $resourceTypeCacheLifetime,
-        $resourceTypeExpiresHeaderLifetime,
-    ) {
-        /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProvider */
+        ?int $cacheLifetime,
+        ?int $expiresHeaderLifetime,
+        int $resourceTypeCacheLifetime,
+        ?int $resourceTypeExpiresHeaderLifetime,
+    ): ConfigurationProviderInterface {
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
 
         /** @var string $typeToken */
@@ -183,7 +142,7 @@ class CacheFactoryTest extends TestCase
             }
         );
 
-        /** @var ResourceType|TypeToken $resourceType */
+        /** @var \Cundd\Rest\Request\ResourceType|TypeToken $resourceType */
         $resourceType = Argument::type(ResourceType::class);
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
@@ -191,8 +150,8 @@ class CacheFactoryTest extends TestCase
             function () use ($resourceTypeCacheLifetime, $resourceTypeExpiresHeaderLifetime) {
                 return new ResourceConfiguration(
                     new ResourceType(''),
-                    Access::allowed(),
-                    Access::denied(),
+                    Access::Allowed,
+                    Access::Denied,
                     $resourceTypeCacheLifetime,
                     '',
                     '',

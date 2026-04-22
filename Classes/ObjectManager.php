@@ -10,6 +10,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Cache\CacheFactory;
 use Cundd\Rest\Cache\CacheInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\DataProvider\Utility;
@@ -20,6 +21,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request\ResourceType;
 use LogicException;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function class_exists;
@@ -32,8 +34,6 @@ use function sprintf;
  */
 class ObjectManager implements ObjectManagerInterface, SingletonInterface
 {
-    protected ?ConfigurationProviderInterface $configurationProvider = null;
-
     protected ContainerInterface $container;
 
     public function __construct(?ContainerInterface $container = null)
@@ -41,10 +41,19 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $this->container = $container ?: GeneralUtility::makeInstance(ContainerInterface::class);
     }
 
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
     public function get(string $class): object
     {
         if (func_num_args() > 1) {
-            throw new LogicException('Passing additional arguments to `get()` is not supported anymore');
+            throw new LogicException(
+                'Passing additional arguments to `get()` is not supported anymore'
+            );
         }
 
         return $this->container->get($class);
@@ -63,8 +72,15 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     public function getDataProvider(RestRequestInterface $request): DataProviderInterface
     {
         $resourceType = $request->getResourceType();
-        $dataProvider = $this->getImplementationFromResourceConfiguration($resourceType, 'DataProvider');
+        $dataProvider = $this->getImplementationFromResourceConfiguration(
+            $request,
+            $resourceType,
+            'DataProvider'
+        );
+
         if ($dataProvider) {
+            assert($dataProvider instanceof DataProviderInterface);
+
             return $dataProvider;
         }
 
@@ -73,10 +89,13 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         // Check for a specific builtin Data Provider
         $specialDataProvider = sprintf('Cundd\\Rest\\DataProvider\\%sDataProvider', $extension);
         if (class_exists($specialDataProvider)) {
-            return $this->get($specialDataProvider);
-        } else {
-            return $this->get(DataProviderInterface::class);
+            $dataProvider = $this->get($specialDataProvider);
+            assert($dataProvider instanceof DataProviderInterface);
+
+            return $dataProvider;
         }
+
+        return $this->get(DataProviderInterface::class);
     }
 
     public function getRequestFactory(): RequestFactoryInterface
@@ -84,8 +103,9 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         return $this->get(RequestFactoryInterface::class);
     }
 
-    public function getAuthenticationProvider(RestRequestInterface $request): AuthenticationProviderInterface
-    {
+    public function getAuthenticationProvider(
+        RestRequestInterface $request,
+    ): AuthenticationProviderInterface {
         $resourceType = $request->getResourceType();
         [$vendor, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
@@ -94,16 +114,23 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
 
         // Use the found Authentication Provider
         if (class_exists($authenticationProviderClass)) {
-            return $this->get($authenticationProviderClass);
+            $authenticationProvider = $this->get($authenticationProviderClass);
+            assert($authenticationProvider instanceof AuthenticationProviderInterface);
+
+            return $authenticationProvider;
         }
 
         // Use the Authentication Providers defined in TypoScript
         $providerInstances = [];
-        $configuredProviders = $this->getConfigurationProvider()->getSetting('authenticationProvider') ?? [];
+        $configuredProviders = $this->getConfigurationProvider($request)
+            ->getSetting('authenticationProvider') ?? [];
+
         ksort($configuredProviders);
         foreach ($configuredProviders as $providerClass) {
             if (class_exists($providerClass)) {
-                $providerInstances[] = $this->get(ltrim($providerClass, '\\'));
+                $providerInstance = $this->get(ltrim($providerClass, '\\'));
+                assert($providerInstance instanceof AuthenticationProviderInterface);
+                $providerInstances[] = $providerInstance;
             }
         }
 
@@ -118,61 +145,88 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         // Check if an extension provides an Authentication Provider
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
         if (class_exists($accessControllerClass)) {
-            return $this->get($accessControllerClass);
-        } else {
-            // Use the configuration based Authentication Provider
-            return $this->get(ConfigurationBasedAccessController::class);
+            $accessController = $this->get($accessControllerClass);
+            assert($accessController instanceof AccessControllerInterface);
+
+            return $accessController;
         }
+
+        // Use the configuration based Authentication Provider
+        return $this->get(ConfigurationBasedAccessController::class);
     }
 
     public function getHandler(RestRequestInterface $request): HandlerInterface
     {
         $resourceType = $request->getResourceType();
-        $handler = $this->getImplementationFromResourceConfiguration($resourceType, 'Handler');
+        $handler = $this->getImplementationFromResourceConfiguration(
+            $request,
+            $resourceType,
+            'Handler'
+        );
+
         if ($handler) {
+            assert($handler instanceof HandlerInterface);
+
             return $handler;
         }
 
         [, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
         // Check for a specific builtin Handler
-        $specialHandler = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
-        if (class_exists($specialHandler)) {
-            return $this->has($specialHandler)
-                ? $this->get($specialHandler)
-                : GeneralUtility::makeInstance($specialHandler);
-        } else {
-            return $this->get(CrudHandler::class);
+        $specialHandlerClass = 'Cundd\\Rest\\Handler\\' . $extension . 'Handler';
+        if (class_exists($specialHandlerClass)) {
+            $handler = $this->has($specialHandlerClass)
+                ? $this->get($specialHandlerClass)
+                : GeneralUtility::makeInstance($specialHandlerClass);
+
+            assert($handler instanceof HandlerInterface);
+
+            return $handler;
         }
+
+        return $this->get(CrudHandler::class);
     }
 
-    public function getCache(ResourceType $resourceType): CacheInterface
-    {
+    public function getCache(
+        RestRequestInterface $request,
+        ResourceType $resourceType,
+    ): CacheInterface {
         /** @var CacheFactory $cacheFactory */
         $cacheFactory = $this->get(CacheFactory::class);
 
-        return $cacheFactory->buildCache($resourceType, $this->getConfigurationProvider(), $this);
+        return $cacheFactory->buildCache(
+            $resourceType,
+            $this->getConfigurationProvider($request),
+            $this
+        );
     }
 
-    public function getConfigurationProvider(): ConfigurationProviderInterface
-    {
-        if (!$this->configurationProvider) {
-            $this->configurationProvider = $this->get(ConfigurationProviderInterface::class);
-        }
+    public function getConfigurationProvider(
+        ServerRequestInterface $request,
+    ): ConfigurationProviderInterface {
+        $configurationProviderFactory = $this->get(ConfigurationProviderFactoryInterface::class);
 
-        return $this->configurationProvider;
+        return $configurationProviderFactory->build($request);
     }
 
-    public function __call($name, $arguments)
+    /**
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
     {
-        return call_user_func_array([$this->container, $name], $arguments);
+        return $this->container->$name(...$arguments);
     }
 
-    private function getImplementationFromResourceConfiguration(ResourceType $resourceType, string $type)
-    {
-        $resourceConfiguration = $this->getConfigurationProvider()->getResourceConfiguration($resourceType);
+    private function getImplementationFromResourceConfiguration(
+        RestRequestInterface $request,
+        ResourceType $resourceType,
+        string $type,
+    ): ?object {
+        $resourceConfiguration = $this->getConfigurationProvider($request)
+            ->getResourceConfiguration($resourceType);
         if (!$resourceConfiguration) {
-            // This case should not occur in reality, since at least the `all` Resource should have been configured
+            // This case should not occur in reality, since at least the
+            // `all`-`Resource` should have been configured
             throw new InvalidConfigurationException(
                 sprintf('Resource "%s" is not configured', (string) $resourceType)
             );

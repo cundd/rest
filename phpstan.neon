@@ -9,7 +9,7 @@ parameters:
 		analyse:
 			- Classes/Http/ServerRequestProxyTrait.php
 			- Classes/Documentation/Handler/DummyRequest.php
-			- Classes/Bootstrap/V12/V12CoreBootstrap.php?
+			- Classes/Documentation/HandlerReport.php
 	treatPhpDocTypesAsCertain: false
 includes:
 	- .Build/vendor/jangregor/phpstan-prophecy/extension.neon

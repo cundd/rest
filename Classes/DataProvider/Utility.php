@@ -56,7 +56,7 @@ final class Utility
     /**
      * Return the Domain Model class or interface name for the given API resource type
      *
-     * @return class-string<object>
+     * @return class-string|interface-string
      */
     public static function getModelEntityForResourceType(
         ResourceType $resourceType,
@@ -70,13 +70,9 @@ final class Utility
             . $model;
         $underscoreVersion = 'Tx_' . $extension . '_Domain_Model_' . $model;
 
-        if (class_exists($namespaceVersion)) {
+        if (class_exists($namespaceVersion) || interface_exists($namespaceVersion)) {
             return $namespaceVersion;
-        } elseif (class_exists($underscoreVersion)) {
-            return $underscoreVersion;
-        } elseif (interface_exists($namespaceVersion)) {
-            return $namespaceVersion;
-        } elseif (interface_exists($underscoreVersion)) {
+        } elseif (class_exists($underscoreVersion) || interface_exists($underscoreVersion)) {
             return $underscoreVersion;
         }
 
@@ -142,7 +138,7 @@ final class Utility
      */
     private static function camelCaseToLowerCaseUnderscored(string $input): string
     {
-        $value = preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $input);
+        $value = (string) preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $input);
 
         return mb_strtolower($value, 'utf-8');
     }
