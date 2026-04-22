@@ -16,15 +16,13 @@ use function is_numeric;
 /**
  * Abstract Configuration Provider
  *
- * @phpstan-type RawConfiguration array{path?:string, read?:'deny'|'require'|'allow', write?:'deny'|'require'|'allow', handlerClass?: string, cacheLifetime?:int, expiresHeaderLifetime?:int}
- * @phpstan-type Settings array{paths?:array<string,RawConfiguration>}
+ * @phpstan-import-type RawConfiguration from ConfigurationProviderInterface
+ * @phpstan-import-type Settings from ConfigurationProviderInterface
  */
 abstract class AbstractConfigurationProvider implements SingletonInterface, ConfigurationProviderInterface
 {
     /**
-     * Settings read from the TypoScript
-     *
-     * @var Settings
+     * @var Settings|null
      */
     protected ?array $settings = null;
 
@@ -62,8 +60,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Return the settings read from the TypoScript
-     *
      * @return Settings
      */
     public function getSettings(): array
@@ -137,11 +133,11 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
                 [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
 
                 $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
-                    ? new Access($configuration[self::ACCESS_METHOD_READ])
-                    : Access::denied();
+                    ? Access::from($configuration[self::ACCESS_METHOD_READ])
+                    : Access::Denied;
                 $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
-                    ? new Access($configuration[self::ACCESS_METHOD_WRITE])
-                    : Access::denied();
+                    ? Access::from($configuration[self::ACCESS_METHOD_WRITE])
+                    : Access::Denied;
 
                 if (isset($configuration['className'])) {
                     throw new InvalidConfigurationException('Unsupported configuration key "className"');

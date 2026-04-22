@@ -39,7 +39,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     public function getAccess(RestRequestInterface $request): Access
     {
         $access = $this->getAccessConfiguration($request);
-        if ($access->isRequireLogin()) {
+        if (Access::RequireLogin === $access) {
             return $this->checkAuthentication($request);
         }
 
@@ -55,17 +55,17 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Returns if the given request needs authentication
+     * Return if the given request needs authentication
      *
      * @throws InvalidConfigurationException
      */
     public function requestNeedsAuthentication(RestRequestInterface $request): bool
     {
-        return $this->getAccessConfiguration($request)->isRequireLogin();
+        return Access::RequireLogin === $this->getAccessConfiguration($request);
     }
 
     /**
-     * Returns if the given request requires authorization
+     * Return if the given request requires authorization
      */
     protected function requiresAuthorization(RestRequestInterface $request): bool
     {
@@ -75,23 +75,16 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     protected function getAccessConfiguration(RestRequestInterface $request): Access
     {
         if (!$this->requiresAuthorization($request)) {
-            return Access::allowed();
+            return Access::Allowed;
         }
 
-        $configuration = $this->getConfigurationForResourceType($request->getResourceType());
-        switch (true) {
-            case $request->isWrite():
-                return $configuration->getWrite();
+        $configuration = $this->getConfigurationForRequest($request);
 
-            case $request->isPreflight():
-                // Should be already covered by `if (!$this->requiresAuthorization())`
-                return Access::allowed();
-
-            case $request->isRead():
-                return $configuration->getRead();
-
-            default:
-                throw new OutOfBoundsException('Request is neither write, read, nor a preflight request');
-        }
+        return match (true) {
+            $request->isWrite()     => $configuration->writeAccess,
+            $request->isPreflight() => Access::Allowed,
+            $request->isRead()      => $configuration->readAccess,
+            default                 => throw new OutOfBoundsException('Request is neither write, read, nor a preflight request'),
+        };
     }
 }

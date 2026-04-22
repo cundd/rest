@@ -5,18 +5,23 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\Functional\Fixtures\FrontendUserAuthentication;
+use Cundd\Rest\Tests\Functional\Integration\AbstractIntegrationCase;
 use Cundd\Rest\Tests\Functional\Integration\FrontendSiteSetupTrait;
+use PHPUnit\Framework\Attributes\Test;
+use Prophecy\Argument;
 
 /**
  * Functional tests for ConfigurationBasedAccessController
  *
  * @see \Cundd\Rest\Tests\Unit\Core\ConfigurationBasedAccessControllerTest for Unit tests
  */
-class ConfigurationBasedAccessControllerTest extends AbstractCase
+final class ConfigurationBasedAccessControllerTest extends AbstractCase
 {
     use FrontendSiteSetupTrait;
 
@@ -66,55 +71,47 @@ class ConfigurationBasedAccessControllerTest extends AbstractCase
         $GLOBALS['TSFE'] = (object) ['fe_user' => new FrontendUserAuthentication()];
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithoutWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithoutWildcardTest(): void
     {
         $uri = 'my_ext-my_model/3/';
-        $request = $this->buildRequestWithUri($uri, null, 'GET');
-        $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
+        $request = $this->buildTestRequestWithSite($uri, 'GET');
+        $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('my_ext-my_model', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isRequireLogin());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertTrue(Access::RequireLogin === $configuration->getRead());
+        $this->assertTrue(Access::Allowed === $configuration->getWrite());
 
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
-        $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-
-        $this->assertFalse($this->fixture->getAccess($request->withMethod('GET'))->isAuthorized());
-        $this->assertTrue($this->fixture->getAccess($request->withMethod('GET'))->isUnauthorized());
+        $this->assertFalse(Access::Authorized === $this->fixture->getAccess($request->withMethod('GET')));
+        $this->assertTrue(Access::Unauthorized === $this->fixture->getAccess($request->withMethod('GET')));
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithWildcardTest(): void
     {
         $uri = 'my_secondext-my_model/2/';
-        $request = $this->buildRequestWithUri($uri, null, 'GET');
-        $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
+        $request = $this->buildTestRequestWithSite($uri, 'GET');
+        $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('my_secondext-*', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isDenied());
-        $this->assertTrue($configuration->getWrite()->isRequireLogin());
+        $this->assertTrue(Access::Denied === $configuration->getRead());
+        $this->assertTrue(Access::RequireLogin === $configuration->getWrite());
 
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
 
-        $this->assertFalse($this->fixture->getAccess($request->withMethod('POST'))->isAuthorized());
-        $this->assertTrue($this->fixture->getAccess($request->withMethod('POST'))->isUnauthorized());
+        $this->assertFalse(Access::Authorized === $this->fixture->getAccess($request->withMethod('POST')));
+        $this->assertTrue(Access::Unauthorized === $this->fixture->getAccess($request->withMethod('POST')));
     }
 
-    /**
-     * @test
-     */
-    public function getDefaultConfigurationForPathTest()
+    #[Test]
+    public function getDefaultConfigurationForPathTest(): void
     {
         $uri = 'my_ext-my_default_model/1/';
-        $request = $this->buildRequestWithUri($uri, null, 'GET');
-        $configuration = $this->fixture->getConfigurationForResourceType($request->getResourceType());
+        $request = $this->buildTestRequestWithSite($uri, 'GET');
+        $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('all', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isAllowed());
-        $this->assertTrue($configuration->getWrite()->isDenied());
+        $this->assertTrue(Access::Allowed === $configuration->getRead());
+        $this->assertTrue(Access::Denied === $configuration->getWrite());
     }
 }

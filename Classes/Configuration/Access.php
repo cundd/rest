@@ -11,128 +11,125 @@ use Cundd\Rest\Exception\InvalidArgumentException;
  *
  * The identifier signals if a request is allowed
  */
-class Access
+enum Access: string
 {
     /**
      * Access identifier to signal denied requests
      */
-    private const ACCESS_DENY = 'deny';
+    case Denied = 'deny';
 
     /**
      * Access identifier to signal allowed requests
      */
-    private const ACCESS_ALLOW = 'allow';
+    case Allowed = 'allow';
 
     /**
      * Access identifier to signal requests that require a valid login
      */
-    private const ACCESS_REQUIRE_LOGIN = 'require';
+    case RequireLogin = 'require';
 
     /**
      * Access identifier to signal a successful login
      */
-    private const ACCESS_AUTHORIZED = self::ACCESS_ALLOW;
+    case Authorized = 'authorized';
 
     /**
      * Access identifier to signal a missing or failed login
      */
-    private const ACCESS_UNAUTHORIZED = 'unauthorized';
+    case Unauthorized = 'unauthorized';
 
-    /**
-     * @var string
-     */
-    private $value;
+    // public function __construct(string|Access $value)
+    // {
+    // // dontcommit
+    //     $valueString = (string) $value;
+    //     if (self::ACCESS_ALLOW !== $valueString
+    //         && self::ACCESS_DENY !== $valueString
+    //         && self::ACCESS_REQUIRE_LOGIN !== $valueString
+    //         && self::ACCESS_AUTHORIZED !== $valueString
+    //         && self::ACCESS_UNAUTHORIZED !== $valueString) {
+    //         throw new InvalidArgumentException('Argument value must be one of the ACCESS constants');
+    //     }
+    //
+    //     $this->value = $valueString;
+    // }
 
-    /**
-     * Access constructor.
-     *
-     * @param string|Access $value
-     */
-    public function __construct($value)
-    {
-        if (!($value instanceof Access) && !is_string($value)) {
-            throw InvalidArgumentException::buildException($value, 'string|' . Access::class, 'value');
-        }
-
-        $valueString = (string) $value;
-        if (self::ACCESS_ALLOW !== $valueString
-            && self::ACCESS_DENY !== $valueString
-            && self::ACCESS_REQUIRE_LOGIN !== $valueString
-            && self::ACCESS_AUTHORIZED !== $valueString
-            && self::ACCESS_UNAUTHORIZED !== $valueString) {
-            throw new InvalidArgumentException('Argument value must be one of the ACCESS constants');
-        }
-
-        $this->value = $valueString;
-    }
-
-    /**
-     * Return a new instance with `ACCESS_DENY` state
-     */
-    public static function denied(): self
-    {
-        return new static(self::ACCESS_DENY);
-    }
-
-    /**
-     * Return a new instance with `ACCESS_ALLOW` state
-     */
-    public static function allowed(): self
-    {
-        return new static(self::ACCESS_ALLOW);
-    }
-
-    /**
-     * Return a new instance with `ACCESS_REQUIRE_LOGIN` state
-     */
-    public static function requiresLogin(): self
-    {
-        return new static(self::ACCESS_REQUIRE_LOGIN);
-    }
-
-    /**
-     * Return a new instance with `ACCESS_AUTHORIZED` state
-     */
-    public static function authorized(): self
-    {
-        return new static(self::ACCESS_AUTHORIZED);
-    }
-
-    /**
-     * Return a new instance with `ACCESS_UNAUTHORIZED` state
-     */
-    public static function unauthorized(): self
-    {
-        return new static(self::ACCESS_UNAUTHORIZED);
-    }
-
-    public function isAllowed(): bool
-    {
-        return self::ACCESS_ALLOW === $this->value;
-    }
-
-    public function isDenied(): bool
-    {
-        return self::ACCESS_DENY === $this->value;
-    }
-
-    public function isRequireLogin(): bool
-    {
-        return self::ACCESS_REQUIRE_LOGIN === $this->value;
-    }
-
-    public function isAuthorized(): bool
-    {
-        return self::ACCESS_AUTHORIZED === $this->value;
-    }
-
-    public function isUnauthorized(): bool
-    {
-        return self::ACCESS_UNAUTHORIZED === $this->value;
-    }
-
-    public function __toString()
-    {
-        return $this->value;
-    }
+    // /**
+    //  * Return a new instance with `ACCESS_DENY` state
+    //  *
+    //  * @deprecated
+    //  */
+    // public static function denied(): self
+    // {
+    //     return self::Denied;
+    // }
+    //
+    // /**
+    //  * Return a new instance with `ACCESS_ALLOW` state
+    //  *
+    //  * @deprecated
+    //  */
+    // public static function allowed(): self
+    // {
+    //     return (self::_ALLOW);
+    // }
+    //
+    // /**
+    //  * Return a new instance with `ACCESS_REQUIRE_LOGIN` state
+    //  *
+    //  * @deprecated
+    //  */
+    // public static function requiresLogin(): self
+    // {
+    //     return (self::ACCESS_REQUIRE_LOGIN);
+    // }
+    //
+    // /**
+    //  * Return a new instance with `ACCESS_AUTHORIZED` state
+    //  *
+    //  * @deprecated
+    //  */
+    // public static function authorized(): self
+    // {
+    //     return (self::ACCESS_AUTHORIZED);
+    // }
+    //
+    // /**
+    //  * Return a new instance with `ACCESS_UNAUTHORIZED` state
+    //  *
+    //  * @deprecated
+    //  */
+    // public static function unauthorized(): self
+    // {
+    //     return (self::ACCESS_UNAUTHORIZED);
+    // }
+    //
+    // public function isAllowed(): bool
+    // {
+    //     return self::ACCESS_ALLOW === $this->value;
+    // }
+    //
+    // public function isDenied(): bool
+    // {
+    //     return self::ACCESS_DENY === $this->value;
+    // }
+    //
+    // public function isRequireLogin(): bool
+    // {
+    //     return self::ACCESS_REQUIRE_LOGIN === $this->value;
+    // }
+    //
+    // public function isAuthorized(): bool
+    // {
+    //     return self::ACCESS_AUTHORIZED === $this->value;
+    // }
+    //
+    // public function isUnauthorized(): bool
+    // {
+    //     return self::ACCESS_UNAUTHORIZED === $this->value;
+    // }
+    //
+    // public function __toString(): string
+    // {
+    //     return $this->value;
+    // }
 }

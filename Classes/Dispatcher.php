@@ -179,10 +179,13 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         }
 
         // Checks if the request needs authentication
-        $access = $this->objectManager->getAccessController($request)->getAccess($request);
-        switch (true) {
-            case $access->isAllowed():
-            case $access->isAuthorized():
+        $access = $this->objectManager->getAccessController($request)
+            ->getAccess($request);
+
+        // TODO: Dispatch event to modify access?
+
+        return match ($access) {
+            Access::Allowed, Access::Authorized => (function () use ($request) {
                 $newResponse = $this->getCachedResponseOrCallHandler($request);
 
                 $this->logger->logResponse(
@@ -191,14 +194,17 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                 );
 
                 return $newResponse;
+            })(),
 
-            case $access->isUnauthorized():
-                return $this->responseFactory->createErrorResponse('Unauthorized', 401, $request);
+            Access::Denied => $this->responseFactory
+                ->createErrorResponse('Forbidden', 403, $request),
+            Access::Unauthorized => $this->responseFactory
+                ->createErrorResponse('Unauthorized', 401, $request),
 
-            case $access->isDenied():
-            default:
-                return $this->responseFactory->createErrorResponse('Forbidden', 403, $request);
-        }
+            Access::RequireLogin => throw new UnexpectedValueException(
+                'Access::RequireLogin has not been evaluated'
+            ),
+        };
     }
 
     private function addHeaders(
