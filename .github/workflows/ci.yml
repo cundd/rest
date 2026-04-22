@@ -3,22 +3,21 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-
   testsuite:
     name: all tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '8.1', '8.2' ]
+        php: ["8.3", "8.4"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Composer
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerUpdate 
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composer update
 
       - name: Composer validate
-        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composerValidate
+        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s composer validate
 
       - name: Lint PHP
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -s lint
@@ -29,8 +28,8 @@ jobs:
       - name: Functional tests with mariadb
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d mariadb -s functional
 
-#      - name: Functional tests with postgres
-#        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d postgres -s functional
+      #      - name: Functional tests with postgres
+      #        run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d postgres -s functional
 
       - name: Functional tests with sqlite
         run: Build/Scripts/runTests.sh -p ${{ matrix.php }} -d sqlite -s functional
