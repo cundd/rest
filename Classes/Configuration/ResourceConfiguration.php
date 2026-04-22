@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Configuration;
 
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidArgumentException;
+use Cundd\Rest\Request\ResourceType;
 
 class ResourceConfiguration
 {

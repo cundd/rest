@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Utility\DebugUtility;

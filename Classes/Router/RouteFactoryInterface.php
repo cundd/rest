@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Request\ResourceType;
 
 /**
  * Interface for Route factory methods

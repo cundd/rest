@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cundd\Rest\Domain\Model;
+namespace Cundd\Rest\Request;
 
 use InvalidArgumentException;
+use Stringable;
 
-class Format
+final class Format
 {
     public const DEFAULT_FORMAT = 'json';
     public const MIME_TYPES = [
@@ -69,7 +70,7 @@ class Format
         return new static('json');
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format;
     }
@@ -77,7 +78,7 @@ class Format
     /**
      * Return if the given format is valid
      */
-    public static function isValidFormat($format): bool
+    public static function isValidFormat(Format|string|Stringable|null $format): bool
     {
         if (!$format) {
             return false;
@@ -85,7 +86,7 @@ class Format
 
         $mimeTypes = self::MIME_TYPES;
 
-        return isset($mimeTypes[$format]);
+        return isset($mimeTypes[(string) $format]);
     }
 
     private static function assertValidFormat(string $format): void

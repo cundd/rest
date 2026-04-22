@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Router;
 
-use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\Router\ParameterTypeInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Tests\RequestBuilderTrait;

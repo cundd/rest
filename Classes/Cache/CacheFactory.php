@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cundd\Rest\Cache;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\ObjectManager;
+use Cundd\Rest\Request\ResourceType;
 
 class CacheFactory
 {

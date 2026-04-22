@@ -9,9 +9,9 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Cache\CacheInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\DataProvider\DataProviderInterface;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\ResourceType;
 
 /**
  * Interface for the specialized Object Manager

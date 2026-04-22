@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Router;
 
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\ResourceType;
 use Psr\Http\Message\ResponseInterface;
 
 /**

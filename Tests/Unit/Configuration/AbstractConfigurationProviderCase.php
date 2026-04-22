@@ -8,9 +8,9 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\Request\ResourceType;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 

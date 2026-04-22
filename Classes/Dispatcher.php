@@ -6,11 +6,11 @@ namespace Cundd\Rest;
 
 use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Utility\DebugUtility;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
 
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\ClassLoadingException;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Exception\InvalidPropertyException;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\SingletonInterface;
 use Exception;
 use Psr\Log\LoggerInterface;

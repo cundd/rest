@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
 
-use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Http\RestRequestInterface;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 

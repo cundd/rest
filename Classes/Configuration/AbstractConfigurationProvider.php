@@ -6,9 +6,9 @@ namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\Access\Exception\InvalidConfigurationException as InvalidAccessConfigurationException;
 use Cundd\Rest\DataProvider\Utility;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\SingletonInterface;
 
 use function is_numeric;

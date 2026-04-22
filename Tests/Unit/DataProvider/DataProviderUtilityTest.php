@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\DataProvider;
 
 use Cundd\Rest\DataProvider\Utility;
-use Cundd\Rest\Domain\Model\ResourceType;
+use Cundd\Rest\Request\ResourceType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

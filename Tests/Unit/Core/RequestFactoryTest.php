@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Domain\Model\Format;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Request;
+use Cundd\Rest\Request\Format;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
 use Laminas\Diactoros\ServerRequestFactory;

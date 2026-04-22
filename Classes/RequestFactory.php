@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Domain\Model\Format;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\Format;
+use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\Utility\SiteLanguageUtility;
 use Cundd\Rest\Utility\SiteUtility;
 use Psr\Http\Message\ServerRequestInterface;

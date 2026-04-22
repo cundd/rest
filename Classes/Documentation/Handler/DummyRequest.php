@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Documentation\Handler;
 
-use Cundd\Rest\Domain\Model\Format;
-use Cundd\Rest\Domain\Model\ResourceType;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\Format;
+use Cundd\Rest\Request\ResourceType;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -39,7 +39,7 @@ class DummyRequest implements RestRequestInterface
         return clone $this;
     }
 
-    public function getSentData()
+    public function getSentData(): mixed
     {
         return null;
     }
