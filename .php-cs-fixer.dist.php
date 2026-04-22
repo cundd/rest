@@ -22,6 +22,7 @@ return (new PhpCsFixer\Config())
             'phpdoc_summary'                                   => false,
             'simplified_if_return'                             => true,
             'single_line_throw'                                => false,
+            'no_useless_else'                                  => false,
         ],
     )
 

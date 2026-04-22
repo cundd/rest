@@ -1,0 +1,15 @@
+parameters:
+	level: 8
+	paths:
+		- Classes
+		- Tests
+	excludePaths:
+		analyseAndScan:
+			- .Build
+		analyse:
+			- Classes/Http/ServerRequestProxyTrait.php
+			- Classes/Documentation/Handler/DummyRequest.php
+			- Classes/Bootstrap/V12/V12CoreBootstrap.php?
+	treatPhpDocTypesAsCertain: false
+includes:
+	- .Build/vendor/jangregor/phpstan-prophecy/extension.neon
