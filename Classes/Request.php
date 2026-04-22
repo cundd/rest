@@ -7,6 +7,7 @@ namespace Cundd\Rest;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Http\ServerRequestProxyTrait;
 use Cundd\Rest\Request\Format;
+use Cundd\Rest\Request\RequestType;
 use Cundd\Rest\Request\ResourceType;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -101,19 +102,24 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return $this->format;
     }
 
+    public function getRequestType(): RequestType
+    {
+        return RequestType::fromRequest($this);
+    }
+
     public function isPreflight(): bool
     {
-        return 'OPTIONS' === strtoupper($this->getMethod());
+        return RequestType::Preflight === $this->getRequestType();
     }
 
     public function isWrite(): bool
     {
-        return !$this->isRead() && !$this->isPreflight();
+        return RequestType::Write === $this->getRequestType();
     }
 
     public function isRead(): bool
     {
-        return in_array(strtoupper($this->getMethod()), ['GET', 'HEAD']);
+        return RequestType::Read === $this->getRequestType();
     }
 
     public function withFormat(Format $format): RestRequestInterface

@@ -6,6 +6,7 @@ namespace Cundd\Rest\Router;
 
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\Request\RequestType;
 use Cundd\Rest\Request\ResourceType;
 use Psr\Http\Message\ResponseInterface;
 
@@ -164,6 +165,11 @@ final class Route implements RouteInterface, RouteFactoryInterface
     public function getParameters(): array
     {
         return $this->parameters;
+    }
+
+    public function getRequestType(): RequestType
+    {
+        return RequestType::fromMethod($this->getMethod());
     }
 
     /**
