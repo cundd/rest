@@ -7,6 +7,7 @@ namespace Cundd\Rest\DataProvider;
 use Cundd\Rest\Exception\ClassLoadingException;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Exception\InvalidPropertyException;
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Persistence\Generic\RestQuerySettings;
 use Cundd\Rest\Request\ResourceType;
@@ -19,6 +20,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Persistence\RepositoryInterface;
 use TYPO3\CMS\Extbase\Property\Exception as ExtbaseException;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
@@ -36,29 +38,17 @@ use function sprintf;
  */
 class DataProvider implements DataProviderInterface, ClassLoadingInterface, SingletonInterface
 {
-    protected ObjectManagerInterface $objectManager;
-
-    protected ExtractorInterface $extractor;
-
-    protected ?LoggerInterface $logger;
-
-    protected IdentityProviderInterface $identityProvider;
-
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        ExtractorInterface $extractor,
-        IdentityProviderInterface $identityProvider,
-        ?LoggerInterface $logger = null,
+        protected readonly ObjectManagerInterface $objectManager,
+        protected readonly ExtractorInterface $extractor,
+        protected readonly IdentityProviderInterface $identityProvider,
+        protected ?LoggerInterface $logger = null,
     ) {
-        $this->objectManager = $objectManager;
-        $this->extractor = $extractor;
-        $this->logger = $logger;
-        $this->identityProvider = $identityProvider;
     }
 
-    public function getModelData(mixed $model): mixed
+    public function getModelData(RestRequestInterface $request, mixed $model): mixed
     {
-        return $this->extractor->extract($model);
+        return $this->extractor->extract($request->getUri(), $model);
     }
 
     public function getRepositoryClassForResourceType(ResourceType $resourceType): string
@@ -68,13 +58,17 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
     }
 
+    /**
+     * @return RepositoryInterface<object>
+     */
     public function getRepositoryForResourceType(ResourceType $resourceType): object
     {
+        /** @var class-string<object> $repositoryClass */
         $repositoryClass = $this->getRepositoryClassForResourceType($resourceType);
         $repository = null;
         $exception = null;
-        /* @var RepositoryInterface|null $repository */
         try {
+            /** @var RepositoryInterface<object> $repository */
             $repository = $this->objectManager->get($repositoryClass);
         } catch (Exception $exception) {
         }
@@ -88,14 +82,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
                     $triedClasses
                 );
                 throw new ClassLoadingException($message, 1542116783, $exception);
-            } else {
-                $message = sprintf(
-                    'Repository for resource type "%s" could not be found. %s',
-                    $resourceType,
-                    $triedClasses
-                );
-                throw new ClassLoadingException($message, 1542116782);
             }
+            $message = sprintf(
+                'Repository for resource type "%s" could not be found. %s',
+                $resourceType,
+                $triedClasses
+            );
+            throw new ClassLoadingException($message, 1542116782);
         }
         /** @var QuerySettingsInterface $defaultQuerySettings */
         $defaultQuerySettings = $this->objectManager->get(RestQuerySettings::class);
@@ -104,9 +97,14 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $repository;
     }
 
+    /**
+     * @return class-string<object>|string
+     */
     public function getModelClassForResourceType(ResourceType $resourceType): string
     {
-        $modelEntityForResourceType = Utility::getModelEntityForResourceType($resourceType);
+        $modelEntityForResourceType = Utility::getModelEntityForResourceType(
+            $resourceType
+        );
         if ($modelEntityForResourceType && class_exists($modelEntityForResourceType)) {
             return $modelEntityForResourceType;
         }
@@ -114,30 +112,41 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return '';
     }
 
-    public function fetchAllModels(ResourceType $resourceType): iterable
+    public function fetchAllModels(RestRequestInterface $request): iterable
     {
-        return $this->getRepositoryForResourceType($resourceType)->findAll();
+        return $this->getRepositoryForResourceType(
+            $request->getResourceType(),
+        )->findAll();
     }
 
-    public function countAllModels(ResourceType $resourceType): int
+    public function countAllModels(RestRequestInterface $request): int
     {
-        return $this->getRepositoryForResourceType($resourceType)->countAll();
+        return $this->getRepositoryForResourceType(
+            $request->getResourceType(),
+        )->countAll();
     }
 
-    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): ?object
-    {
+    public function fetchModel(
+        RestRequestInterface $request,
+        int|array|string $identifier,
+    ): ?object {
         if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForResourceType($identifier, $resourceType);
+            return $this->getModelWithIdentityForResourceType(
+                $identifier,
+                $request->getResourceType(),
+            );
         }
 
         return null;
     }
 
-    public function createModel(array $data, ResourceType $resourceType): ?object
+    public function createModel(RestRequestInterface $request, array $data): ?object
     {
         // If no data is given return a new empty instance
         if (!$data) {
-            return $this->getEmptyModelForResourceType($resourceType);
+            return $this->getEmptyModelForResourceType(
+                $request->getResourceType(),
+            );
         }
 
         // It is **not** allowed to insert Models with a defined UID
@@ -148,39 +157,50 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
 
         // Get a fresh model
-        return $this->convertIntoModel($data, $resourceType);
+        return $this->convertIntoModel($request, $data);
     }
 
-    public function getModelProperty(object $model, string $propertyParameter): mixed
-    {
+    /**
+     * @param non-empty-string $propertyParameter
+     */
+    public function getModelProperty(
+        RestRequestInterface $request,
+        object $model,
+        string $propertyParameter,
+    ): mixed {
         InvalidArgumentException::assertObject($model);
         $propertyKey = $this->convertPropertyParameterToKey($propertyParameter);
 
         $normalizedGetter = 'get' . ucfirst($propertyKey);
         if (method_exists($model, $normalizedGetter) && is_callable([$model, $normalizedGetter])) {
-            return $this->getModelData($model->$normalizedGetter());
+            return $this->getModelData($request, $model->$normalizedGetter());
         }
 
         $getter = 'get' . ucfirst($propertyParameter);
         if (method_exists($model, $getter) && is_callable([$model, $getter])) {
-            return $this->getModelData($model->$getter());
+            return $this->getModelData($request, $model->$getter());
         }
 
         if ($model instanceof DomainObjectInterface) {
             $value = $model->_getProperty($propertyKey);
             if (null !== $value) {
-                return $this->getModelData($value);
-            } else {
-                return $this->getModelData($model->_getProperty($propertyParameter));
+                return $this->getModelData($request, $value);
             }
+
+            return $this->getModelData(
+                $request,
+                $model->_getProperty($propertyParameter)
+            );
         }
 
         return null;
     }
 
-    public function saveModel(object $model, ResourceType $resourceType): void
+    public function saveModel(RestRequestInterface $request, object $model): void
     {
-        $repository = $this->getRepositoryForResourceType($resourceType);
+        $repository = $this->getRepositoryForResourceType(
+            $request->getResourceType()
+        );
         if ($this->isModelNew($model)) {
             $repository->add($model);
         } else {
@@ -198,16 +218,21 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    public function removeModel(object $model, ResourceType $resourceType): void
+    public function removeModel(RestRequestInterface $request, object $model): void
     {
         InvalidArgumentException::assertObjectOrNull($model);
-        $repository = $this->getRepositoryForResourceType($resourceType);
+        $repository = $this->getRepositoryForResourceType(
+            $request->getResourceType(),
+        );
         $repository->remove($model);
         $this->persistAllChanges();
     }
 
-    public function convertIntoModel(array $data, ResourceType $resourceType): ?object
-    {
+    public function convertIntoModel(
+        RestRequestInterface $request,
+        array $data,
+    ): ?object {
+        $resourceType = $request->getResourceType();
         $propertyMapper = $this->objectManager->get(PropertyMapper::class);
         try {
             return $propertyMapper->convert(
@@ -222,14 +247,16 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         }
     }
 
-    public function getEmptyModelForResourceType(ResourceType $resourceType)
-    {
+    public function getEmptyModelForResourceType(
+        ResourceType $resourceType,
+    ): object {
+        /** @var class-string<object> $modelClassForResourceType */
         $modelClassForResourceType = $this->getModelClassForResourceType($resourceType);
         if ($this->objectManager->has($modelClassForResourceType)) {
             return $this->objectManager->get($modelClassForResourceType);
-        } else {
-            return new $modelClassForResourceType();
         }
+
+        return new $modelClassForResourceType();
     }
 
     /**
@@ -249,11 +276,19 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * @return int|string|null Returns the UID or NULL if the object couldn't be found
      */
-    protected function getUidOfModelWithIdentityForResourceType($identifier, ResourceType $resourceType)
-    {
-        $model = $this->getModelWithIdentityForResourceType($identifier, $resourceType);
-
-        return $model ? $model->getUid() : null;
+    protected function getUidOfModelWithIdentityForResourceType(
+        mixed $identifier,
+        ResourceType $resourceType,
+    ): int|string|null {
+        $model = $this->getModelWithIdentityForResourceType(
+            $identifier,
+            $resourceType
+        );
+        if ($model && is_callable([$model, 'getUid'])) {
+            return $model->getUid();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -261,10 +296,21 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * Example:
      *  'dog-name' => 'dogName'
+     *
+     * @param non-empty-string $propertyParameter
+     *
+     * @return non-empty-string
      */
     protected function convertPropertyParameterToKey(string $propertyParameter): string
     {
-        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $propertyParameter)));
+        $key = str_replace(' ', '', ucwords(str_replace(
+            ['_', '-'],
+            ' ',
+            $propertyParameter
+        )));
+        assert('' !== $key);
+
+        return $key;
     }
 
     /**
@@ -276,14 +322,20 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         /* @noinspection PhpUnusedParameterInspection */
         ResourceType $resourceType,
     ): object {
-        return $this->objectManager->get(PropertyMappingConfigurationBuilder::class)->build();
+        return $this->objectManager
+            ->get(PropertyMappingConfigurationBuilder::class)
+            ->build();
     }
 
     /**
      * Load the model with the given identifier
+     *
+     * @return DomainObjectInterface|object|null
      */
-    protected function getModelWithIdentityForResourceType(mixed $identifier, ResourceType $resourceType): ?object
-    {
+    protected function getModelWithIdentityForResourceType(
+        mixed $identifier,
+        ResourceType $resourceType,
+    ): ?object {
         $repository = $this->getRepositoryForResourceType($resourceType);
 
         // Tries to fetch the object by UID
@@ -304,10 +356,8 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             default   => false,
         };
 
-        if ($typeMatching) {
-            $findMethod = 'findOneBy' . ucfirst($property);
-
-            return call_user_func([$repository, $findMethod], $identifier);
+        if ($typeMatching && $property && $repository instanceof Repository) {
+            return $repository->findOneBy([$property => $identifier]);
         }
 
         return null;
@@ -315,6 +365,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     /**
      * Prepares the given data before transforming it to a model
+     *
+     * @param array<string,mixed> $data
+     *
+     * @return array<string,mixed>
      */
     protected function prepareModelData(array $data): array
     {
@@ -327,7 +381,8 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
     protected function getLogger(): LoggerInterface
     {
         if (!$this->logger) {
-            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance(LogManager::class)
+                ->getLogger(__CLASS__);
         }
 
         return $this->logger;

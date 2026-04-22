@@ -13,30 +13,28 @@ interface DataProviderInterface
     /**
      * Return all Domain Models for the given API resource type
      *
-     * @param ResourceType $resourceType API resource type to get the repository for
-     *
-     * @return object[]|DomainObjectInterface[]|QueryResultInterface
+     * @return object[]|DomainObjectInterface[]|QueryResultInterface<mixed,DomainObjectInterface>
      */
-    public function fetchAllModels(ResourceType $resourceType): iterable;
+    public function fetchAllModels(RestRequestInterface $request): iterable;
 
     /**
      * Return the number of all Domain Models for the given API resource type
-     *
-     * @param ResourceType $resourceType API resource type to get the repository for
      */
-    public function countAllModels(ResourceType $resourceType): int;
+    public function countAllModels(RestRequestInterface $request): int;
 
     /**
      * Return a Domain Model for the given API resource type and data
      *
      * This method will load existing models
      *
-     * @param int|array|string $identifier   Data of the new model or it's UID
-     * @param ResourceType     $resourceType API resource type to get the repository for
+     * @param int|array<string,mixed>|string $identifier Data of the new model or it's UID
      *
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
-    public function fetchModel(int|array|string $identifier, ResourceType $resourceType): ?object;
+    public function fetchModel(
+        RestRequestInterface $request,
+        int|array|string $identifier,
+    ): ?object;
 
     /**
      * Create a new Domain Model with the given data
@@ -44,47 +42,66 @@ interface DataProviderInterface
      * Implementations are free to decide if identifiers are accepted (e.g. an exception will be thrown for Extbase
      * Models if the property `uid` or `__identity` is given)
      *
-     * @param array        $data         Data of the new model
-     * @param ResourceType $resourceType API resource type to get the repository for
+     * @param array<string,mixed> $data Data of the new model
      *
      * @return object|null Return the created Model on success otherwise an Exception
      */
-    public function createModel(array $data, ResourceType $resourceType): ?object;
+    public function createModel(
+        RestRequestInterface $request,
+        array $data,
+    ): ?object;
 
     /**
      * Converts the data into an instance of the Domain Model for the Resource Type
      *
+     * @param array<string,mixed> $data
+     *
      * @return object|DomainObjectInterface|null
      */
-    public function convertIntoModel(array $data, ResourceType $resourceType): ?object;
+    public function convertIntoModel(
+        RestRequestInterface $request,
+        array $data,
+    ): ?object;
 
     /**
      * Extract the data from the given Model or one of it's properties
      *
-     * @return array|int|bool|string|float|null
+     * @return array<string,mixed>|int|bool|string|float|null
      */
-    public function getModelData(mixed $model): mixed;
+    public function getModelData(
+        RestRequestInterface $request,
+        mixed $model,
+    ): mixed;
 
     /**
      * Return the property data from the given Model
      *
+     * @param non-empty-string             $propertyParameter
      * @param object|DomainObjectInterface $model
      */
-    public function getModelProperty(object $model, string $propertyParameter): mixed;
+    public function getModelProperty(
+        RestRequestInterface $request,
+        object $model,
+        string $propertyParameter,
+    ): mixed;
 
     /**
      * Add or update the given Model in the repository
      *
      * @param object|DomainObjectInterface $model
-     * @param ResourceType                 $resourceType The API resource type
      */
-    public function saveModel(object $model, ResourceType $resourceType): void;
+    public function saveModel(
+        RestRequestInterface $request,
+        object $model,
+    ): void;
 
     /**
      * Remove the given model from the repository for the given API resource type
      *
      * @param object|DomainObjectInterface $model
-     * @param ResourceType                 $resourceType The API resource type
      */
-    public function removeModel(object $model, ResourceType $resourceType): void;
+    public function removeModel(
+        RestRequestInterface $request,
+        object $model,
+    ): void;
 }
