@@ -56,11 +56,6 @@ interface RestRequestInterface extends ServerRequestInterface
     public function isRead(): bool;
 
     /**
-     * Return the key to use for the root object if addRootObjectForCollection is enabled
-     */
-    public function getRootObjectKey(): string;
-
-    /**
      * Return an instance with the given format
      *
      * This method MUST be implemented in such a way as to retain the

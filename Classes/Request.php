@@ -116,11 +116,6 @@ class Request implements ServerRequestInterface, RestRequestInterface
         return in_array(strtoupper($this->getMethod()), ['GET', 'HEAD']);
     }
 
-    public function getRootObjectKey(): string
-    {
-        return $this->getOriginalResourceType();
-    }
-
     public function withFormat(Format $format): RestRequestInterface
     {
         return new static(
