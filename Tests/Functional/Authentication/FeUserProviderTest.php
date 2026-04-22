@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for the FeUser based User Provider
@@ -16,10 +17,7 @@ class FeUserProviderTest extends AbstractCase
 {
     use FeUserCaseTrait;
 
-    /**
-     * @var UserProviderInterface
-     */
-    protected $fixture;
+    protected UserProviderInterface $fixture;
 
     public function setUp(): void
     {
@@ -27,13 +25,11 @@ class FeUserProviderTest extends AbstractCase
         $this->fixture = new FeUserProvider();
 
         $this->addApiKeyColumn();
-        $this->importDataSet(__DIR__ . '/../Fixtures/login.xml');
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/login.csv');
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForValidUserTest()
+    #[Test]
+    public function checkCredentialsForValidUserTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('dan', ''));
         $this->assertFalse($this->fixture->checkCredentials('dan', 'wrongKey'));
@@ -41,50 +37,40 @@ class FeUserProviderTest extends AbstractCase
         $this->assertTrue($this->fixture->checkCredentials('dan', 'api-key'));
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForUserWithoutApiKeyTest()
+    #[Test]
+    public function checkCredentialsForUserWithoutApiKeyTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('test', 'someKey'));
         $this->assertFalse($this->fixture->checkCredentials('test', 'NULL'));
         $this->assertFalse($this->fixture->checkCredentials('test', ''));
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForDeletedUserTest()
+    #[Test]
+    public function checkCredentialsForDeletedUserTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', 'api-key'));
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('deleted_user', ''));
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForDisabledUserTest()
+    #[Test]
+    public function checkCredentialsForDisabledUserTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', 'api-key'));
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('disabled_user', ''));
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForExpiredUserTest()
+    #[Test]
+    public function checkCredentialsForExpiredUserTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('expired_user', 'api-key'));
         $this->assertFalse($this->fixture->checkCredentials('expired_user', 'wrongKey'));
         $this->assertFalse($this->fixture->checkCredentials('expired_user', ''));
     }
 
-    /**
-     * @test
-     */
-    public function checkCredentialsForFutureUserTest()
+    #[Test]
+    public function checkCredentialsForFutureUserTest(): void
     {
         $this->assertFalse($this->fixture->checkCredentials('future_user', 'api-key'));
         $this->assertFalse($this->fixture->checkCredentials('future_user', 'wrongKey'));

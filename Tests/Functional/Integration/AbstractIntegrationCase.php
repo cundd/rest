@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
 use Cundd\Rest\Dispatcher;
-use Cundd\Rest\Dispatcher\DispatcherInterface;
+use Cundd\Rest\Dispatcher\DispatcherFactory;
+use Cundd\Rest\Dispatcher\ResponseHeaderUpdaterInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\Logger;
-use Cundd\Rest\ObjectManager;
+use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Site\Entity\Site;
 
-use function is_array;
 use function json_decode;
 use function putenv;
 use function sprintf;
@@ -30,9 +30,7 @@ class AbstractIntegrationCase extends AbstractCase
     use RequestBuilderTrait;
     use FrontendRequestTrait;
 
-    protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
-
-    private DispatcherInterface $dispatcher;
+    // protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
 
     public function setUp(): void
     {
@@ -40,27 +38,38 @@ class AbstractIntegrationCase extends AbstractCase
         putenv('TEST_MODE=true');
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/pages.csv');
-        $this->setUpFrontendRootPage(1, [
-            __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
-        ]);
+        $this->setUpFrontendRootPage(1000);
     }
 
+    /**
+     * @param array<string,mixed> $pathConfiguration
+     */
     protected function configurePath(
         ContainerInterface $objectManager,
         string $path,
         array $pathConfiguration,
     ): void {
-        /** @var TypoScriptConfigurationProvider $configurationProvider */
-        $configurationProvider = $objectManager->get(ConfigurationProviderInterface::class);
-        $configuration = $configurationProvider->getSettings();
-        $configuration['paths'][$path] = $pathConfiguration;
-        $configurationProvider->setSettings($configuration);
+        $this->mergeSiteConfiguration(
+            'test-site',
+            [
+                'settings' => [
+                    'rest' => [
+                        'settings' => [
+                            'paths' => [
+                                $path => $pathConfiguration,
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
     }
 
     /**
      * Dispatch the given Request using the REST Dispatcher
      *
-     * Use this method to preform an Integration Test against the REST extension's dispatching mechanism.
+     * Use this method to preform an Integration Test against the REST
+     * extension's dispatching mechanism.
      *
      * Limitations:
      *  - This will bypass TYPO3's routing
@@ -69,14 +78,18 @@ class AbstractIntegrationCase extends AbstractCase
         ContainerInterface $container,
         RestRequestInterface $request,
     ): ResponseInterface {
-        $dispatcher = new Dispatcher(
-            $container->get(ObjectManager::class),
-            $container->get(RequestFactoryInterface::class),
-            $container->get(ResponseFactoryInterface::class),
-            new Logger(new StreamLogger()),
-            $container->get(RouterInterface::class),
-            null
-        );
+        // $dispatcher = new Dispatcher(
+        //     $container->get(ObjectManagerInterface::class),
+        //     $container->get(RequestFactoryInterface::class),
+        //     $container->get(ResponseFactoryInterface::class),
+        //     new Logger(new StreamLogger()),
+        //     $container->get(RouterInterface::class),
+        //     $container->get(ResponseHeaderUpdaterInterface::class),
+        //     $container->get(EventDispatcherInterface::class),
+        // );
+
+        /** @var Dispatcher $dispatcher */
+        $dispatcher = $container->get(DispatcherFactory::class)->build();
 
         return $dispatcher->dispatch($request);
     }
@@ -84,30 +97,31 @@ class AbstractIntegrationCase extends AbstractCase
     /**
      * Build a request and dispatch it using the REST Dispatcher
      *
-     * @param null $basicAuth Ignored
+     * @param array<mixed,mixed>|string|null $body
+     * @param null                           $basicAuth Ignored
+     * @param array<mixed,mixed>             $headers
      *
      * @see dispatch()
      */
     public function buildRequestAndDispatch(
-        ContainerInterface $objectManager,
+        ContainerInterface $container,
         string $path,
         string $method = 'GET',
         array|string|null $body = null,
         array $headers = [],
         /** @noinspection PhpUnusedParameterInspection */
         $basicAuth = null,
+        ?Site $site = null,
     ): ResponseInterface {
-        $uri = 'http://localhost:8888/' . ltrim($path, '/');
-        $request = $this->buildTestRequest(
-            $uri,
+        $request = $this->buildTestRequestWithSite(
+            $path,
             $method,
-            [],
-            $headers,
             $body,
-            is_array($body) ? $body : null
+            $headers,
+            $site
         );
 
-        return $this->dispatch($objectManager, $request);
+        return $this->dispatch($container, $request);
     }
 
     protected function getErrorDescription(ResponseInterface $response): string
@@ -127,8 +141,8 @@ class AbstractIntegrationCase extends AbstractCase
     {
         if ($response instanceof ResponseInterface) {
             return $this->getParsedBody((string) $response->getBody());
-        } else {
-            return json_decode($response, true);
         }
+
+        return json_decode($response, true);
     }
 }

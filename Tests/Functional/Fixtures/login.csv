@@ -1,0 +1,7 @@
+"fe_users"
+,pid,tstamp,username,password,usergroup,disable,starttime,endtime,name,first_name,middle_name,last_name,address,telephone,fax,email,crdate,deleted,uc,title,zip,city,country,www,company,image,lastlogin,is_online,tx_extbase_type,tx_rest_apikey,
+,0,1320344719,test,password,1,0,0,0,Max Mustermann,Max,"",Mustermann,"","","","",1320060686,0,"\NULL",,,,,,,,1321968097,1321968097,0,"\NULL"
+,0,1393354523,dan,password,1,0,0,0,Daniel Corn,Daniel,"",Corn,"","","","",1393354416,0,"\NULL",,,,,,,,1394886395,1394891237,0,"api-key"
+,0,1439302303,deleted_user,password,1,0,0,0,Dr. Evil,Dr.,"",Evil,"","","","",1439302187,1,"\NULL","","","","","","","",1439302329,1439302329,0,api-key,
+,0,1439302466,disabled_user,password,1,1,0,0,Cruella De Vil,Cruella,"",De Vil,"","","","",1439302466,0,"\NULL","","","","","","","",1439302466,1439302466,0,api-key,
+,0,1439302466,expired_user,password,1,0,842630500,842630580,Tupac Shakur,Tupac,"",Shakur,"","","","",1439302466,0,"\NULL","","","","","","","",1439302466,1439302466,0,api-key,

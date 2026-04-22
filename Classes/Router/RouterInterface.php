@@ -18,7 +18,7 @@ interface RouterInterface
      *
      * @return ResponseInterface|mixed
      */
-    public function dispatch(RestRequestInterface $request);
+    public function dispatch(RestRequestInterface $request): mixed;
 
     /**
      * Add the given Route
@@ -26,22 +26,38 @@ interface RouterInterface
     public function add(RouteInterface $route): RouterInterface;
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method GET
+     * Create and registers a new Route with the given pattern and callback for
+     * the method GET
      */
-    public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface;
+    public function routeGet(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface;
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method POST
+     * Create and registers a new Route with the given pattern and callback for
+     * the method POST
      */
-    public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface;
+    public function routePost(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface;
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method PUT
+     * Create and registers a new Route with the given pattern and callback for
+     * the method PUT
      */
-    public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface;
+    public function routePut(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface;
 
     /**
-     * Creates and registers a new Route with the given pattern and callback for the method DELETE
+     * Create and registers a new Route with the given pattern and callback for
+     * the method DELETE
      */
-    public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface;
+    public function routeDelete(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface;
 }

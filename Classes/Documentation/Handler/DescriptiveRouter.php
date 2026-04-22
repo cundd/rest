@@ -14,7 +14,7 @@ use Cundd\Rest\Router\Router;
  */
 class DescriptiveRouter extends Router
 {
-    public function dispatch(RestRequestInterface $request)
+    public function dispatch(RestRequestInterface $request): mixed
     {
         return new NotFoundException();
     }

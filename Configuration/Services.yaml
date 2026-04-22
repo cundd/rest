@@ -6,8 +6,12 @@ services:
     public: false
 
   Cundd\Rest\:
-    resource: '../Classes/*'
-    exclude: [ '../Classes/Configuration/StandaloneConfigurationProvider.php','../Classes/Utility/Profiler.php','../Classes/Domain/Model/*' ]
+    resource: "../Classes/*"
+    exclude:
+      [
+        "../Classes/Configuration/StandaloneConfigurationProvider.php",
+        "../Classes/Configuration/SiteSettingsConfigurationProvider.php",
+      ]
 
   Cundd\Rest\Access\ConfigurationBasedAccessController:
     public: true
@@ -21,15 +25,19 @@ services:
   Cundd\Rest\Authentication\CredentialsAuthenticationProvider:
     public: true
 
+  Cundd\Rest\Bootstrap\MiddlewareBootstrap:
+    public: true
+
   Cundd\Rest\Cache\Cache:
     public: true
   Cundd\Rest\Cache\CacheFactory:
     public: true
 
-  Cundd\Rest\Configuration\ConfigurationProviderInterface:
-    alias: 'Cundd\Rest\Configuration\TypoScriptConfigurationProvider'
-    public: true
-  Cundd\Rest\Configuration\TypoScriptConfigurationProvider:
+  Cundd\Rest\Configuration\Access:
+    autowire: false
+
+  Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface:
+    alias: 'Cundd\Rest\Configuration\ConfigurationProviderFactory'
     public: true
 
   Cundd\Rest\DataProvider\DataProviderInterface:
@@ -40,9 +48,15 @@ services:
   Cundd\Rest\DataProvider\Extractor:
     public: true
 
-  Cundd\Rest\Dispatcher\DispatcherInterface: '@Cundd\Rest\Dispatcher'
-  Cundd\Rest\Dispatcher:
+  Cundd\Rest\Dispatcher\DispatcherFactory:
     public: true
+
+  Cundd\Rest\Dispatcher\DispatcherInterface:
+    alias: 'Cundd\Rest\Dispatcher'
+    public: true
+
+  Cundd\Rest\Request\ResourceType:
+    autowire: false
 
   Cundd\Rest\RequestFactoryInterface:
     alias: 'Cundd\Rest\RequestFactory'

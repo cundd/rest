@@ -9,6 +9,8 @@ use Cundd\Rest\Router\ParameterTypeInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class RouteTest extends TestCase
@@ -20,10 +22,6 @@ class RouteTest extends TestCase
      */
     private $cb;
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,34 +31,35 @@ class RouteTest extends TestCase
         };
     }
 
-    /**
-     * @test
-     */
-    public function processTest()
+    #[Test]
+    public function processTest(): void
     {
         $this->assertEquals(
             'hello',
-            Route::routeWithPattern('a/route', $this->cb)->process($this->buildTestRequest('/a/route'))
+            Route::routeWithPattern('a/route', $this->cb)
+                ->process($this->buildTestRequest('/a/route'))
         );
     }
 
     /**
-     * @test
-     *
-     * @dataProvider routeShouldTrimSlashesDataProvider
-     *
-     * @param string $inputPattern
-     * @param string $outputPattern
+     * @param non-empty-string $inputPattern
      */
-    public function routeShouldStartWithSlashTest($inputPattern, $outputPattern)
-    {
-        $this->assertEquals($outputPattern, Route::routeWithPattern($inputPattern, $this->cb)->getPattern());
+    #[Test]
+    #[DataProvider('routeShouldTrimSlashesDataProvider')]
+    public function routeShouldStartWithSlashTest(
+        string $inputPattern,
+        string $outputPattern,
+    ): void {
+        $this->assertEquals(
+            $outputPattern,
+            Route::routeWithPattern($inputPattern, $this->cb)->getPattern()
+        );
     }
 
     /**
-     * @return array
+     * @return array<int,array<int,string>>
      */
-    public function routeShouldTrimSlashesDataProvider()
+    public static function routeShouldTrimSlashesDataProvider(): array
     {
         return [
             ['/', '/'],
@@ -74,10 +73,8 @@ class RouteTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function routeShouldAcceptResourceTypeTest()
+    #[Test]
+    public function routeShouldAcceptResourceTypeTest(): void
     {
         $this->assertEquals(
             '/path',
@@ -94,30 +91,28 @@ class RouteTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getDefaultMethodTest()
+    #[Test]
+    public function getDefaultMethodTest(): void
     {
         $this->assertEquals('GET', Route::routeWithPattern('/', $this->cb)->getMethod());
     }
 
     /**
-     * @test
-     *
-     * @dataProvider getMethodTestDataProvider
-     *
-     * @param string $method
-     * @param string $expected
+     * @param non-empty-string $method
      */
-    public function getMethodTest($method, $expected)
+    #[Test]
+    #[DataProvider('getMethodTestDataProvider')]
+    public function getMethodTest(string $method, string $expected): void
     {
         $route = new Route('/', $method, $this->cb);
 
         $this->assertEquals($expected, $route->getMethod());
     }
 
-    public function getMethodTestDataProvider()
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    public static function getMethodTestDataProvider(): array
     {
         return [
             ['GET', 'GET'],
@@ -138,22 +133,25 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider deeperPathsHaveHigherPriorityDataProvider
-     *
-     * @param string $patternLowPriority
-     * @param string $patternHighPriority
+     * @param non-empty-string $patternLowPriority
+     * @param non-empty-string $patternHighPriority
      */
-    public function deeperPathsHaveHigherPriorityTest($patternLowPriority, $patternHighPriority)
-    {
+    #[Test]
+    #[DataProvider('deeperPathsHaveHigherPriorityDataProvider')]
+    public function deeperPathsHaveHigherPriorityTest(
+        string $patternLowPriority,
+        string $patternHighPriority,
+    ): void {
         $this->assertTrue(
             Route::routeWithPattern($patternLowPriority, $this->cb)->getPriority()
             < Route::routeWithPattern($patternHighPriority, $this->cb)->getPriority()
         );
     }
 
-    public function deeperPathsHaveHigherPriorityDataProvider()
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    public static function deeperPathsHaveHigherPriorityDataProvider(): array
     {
         return [
             ['path', 'path/sub-path'],
@@ -170,22 +168,25 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider patternsWithExpressionsHaveLowerPriorityDataProvider
-     *
-     * @param string $patternLowPriority
-     * @param string $patternHighPriority
+     * @param non-empty-string $patternLowPriority
+     * @param non-empty-string $patternHighPriority
      */
-    public function patternsWithExpressionsHaveLowerPriorityTest($patternLowPriority, $patternHighPriority)
-    {
+    #[Test]
+    #[DataProvider('patternsWithExpressionsHaveLowerPriorityDataProvider')]
+    public function patternsWithExpressionsHaveLowerPriorityTest(
+        string $patternLowPriority,
+        string $patternHighPriority,
+    ): void {
         $this->assertTrue(
             Route::routeWithPattern($patternLowPriority, $this->cb)->getPriority()
             < Route::routeWithPattern($patternHighPriority, $this->cb)->getPriority()
         );
     }
 
-    public function patternsWithExpressionsHaveLowerPriorityDataProvider()
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    public static function patternsWithExpressionsHaveLowerPriorityDataProvider(): array
     {
         return [
             ['path/{string}', 'path/sub-path'],
@@ -206,19 +207,20 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @param string $inputPattern
-     * @param string $expectedPattern
-     *
-     * @dataProvider getNormalizedPatternDataProvider
+     * @param non-empty-string $inputPattern
+     * @param non-empty-string $expectedPattern
      */
-    public function getNormalizedPatternTest($inputPattern, $expectedPattern)
+    #[Test]
+    #[DataProvider('getNormalizedPatternDataProvider')]
+    public function getNormalizedPatternTest(string $inputPattern, string $expectedPattern): void
     {
         $this->assertEquals($expectedPattern, Route::routeWithPattern($inputPattern, $this->cb)->getPattern());
     }
 
-    public function getNormalizedPatternDataProvider()
+    /**
+     * @return list<array{0:string,1:string}>
+     */
+    public static function getNormalizedPatternDataProvider(): array
     {
         return [
             ['path/{string}', '/path/{slug}'],
@@ -235,21 +237,25 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @param string $pattern
-     *
-     * @dataProvider getParametersDataProvider
+     * @param non-empty-string            $pattern
+     * @param array<int,non-empty-string> $expectedParameters
      */
-    public function getParametersTest($pattern, array $expectedParameters)
-    {
+    #[Test]
+    #[DataProvider('getParametersDataProvider')]
+    public function getParametersTest(
+        string $pattern,
+        array $expectedParameters,
+    ): void {
         $this->assertEquals(
             $expectedParameters,
             array_values(Route::routeWithPattern($pattern, $this->cb)->getParameters())
         );
     }
 
-    public function getParametersDataProvider()
+    /**
+     * @return list<list<mixed>>
+     */
+    public static function getParametersDataProvider(): array
     {
         return [
             [
@@ -318,19 +324,20 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @param string $pattern
-     *
-     * @dataProvider shouldThrowForInvalidParametersDataProvider
+     * @param non-empty-string $pattern
      */
-    public function shouldThrowForInvalidParametersTest($pattern)
+    #[Test]
+    #[DataProvider('shouldThrowForInvalidParametersDataProvider')]
+    public function shouldThrowForInvalidParametersTest(string $pattern): void
     {
         $this->expectException(LogicException::class);
         Route::routeWithPattern($pattern, $this->cb);
     }
 
-    public function shouldThrowForInvalidParametersDataProvider()
+    /**
+     * @return list<list<string>>
+     */
+    public static function shouldThrowForInvalidParametersDataProvider(): array
     {
         return [
             ['{}'],
@@ -340,10 +347,8 @@ class RouteTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function factoryMethodsTest()
+    #[Test]
+    public function factoryMethodsTest(): void
     {
         $this->assertEquals('GET', Route::get('path/sub-path', $this->cb)->getMethod());
         $this->assertEquals('POST', Route::post('path/sub-path', $this->cb)->getMethod());

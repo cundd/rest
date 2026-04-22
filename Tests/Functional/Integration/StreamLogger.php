@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\Integration;
 
 use Cundd\Rest\Log\AbstractLogger;
+use Stringable;
 
 class StreamLogger extends AbstractLogger
 {
+    /**
+     * @var resource
+     */
     private $stream;
 
     /**
@@ -21,7 +25,7 @@ class StreamLogger extends AbstractLogger
         $this->stream = $stream;
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         fwrite($this->stream, sprintf('[%s] %s', strtoupper($level), $message));
     }

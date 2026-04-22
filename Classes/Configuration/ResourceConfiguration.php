@@ -4,75 +4,29 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Configuration;
 
+use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Exception\InvalidArgumentException;
+use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Request\ResourceType;
 
 class ResourceConfiguration
 {
     /**
-     * @var ResourceType
-     */
-    private $resourceType;
-
-    /**
-     * @var Access
-     */
-    private $read;
-
-    /**
-     * @var Access
-     */
-    private $write;
-
-    /**
-     * @var int
-     */
-    private $cacheLifetime;
-
-    /**
-     * @var string
-     */
-    private $handlerClass;
-
-    /**
-     * @var string[]
-     */
-    private $aliases;
-
-    /**
-     * @var string
-     */
-    private $dataProviderClass;
-
-    /**
-     * @var int
-     */
-    private $expiresHeaderLifetime;
-
-    /**
-     * ResourceConfiguration constructor
-     *
-     * @param string[] $aliases
+     * @param string[]                                   $aliases
+     * @param class-string<HandlerInterface>|string      $handlerClass
+     * @param class-string<DataProviderInterface>|string $dataProviderClass
      */
     public function __construct(
-        ResourceType $resourceType,
-        Access $read,
-        Access $write,
-        int $cacheLifetime,
-        string $handlerClass,
-        string $dataProviderClass,
-        array $aliases,
-        int $expiresHeaderLifetime = -1,
+        public readonly ResourceType $resourceType,
+        public readonly Access $readAccess,
+        public readonly Access $writeAccess,
+        public readonly int $cacheLifetime,
+        public readonly string $handlerClass,
+        public readonly string $dataProviderClass,
+        public readonly array $aliases,
+        public readonly int $expiresHeaderLifetime = -1,
     ) {
-        $this->resourceType = $resourceType;
-        $this->read = $read;
-        $this->write = $write;
-        $this->cacheLifetime = $cacheLifetime;
-        $this->handlerClass = $handlerClass;
         $this->assertStringArray($aliases);
-        $this->aliases = $aliases;
-        $this->dataProviderClass = $dataProviderClass;
-        $this->expiresHeaderLifetime = $expiresHeaderLifetime;
     }
 
     public function getResourceType(): ResourceType
@@ -82,12 +36,12 @@ class ResourceConfiguration
 
     public function getRead(): Access
     {
-        return $this->read;
+        return $this->readAccess;
     }
 
     public function getWrite(): Access
     {
-        return $this->write;
+        return $this->writeAccess;
     }
 
     public function getCacheLifetime(): int
@@ -95,11 +49,17 @@ class ResourceConfiguration
         return $this->cacheLifetime;
     }
 
+    /**
+     * @return class-string<HandlerInterface>|string
+     */
     public function getHandlerClass(): string
     {
         return $this->handlerClass;
     }
 
+    /**
+     * @return class-string<DataProviderInterface>|string
+     */
     public function getDataProviderClass(): string
     {
         return $this->dataProviderClass;
@@ -118,7 +78,12 @@ class ResourceConfiguration
         return $this->aliases;
     }
 
-    private function assertStringArray(array $aliases)
+    /**
+     * @phpstan-assert array<string> $aliases
+     *
+     * @param array<int,mixed> $aliases
+     */
+    private function assertStringArray(array $aliases): void
     {
         foreach ($aliases as $alias) {
             if (!is_string($alias)) {

@@ -14,11 +14,16 @@ trait DomainModelProphetTrait
     /**
      * @throws LogicException
      */
-    abstract protected function prophesize(?string $classOrInterface = null): ObjectProphecy;
+    abstract protected function prophesize(
+        ?string $classOrInterface = null,
+    ): ObjectProphecy;
 
-    protected function createDomainModelFixture(array $properties = []): DomainObjectInterface
-    {
-        /** @var DomainObjectInterface|ObjectProphecy $domainModelProphecy */
+    /**
+     * @param array<string,mixed> $properties
+     */
+    protected function createDomainModelFixture(
+        array $properties = [],
+    ): DomainObjectInterface {
         $domainModelProphecy = $this->prophesize(DomainObjectInterface::class);
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $domainModelProphecy->_getProperties();

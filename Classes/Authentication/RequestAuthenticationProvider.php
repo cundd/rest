@@ -5,21 +5,22 @@ declare(strict_types=1);
 namespace Cundd\Rest\Authentication;
 
 use Cundd\Rest\Http\RestRequestInterface;
+use TYPO3\CMS\Core\Context\Context;
 
 /**
- * The class expects an existing valid authenticated Frontend User or credentials passed through the request.
- *
- * Example URL: logintype=login&pid=PIDwhereTheFEUsersAreStored&user=MyUserName&pass=MyPassword
+ * The class expects an existing valid authenticated Frontend User
  */
-class RequestAuthenticationProvider extends AbstractAuthenticationProvider
+class RequestAuthenticationProvider implements AuthenticationProviderInterface
 {
-    /**
-     * Tries to authenticate the current request
-     *
-     * @return bool Returns if the authentication was successful
-     */
+    public function __construct(private readonly Context $context)
+    {
+    }
+
     public function authenticate(RestRequestInterface $request): bool
     {
-        return (bool) ($GLOBALS['TSFE']->fe_user->user);
+        return $this->context->getPropertyFromAspect(
+            'frontend.user',
+            'isLoggedIn'
+        );
     }
 }

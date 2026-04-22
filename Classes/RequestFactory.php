@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Cundd\Rest;
 
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request\Format;
 use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\Utility\SiteLanguageUtility;
 use Cundd\Rest\Utility\SiteUtility;
 use Psr\Http\Message\ServerRequestInterface;
-use stdClass;
 
 use function basename;
 use function dirname;
@@ -29,11 +28,19 @@ use function trim;
 
 /**
  * Factory class to get the current Request
+ *
+ * @phpstan-type RequestPathInfo object{
+ *     path:string,
+ *     originalPath:string,
+ *     resourceType:string,
+ *     format:string
+ * }
  */
-class RequestFactory implements SingletonInterface, RequestFactoryInterface
+final readonly class RequestFactory implements SingletonInterface, RequestFactoryInterface
 {
-    public function __construct(private ConfigurationProviderInterface $configurationProvider)
-    {
+    public function __construct(
+        private ConfigurationProviderFactoryInterface $configurationProviderFactory,
+    ) {
     }
 
     public function buildRequest(ServerRequestInterface $request): RestRequestInterface
@@ -54,16 +61,23 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     /**
      * Check for an alias for the given path
      */
-    protected function getAliasForPath(string $path): ?string
-    {
-        return $this->configurationProvider->getSetting('aliases.' . $path);
+    private function getAliasForPath(
+        ServerRequestInterface $request,
+        string $path,
+    ): ?string {
+        return $this->configurationProviderFactory
+            ->build($request)
+            ->getSetting('aliases.' . $path);
     }
 
     /**
-     * Returns the path and original path for the given input path respecting configured aliases
+     * Return the path and original path for the given input path respecting configured aliases
+     *
+     * @return RequestPathInfo
      */
-    protected function determineAndAnalyseInputPath(ServerRequestInterface $request): stdClass
-    {
+    private function determineAndAnalyseInputPath(
+        ServerRequestInterface $request,
+    ): object {
         $pathAndFormat = $this->determinePathAndFormat($request);
         $inputPath = $pathAndFormat->path;
 
@@ -96,10 +110,17 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         }
 
         // Check for path aliases
-        $resourceTypeAlias = $this->getAliasForPath($resourceType);
+        $resourceTypeAlias = $this->getAliasForPath($request, $resourceType);
         if ($resourceTypeAlias) {
+            $patchedPath = (string) preg_replace(
+                '!' . preg_quote($resourceType, '!') . '!',
+                $resourceTypeAlias,
+                $path,
+                1
+            );
+
             return (object) [
-                'path'         => preg_replace('!' . $resourceType . '!', $resourceTypeAlias, $path, 1),
+                'path'         => $patchedPath,
                 'originalPath' => $path,
                 'resourceType' => $resourceTypeAlias,
                 'format'       => $pathAndFormat->format,
@@ -114,14 +135,20 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         ];
     }
 
-    private function removePathPrefixes(ServerRequestInterface $request, string $path): string
-    {
+    private function removePathPrefixes(
+        ServerRequestInterface $request,
+        string $path,
+    ): string {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH') ?: getenv('REDIRECT_TYPO3_REST_REQUEST_BASE_PATH');
         if (false === $pathPrefix) {
-            $pathPrefix = $this->configurationProvider->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
+            $pathPrefix = $this->configurationProviderFactory
+                ->build($request)
+                ->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
         }
         if (false === $pathPrefix) {
-            $pathPrefix = $this->configurationProvider->getSetting('absRefPrefix');
+            $pathPrefix = $this->configurationProviderFactory
+                ->build($request)
+                ->getSetting('absRefPrefix', '');
         }
 
         $path = $this->removePathPrefix($path, '/' . trim((string) $pathPrefix, '/'));
@@ -129,9 +156,10 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
         $sitePrefix = SiteUtility::detectSitePrefix($request);
         $path = $this->removePathPrefix($path, rtrim($sitePrefix, '/') . '/rest/');
+
         // The Site-Language Prefix also contains the Site Prefix
         $siteLanguagePrefix = SiteLanguageUtility::detectSiteLanguagePrefix($request);
-        $path = $this->removePathPrefix($path, $siteLanguagePrefix . 'rest/');
+        $path = $this->removePathPrefix($path, rtrim($siteLanguagePrefix, '/') . '/rest/');
 
         return $path;
     }
@@ -154,6 +182,8 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     /**
      * Split path and format
+     *
+     * @return object{path:string,format:string}
      */
     private function splitPathAndFormat(string $path): object
     {
@@ -178,7 +208,7 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
             $path = $path . '.' . $format;
             $format = '';
         }
-        if (!$format || !$this->isValidFormat($format)) {
+        if (!$this->isValidFormat($format)) {
             $format = Format::DEFAULT_FORMAT;
         }
 
@@ -188,6 +218,9 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
         ];
     }
 
+    /**
+     * @return object{path:string,format:string}
+     */
     private function determinePathAndFormat(ServerRequestInterface $request): object
     {
         $path = $this->getRawPath($request);
@@ -211,13 +244,18 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
     }
 
     /**
-     * Returns if the given format is valid
+     * Return if the given format is valid
      */
-    public static function isValidFormat($format): bool
+    public static function isValidFormat(mixed $format): bool
     {
+        if (!is_string($format)) {
+            return false;
+        }
+
         if (!$format) {
             return false;
         }
+
         $mimeTypes = Format::MIME_TYPES;
 
         return isset($mimeTypes[$format]);

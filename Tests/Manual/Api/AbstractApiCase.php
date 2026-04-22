@@ -8,39 +8,49 @@ use Cundd\Rest\Tests\Manual\HttpClient;
 use Cundd\Rest\Tests\Manual\HttpErrorDescriptionTrait;
 use Cundd\Rest\Tests\Manual\HttpResponse;
 
+/**
+ * @phpstan-import-type Headers from HttpClient
+ */
 abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
 {
     use HttpErrorDescriptionTrait;
 
     /**
-     * @param string            $path
-     * @param string            $method
+     * @param non-empty-string  $method
      * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
-     * @param string[]          $headers   A dictionary of headers
+     * @param Headers           $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
-     *
-     * @return HttpResponse
      */
-    public function request($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
-    {
+    public function request(
+        string $path,
+        string $method = 'GET',
+        mixed $body = null,
+        array $headers = [],
+        ?string $basicAuth = null,
+    ): HttpResponse {
         return HttpClient::client()->request($path, $method, $body, $headers, $basicAuth);
     }
 
     /**
-     * @param string            $path
-     * @param string            $method
+     * @param non-empty-string  $method
      * @param string|mixed|null $body      Will be ignored if NULL, otherwise will be JSON encoded if it is not a string
-     * @param string[]          $headers   A dictionary of headers
+     * @param Headers           $headers   A dictionary of headers
      * @param string            $basicAuth String in the format "user:password"
-     *
-     * @return HttpResponse
      */
-    public function requestJson($path, $method = 'GET', $body = null, array $headers = [], $basicAuth = null)
-    {
+    public function requestJson(
+        string $path,
+        string $method = 'GET',
+        mixed $body = null,
+        array $headers = [],
+        $basicAuth = null,
+    ): HttpResponse {
         return HttpClient::client()->requestJson($path, $method, $body, $headers, $basicAuth);
     }
 
-    public function suffixDataProvider()
+    /**
+     * @return list<array<string>>
+     */
+    public static function suffixDataProvider(): array
     {
         return [
             [''],
@@ -49,18 +59,12 @@ abstract class AbstractApiCase extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return string
-     */
-    protected function getApiUser()
+    protected function getApiUser(): string
     {
         return getenv('API_USER') ?: 'daniel';
     }
 
-    /**
-     * @return string
-     */
-    protected function getApiKey()
+    protected function getApiKey(): string
     {
         return getenv('API_KEY') ?: 'api-key';
     }

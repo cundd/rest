@@ -8,14 +8,17 @@ use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
-    private array $container;
-
-    public function __construct(array $container = [])
+    /**
+     * @param array<class-string|non-empty-string,object> $container
+     */
+    public function __construct(private array $container = [])
     {
-        $this->container = $container;
     }
 
-    public function get(string $id)
+    /**
+     * @param class-string|non-empty-string $id
+     */
+    public function get(string $id): mixed
     {
         if (!$this->has($id)) {
             throw new NotFoundException(sprintf('No object for ID "%s" found', $id));
@@ -32,11 +35,17 @@ class Container implements ContainerInterface
         }
     }
 
+    /**
+     * @param class-string|non-empty-string $id
+     */
     public function has(string $id): bool
     {
         return isset($this->container[$id]);
     }
 
+    /**
+     * @param class-string|non-empty-string $id
+     */
     public function set(string $id, object $impl): void
     {
         $this->container[$id] = $impl;

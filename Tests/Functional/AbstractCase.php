@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional;
 
+use Cundd\Rest\Authentication\BasicAuthenticationProvider;
+use Cundd\Rest\DataProvider\DataProviderInterface;
+use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\Handler\GreetingHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
-use Cundd\Rest\ObjectManager;
-use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
-use Cundd\Rest\Tests\InjectPropertyTrait;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
 use Doctrine\DBAL\Exception as DoctrineException;
@@ -21,46 +22,94 @@ use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Exception as TYPO3CoreException;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-/**
- * @method void assertInternalType($expected, $actual, $message = '')
- * @method void assertEquals($expected, $actual, $message = '', ...$args)
- * @method void assertSame($expected, $actual, $message = '')
- * @method void assertEmpty($actual, $message = '')
- * @method void markTestSkipped($message = '')
- * @method void markTestIncomplete($message = '')
- * @method void assertInstanceOf($expected, $actual, $message = '')
- * @method void assertArrayHasKey($key, $array, $message = '')
- * @method void assertCount($expectedCount, $haystack, $message = '')
- * @method void assertNotEquals($expected, $actual, $message = '', ...$args)
- * @method void assertNull($actual, $message = '')
- * @method void assertFalse($condition, $message = '')
- * @method void assertTrue($condition, $message = '')
- * @method void assertNotEmpty($actual, $message = '')
- */
 class AbstractCase extends FunctionalTestCase
 {
     use ProphecyTrait;
     use ResponseBuilderTrait;
     use RequestBuilderTrait;
     use ClassBuilderTrait;
-    use InjectPropertyTrait;
+    use SiteBasedTestTrait;
 
+    public const BASE_URI = 'http://localhost:8888/';
+
+    protected const LANGUAGE_PRESETS = [
+        'EN' => ['id' => 0, 'title' => 'English', 'locale' => 'en_US.UTF8'],
+        'DE' => ['id' => 1, 'title' => 'German', 'locale' => 'de_DE.UTF8'],
+        'FR' => ['id' => 2, 'title' => 'French', 'locale' => 'fr_FR.UTF8'],
+        'ES' => ['id' => 3, 'title' => 'Spanish', 'locale' => 'es_ES.UTF8'],
+    ];
+
+    protected const DEFAULT_SETTINGS = [
+        'rest' => [
+            'settings' => [
+                'paths' => [
+                    'greeting' => [
+                        'path'              => 'greeting',
+                        'read'              => 'allow',
+                        'write'             => 'deny',
+                        'cacheLifetime'     => -1,
+                        'handlerClass'      => GreetingHandler::class,
+                        'dataProviderClass' => DataProviderInterface::class,
+                    ],
+                    'all' => [
+                        'path'              => 'all',
+                        'read'              => 'deny',
+                        'write'             => 'deny',
+                        'cacheLifetime'     => -1,
+                        'handlerClass'      => CrudHandler::class,
+                        'dataProviderClass' => DataProviderInterface::class,
+                    ],
+                ],
+                'singularToPlural' => [
+                    'news'        => 'news',
+                    'equipment'   => 'equipment',
+                    'information' => 'information',
+                    'rice'        => 'rice',
+                    'money'       => 'money',
+                    'species'     => 'species',
+                    'series'      => 'series',
+                    'fish'        => 'fish',
+                    'sheep'       => 'sheep',
+                    'press'       => 'press',
+                    'sms'         => 'sms',
+                ],
+                'authenticationProvider' => [
+                    '10' => BasicAuthenticationProvider::class,
+                ],
+            ],
+        ],
+    ];
     protected array $testExtensionsToLoad = ['typo3conf/ext/rest'];
 
     public function setUp(): void
     {
         try {
             parent::setUp();
-        } catch (DBALException|DoctrineException|\TYPO3\CMS\Core\Exception $exception) {
+        } catch (DoctrineException|TYPO3CoreException $exception) {
         }
 
         $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
 
         $this->registerAssetCache();
         $this->registerLoggerImplementation();
+
+        $this->writeSiteConfiguration(
+            'test-site',
+            $this->buildSiteConfiguration(1000, self::BASE_URI)
+                      + ['settings' => self::DEFAULT_SETTINGS],
+            [
+                $this->buildDefaultLanguageConfiguration('EN', '/'),
+                $this->buildLanguageConfiguration('FR', '/fr/', ['EN']),
+                $this->buildLanguageConfiguration('DE', '/de/', ['EN']),
+                $this->buildLanguageConfiguration('ES', '/es/', ['EN']),
+            ]
+        );
     }
 
     protected function tearDown(): void
@@ -71,7 +120,7 @@ class AbstractCase extends FunctionalTestCase
     /**
      * Build a new request with the given URI
      */
-    public function buildRequestWithUri(
+    public function buildTestRequestWithUri(
         string $uri,
         ?string $format = null,
         ?string $method = null,
@@ -88,16 +137,31 @@ class AbstractCase extends FunctionalTestCase
     }
 
     /**
-     * @return BackendInterface|RawQueryBackendInterface
+     * @param array<mixed,mixed>|string|null $body
+     * @param array<mixed,mixed>|string|null $body
+     * @param array<mixed,mixed>             $headers
      */
-    protected function getDatabaseBackend(): BackendInterface
-    {
-        return BackendFactory::getBackend();
-    }
+    public function buildTestRequestWithSite(
+        string $path,
+        string $method = 'GET',
+        array|string|null $body = null,
+        array $headers = [],
+        ?Site $site = null,
+    ): RestRequestInterface {
+        /* @var Site $site */
+        $site ??= $this->get(SiteFinder::class)->getSiteByIdentifier('test-site');
 
-    protected function buildConfiguredObjectManager(): ObjectManagerInterface
-    {
-        return new ObjectManager($this->getContainer());
+        $uri = self::BASE_URI . ltrim($path, '/');
+
+        return $this->buildTestRequest(
+            $uri,
+            $method,
+            [],
+            $headers,
+            !is_array($body) ? $body : null,
+            is_array($body) ? $body : null
+        )
+            ->withAttribute('site', $site);
     }
 
     private function registerLoggerImplementation(): void

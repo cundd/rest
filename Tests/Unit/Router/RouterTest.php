@@ -9,24 +9,16 @@ use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\Router;
 use Cundd\Rest\Tests\Unit\AbstractRequestBasedCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use stdClass;
 
-class RouterTest extends AbstractRequestBasedCase
+final class RouterTest extends AbstractRequestBasedCase
 {
-    /**
-     * @var Router
-     */
-    protected $fixture;
+    protected Router $fixture;
 
-    /**
-     * @var callable
-     */
-    private $cb;
+    private Closure $cb;
 
-    /**
-     * Sets up the fixture, for example, open a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,16 +40,18 @@ class RouterTest extends AbstractRequestBasedCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider getPreparedParametersDataProvider
-     *
-     * @param string $pattern
-     * @param string $path
-     * @param bool   $noResult
+     * @param non-empty-string $pattern
+     * @param non-empty-string $path
+     * @param array<int,mixed> $expectedParameters
      */
-    public function dispatchTest($pattern, $path, array $expectedParameters, $noResult = false)
-    {
+    #[Test]
+    #[DataProvider('getPreparedParametersDataProvider')]
+    public function dispatchTest(
+        string $pattern,
+        string $path,
+        array $expectedParameters,
+        bool $noResult = false,
+    ): void {
         $this->fixture->add(Route::get($pattern, $this->cb));
 
         $request = $this->buildTestRequest($path, 'GET');
@@ -73,25 +67,26 @@ class RouterTest extends AbstractRequestBasedCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider getPreparedParametersDataProvider
-     *
-     * @param string $pattern
-     * @param string $path
+     * @param non-empty-string $pattern
+     * @param non-empty-string $path
+     * @param array<int,mixed> $expectedParameters
      */
-    public function getPreparedParametersTest($pattern, $path, array $expectedParameters)
-    {
+    #[Test]
+    #[DataProvider('getPreparedParametersDataProvider')]
+    public function getPreparedParametersTest(
+        string $pattern,
+        string $path,
+        array $expectedParameters,
+    ): void {
         $this->fixture->add(Route::get($pattern, $this->cb));
 
         $prepareParameters = $this->fixture->getPreparedParameters($this->buildTestRequest($path, 'GET'));
         $this->assertSame($expectedParameters, $prepareParameters, "Failed with pattern '$pattern' for path '$path'");
     }
 
-    /**
-     * @test
-     */
-    public function dispatchNotFoundTest()
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function dispatchNotFoundTest(): void
     {
         $this->fixture->add(Route::get('some/route', $this->cb));
 
@@ -100,7 +95,10 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertInstanceOf(NotFoundException::class, $result);
     }
 
-    public function getPreparedParametersDataProvider()
+    /**
+     * @return array<int,array<int,mixed>>
+     */
+    public static function getPreparedParametersDataProvider(): array
     {
         return [
             ['{slug}/{float}/{bool}/{int}/?', '/slug/1.0/no/9', ['slug', 1.0, false, 9]],
@@ -137,14 +135,9 @@ class RouterTest extends AbstractRequestBasedCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function getMatchingRoutesSortedTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function getMatchingRoutesSortedTest(string $method): void
     {
         $this->fixture->add(Route::get('path/{slug}', $this->cb));
         $this->fixture->add(Route::post('path/{slug}', $this->cb));
@@ -166,17 +159,13 @@ class RouterTest extends AbstractRequestBasedCase
         );
         $this->assertCount(2, $matchingRoutes);
         $firstMatch = reset($matchingRoutes);
+        $this->assertInstanceOf(Route::class, $firstMatch);
         $this->assertSame('/path/perfect-match', $firstMatch->getPattern());
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function dispatchMatchingRoutesSortedTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function dispatchMatchingRoutesSortedTest(string $method): void
     {
         $perfectMatchCallback = Closure::bind(
             function () {
@@ -222,7 +211,8 @@ class RouterTest extends AbstractRequestBasedCase
     /**
      * @test
      */
-    public function dispatchLikeDefaultHandlerTest()
+    #[Test]
+    public function dispatchLikeDefaultHandlerTest(): void
     {
         $count = Closure::bind(
             function () {
@@ -249,14 +239,9 @@ class RouterTest extends AbstractRequestBasedCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function getMatchingRoutesSlugTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function getMatchingRoutesSlugTest(string $method): void
     {
         $this->fixture->add(Route::get('path/{slug}', $this->cb));
         $this->fixture->add(Route::post('path/{slug}', $this->cb));
@@ -279,14 +264,9 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertSame('/path/{slug}', $matchingRoutes['/path/{slug}']->getPattern());
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function getMatchingRoutesIntegerTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function getMatchingRoutesIntegerTest(string $method): void
     {
         $this->fixture->add(Route::get('path/{int}', $this->cb));
         $this->fixture->add(Route::post('path/{int}', $this->cb));
@@ -332,14 +312,9 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertSame('/path/{integer}', $matchingRoutes['/path/{integer}']->getPattern());
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function getMatchingRoutesFloatTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function getMatchingRoutesFloatTest(string $method): void
     {
         $this->fixture->add(Route::get('path/{float}', $this->cb));
         $this->fixture->add(Route::post('path/{float}', $this->cb));
@@ -367,14 +342,9 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertSame('/path/{float}', $matchingRoutes['/path/{float}']->getPattern());
     }
 
-    /**
-     * @test
-     *
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesMethodDataProvider
-     */
-    public function getMatchingRoutesBooleanNotMatchesTest($method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesMethodDataProvider')]
+    public function getMatchingRoutesBooleanNotMatchesTest(string $method): void
     {
         $this->fixture->add(Route::get('path/{boolean}', $this->cb));
         $this->fixture->add(Route::post('path/{boolean}', $this->cb));
@@ -387,7 +357,10 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertEmpty($this->fixture->getMatchingRoutes($this->buildTestRequest('/path/some@domain', $method)));
     }
 
-    public function getMatchingRoutesMethodDataProvider()
+    /**
+     * @return array<list<string>>
+     */
+    public static function getMatchingRoutesMethodDataProvider(): array
     {
         return [
             ['GET'],
@@ -397,15 +370,9 @@ class RouterTest extends AbstractRequestBasedCase
         ];
     }
 
-    /**
-     * @test
-     *
-     * @param string $path
-     * @param string $method
-     *
-     * @dataProvider getMatchingRoutesBooleanMatchesDataProvider
-     */
-    public function getMatchingRoutesBooleanMatchesTest($path, $method)
+    #[Test]
+    #[DataProvider('getMatchingRoutesBooleanMatchesDataProvider')]
+    public function getMatchingRoutesBooleanMatchesTest(string $path, string $method): void
     {
         $this->fixture->add(Route::get('path/{boolean}', $this->cb));
         $this->fixture->add(Route::post('path/{boolean}', $this->cb));
@@ -417,7 +384,10 @@ class RouterTest extends AbstractRequestBasedCase
         $this->assertSame('/path/{boolean}', $matchingRoutes['/path/{boolean}']->getPattern());
     }
 
-    public function getMatchingRoutesBooleanMatchesDataProvider()
+    /**
+     * @return list<list<string>>
+     */
+    public static function getMatchingRoutesBooleanMatchesDataProvider(): array
     {
         return [
             ['/path/1', 'GET'],

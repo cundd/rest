@@ -12,6 +12,7 @@ use Cundd\Rest\DataProvider\DataProviderInterface;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Request\ResourceType;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Interface for the specialized Object Manager
@@ -19,21 +20,32 @@ use Cundd\Rest\Request\ResourceType;
 interface ObjectManagerInterface
 {
     /**
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     */
+    public function has(string $class): bool;
+
+    /**
      * Return an instance of the given class
      *
-     * @param string $class The class name of the object to return an instance of
+     * @template T of object
      *
-     * @return object The object instance
+     * @param class-string<T> $class The class name of the object to return an instance of
+     *
+     * @return T
      */
     public function get(string $class): object;
 
     /**
      * Return the configuration provider
      */
-    public function getConfigurationProvider(): ConfigurationProviderInterface;
+    public function getConfigurationProvider(
+        ServerRequestInterface $request,
+    ): ConfigurationProviderInterface;
 
     /**
-     * Return the configuration provider
+     * Return the Request Factory
      */
     public function getRequestFactory(): RequestFactoryInterface;
 
@@ -45,17 +57,23 @@ interface ObjectManagerInterface
     /**
      * Return the data provider
      */
-    public function getDataProvider(RestRequestInterface $request): DataProviderInterface;
+    public function getDataProvider(
+        RestRequestInterface $request,
+    ): DataProviderInterface;
 
     /**
      * Return the Authentication Provider
      */
-    public function getAuthenticationProvider(RestRequestInterface $request): AuthenticationProviderInterface;
+    public function getAuthenticationProvider(
+        RestRequestInterface $request,
+    ): AuthenticationProviderInterface;
 
     /**
      * Return the Access Controller
      */
-    public function getAccessController(RestRequestInterface $request): AccessControllerInterface;
+    public function getAccessController(
+        RestRequestInterface $request,
+    ): AccessControllerInterface;
 
     /**
      * Return the Handler which is responsible for handling the current request
@@ -65,5 +83,8 @@ interface ObjectManagerInterface
     /**
      * Return the Cache instance for the given Resource Type
      */
-    public function getCache(ResourceType $resourceType): CacheInterface;
+    public function getCache(
+        RestRequestInterface $request,
+        ResourceType $resourceType,
+    ): CacheInterface;
 }

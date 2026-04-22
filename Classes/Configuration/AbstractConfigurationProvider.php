@@ -34,7 +34,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Return the setting with the given key
      */
-    public function getSetting(string $keyPath, $defaultValue = null)
+    public function getSetting(string $keyPath, mixed $defaultValue = null): mixed
     {
         $matchingSetting = $this->getSettings();
 

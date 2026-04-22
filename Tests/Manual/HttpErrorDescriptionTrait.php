@@ -8,13 +8,15 @@ trait HttpErrorDescriptionTrait
 {
     /**
      * Return a descriptive error message for the response
-     *
-     * @return string
      */
-    public static function getErrorDescription(HttpResponse $response)
+    public static function getErrorDescription(HttpResponse $response): string
     {
         $bodyPart = PHP_EOL . '------------------------------------' . PHP_EOL
-            . substr($response->getBody(), 0, (int) getenv('ERROR_BODY_LENGTH') ?: 300) . PHP_EOL
+            . substr(
+                (string) $response->getBody(),
+                0,
+                (int) getenv('ERROR_BODY_LENGTH') ?: 300
+            ) . PHP_EOL
             . '------------------------------------';
 
         return sprintf(

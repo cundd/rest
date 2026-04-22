@@ -8,6 +8,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\Router;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use Cundd\Rest\Tests\RequestBuilderUtility;
 use Cundd\TestFlight\Event\Event;
 use Cundd\TestFlight\Event\EventDispatcherInterface;
 use Cundd\TestFlight\TestRunner\TestRunnerInterface;
@@ -17,10 +18,10 @@ class Bootstrap
 {
     use RequestBuilderTrait;
 
-    public function run(EventDispatcherInterface $eventDispatcher)
+    public function run(?EventDispatcherInterface $eventDispatcher): void
     {
         class_alias(Route::class, 'Route');
-        $eventDispatcher->register(
+        $eventDispatcher?->register(
             TestRunnerInterface::EVENT_TEST_WILL_RUN,
             function (Event $event) {
                 $prophet = new Prophet();
@@ -28,7 +29,7 @@ class Bootstrap
                 $event->getContext()->addVariables(
                     [
                         'router'  => new Router(),
-                        'request' => RequestBuilderTrait::buildTestRequest('some/path'),
+                        'request' => RequestBuilderUtility::buildTestRequest('some/path'),
                     ]
                 );
             }
@@ -37,4 +38,4 @@ class Bootstrap
 }
 
 /* @var EventDispatcherInterface $eventDispatcher */
-(new Bootstrap())->run($eventDispatcher);
+(new Bootstrap())->run($eventDispatcher); // @phpstan-ignore variable.undefined

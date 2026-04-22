@@ -10,7 +10,8 @@ use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\RequestBuilderTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
@@ -21,6 +22,8 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
 /**
  * Tests for the Caching interface
+ *
+ * @phpstan-type Headers array<non-empty-string, array<string>|string>
  */
 class CacheTest extends AbstractCase
 {
@@ -39,23 +42,25 @@ class CacheTest extends AbstractCase
 
     protected function tearDown(): void
     {
-        unset($this->fixture);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider getCacheKeyDataProvider
-     */
-    public function getCacheKeyTest($expectedKey, $uri, $format = null)
-    {
-        $request = $this->buildRequestWithUri($uri, $format);
+    #[Test]
+    #[DataProvider('getCacheKeyDataProvider')]
+    public function getCacheKeyTest(
+        string $expectedKey,
+        string $uri,
+        ?string $format = null,
+    ): void {
+        $request = $this->buildTestRequestWithUri($uri, $format);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals($expectedKey, $cacheKey, 'Failed for URI ' . $uri);
     }
 
-    public function getCacheKeyDataProvider(): array
+    /**
+     * @return array<int,array<int,string>>
+     */
+    public static function getCacheKeyDataProvider(): array
     {
         return [
             ['e53553c0d92fd881af17e02c9bba3e3dd592e1b5', 'MyExt-MyModel/1'],
@@ -76,26 +81,26 @@ class CacheTest extends AbstractCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function getCacheKeyForGetRequestWithParameterTest()
+    #[Test]
+    public function getCacheKeyForGetRequestWithParameterTest(): void
     {
         $uri = 'MyExt-MyModel/1';
-        $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
+        $request = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
-        $this->assertEquals('8f0f35de918d2e1494849827b2b453792c54d030', $cacheKey, 'Failed for URI ' . $uri);
+        $this->assertEquals(
+            '8f0f35de918d2e1494849827b2b453792c54d030',
+            $cacheKey,
+            'Failed for URI ' . $uri
+        );
     }
 
-    /**
-     * @test
-     */
-    public function getCacheKeyForGetRequestWithDifferentParametersShouldNotMatchTest()
+    #[Test]
+    public function getCacheKeyForGetRequestWithDifferentParametersShouldNotMatchTest(): void
     {
         $uri = 'MyExt-MyModel/1';
-        $request = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
-        $request2 = $this->buildRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter2']);
-        $requestWithoutParameters = $this->buildRequestWithUri($uri);
+        $request = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
+        $request2 = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter2']);
+        $requestWithoutParameters = $this->buildTestRequestWithUri($uri);
 
         $this->assertNotEquals(
             $this->fixture->getCacheKeyForRequest($request),
@@ -114,13 +119,11 @@ class CacheTest extends AbstractCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function getCachedInitialValueForRequestTest()
+    #[Test]
+    public function getCachedInitialValueForRequestTest(): void
     {
         $uri = 'MyAliasedModel' . time();
-        $request = $this->buildRequestWithUri($uri);
+        $request = $this->buildTestRequestWithUri($uri);
 
         /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $this->getFrontendCacheProphecy()->reveal();
@@ -129,10 +132,8 @@ class CacheTest extends AbstractCase
         $this->assertNull($cachedValue);
     }
 
-    /**
-     * @test
-     */
-    public function getCachedValueForRequestTest()
+    #[Test]
+    public function getCachedValueForRequestTest(): void
     {
         $uri = 'MyAliasedModel' . time();
         $responseArray = [
@@ -142,7 +143,7 @@ class CacheTest extends AbstractCase
             Header::LAST_MODIFIED => gmdate('D, d M Y H:i:s \G\M\T'),
         ];
 
-        $request = $this->buildRequestWithUri($uri);
+        $request = $this->buildTestRequestWithUri($uri);
 
         $cacheProphecy = $this->getFrontendCacheProphecy();
 
@@ -160,79 +161,93 @@ class CacheTest extends AbstractCase
         $this->assertSame($responseArray['status'], $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
-    public function setCachedValueForRequestTest()
+    #[Test]
+    public function setCachedValueForRequestTest(): void
     {
         $response = $this->buildTestResponse(200, [], 'Test content');
         $uri = 'MyAliasedModel';
-        $request = $this->buildRequestWithUri($uri);
+        $request = $this->buildTestRequestWithUri($uri);
 
         $cacheProphecy = $this->getFrontendCacheProphecy();
 
-        /** @var array $remaining */
+        /** @var array<mixed> $remaining */
         $remaining = Argument::cetera();
         /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), $remaining);
+        $methodProphecy = $cacheProphecy->set(
+            Argument::type('string'),
+            Argument::type('array'),
+            $remaining
+        );
         $methodProphecy->shouldBeCalled();
-        $methodProphecy->willReturn('');
 
         /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
+        $this->fixture->setCachedValueForRequest(
+            $request,
+            $response,
+            $this->buildResourceConfiguration($request)
+        );
     }
 
     /**
-     * @test
-     *
-     * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
+     * @param Headers $header
      */
-    public function setCachedValueForRequestWillNotCacheTest(array $header)
+    #[Test]
+    #[DataProvider('setCachedValueForRequestWillNotCacheDataProvider')]
+    public function setCachedValueForRequestWillNotCacheTest(array $header): void
     {
-        $request = $this->buildRequestWithUri('MyAliasedModel');
+        $request = $this->buildTestRequestWithUri('MyAliasedModel');
         $response = $this->buildTestResponse(200, $header, 'Test content');
 
         $cacheProphecy = $this->getFrontendCacheProphecy();
 
-        /** @var array $remaining */
+        /** @var array<mixed> $remaining */
         $remaining = Argument::cetera();
         /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $cacheProphecy->set(Argument::type('string'), Argument::type('array'), $remaining);
+        $methodProphecy = $cacheProphecy->set(
+            Argument::type('string'),
+            Argument::type('array'),
+            $remaining
+        );
         $methodProphecy->shouldNotBeCalled();
 
         /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $cacheProphecy->reveal();
         $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest($request, $response, $this->buildResourceConfiguration($request));
+        $this->fixture->setCachedValueForRequest(
+            $request,
+            $response,
+            $this->buildResourceConfiguration($request)
+        );
     }
 
     /**
-     * @test
-     *
-     * @dataProvider setCachedValueForRequestWillNotCacheDataProvider
+     * @param Headers $header
      */
-    public function canBeCachedTest(array $header, bool $expected)
+    #[Test]
+    #[DataProvider('setCachedValueForRequestWillNotCacheDataProvider')]
+    public function canBeCachedTest(array $header, bool $expected): void
     {
-        $request = $this->buildRequestWithUri('MyAliasedModel');
+        $request = $this->buildTestRequestWithUri('MyAliasedModel');
         $response = $this->buildTestResponse(200, $header, 'Test content');
 
         $this->assertSame($expected, $this->fixture->canBeCached($request, $response));
     }
 
-    /**
-     * @test
-     */
-    public function postRequestCanNotBeCachedTest()
+    #[Test]
+    public function postRequestCanNotBeCachedTest(): void
     {
-        $request = RequestBuilderTrait::buildTestRequest('MyAliasedModel', 'POST');
+        $request = $this->buildTestRequest('MyAliasedModel', 'POST');
         $response = $this->buildTestResponse(200, [], 'Test content');
 
         $this->assertFalse($this->fixture->canBeCached($request, $response));
     }
 
-    public function setCachedValueForRequestWillNotCacheDataProvider(): array
+    /**
+     * @return list<array{0:array<string,string>, 1:bool}>
+     */
+    public static function setCachedValueForRequestWillNotCacheDataProvider(): array
     {
         return [
             [[Header::CUNDD_REST_NO_CACHE => 'true'], false],
@@ -245,11 +260,10 @@ class CacheTest extends AbstractCase
     }
 
     /**
-     * @return ObjectProphecy|AbstractFrontend
+     * @return ObjectProphecy<AbstractFrontend>
      */
-    private function getFrontendCacheProphecy()
+    private function getFrontendCacheProphecy(): ObjectProphecy
     {
-        /* @var ObjectProphecy|AbstractFrontend $cacheProphecy */
         return $this->prophesize(AbstractFrontend::class);
     }
 
@@ -259,8 +273,8 @@ class CacheTest extends AbstractCase
     ): ResourceConfiguration {
         return new ResourceConfiguration(
             $request->getResourceType(),
-            Access::allowed(),
-            Access::allowed(),
+            Access::Allowed,
+            Access::Allowed,
             $cacheLifetime,
             '',
             '',

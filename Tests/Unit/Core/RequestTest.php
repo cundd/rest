@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Tests\Unit\AbstractRequestBasedCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RequestTest extends AbstractRequestBasedCase
 {
-    /**
-     * @test
-     */
-    public function getSentDataFormUrlEncodedTest()
+    #[Test]
+    public function getSentDataFormUrlEncodedTest(): void
     {
         $testData = [
             'myData' => [
@@ -29,10 +28,8 @@ class RequestTest extends AbstractRequestBasedCase
         $this->assertSame($testData, $request->getSentData());
     }
 
-    /**
-     * @test
-     */
-    public function getSentDataMultipartFormDataTest()
+    #[Test]
+    public function getSentDataMultipartFormDataTest(): void
     {
         $testData = [
             'myData' => [
@@ -50,10 +47,8 @@ class RequestTest extends AbstractRequestBasedCase
         $this->assertSame($testData, $request->getSentData());
     }
 
-    /**
-     * @test
-     */
-    public function getSentDataFromRawBodyTest()
+    #[Test]
+    public function getSentDataFromRawBodyTest(): void
     {
         $testData = [
             'myData' => [
@@ -61,14 +56,18 @@ class RequestTest extends AbstractRequestBasedCase
                 'time' => time(),
             ],
         ];
-        $request = $this->buildTestRequest('MyAliasedModel' . time(), null, [], [], json_encode($testData));
+        $request = $this->buildTestRequest(
+            'MyAliasedModel' . time(),
+            null,
+            [],
+            [],
+            (string) json_encode($testData)
+        );
         $this->assertSame($testData, $request->getSentData());
     }
 
-    /**
-     * @test
-     */
-    public function isPreflightTest()
+    #[Test]
+    public function isPreflightTest(): void
     {
         $this->assertFalse(
             $this->buildTestRequest('MyAliasedModel', 'HEAD')->isPreflight(),
@@ -106,10 +105,8 @@ class RequestTest extends AbstractRequestBasedCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function isWriteTest()
+    #[Test]
+    public function isWriteTest(): void
     {
         $this->assertFalse($this->buildTestRequest('MyAliasedModel', 'HEAD')->isWrite(), 'Failed isWrite() for HEAD');
         $this->assertFalse($this->buildTestRequest('MyAliasedModel', 'GET')->isWrite(), 'Failed isWrite() for GET');
@@ -129,10 +126,8 @@ class RequestTest extends AbstractRequestBasedCase
         $this->assertTrue($this->buildTestRequest('MyAliasedModel', 'TRACE')->isWrite(), 'Failed isWrite() for TRACE');
     }
 
-    /**
-     * @test
-     */
-    public function isReadTest()
+    #[Test]
+    public function isReadTest(): void
     {
         $this->assertTrue($this->buildTestRequest('MyAliasedModel', 'HEAD')->isRead(), 'Failed isRead() for HEAD');
         $this->assertTrue($this->buildTestRequest('MyAliasedModel', 'GET')->isRead(), 'Failed isRead() for GET');

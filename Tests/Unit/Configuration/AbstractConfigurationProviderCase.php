@@ -4,28 +4,31 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Configuration;
 
-use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Configuration\AbstractConfigurationProvider;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ResourceConfiguration;
-use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
-use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Request\ResourceType;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use ValueError;
 
 abstract class AbstractConfigurationProviderCase extends TestCase
 {
     use ProphecyTrait;
 
-    /**
-     * @var ConfigurationProviderInterface|TypoScriptConfigurationProvider|StandaloneConfigurationProvider
-     */
-    protected $fixture;
+    protected AbstractConfigurationProvider $fixture;
 
-    public function setup(): void
+    public function setUp(): void
     {
-        parent::setup();
+        parent::setUp();
+
+        /** @var class-string $fakeClass1 */
+        $fakeClass1 = 'SomeClass2'; // @phpstan-ignore varTag.nativeType
+
+        /** @var class-string $fakeClass2 */
+        $fakeClass2 = 'SomeClass3'; // @phpstan-ignore varTag.nativeType
 
         $settings = [
             'paths' => [
@@ -39,13 +42,13 @@ abstract class AbstractConfigurationProviderCase extends TestCase
                     'path'         => 'my_ext-my_model',
                     'read'         => 'allow',
                     'write'        => 'allow',
-                    'handlerClass' => 'SomeClass2',
+                    'handlerClass' => $fakeClass1,
                 ],
                 'my_secondext-*' => [
                     'path'         => 'my_secondext-*',
                     'read'         => 'deny',
                     'write'        => 'allow',
-                    'handlerClass' => 'SomeClass3',
+                    'handlerClass' => $fakeClass2,
                 ],
                 'vendor-my_third_ext-model' => [
                     'read'  => 'deny',
@@ -61,21 +64,10 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $this->fixture->setSettings($settings);
     }
 
-    /**
-     * @return ConfigurationProviderInterface|TypoScriptConfigurationProvider|StandaloneConfigurationProvider
-     */
-    abstract public function getConfigurationProviderToTest();
+    abstract public function getConfigurationProviderToTest(): AbstractConfigurationProvider;
 
-    public function tearDown(): void
-    {
-        unset($this->fixture);
-        parent::tearDown();
-    }
-
-    /**
-     * @test
-     */
-    public function getConfiguredResourceTypesTest()
+    #[Test]
+    public function getConfiguredResourceTypesTest(): void
     {
         $this->fixture->setSettings(
             [
@@ -103,7 +95,6 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         );
 
         $resourceTypeConfigurations = $this->fixture->getConfiguredResources();
-        $this->assertIsArray($resourceTypeConfigurations);
         $this->assertCount(4, $resourceTypeConfigurations);
         array_map(
             function ($c) {
@@ -114,113 +105,102 @@ abstract class AbstractConfigurationProviderCase extends TestCase
 
         $resourceConfiguration1 = $resourceTypeConfigurations['my_protectedext-*'];
         $this->assertSame('my_protectedext-*', (string) $resourceConfiguration1->getResourceType());
-        $this->assertTrue($resourceConfiguration1->getRead()->isAllowed());
-        $this->assertTrue($resourceConfiguration1->getWrite()->isRequireLogin());
+        $this->assertTrue(Access::Allowed === $resourceConfiguration1->readAccess);
+        $this->assertTrue(Access::RequireLogin === $resourceConfiguration1->writeAccess);
         $this->assertSame(-1, $resourceConfiguration1->getCacheLifetime());
 
         $resourceConfiguration2 = $resourceTypeConfigurations['vendor-my_ext-my_model'];
         $this->assertSame('vendor-my_ext-my_model', (string) $resourceConfiguration2->getResourceType());
-        $this->assertTrue($resourceConfiguration2->getRead()->isRequireLogin());
-        $this->assertTrue($resourceConfiguration2->getWrite()->isDenied());
+        $this->assertTrue(Access::RequireLogin === $resourceConfiguration2->readAccess);
+        $this->assertTrue(Access::Denied === $resourceConfiguration2->writeAccess);
         $this->assertSame(-1, $resourceConfiguration2->getCacheLifetime());
 
         $resourceConfiguration3 = $resourceTypeConfigurations['vendor-my_other_ext-my_model'];
         $this->assertSame('vendor-my_other_ext-my_model', (string) $resourceConfiguration3->getResourceType());
-        $this->assertTrue($resourceConfiguration3->getRead()->isDenied());
-        $this->assertTrue($resourceConfiguration3->getWrite()->isDenied());
+        $this->assertTrue(Access::Denied === $resourceConfiguration3->readAccess);
+        $this->assertTrue(Access::Denied === $resourceConfiguration3->writeAccess);
         $this->assertSame(2, $resourceConfiguration3->getCacheLifetime());
 
         $resourceConfiguration4 = $resourceTypeConfigurations['vendor-my_other_ext-my_model2'];
         $this->assertSame('vendor-my_other_ext-my_model2', (string) $resourceConfiguration4->getResourceType());
-        $this->assertTrue($resourceConfiguration4->getRead()->isDenied());
-        $this->assertTrue($resourceConfiguration4->getWrite()->isDenied());
+        $this->assertTrue(Access::Denied === $resourceConfiguration4->readAccess);
+        $this->assertTrue(Access::Denied === $resourceConfiguration4->writeAccess);
         $this->assertSame(3, $resourceConfiguration4->getCacheLifetime());
     }
 
-    /**
-     * @test
-     */
-    public function getConfiguredResourceTypesInvalidReadTest()
+    #[Test]
+    public function getConfiguredResourceTypesInvalidReadTest(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['read' => 'invalid']]]);
+        $this->expectException(ValueError::class);
+        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['read' => 'invalid']]]); // @phpstan-ignore argument.type
         $this->fixture->getConfiguredResources();
     }
 
-    /**
-     * @test
-     */
-    public function getConfiguredResourceTypesInvalidWriteTest()
+    #[Test]
+    public function getConfiguredResourceTypesInvalidWriteTest(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]);
+        $this->expectException(ValueError::class);
+        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]); // @phpstan-ignore argument.type
         $this->fixture->getConfiguredResources();
     }
 
-    /**
-     * @test
-     */
-    public function getDefaultConfigurationForPathTest()
+    #[Test]
+    public function getDefaultConfigurationForPathTest(): void
     {
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_ext-my_default_model'));
-        $this->assertSame('all', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isAllowed());
-        $this->assertTrue($configuration->getWrite()->isDenied());
+
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame('all', (string) $configuration->resourceType);
+        $this->assertTrue(Access::Allowed === $configuration->readAccess);
+        $this->assertTrue(Access::Denied === $configuration->writeAccess);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithoutWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithoutWildcardTest(): void
     {
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_ext-my_model'));
-        $this->assertSame('my_ext-my_model', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isAllowed());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame('my_ext-my_model', (string) $configuration->resourceType);
+        $this->assertTrue(Access::Allowed === $configuration->readAccess);
+        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithoutExplicitPathConfigurationTest()
+    #[Test]
+    public function getConfigurationForPathWithoutExplicitPathConfigurationTest(): void
     {
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('vendor-my_third_ext-model'));
-        $this->assertSame('vendor-my_third_ext-model', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isDenied());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame('vendor-my_third_ext-model', (string) $configuration->resourceType);
+        $this->assertTrue(Access::Denied === $configuration->readAccess);
+        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithoutExplicitPathConfigurationWithDotTest()
+    #[Test]
+    public function getConfigurationForPathWithoutExplicitPathConfigurationWithDotTest(): void
     {
         $configuration = $this->fixture->getResourceConfiguration(
             new ResourceType('vendor-my_fourth_ext-model')
         );
-        $this->assertSame('vendor-my_fourth_ext-model', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isDenied());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame('vendor-my_fourth_ext-model', (string) $configuration->resourceType);
+        $this->assertTrue(Access::Denied === $configuration->readAccess);
+        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
     }
 
-    /**
-     * @test
-     */
-    public function getConfigurationForPathWithWildcardTest()
+    #[Test]
+    public function getConfigurationForPathWithWildcardTest(): void
     {
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_secondext-my_model'));
-        $this->assertSame('my_secondext-*', (string) $configuration->getResourceType());
-        $this->assertTrue($configuration->getRead()->isDenied());
-        $this->assertTrue($configuration->getWrite()->isAllowed());
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame('my_secondext-*', (string) $configuration->resourceType);
+        $this->assertTrue(Access::Denied === $configuration->readAccess);
+        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
     }
 
-    /**
-     * @test
-     */
-    public function getConfiguredHandlersTest()
+    #[Test]
+    public function getConfiguredHandlersTest(): void
     {
         $handlerConfigurations = $this->fixture->getConfiguredResources();
-        $this->assertIsArray($handlerConfigurations);
         $this->assertCount(5, $handlerConfigurations);
         array_map(
             function ($c) {

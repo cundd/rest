@@ -18,10 +18,12 @@ use function var_export;
 /**
  * Factory class to create Response objects
  */
-class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
+final class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 {
-    public function createResponse($data, int $status): ResponseInterface
-    {
+    public function createResponse(
+        string $data,
+        int $status,
+    ): ResponseInterface {
         $responseClass = $this->getResponseImplementationClass();
         /** @var ResponseInterface $response */
         $response = new $responseClass();
@@ -31,25 +33,31 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
         return $response;
     }
 
-    public function createErrorResponse($data, int $status, RestRequestInterface $request): ResponseInterface
-    {
+    public function createErrorResponse(
+        string|int|array|null $data,
+        int $status,
+        RestRequestInterface $request,
+    ): ResponseInterface {
         return $this->createFormattedResponse($data, $status, true, $request);
     }
 
-    public function createSuccessResponse($data, int $status, RestRequestInterface $request): ResponseInterface
-    {
+    public function createSuccessResponse(
+        string|int|array|null $data,
+        int $status,
+        RestRequestInterface $request,
+    ): ResponseInterface {
         return $this->createFormattedResponse($data, $status, false, $request);
     }
 
     /**
-     * Returns a response with the given message and status code
+     * Return a response with the given message and status code
      *
-     * @param string|array $data       Data to send
-     * @param int          $status     Status code of the response
-     * @param bool         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+     * @param string|int|array<mixed>|null $data       Data to send
+     * @param int                          $status     Status code of the response
+     * @param bool                         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
      */
     private function createFormattedResponse(
-        $data,
+        string|int|array|null $data,
         int $status,
         bool $forceError,
         RestRequestInterface $request,
@@ -66,34 +74,21 @@ class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 
         switch ($request->getFormat()) {
             case 'json':
-                switch (gettype($data)) {
-                    case 'string':
-                        $body = [
-                            $messageKey => $data,
-                        ];
-                        break;
+                $body = match (gettype($data)) {
+                    'string' => [
+                        $messageKey => $data,
+                    ],
+                    'integer', 'double', 'boolean' => $data,
+                    'array'                        => $data,
+                    'NULL'                         => [
+                        $messageKey => $response->getReasonPhrase(),
+                    ],
+                    default => null,
+                };
 
-                    case 'integer':
-                    case 'double':
-                    case 'boolean':
-                        $body = $data;
-                        break;
-
-                    case 'array':
-                        $body = $data;
-                        break;
-
-                    case 'NULL':
-                        $body = [
-                            $messageKey => $response->getReasonPhrase(),
-                        ];
-                        break;
-
-                    default:
-                        $body = null;
-                }
-
-                $response->getBody()->write(json_encode($body));
+                $response->getBody()->write(
+                    (string) json_encode($body, JSON_THROW_ON_ERROR)
+                );
 
                 return $response->withHeader(Header::CONTENT_TYPE, 'application/json');
 

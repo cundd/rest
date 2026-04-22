@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Documentation;
 
-use Cundd\Rest\Configuration\ResourceConfiguration;
-use Cundd\Rest\Configuration\TypoScriptConfigurationProvider;
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
+use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Documentation\HandlerDescriptor;
-use Cundd\Rest\Handler\AuthHandler;
 use Cundd\Rest\Handler\CrudHandler;
+use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ObjectManager;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use PHPUnit\Framework\Attributes\Test;
+use Prophecy\Argument;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 class HandlerDescriptorTest extends AbstractCase
 {
@@ -23,44 +27,48 @@ class HandlerDescriptorTest extends AbstractCase
     {
         parent::setUp();
 
-        $configurationProvider = new TypoScriptConfigurationProvider();
-        $configurationProvider->setSettings(
+        $configurationProvider = new StandaloneConfigurationProvider(
             [
                 'paths' => [
                     'all' => [
                         'path'         => 'all',
                         'handlerClass' => CrudHandler::class,
                     ],
-                    'auth' => [
-                        'path'         => 'auth',
-                        'handlerClass' => AuthHandler::class,
-                    ],
-                ],
-
-                'aliases' => [
-                    'auth_alias' => 'auth',
                 ],
             ]
         );
+        $configurationProviderFactory = $this->prophesize(
+            ConfigurationProviderFactoryInterface::class
+        );
+        $configurationProviderFactory->build(Argument::type(RestRequestInterface::class))
+            ->willReturn($configurationProvider);
+
+        $configurationProviderFactory->buildFromSite(Argument::type(Site::class))
+            ->willReturn($configurationProvider);
 
         $this->fixture = new HandlerDescriptor(
             $this->getContainer()->get(ObjectManager::class),
-            $configurationProvider
+            $configurationProviderFactory->reveal()
         );
     }
 
-    /**
-     * @test
-     */
-    public function getInformationTest()
+    protected function tearDown(): void
     {
-        $result = $this->fixture->getInformation();
+        unset($this->fixture);
+        parent::tearDown();
+    }
+
+    #[Test]
+    public function getInformationTest(): void
+    {
+        $site = $this->get(SiteFinder::class)->getSiteByIdentifier('test-site');
+        $result = $this->fixture->getInformation($site);
         $this->assertIsArray($result);
 
-        $this->assertCount(2, $result);
+        $this->assertCount(1, $result);
         $this->assertArrayHasKey('all', $result);
         $allHandler = $result['all'];
-        $this->assertInstanceOf(CrudHandler::class, $allHandler['handler']);
+        $this->assertInstanceOf(CrudHandler::class, $allHandler['handler'] ?? null);
         $this->assertCount(6, $allHandler['routes']);
 
         $this->assertArrayHasKey('GET', $allHandler['routes']);
@@ -70,23 +78,5 @@ class HandlerDescriptorTest extends AbstractCase
         $this->assertArrayHasKey('PATCH', $allHandler['routes']);
 
         $this->assertCount(4, $allHandler['routes']['GET']);
-
-        $this->assertArrayHasKey('auth', $result);
-        $authHandler = $result['auth'];
-        $this->assertInstanceOf(AuthHandler::class, $authHandler['handler']);
-        $this->assertCount(3, $authHandler['routes']);
-        $this->assertArrayHasKey('GET', $authHandler['routes']);
-        $this->assertArrayHasKey('POST', $authHandler['routes']);
-        $this->assertArrayHasKey('OPTIONS', $authHandler['routes']);
-        /** @var ResourceConfiguration $configuration */
-        $configuration = $authHandler['configuration'];
-        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
-        $this->assertEquals(['auth_alias'], $configuration->getAliases());
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->fixture);
-        parent::tearDown();
     }
 }

@@ -51,11 +51,17 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         return $this->extractor->extract($request->getUri(), $model);
     }
 
-    public function getRepositoryClassForResourceType(ResourceType $resourceType): string
-    {
-        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType($resourceType);
+    public function getRepositoryClassForResourceType(
+        ResourceType $resourceType,
+    ): string {
+        [$vendor, $extension, $model] = Utility::getClassNamePartsForResourceType(
+            $resourceType
+        );
 
-        return ($vendor ? $vendor . '\\' : '') . $extension . '\\Domain\\Repository\\' . $model . 'Repository';
+        return ($vendor ? $vendor . '\\' : '')
+            . $extension
+            . '\\Domain\\Repository\\'
+            . $model . 'Repository';
     }
 
     /**
@@ -73,7 +79,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         } catch (Exception $exception) {
         }
         if (!$repository) {
-            $triedClasses = sprintf('Tried the following classes: "%s"', $repositoryClass);
+            $triedClasses = sprintf(
+                'Tried the following classes: "%s"',
+                $repositoryClass
+            );
             if ($exception) {
                 $message = sprintf(
                     'Repository for resource type "%s" could not be created: %s %s',
@@ -218,9 +227,10 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
         $this->persistAllChanges();
     }
 
-    public function removeModel(RestRequestInterface $request, object $model): void
-    {
-        InvalidArgumentException::assertObjectOrNull($model);
+    public function removeModel(
+        RestRequestInterface $request,
+        object $model,
+    ): void {
         $repository = $this->getRepositoryForResourceType(
             $request->getResourceType(),
         );
@@ -264,7 +274,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      */
     protected function persistAllChanges(): void
     {
-        $persistenceManager = $this->objectManager->get(PersistenceManagerInterface::class);
+        $persistenceManager = $this->objectManager->get(
+            PersistenceManagerInterface::class
+        );
         $persistenceManager->persistAll();
     }
 
@@ -301,8 +313,9 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      *
      * @return non-empty-string
      */
-    protected function convertPropertyParameterToKey(string $propertyParameter): string
-    {
+    protected function convertPropertyParameterToKey(
+        string $propertyParameter,
+    ): string {
         $key = str_replace(' ', '', ucwords(str_replace(
             ['_', '-'],
             ' ',
@@ -390,8 +403,13 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     protected function logException(Exception $exception): void
     {
-        $message = 'Uncaught exception #' . $exception->getCode() . ': ' . $exception->getMessage();
-        $this->getLogger()->log(LogLevel::ERROR, $message, ['exception' => $exception]);
+        $message = 'Uncaught exception #'
+            . $exception->getCode() . ': ' . $exception->getMessage();
+        $this->getLogger()->log(
+            LogLevel::ERROR,
+            $message,
+            ['exception' => $exception]
+        );
     }
 
     /**

@@ -8,6 +8,7 @@ use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Router\Route;
 use Cundd\Rest\Router\RouterInterface;
+use Cundd\Rest\Utility\SiteLanguageUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -19,11 +20,9 @@ use function date;
  */
 class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
 {
-    protected ResponseFactoryInterface $responseFactory;
-
-    public function __construct(ResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
+    public function __construct(
+        protected readonly ResponseFactoryInterface $responseFactory,
+    ) {
     }
 
     public function getDescription(): string
@@ -35,9 +34,9 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
     {
         if (class_exists(LocalizationUtility::class)) {
             return $this->showTYPO3Greeting($request);
-        } else {
-            return $this->showBuiltinGreeting($request);
         }
+
+        return $this->showBuiltinGreeting($request);
     }
 
     public function options(): bool
@@ -46,30 +45,36 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
         return true;
     }
 
-    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
-    {
-        $router->add(Route::get('/?', [$this, 'show']));
-        $router->add(Route::options('/?', [$this, 'options']));
+    public function configureRoutes(
+        RouterInterface $router,
+        RestRequestInterface $request,
+    ): void {
+        $router->add(Route::get('/?', $this->show(...)));
+        $router->add(Route::options('/?', $this->options(...)));
     }
 
-    protected function showTYPO3Greeting(RestRequestInterface $request): ResponseInterface
-    {
-        // A cleaner way would be to pass the language as argument to the LocalizationUtility, but that may
-        // not be the best for developer experience
-        // $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
-        // $greeting = LocalizationUtility::translate(
-        //     'message.greeting',
-        //     'rest',
-        //     null,
-        //     $siteLanguage ? $siteLanguage->getTypo3Language() : null
-        // );
-        $greeting = LocalizationUtility::translate('message.greeting', 'rest');
+    protected function showTYPO3Greeting(
+        RestRequestInterface $request,
+    ): ResponseInterface {
+        $siteLanguage = SiteLanguageUtility::detectSiteLanguage($request);
+        $greeting = LocalizationUtility::translate(
+            'message.greeting',
+            'rest',
+            [],
+            // TODO: Check why passing the full `Locale`-object does not work
+            $siteLanguage?->getLocale()->getLanguageCode()
+        );
 
-        return $this->responseFactory->createSuccessResponse($greeting, 200, $request);
+        return $this->responseFactory->createSuccessResponse(
+            $greeting,
+            200,
+            $request
+        );
     }
 
-    protected function showBuiltinGreeting(RestRequestInterface $request): ResponseInterface
-    {
+    protected function showBuiltinGreeting(
+        RestRequestInterface $request,
+    ): ResponseInterface {
         $greeting = 'What\'s up?';
         $hour = date('H');
         if ($hour <= '10') {
@@ -78,6 +83,10 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
             $greeting = 'Hy! Still awake?';
         }
 
-        return $this->responseFactory->createSuccessResponse($greeting, 200, $request);
+        return $this->responseFactory->createSuccessResponse(
+            $greeting,
+            200,
+            $request
+        );
     }
 }

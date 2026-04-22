@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Functional\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+
 class GreetingTest extends AbstractGreetingCase
 {
-    private const ROOT_PAGE_ID = 1;
+    private const ROOT_PAGE_ID = 1000;
 
     public function setUp(): void
     {
@@ -20,19 +22,14 @@ class GreetingTest extends AbstractGreetingCase
                     $this->prepareFrontendTypoScriptPath(
                         __DIR__ . '/../Fixtures/TypoScript/BasicPage.typoscript'
                     ),
-                    $this->prepareFrontendTypoScriptPath(
-                        __DIR__ . '/../../../Configuration/TypoScript/setup.typoscript',
-                    ),
                 ],
             ]
         );
         $this->setUpFrontendSite(self::ROOT_PAGE_ID, $this->siteLanguageConfiguration);
     }
 
-    /**
-     * @dataProvider dataProviderTestLanguage
-     */
-    public function testLanguage(string $prefix, string $expectedMessage)
+    #[DataProvider('dataProviderTestLanguage')]
+    public function testLanguage(string $prefix, string $expectedMessage): void
     {
         $this->fetchPathAndTestMessage($prefix, $expectedMessage, self::ROOT_PAGE_ID);
     }
