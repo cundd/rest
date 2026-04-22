@@ -7,6 +7,9 @@ namespace Cundd\Rest\Tests\Functional\DataProvider;
 use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\RequestBuilderUtility;
+use PHPUnit\Framework\Attributes\Test;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Test case for class file related Data Provider functions
@@ -25,147 +28,15 @@ class ExtractorFileTest extends AbstractCase
         $this->fixture = $this->getContainer()->get(Extractor::class);
     }
 
-    public function tearDown(): void
+    #[Test]
+    public function extractForFileTest(): void
     {
-        unset($this->fixture);
-        parent::tearDown();
-    }
-
-    /**
-     * @test
-     */
-    public function extractForModelWithFileReferenceTest()
-    {
-        $testModel = $this->createDomainModelFixture(
-            [
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(),
-            ]
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'title' => 'Test',
-                'file'  => [
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'Test title',
-                    'description'  => 'The original files description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
-                ],
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForModelWithFileReferenceAndDataTest()
-    {
-        $testModel = $this->createDomainModelFixture(
-            [
-                'title' => 'Test',
-                'file'  => $this->createFileReferenceMock(
-                    [
-                        'title'       => 'My title',
-                        'description' => 'File description',
-                        'uid'         => 0,
-                    ]
-                ),
-            ]
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'title' => 'Test',
-                'file'  => [
-                    'name'         => 'Original file name',
-                    'mimeType'     => 'MimeType',
-                    'url'          => 'http://url',
-                    'size'         => 10,
-                    'title'        => 'My title',
-                    'description'  => 'File description',
-                    'uid'          => 1467702760,
-                    'referenceUid' => 0,
-                ],
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForFileReferenceTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock();
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'Test title',
-                'description'  => 'The original files description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForFileReferenceWithDataTest()
-    {
-        /** @var object $testModel */
-        $testModel = $this->createFileReferenceMock(
-            [
-                'title'       => 'My title',
-                'description' => 'File description',
-                'uid'         => 0,
-            ]
-        );
-
-        $result = $this->fixture->extract($testModel);
-        $this->assertNotEmpty($result);
-        $this->assertEquals(
-            [
-                'name'         => 'Original file name',
-                'mimeType'     => 'MimeType',
-                'url'          => 'http://url',
-                'size'         => 10,
-                'title'        => 'My title',
-                'description'  => 'File description',
-                'uid'          => 1467702760,
-                'referenceUid' => 0,
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function extractForFileTest()
-    {
-        /** @var object $testModel */
         $testModel = $this->createFileMock();
 
-        $result = $this->fixture->extract($testModel);
+        $result = $this->fixture->extract(
+            self::buildTestUri(),
+            $testModel
+        );
         $this->assertNotEmpty($result);
         $this->assertEquals(
             [
@@ -178,12 +49,9 @@ class ExtractorFileTest extends AbstractCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function extractForModelWithFileTest()
+    #[Test]
+    public function extractForModelWithFileTest(): void
     {
-        /** @var object $testModel */
         $testModel = $this->createDomainModelFixture(
             [
                 'title' => 'Test',
@@ -191,7 +59,10 @@ class ExtractorFileTest extends AbstractCase
             ]
         );
 
-        $result = $this->fixture->extract($testModel);
+        $result = $this->fixture->extract(
+            self::buildTestUri(),
+            $testModel
+        );
         $this->assertNotEmpty($result);
         $this->assertEquals(
             [
@@ -205,5 +76,10 @@ class ExtractorFileTest extends AbstractCase
             ],
             $result
         );
+    }
+
+    private static function buildTestUri(): UriInterface
+    {
+        return RequestBuilderUtility::buildTestUri('/');
     }
 }

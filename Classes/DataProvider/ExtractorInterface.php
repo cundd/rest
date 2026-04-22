@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\DataProvider;
 
-use InvalidArgumentException;
+use Cundd\Rest\Exception\InvalidArgumentException;
+use Psr\Http\Message\UriInterface;
 use RuntimeException;
 
 /**
@@ -22,5 +23,8 @@ interface ExtractorInterface
      * @throws RuntimeException         if the data nesting is too deep
      * @throws InvalidArgumentException if the input type is not supported
      */
-    public function extract(mixed $input): string|int|bool|float|array|null;
+    public function extract(
+        UriInterface $baseUri,
+        mixed $input,
+    ): string|int|bool|float|array|null;
 }
