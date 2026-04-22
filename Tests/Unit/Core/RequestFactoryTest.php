@@ -4,30 +4,29 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Tests\Unit\Core;
 
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Request;
 use Cundd\Rest\Request\Format;
 use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\RequestFactory;
 use Cundd\Rest\RequestFactoryInterface;
-use Laminas\Diactoros\ServerRequestFactory;
+use Cundd\Rest\Tests\RequestBuilderUtility;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for class new \Cundd\Rest\RequestFactory
  */
-class RequestFactoryTest extends TestCase
+final class RequestFactoryTest extends TestCase
 {
     use ProphecyTrait;
 
-    /**
-     * @var RequestFactoryInterface
-     */
-    protected $fixture;
+    protected RequestFactoryInterface $fixture;
 
     public function setUp(): void
     {
@@ -39,348 +38,281 @@ class RequestFactoryTest extends TestCase
     public function tearDown(): void
     {
         unset($this->fixture);
-        unset($_GET['u']);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function getUriTest()
+    #[Test]
+    public function getUriTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1'));
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getUriWithFormatTest()
+    #[Test]
+    public function getUriWithFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/2.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/2.json'));
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getUriWithHtmlFormatTest()
+    #[Test]
+    public function getUriWithHtmlFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/2.html';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/2.html'));
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('html', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getAliasUriTest()
+    #[Test]
+    public function getAliasUriTest(): void
     {
-        $_GET['u'] = 'myAlias/1';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('myAlias/1'));
         $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getAliasUriWithFormatTest()
+    #[Test]
+    public function getAliasUriWithFormatTest(): void
     {
-        $_GET['u'] = 'myAlias/2.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('myAlias/2.json'));
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getAliasUriWithHtmlFormatTest()
+    #[Test]
+    public function getAliasUriWithHtmlFormatTest(): void
     {
-        $_GET['u'] = 'myAlias/2.html';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('myAlias/2.html'));
         $this->assertEquals('/MyExt-MyModel/2', $request->getPath());
         $this->assertEquals('html', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getOriginalResourceTypeTest()
+    #[Test]
+    public function getOriginalResourceTypeTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1';
         /** @var Request $request */
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1'));
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
-    /**
-     * @test
-     */
-    public function getOriginalResourceTypeWithFormatTest()
+    #[Test]
+    public function getOriginalResourceTypeWithFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/2.json';
         /** @var Request $request */
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/2.json'));
         $this->assertEquals('MyExt-MyModel', $request->getOriginalResourceType());
     }
 
-    /**
-     * @test
-     */
-    public function getRootObjectKeyTest()
+    #[Test]
+    public function getPathTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
-    }
-
-    /**
-     * @test
-     */
-    public function getRootObjectKeyWithFormatTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/2.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getRootObjectKey());
-    }
-
-    /**
-     * @test
-     */
-    public function getPathTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
+        $path = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1'))
+            ->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
-    /**
-     * @test
-     */
-    public function getPathWithFormatTest()
+    #[Test]
+    public function getPathWithFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.json';
-        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
+        $path = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.json'))
+            ->getResourceType();
         $this->assertEquals('MyExt-MyModel', $path);
     }
 
-    /**
-     * @test
-     */
-    public function getUnderscoredPathWithFormatAndIdTest()
+    #[Test]
+    public function getUnderscoredPathWithFormatAndIdTest(): void
     {
-        $_GET['u'] = 'my_ext-my_model/1.json';
-        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
+        $path = $this->fixture
+            ->buildRequest($this->buildServerRequest('my_ext-my_model/1.json'))
+            ->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
-    /**
-     * @test
-     */
-    public function getUnderscoredPathWithFormatTest2()
+    #[Test]
+    public function getUnderscoredPathWithFormatTest2(): void
     {
-        $_GET['u'] = 'my_ext-my_model.json';
-        $path = $this->fixture->buildRequest($this->buildServerRequest())->getResourceType();
+        $path = $this->fixture
+            ->buildRequest($this->buildServerRequest('my_ext-my_model.json'))
+            ->getResourceType();
         $this->assertEquals('my_ext-my_model', $path);
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithoutFormatTest()
+    #[Test]
+    public function getFormatWithoutFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1'));
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithFormatTest()
+    #[Test]
+    public function getFormatWithFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.json'));
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithoutPathTest()
+    #[Test]
+    public function getFormatWithoutPathTest(): void
     {
-        $_GET['u'] = '.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture->buildRequest(
+            $this->buildServerRequest(
+                '.json'
+            )
+        );
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithHtmlFormatTest()
+    #[Test]
+    public function getFormatWithHtmlFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.html';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.html'));
         $this->assertEquals('html', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithDecimalSegmentJsonFormatTest()
+    #[Test]
+    public function getFormatWithDecimalSegmentJsonFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.0.json';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.0.json'));
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithDecimalSegmentHtmlFormatTest()
+    #[Test]
+    public function getFormatWithDecimalSegmentHtmlFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.0.html';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.0.html'));
         $this->assertEquals('html', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithDecimalSegmentTest()
+    #[Test]
+    public function getFormatWithDecimalSegmentTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.0';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.0'));
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getFormatWithNotExistingFormatTest()
+    #[Test]
+    public function getFormatWithNotExistingFormatTest(): void
     {
-        $_GET['u'] = 'MyExt-MyModel/1.blur';
-        $request = $this->fixture->buildRequest($this->buildServerRequest());
+        $request = $this->fixture
+            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.blur'));
         $this->assertEquals('json', $request->getFormat());
     }
 
-    /**
-     * @test
-     */
-    public function getUriWithAbsRefPrefixInSubDirectoryTest()
+    #[Test]
+    public function getUriWithAbsRefPrefixInSubDirectoryTest(): void
     {
-        $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory/'])->buildRequest(
-            $this->buildServerRequest()
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory/'])
+            ->buildRequest(
+                $this->buildServerRequest('/subDirectory/rest/MyExt-MyModel/1')
+            );
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    }
+
+    #[Test]
+    public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest(): void
+    {
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory'])
+            ->buildRequest($this->buildServerRequest('/subDirectory/rest/MyExt-MyModel/1'));
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    }
+
+    #[Test]
+    public function getUriWithAbsRefPrefixSlashTest(): void
+    {
+        $request = $this->buildRequestFactory(['absRefPrefix' => '/'])
+            ->buildRequest($this->buildServerRequest('/rest/MyExt-MyModel/1'));
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    }
+
+    #[Test]
+    public function getUriWithAbsRefPrefixDomainTest(): void
+    {
+        $request = $this->buildRequestFactory(['absRefPrefix' => 'http://example.com/'])
+            ->buildRequest($this->buildServerRequest('/rest/MyExt-MyModel/1'));
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    }
+
+    #[Test]
+    public function getUriWithAbsRefPrefixAutoTest(): void
+    {
+        $request = $this->buildRequestFactory(['absRefPrefix' => 'auto'])
+            ->buildRequest($this->buildServerRequest('/rest/MyExt-MyModel/1'));
+        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    }
+
+    // #[Test]
+    // public function pathShouldNotIncludeQueryDataTest(): void
+    // {
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('MyExt-MyModel/1?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('json', $request->getFormat());
+    //
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('MyExt-MyModel/?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('json', $request->getFormat());
+    //
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('MyExt-MyModel?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('json', $request->getFormat());
+    // }
+
+    // #[Test]
+    // public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest(): void
+    // {
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('/rest/MyExt-MyModel/1?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
+    //     $this->assertEquals('json', $request->getFormat());
+    //
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('/rest/MyExt-MyModel/?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('/MyExt-MyModel/', $request->getPath());
+    //     $this->assertEquals('json', $request->getFormat());
+    //
+    //     $request = $this->buildRequestFactory()->buildRequest(
+    //         $this->buildServerRequest('/rest/MyExt-MyModel?query=string')
+    //     );
+    //     $this->assertEquals('MyExt-MyModel', $request->getResourceType());
+    //     $this->assertEquals('/MyExt-MyModel', $request->getPath());
+    //     $this->assertEquals('json', $request->getFormat());
+    // }
+
+    #[Test]
+    #[DataProvider('createRequestTestDataProvider')]
+    public function createRequestTest(string $input, string $resourceType, string $path, string $format): void
+    {
+        // $_SERVER['REQUEST_URI'] = $input;
+        $request = $this->buildRequestFactory()->buildRequest(
+            $this->buildServerRequest($input)
         );
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function getUriWithAbsRefPrefixInSubDirectoryWithoutTrailingSlashTest()
-    {
-        $_SERVER['REQUEST_URI'] = '/subDirectory/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/subDirectory'])->buildRequest(
-            $this->buildServerRequest()
-        );
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function getUriWithAbsRefPrefixSlashTest()
-    {
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => '/'])->buildRequest($this->buildServerRequest());
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function getUriWithAbsRefPrefixDomainTest()
-    {
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => 'http://example.com/'])->buildRequest(
-            $this->buildServerRequest()
-        );
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function getUriWithAbsRefPrefixAutoTest()
-    {
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1';
-        $request = $this->buildRequestFactory(['absRefPrefix' => 'auto'])->buildRequest($this->buildServerRequest());
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function pathShouldNotIncludeQueryDataTest()
-    {
-        $_GET['u'] = 'MyExt-MyModel/1?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('json', $request->getFormat());
-
-        $_GET['u'] = 'MyExt-MyModel/?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('json', $request->getFormat());
-
-        $_GET['u'] = 'MyExt-MyModel?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('json', $request->getFormat());
-    }
-
-    /**
-     * @test
-     */
-    public function urlAndPathShouldNotIncludeQueryDataFromRequestUriTest()
-    {
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/1?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('/MyExt-MyModel/1', $request->getPath());
-        $this->assertEquals('json', $request->getFormat());
-
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel/?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('/MyExt-MyModel/', $request->getPath());
-        $this->assertEquals('json', $request->getFormat());
-
-        $_SERVER['REQUEST_URI'] = '/rest/MyExt-MyModel?query=string';
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
-        $this->assertEquals('MyExt-MyModel', $request->getResourceType());
-        $this->assertEquals('/MyExt-MyModel', $request->getPath());
-        $this->assertEquals('json', $request->getFormat());
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider createRequestTestDataProvider
-     */
-    public function createRequestTest(string $input, string $resourceType, string $path, string $format)
-    {
-        $_SERVER['REQUEST_URI'] = $input;
-        $request = $this->buildRequestFactory()->buildRequest($this->buildServerRequest());
         $this->assertInstanceOf(ResourceType::class, $request->getResourceType());
         $this->assertSame($resourceType, (string) $request->getResourceType());
         $this->assertSame($path, $request->getPath());
@@ -388,7 +320,10 @@ class RequestFactoryTest extends TestCase
         $this->assertSame($format, (string) $request->getFormat());
     }
 
-    public function createRequestTestDataProvider()
+    /**
+     * @return list<array{0:string,1:string,2:string,3:string}>
+     */
+    public static function createRequestTestDataProvider(): array
     {
         return [
             ['/rest/MyExt-MyModel', 'MyExt-MyModel', '/MyExt-MyModel', 'json'],
@@ -403,10 +338,15 @@ class RequestFactoryTest extends TestCase
         ];
     }
 
-    private function buildRequestFactory(array $configurationProviderSetting = []): RequestFactoryInterface
-    {
-        /** @var ConfigurationProviderInterface|ObjectProphecy $configurationProviderMock */
-        $configurationProviderMock = $this->prophesize(ConfigurationProviderInterface::class);
+    /**
+     * @param array<string,mixed> $configurationProviderSetting
+     */
+    private function buildRequestFactory(
+        array $configurationProviderSetting = [],
+    ): RequestFactoryInterface {
+        $configurationProviderMock = $this->prophesize(
+            ConfigurationProviderInterface::class
+        );
 
         if (empty($configurationProviderSetting)) {
             $configurationProviderSetting = [
@@ -432,11 +372,18 @@ class RequestFactoryTest extends TestCase
         /** @var ConfigurationProviderInterface $configurationProvider */
         $configurationProvider = $configurationProviderMock->reveal();
 
-        return new RequestFactory($configurationProvider);
+        $configurationProviderFactory = $this->prophesize(
+            ConfigurationProviderFactoryInterface::class
+        );
+        $configurationProviderFactory
+            ->build(Argument::any())
+            ->willReturn($configurationProvider);
+
+        return new RequestFactory($configurationProviderFactory->reveal());
     }
 
-    private function buildServerRequest(): ServerRequestInterface
+    private function buildServerRequest(string $url): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals();
+        return RequestBuilderUtility::buildTestServerRequest($url);
     }
 }

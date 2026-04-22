@@ -225,15 +225,12 @@ class RequestFactory implements SingletonInterface, RequestFactoryInterface
 
     private function getRawPath(ServerRequestInterface $request): string
     {
-        $path = '';
-        if (isset($_GET['u'])) {
-            $path = filter_var($this->removePathPrefixes($request, $_GET['u']), FILTER_SANITIZE_URL);
-        }
-
-        if (!$path) {
-            $path = filter_var($this->removePathPrefixes($request, $request->getUri()->getPath()), FILTER_SANITIZE_URL);
-        }
-
-        return (string) $path;
+        return (string) filter_var(
+            $this->removePathPrefixes(
+                $request,
+                $request->getUri()->getPath()
+            ),
+            FILTER_SANITIZE_URL
+        );
     }
 }
