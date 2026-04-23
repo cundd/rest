@@ -44,7 +44,6 @@ final class ObjectManagerTest extends AbstractCase
     public function setUp(): void
     {
         parent::setUp();
-        require_once __DIR__ . '/../../FixtureClasses.php';
 
         $container = $this->getContainer();
         assert($container instanceof Container);

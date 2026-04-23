@@ -12,13 +12,12 @@ use Cundd\Rest\DataProvider\FileExtractor;
 use Cundd\Rest\DataProvider\IdentityProviderInterface;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request\ResourceType;
-use Cundd\Rest\Tests\BaseModel;
+use Cundd\Rest\Tests\Fixtures\MyModel;
+use Cundd\Rest\Tests\Fixtures\MyModelRepository;
+use Cundd\Rest\Tests\Fixtures\MyNestedJsonSerializeModel;
+use Cundd\Rest\Tests\Fixtures\MyNestedModel;
+use Cundd\Rest\Tests\Fixtures\MyNestedModelWithObjectStorage;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\MyModel;
-use Cundd\Rest\Tests\MyModelRepository;
-use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
-use Cundd\Rest\Tests\MyNestedModel;
-use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
 use DateTime;
 use PHPUnit\Framework\Attributes\Test;
 use Prophecy\Argument;
@@ -41,7 +40,6 @@ final class DataProviderTest extends AbstractCase
     {
         parent::setUp();
 
-        require_once __DIR__ . '/../../FixtureClasses.php';
         if (!class_exists('MyExt\\Domain\\Model\\MyModel', false)) {
             class_alias(MyModel::class, 'MyExt\\Domain\\Model\\MyModel');
         }
@@ -341,7 +339,7 @@ final class DataProviderTest extends AbstractCase
             'child' => [
                 'base'  => 'Base',
                 'date'  => $testDate->format(DateTime::ATOM),
-                'child' => self::getUriRequestBase() . 'rest/cundd-rest-tests-my_nested_model/2/child',
+                'child' => self::getUriRequestBase() . 'rest/cundd-rest-tests-fixtures-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
             ],
@@ -374,7 +372,7 @@ final class DataProviderTest extends AbstractCase
         $childModel->setDate($testDate);
         $childModel->_setProperty('uid', 2);
 
-        /** @var ObjectStorage<BaseModel> $children */
+        /** @var ObjectStorage<\Cundd\Rest\Tests\Fixtures\BaseModel> $children */
         $children = new ObjectStorage();
         $children->offsetSet($model, null);
         $children->offsetSet($childModel, null);
@@ -392,7 +390,7 @@ final class DataProviderTest extends AbstractCase
             'uid'      => 1,
             'pid'      => null,
             'children' => [
-                0 => $this->getUriRequestBase() . 'rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                0 => $this->getUriRequestBase() . 'rest/cundd-rest-tests-fixtures-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
                     'base'  => 'Base',
