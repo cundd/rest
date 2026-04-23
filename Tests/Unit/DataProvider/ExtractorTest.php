@@ -10,6 +10,8 @@ use Cundd\Rest\DataProvider\Extractor;
 use Cundd\Rest\DataProvider\ExtractorInterface;
 use Cundd\Rest\DataProvider\FileExtractor;
 use Cundd\Rest\Tests\ClassBuilderTrait;
+use Cundd\Rest\Tests\Fixtures\MyBackedIntEnum;
+use Cundd\Rest\Tests\Fixtures\MyBackedStringEnum;
 use Cundd\Rest\Tests\MyModel;
 use Cundd\Rest\Tests\MyModelRepository;
 use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
@@ -27,14 +29,12 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use SplObjectStorage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 use function class_exists;
-use function method_exists;
 
 /**
  * Test case for class new \Cundd\Rest\App
@@ -46,24 +46,13 @@ final class ExtractorTest extends TestCase
 
     protected ExtractorInterface $fixture;
 
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-
-        // $_SERVER['HTTP_HOST'] = 'rest.cundd.net';
-        // if (class_exists(GeneralUtility::class) && method_exists(GeneralUtility::class, 'setIndpEnv')) {
-        //     GeneralUtility::setIndpEnv('TYPO3_SITE_URL', 'http://rest.cundd.net/');
-        // }
-    }
-
     public function setUp(): void
     {
         parent::setUp();
 
-        $configurationProviderProphecy = $this->prophesize(ConfigurationProviderInterface::class);
-        /** @var ConfigurationProviderInterface $configurationProvider */
-        $configurationProvider = $configurationProviderProphecy->reveal();
-        /** @var LoggerInterface $logger */
+        $configurationProvider = $this->prophesize(
+            ConfigurationProviderInterface::class
+        )->reveal();
         $logger = $this->prophesize(LoggerInterface::class)->reveal();
 
         $this->fixture = new Extractor(new FileExtractor($logger));
@@ -123,8 +112,6 @@ final class ExtractorTest extends TestCase
      */
     public static function extractCollectionDataProvider(): array
     {
-        self::setUpBeforeClass();
-
         $testSets = [];
 
         foreach (self::extractSimpleDataProvider() as $simpleTestSet) {
@@ -478,6 +465,56 @@ final class ExtractorTest extends TestCase
                     ],
                 ],
             ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('extractEnumDataProvider')]
+    public function extractEnumTest(
+        MyBackedIntEnum|MyBackedStringEnum $input,
+        int|string $expected,
+    ): void {
+        $result = $this->fixture->extract(
+            self::buildTestUri(),
+            $input
+        );
+
+        $this->assertEquals($expected, $result);
+    }
+
+    #[Test]
+    #[DataProvider('extractEnumDataProvider')]
+    public function extractEnumChildTest(
+        MyBackedIntEnum|MyBackedStringEnum $input,
+        int|string $expected,
+    ): void {
+        $model = new MyNestedModel();
+        $model->setChild($input);
+
+        $result = $this->fixture->extract(
+            self::buildTestUri(),
+            $model
+        );
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('child', $result);
+
+        $this->assertEquals($expected, $result['child']);
+    }
+
+    /**
+     * @return array{0:MyBackedStringEnum|MyBackedIntEnum,1:string|int}[]
+     */
+    public static function extractEnumDataProvider(): array
+    {
+        return [
+            [MyBackedStringEnum::A, MyBackedStringEnum::A->value],
+            [MyBackedStringEnum::B, MyBackedStringEnum::B->value],
+            [MyBackedStringEnum::C, MyBackedStringEnum::C->value],
+
+            [MyBackedIntEnum::A, MyBackedIntEnum::A->value],
+            [MyBackedIntEnum::B, MyBackedIntEnum::B->value],
+            [MyBackedIntEnum::C, MyBackedIntEnum::C->value],
         ];
     }
 
