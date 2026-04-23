@@ -12,14 +12,14 @@ use Cundd\Rest\DataProvider\FileExtractor;
 use Cundd\Rest\Tests\ClassBuilderTrait;
 use Cundd\Rest\Tests\Fixtures\MyBackedIntEnum;
 use Cundd\Rest\Tests\Fixtures\MyBackedStringEnum;
-use Cundd\Rest\Tests\MyModel;
-use Cundd\Rest\Tests\MyModelRepository;
-use Cundd\Rest\Tests\MyNestedJsonSerializeModel;
-use Cundd\Rest\Tests\MyNestedModel;
-use Cundd\Rest\Tests\MyNestedModelWithObjectStorage;
+use Cundd\Rest\Tests\Fixtures\MyModel;
+use Cundd\Rest\Tests\Fixtures\MyModelRepository;
+use Cundd\Rest\Tests\Fixtures\MyNestedJsonSerializeModel;
+use Cundd\Rest\Tests\Fixtures\MyNestedModel;
+use Cundd\Rest\Tests\Fixtures\MyNestedModelWithObjectStorage;
+use Cundd\Rest\Tests\Fixtures\SimpleClass;
+use Cundd\Rest\Tests\Fixtures\SimpleClassJsonSerializable;
 use Cundd\Rest\Tests\RequestBuilderUtility;
-use Cundd\Rest\Tests\SimpleClass;
-use Cundd\Rest\Tests\SimpleClassJsonSerializable;
 use DateTime;
 use DateTimeInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -181,7 +181,7 @@ final class ExtractorTest extends TestCase
             'child' => [
                 'base'  => 'Base',
                 'date'  => $testDate->format(DateTime::ATOM),
-                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/2/child',
+                'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-fixtures-my_nested_model/2/child',
                 'uid'   => 2,
                 'pid'   => null,
             ],
@@ -236,7 +236,7 @@ final class ExtractorTest extends TestCase
                 'child' => [
                     'base'  => 'Base',
                     'date'  => $testDate->format(DateTime::ATOM),
-                    'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/3/child',
+                    'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-fixtures-my_nested_model/3/child',
                     'uid'   => 3,
                     'pid'   => null,
                 ],
@@ -282,7 +282,7 @@ final class ExtractorTest extends TestCase
         $expectedOutput = [
             'base'  => 'Base',
             'date'  => $testDate->format(DateTime::ATOM),
-            'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model/1/child',
+            'child' => 'http://rest.cundd.net/rest/cundd-rest-tests-fixtures-my_nested_model/1/child',
             'uid'   => 1,
             'pid'   => null,
         ];
@@ -451,7 +451,7 @@ final class ExtractorTest extends TestCase
             'uid'      => 1,
             'pid'      => null,
             'children' => [
-                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-my_nested_model_with_object_storage/1/',
+                0 => 'http://rest.cundd.net/rest/cundd-rest-tests-fixtures-my_nested_model_with_object_storage/1/',
                 // <- This is $model
                 1 => [ // <- This is $childModel
                     'base'  => 'Base',
@@ -524,8 +524,6 @@ final class ExtractorTest extends TestCase
         self::buildClassIfNotExists(Repository::class);
         self::buildClassIfNotExists(ObjectStorage::class, SplObjectStorage::class);
         self::buildInterfaceIfNotExists(DomainObjectInterface::class);
-
-        require_once __DIR__ . '/../../FixtureClasses.php';
 
         if (!class_exists('Tx_MyExt_Domain_Model_MyModel', false)) {
             class_alias(MyModel::class, 'Tx_MyExt_Domain_Model_MyModel');

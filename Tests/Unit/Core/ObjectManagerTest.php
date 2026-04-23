@@ -59,7 +59,6 @@ class ObjectManagerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        require_once __DIR__ . '/../../FixtureClasses.php';
 
         $this->container = new Container();
         $this->fixture = new ObjectManager($this->container);
