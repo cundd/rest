@@ -132,7 +132,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $model = $dataProvider->convertIntoModel($request, $data);
         if (!$model) {
             return $this->responseFactory->createErrorResponse(
-                'Could not create model from data',
+                'Could not update model from data',
                 400,
                 $request
             );
