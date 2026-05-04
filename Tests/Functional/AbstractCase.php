@@ -11,6 +11,7 @@ use Cundd\Rest\Handler\GreetingHandler;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface as CunddLoggerInterface;
 use Cundd\Rest\Tests\ClassBuilderTrait;
+use Cundd\Rest\Tests\Functional\Fixtures\CustomNullBackend;
 use Cundd\Rest\Tests\Functional\Integration\StreamLogger;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderTrait;
@@ -19,7 +20,6 @@ use Exception;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Symfony\Component\DependencyInjection\Container;
-use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception as TYPO3CoreException;
@@ -179,7 +179,7 @@ class AbstractCase extends FunctionalTestCase
         try {
             $cacheManager->getCache('assets');
         } catch (Exception $e) {
-            $cache = new VariableFrontend('assets', new NullBackend('unused'));
+            $cache = new VariableFrontend('assets', new CustomNullBackend());
             $cacheManager->registerCache($cache);
         }
     }
