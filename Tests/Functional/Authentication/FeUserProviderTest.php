@@ -7,7 +7,6 @@ namespace Cundd\Rest\Tests\Functional\Authentication;
 use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use Cundd\Rest\Authentication\UserProviderInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
-use Cundd\Rest\Tests\Functional\FeUserCaseTrait;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
@@ -15,8 +14,6 @@ use PHPUnit\Framework\Attributes\Test;
  */
 class FeUserProviderTest extends AbstractCase
 {
-    use FeUserCaseTrait;
-
     protected UserProviderInterface $fixture;
 
     public function setUp(): void
@@ -24,7 +21,6 @@ class FeUserProviderTest extends AbstractCase
         parent::setUp();
         $this->fixture = new FeUserProvider();
 
-        $this->addApiKeyColumn();
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/login.csv');
     }
 
