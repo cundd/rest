@@ -268,7 +268,7 @@ class Handler implements \Cundd\Rest\Handler\HandlerInterface
 
     // (…)
 
-    public function configureRoutes(RouterInterface $router, RestRequestInterface $request)
+    public function configureRoutes(RouterInterface $router, RestRequestInterface $request):void
     {
         # curl -X GET http://localhost:8888/rest/customhandler
         $router->add(
