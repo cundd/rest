@@ -20,6 +20,9 @@ trim_trailing_whitespace = true
 # [*.json]
 # indent_style = tab
 
+[*.sh]
+switch_case_indent = true
+
 # ReST-Files
 [*.{rst,rst.txt}]
 indent_size = 4
