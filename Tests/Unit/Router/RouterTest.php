@@ -77,6 +77,7 @@ final class RouterTest extends AbstractRequestBasedCase
         string $pattern,
         string $path,
         array $expectedParameters,
+        ?bool $_ = null,
     ): void {
         $this->fixture->add(Route::get($pattern, $this->cb));
 
@@ -86,7 +87,7 @@ final class RouterTest extends AbstractRequestBasedCase
 
     #[Test]
     #[DataProvider('getMatchingRoutesMethodDataProvider')]
-    public function dispatchNotFoundTest(): void
+    public function dispatchNotFoundTest(string $_): void
     {
         $this->fixture->add(Route::get('some/route', $this->cb));
 
