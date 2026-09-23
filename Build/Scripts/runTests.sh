@@ -570,7 +570,7 @@ echo "PHP: ${PHP_VERSION}" >&2
 echo "TYPO3: ${CORE_VERSION}" >&2
 if [[ ${TEST_SUITE} =~ ^functional$ ]]; then
     case "${DBMS}" in
-        mariadb|mysql)
+        mariadb | mysql)
             echo "DBMS: ${DBMS}  version ${DBMS_VERSION}  driver ${DATABASE_DRIVER}" >&2
             ;;
         postgres)
