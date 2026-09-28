@@ -30,7 +30,7 @@
         "ext-simplexml": "*",
         "cundd/test-flight": "^0.1.5",
         "jangregor/phpstan-prophecy": "^2.2.0",
-        "laminas/laminas-diactoros": "^3.0.0",
+        "laminas/laminas-diactoros": "^3.8.0",
         "phpspec/prophecy": "*",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^11.2.5",
