@@ -6,12 +6,9 @@ namespace Cundd\Rest\Configuration;
 
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use TYPO3\CMS\Core\Site\Entity\SiteSettings;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 
 class SiteSettingsConfigurationProvider extends AbstractConfigurationProvider
 {
-    protected ConfigurationManager $configurationManager;
-
     public function __construct(private readonly SiteSettings $siteSettings)
     {
     }
