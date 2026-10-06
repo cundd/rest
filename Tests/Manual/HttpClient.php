@@ -71,6 +71,7 @@ final class HttpClient
         $response = $response->withParsedBody(json_decode(
             (string) $response->getBody(),
             true,
+            512,
             JSON_THROW_ON_ERROR
         ));
         if (null === $response->getParsedBody()) {
