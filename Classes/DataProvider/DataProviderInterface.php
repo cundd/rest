@@ -13,7 +13,7 @@ interface DataProviderInterface
     /**
      * Return all Domain Models for the given API resource type
      *
-     * @return object[]|DomainObjectInterface[]|QueryResultInterface<mixed,DomainObjectInterface>
+     * @return object[]|DomainObjectInterface[]|QueryResultInterface<int,DomainObjectInterface>
      */
     public function fetchAllModels(RestRequestInterface $request): iterable;
 

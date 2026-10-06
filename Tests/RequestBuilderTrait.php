@@ -9,9 +9,9 @@ use Cundd\Rest\Http\RestRequestInterface;
 trait RequestBuilderTrait
 {
     /**
-     * @param array<mixed,mixed>      $params
-     * @param array<mixed,mixed>      $headers
-     * @param array<mixed,mixed>|null $parsedBody
+     * @param array<mixed,mixed>                            $params
+     * @param array<non-empty-string, array<string>|string> $headers
+     * @param array<mixed,mixed>|null                       $parsedBody
      */
     public function buildTestRequest(
         string $url,

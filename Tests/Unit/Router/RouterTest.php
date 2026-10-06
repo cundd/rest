@@ -61,6 +61,7 @@ final class RouterTest extends AbstractRequestBasedCase
             $this->assertInstanceOf(NotFoundException::class, $result);
         } else {
             $this->assertFalse(is_object($result), 'No object as result expected');
+            $this->assertIsArray($result);
             $this->assertSame($request, array_shift($result));
             $this->assertSame($expectedParameters, $result);
         }

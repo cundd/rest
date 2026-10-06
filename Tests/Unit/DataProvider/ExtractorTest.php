@@ -78,7 +78,7 @@ final class ExtractorTest extends TestCase
     }
 
     /**
-     * @return array<int,mixed>
+     * @return array{0:object|array<string,mixed>,1:array<string,mixed>}[]
      */
     public static function extractSimpleDataProvider(): array
     {

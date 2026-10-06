@@ -39,7 +39,7 @@ final class ClassBuilder
 
         static::buildCode('class', $preparedClassName, $preparedNamespace, $preparedExtends);
 
-        if (!class_exists("$preparedNamespace\\$preparedClassName")) { // @phpstan-ignore booleanNot.alwaysTrue
+        if (!class_exists("$preparedNamespace\\$preparedClassName")) {
             throw new Exception(sprintf(
                 'Could not create class %s',
                 "$preparedNamespace\\$preparedClassName"
@@ -100,7 +100,7 @@ final class ClassBuilder
             $preparedExtends
         );
 
-        if (!interface_exists("$preparedNamespace\\$preparedClassName")) { // @phpstan-ignore booleanNot.alwaysTrue
+        if (!interface_exists("$preparedNamespace\\$preparedClassName")) {
             throw new Exception(sprintf(
                 'Could not create interface %s',
                 "$preparedNamespace\\$preparedClassName"

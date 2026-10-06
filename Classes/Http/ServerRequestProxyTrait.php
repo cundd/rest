@@ -13,7 +13,9 @@ trait ServerRequestProxyTrait
 {
     abstract public function getOriginalRequest(): ServerRequestInterface;
 
-    abstract protected function setOriginalRequest(ServerRequestInterface $request): Request;
+    abstract protected function setOriginalRequest(
+        ServerRequestInterface $request,
+    ): Request;
 
     protected function copy(): self
     {
@@ -25,6 +27,9 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getProtocolVersion();
     }
 
+    /**
+     * @return string[][]
+     */
     public function getHeaders(): array
     {
         return $this->getOriginalRequest()->getHeaders();
@@ -65,31 +70,49 @@ trait ServerRequestProxyTrait
         return $this->getOriginalRequest()->getUri();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getServerParams(): array
     {
         return $this->getOriginalRequest()->getServerParams();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCookieParams(): array
     {
         return $this->getOriginalRequest()->getCookieParams();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQueryParams(): array
     {
         return $this->getOriginalRequest()->getQueryParams();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getUploadedFiles(): array
     {
         return $this->getOriginalRequest()->getUploadedFiles();
     }
 
+    /**
+     * @return array<string, mixed>|object|null
+     */
     public function getParsedBody()
     {
         return $this->getOriginalRequest()->getParsedBody();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributes(): array
     {
         return $this->getOriginalRequest()->getAttributes();
@@ -102,71 +125,113 @@ trait ServerRequestProxyTrait
 
     public function withProtocolVersion(string $version): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withProtocolVersion($version));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withProtocolVersion($version)
+        );
     }
 
     public function withHeader(string $name, $value): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withHeader($name, $value));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withHeader($name, $value)
+        );
     }
 
     public function withAddedHeader(string $name, $value): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAddedHeader($name, $value));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withAddedHeader($name, $value)
+        );
     }
 
     public function withoutHeader(string $name): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutHeader($name));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withoutHeader($name)
+        );
     }
 
     public function withBody(StreamInterface $body): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withBody($body));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withBody($body)
+        );
     }
 
     public function withRequestTarget($requestTarget): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withRequestTarget($requestTarget));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withRequestTarget($requestTarget)
+        );
     }
 
     public function withMethod(string $method): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withMethod($method));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withMethod($method)
+        );
     }
 
-    public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface
-    {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUri($uri, $preserveHost));
+    public function withUri(
+        UriInterface $uri,
+        bool $preserveHost = false,
+    ): ServerRequestInterface {
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withUri($uri, $preserveHost)
+        );
     }
 
+    /**
+     * @param array<string, mixed> $cookies
+     */
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withCookieParams($cookies));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withCookieParams($cookies)
+        );
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     public function withQueryParams(array $query): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withQueryParams($query));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withQueryParams($query)
+        );
     }
 
+    /**
+     * @param array<string, mixed> $uploadedFiles
+     */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withUploadedFiles($uploadedFiles));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withUploadedFiles($uploadedFiles)
+        );
     }
 
+    /**
+     * @param array<string, mixed>|object|null $data
+     */
     public function withParsedBody($data): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withParsedBody($data));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withParsedBody($data)
+        );
     }
 
     public function withAttribute(string $name, $value): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withAttribute($name, $value));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withAttribute($name, $value)
+        );
     }
 
     public function withoutAttribute(string $name): ServerRequestInterface
     {
-        return $this->copy()->setOriginalRequest($this->getOriginalRequest()->withoutAttribute($name));
+        return $this->copy()->setOriginalRequest(
+            $this->getOriginalRequest()->withoutAttribute($name)
+        );
     }
 }

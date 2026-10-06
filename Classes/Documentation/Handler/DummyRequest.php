@@ -154,56 +154,88 @@ class DummyRequest implements RestRequestInterface
         return new Uri((string) $this->resourceType);
     }
 
-    public function withUri(UriInterface $uri, bool $preserveHost = false): ServerRequestInterface
-    {
+    public function withUri(
+        UriInterface $uri,
+        bool $preserveHost = false,
+    ): ServerRequestInterface {
         return clone $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getServerParams(): array
     {
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCookieParams(): array
     {
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $cookies
+     */
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
         return clone $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getQueryParams(): array
     {
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     public function withQueryParams(array $query): ServerRequestInterface
     {
         return clone $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getUploadedFiles(): array
     {
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $uploadedFiles
+     */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         return clone $this;
     }
 
+    /**
+     * @return array<string, mixed>|object|null
+     */
     public function getParsedBody()
     {
         return null;
     }
 
+    /**
+     * @param array<string, mixed>|object|null $data
+     */
     public function withParsedBody($data): ServerRequestInterface
     {
         return clone $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributes(): array
     {
         return [];

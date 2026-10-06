@@ -14,7 +14,7 @@ class FormatTest extends TestCase
 {
     #[Test]
     #[DataProvider('validFormatDataProvider')]
-    public function validFormatTest(mixed $input): void
+    public function validFormatTest(string $input): void
     {
         $this->assertEquals($input, (string) new Format($input));
     }
@@ -33,7 +33,7 @@ class FormatTest extends TestCase
 
     #[Test]
     #[DataProvider('invalidFormatDataProvider')]
-    public function invalidFormatTest(mixed $input): void
+    public function invalidFormatTest(string $input): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Format($input);
