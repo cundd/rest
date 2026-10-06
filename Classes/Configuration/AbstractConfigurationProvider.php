@@ -209,7 +209,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             return $settings['paths'];
         }
 
-        return $settings['paths.'] ?? [];
+        return [];
     }
 
     /**
