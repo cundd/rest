@@ -43,9 +43,8 @@ class DummyDataProvider implements DataProviderInterface
     public function getModelProperty(
         RestRequestInterface $request,
         $model,
-        string $propertyParameter
-    ): mixed
-    {
+        string $propertyParameter,
+    ): mixed {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 

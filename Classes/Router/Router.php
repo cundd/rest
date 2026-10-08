@@ -63,7 +63,7 @@ class Router implements RouterInterface
     /**
      * Create and register a new Route with the given pattern and callback for the method GET
      *
-     * @param non-empty-string|\Cundd\Rest\Request\ResourceType $pattern
+     * @param non-empty-string|ResourceType $pattern
      */
     public function routeGet(
         string|ResourceType $pattern,
@@ -91,7 +91,7 @@ class Router implements RouterInterface
     /**
      * Create and register a new Route with the given pattern and callback for the method PUT
      *
-     * @param non-empty-string|\Cundd\Rest\Request\ResourceType $pattern
+     * @param non-empty-string|ResourceType $pattern
      */
     public function routePut(
         string|ResourceType $pattern,

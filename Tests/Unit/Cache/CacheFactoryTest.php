@@ -142,7 +142,7 @@ class CacheFactoryTest extends TestCase
             }
         );
 
-        /** @var \Cundd\Rest\Request\ResourceType|TypeToken $resourceType */
+        /** @var ResourceType|TypeToken $resourceType */
         $resourceType = Argument::type(ResourceType::class);
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
