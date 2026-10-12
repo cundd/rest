@@ -5,8 +5,7 @@ A [REST API (Representational State Transfer)](http://en.wikipedia.org/wiki/Repr
 ## Features
 
 - Builtin support for Extbase Models
-- [Authentication mechanisms](/Configuration/Authentication/) (Basic Access Authentication, login per POST)
-- [Custom web services](/Tutorial/)
+- [Authentication mechanisms](/Configuration/Authentication/) (Basic Access Authentication)
 - JSON formatted output
 - Support for TYPO3 13
 
