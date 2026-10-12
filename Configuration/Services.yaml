@@ -22,8 +22,6 @@ services:
     public: true
   Cundd\Rest\Authentication\RequestAuthenticationProvider:
     public: true
-  Cundd\Rest\Authentication\CredentialsAuthenticationProvider:
-    public: true
 
   Cundd\Rest\Bootstrap\MiddlewareBootstrap:
     public: true
