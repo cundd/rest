@@ -285,15 +285,15 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_HANDLER,
-                $resourceConfiguration?->getHandlerClass() ?? ''
+                $resourceConfiguration->handlerClass ?? ''
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_DATA_PROVIDER,
-                $resourceConfiguration?->getDataProviderClass() ?? ''
+                $resourceConfiguration->dataProviderClass ?? ''
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_ALIASES,
-                $resourceConfiguration?->getAliases() ?? ''
+                $resourceConfiguration->aliases ?? ''
             );
     }
 }

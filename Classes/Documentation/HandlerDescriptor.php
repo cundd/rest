@@ -63,7 +63,7 @@ final readonly class HandlerDescriptor
     private function fetchInformationForHandler(ResourceConfiguration $configuration): array
     {
         /** @var class-string<HandlerInterface> $className */
-        $className = $configuration->getHandlerClass();
+        $className = $configuration->handlerClass;
         if (!$className) {
             $className = CrudHandler::class;
         }
@@ -96,7 +96,7 @@ final readonly class HandlerDescriptor
         }
 
         $router = new DescriptiveRouter();
-        $request = new DummyRequest($configuration->getResourceType());
+        $request = new DummyRequest($configuration->resourceType);
         try {
             $handler->configureRoutes($router, $request);
         } catch (Exception $exception) {

@@ -9,10 +9,10 @@ use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Handler\HandlerInterface;
 use Cundd\Rest\Request\ResourceType;
 
-class ResourceConfiguration
+final class ResourceConfiguration
 {
     /**
-     * @param string[]                                   $aliases
+     * @param non-empty-string[]                         $aliases
      * @param class-string<HandlerInterface>|string      $handlerClass
      * @param class-string<DataProviderInterface>|string $dataProviderClass
      */
@@ -27,55 +27,6 @@ class ResourceConfiguration
         public readonly int $expiresHeaderLifetime = -1,
     ) {
         $this->assertStringArray($aliases);
-    }
-
-    public function getResourceType(): ResourceType
-    {
-        return $this->resourceType;
-    }
-
-    public function getRead(): Access
-    {
-        return $this->readAccess;
-    }
-
-    public function getWrite(): Access
-    {
-        return $this->writeAccess;
-    }
-
-    public function getCacheLifetime(): int
-    {
-        return $this->cacheLifetime;
-    }
-
-    /**
-     * @return class-string<HandlerInterface>|string
-     */
-    public function getHandlerClass(): string
-    {
-        return $this->handlerClass;
-    }
-
-    /**
-     * @return class-string<DataProviderInterface>|string
-     */
-    public function getDataProviderClass(): string
-    {
-        return $this->dataProviderClass;
-    }
-
-    public function getExpiresHeaderLifetime(): int
-    {
-        return $this->expiresHeaderLifetime;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAliases(): array
-    {
-        return $this->aliases;
     }
 
     /**

@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -41,6 +42,8 @@ final class ObjectManagerTest extends AbstractCase
 {
     protected ObjectManager $fixture;
 
+    private ResourceType $testResourceType;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -48,6 +51,7 @@ final class ObjectManagerTest extends AbstractCase
         $container = $this->getContainer();
         assert($container instanceof Container);
         $this->fixture = new ObjectManager($container);
+        $this->testResourceType = new ResourceType('some_extension-my_model' . time());
     }
 
     public function tearDown(): void
@@ -207,8 +211,6 @@ final class ObjectManagerTest extends AbstractCase
         $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
         $this->buildClass($expectedHandler, '', CrudHandler::class);
 
-        $resourceType = new ResourceType('some_extension-my_model' . time());
-
         $container = $this->getContainer();
         assert($container instanceof Container);
         $container->set(
@@ -222,7 +224,7 @@ final class ObjectManagerTest extends AbstractCase
         $this->injectConfigurationProvider($container, [], $expectedHandler);
 
         $handler = $this->fixture->getHandler(
-            $this->buildTestRequestWithSite((string) $resourceType)
+            $this->buildTestRequestWithSite((string) $this->testResourceType)
         );
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
@@ -238,19 +240,24 @@ final class ObjectManagerTest extends AbstractCase
         array $settings = [],
         string $handlerClass = '',
     ): void {
-        $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
-        $handlerClassMethod = $resourceConfiguration->getHandlerClass();
-        $handlerClassMethod->willReturn($handlerClass);
-
-        $dataProviderClassMethod = $resourceConfiguration->getDataProviderClass();
-        $dataProviderClassMethod->willReturn('');
+        $resourceConfiguration = new ResourceConfiguration(
+            resourceType: $this->testResourceType,
+            readAccess: Access::Denied,
+            writeAccess: Access::Denied,
+            cacheLifetime: 0,
+            handlerClass: $handlerClass,
+            dataProviderClass: '',
+            aliases: [],
+            expiresHeaderLifetime: 0,
+        );
 
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
+        // Use a general `Argument::type()` here to allow checking for the default handling (= `all` path)
         /** @var ResourceType $resourceType */
-        $resourceType = Argument::any();
+        $resourceType = Argument::type(ResourceType::class);
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
         $methodProphecy
-            ->willReturn($resourceConfiguration->reveal());
+            ->willReturn($resourceConfiguration);
 
         /** @var string $typeToken */
         $typeToken = Argument::type('string');

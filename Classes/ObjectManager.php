@@ -232,8 +232,8 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             );
         }
 
-        $getter = 'get' . ucfirst($type) . 'Class';
-        $implementation = $resourceConfiguration->$getter();
+        $property = lcfirst($type) . 'Class';
+        $implementation = $resourceConfiguration->$property;
         if (!$implementation) {
             return null;
         }

@@ -103,7 +103,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         }
 
         foreach ($configuredPaths as $configuration) {
-            $currentResourceTypeString = (string) $configuration->getResourceType();
+            $currentResourceTypeString = (string) $configuration->resourceType;
             if ('all' === $currentResourceTypeString && !$matchingConfiguration) {
                 $matchingConfiguration = $configuration;
             } elseif ($this->checkIfPatternMatchesResourceType($currentResourceTypeString, $resourceTypeString)) {
@@ -168,8 +168,10 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Check if the given pattern matches the resource type
      */
-    private function checkIfPatternMatchesResourceType(string $pattern, string $resourceTypeString): bool
-    {
+    private function checkIfPatternMatchesResourceType(
+        string $pattern,
+        string $resourceTypeString,
+    ): bool {
         $currentPathPattern = str_replace(
             '*',
             '\w*',
@@ -182,21 +184,18 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Fetch aliases for the given Resource Type
      *
-     * @return string[]
+     * @return non-empty-string[]
      */
     private function getAliasesForResourceType(ResourceType $resourceType): array
     {
         $resourceTypeString = (string) $resourceType;
 
-        return array_keys(
-            array_filter(
-                $this->getSetting('aliases', []),
-                function ($alias) use ($resourceTypeString) {
-                    // Return if the given Resource Type would handle this alias
-                    return $this->checkIfPatternMatchesResourceType($resourceTypeString, $alias);
-                }
-            )
-        );
+        return array_filter(array_keys(array_filter(
+            $this->getSetting('aliases', []),
+
+            // Return if the given Resource Type would handle this alias
+            fn ($alias) => $this->checkIfPatternMatchesResourceType($resourceTypeString, $alias)
+        )));
     }
 
     /**

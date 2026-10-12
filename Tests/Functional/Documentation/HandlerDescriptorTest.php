@@ -16,7 +16,7 @@ use Prophecy\Argument;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
-class HandlerDescriptorTest extends AbstractCase
+final class HandlerDescriptorTest extends AbstractCase
 {
     /**
      * @var HandlerDescriptor

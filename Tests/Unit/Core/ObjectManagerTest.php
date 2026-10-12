@@ -8,6 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
+use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -227,7 +228,7 @@ class ObjectManagerTest extends TestCase
             }
         );
 
-        $resourceType = new ResourceType('some_extension-my_model');
+        $resourceType = $this->getTestResourceType();
         $resourceTypeString = (string) $resourceType;
         $configurationProvider = new StandaloneConfigurationProvider([]);
         $settings = [
@@ -307,7 +308,7 @@ class ObjectManagerTest extends TestCase
             }
         );
 
-        $resourceType = new ResourceType('some_extension-my_model');
+        $resourceType = $this->getTestResourceType();
         $resourceTypeString = (string) $resourceType;
         $configurationProvider = new StandaloneConfigurationProvider([]);
         $configurationProvider->setSettings(
@@ -324,7 +325,9 @@ class ObjectManagerTest extends TestCase
             $configurationProvider
         );
 
-        $handler = $this->fixture->getHandler($this->buildTestRequest($resourceTypeString, 'GET'));
+        $handler = $this->fixture->getHandler(
+            $this->buildTestRequest($resourceTypeString, 'GET')
+        );
         $this->assertInstanceOf($expectedHandler, $handler);
         $this->assertInstanceOf(HandlerInterface::class, $handler);
     }
@@ -338,19 +341,23 @@ class ObjectManagerTest extends TestCase
         string $handler = '',
         string $dataProvider = '',
     ): void {
-        $resourceConfiguration = $this->prophesize(ResourceConfiguration::class);
-        $handlerClassMethod = $resourceConfiguration->getHandlerClass();
-        $handlerClassMethod->willReturn($handler);
-
-        $dataProviderClassMethod = $resourceConfiguration->getDataProviderClass();
-        $dataProviderClassMethod->willReturn($dataProvider);
+        $resourceConfiguration = new ResourceConfiguration(
+            resourceType: $this->getTestResourceType(),
+            readAccess: Access::Denied,
+            writeAccess: Access::Denied,
+            cacheLifetime: 0,
+            handlerClass: $handler,
+            dataProviderClass: $dataProvider,
+            aliases: [],
+            expiresHeaderLifetime: 0,
+        );
 
         $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
+        // Use a general `Argument::type()` here to allow checking for the default handling (= `all` path)
         /** @var ResourceType $resourceType */
-        $resourceType = Argument::any();
+        $resourceType = Argument::type(ResourceType::class);
         $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
-        $methodProphecy
-            ->willReturn($resourceConfiguration->reveal());
+        $methodProphecy->willReturn($resourceConfiguration);
 
         /** @var string $typeToken */
         $typeToken = Argument::type('string');
@@ -383,5 +390,10 @@ class ObjectManagerTest extends TestCase
                 return $this->configurationProvider;
             }
         });
+    }
+
+    private function getTestResourceType(): ResourceType
+    {
+        return new ResourceType('some_extension-my_model');
     }
 }

@@ -104,28 +104,28 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         );
 
         $resourceConfiguration1 = $resourceTypeConfigurations['my_protectedext-*'];
-        $this->assertSame('my_protectedext-*', (string) $resourceConfiguration1->getResourceType());
+        $this->assertSame('my_protectedext-*', (string) $resourceConfiguration1->resourceType);
         $this->assertTrue(Access::Allowed === $resourceConfiguration1->readAccess);
         $this->assertTrue(Access::RequireLogin === $resourceConfiguration1->writeAccess);
-        $this->assertSame(-1, $resourceConfiguration1->getCacheLifetime());
+        $this->assertSame(-1, $resourceConfiguration1->cacheLifetime);
 
         $resourceConfiguration2 = $resourceTypeConfigurations['vendor-my_ext-my_model'];
-        $this->assertSame('vendor-my_ext-my_model', (string) $resourceConfiguration2->getResourceType());
+        $this->assertSame('vendor-my_ext-my_model', (string) $resourceConfiguration2->resourceType);
         $this->assertTrue(Access::RequireLogin === $resourceConfiguration2->readAccess);
         $this->assertTrue(Access::Denied === $resourceConfiguration2->writeAccess);
-        $this->assertSame(-1, $resourceConfiguration2->getCacheLifetime());
+        $this->assertSame(-1, $resourceConfiguration2->cacheLifetime);
 
         $resourceConfiguration3 = $resourceTypeConfigurations['vendor-my_other_ext-my_model'];
-        $this->assertSame('vendor-my_other_ext-my_model', (string) $resourceConfiguration3->getResourceType());
+        $this->assertSame('vendor-my_other_ext-my_model', (string) $resourceConfiguration3->resourceType);
         $this->assertTrue(Access::Denied === $resourceConfiguration3->readAccess);
         $this->assertTrue(Access::Denied === $resourceConfiguration3->writeAccess);
-        $this->assertSame(2, $resourceConfiguration3->getCacheLifetime());
+        $this->assertSame(2, $resourceConfiguration3->cacheLifetime);
 
         $resourceConfiguration4 = $resourceTypeConfigurations['vendor-my_other_ext-my_model2'];
-        $this->assertSame('vendor-my_other_ext-my_model2', (string) $resourceConfiguration4->getResourceType());
+        $this->assertSame('vendor-my_other_ext-my_model2', (string) $resourceConfiguration4->resourceType);
         $this->assertTrue(Access::Denied === $resourceConfiguration4->readAccess);
         $this->assertTrue(Access::Denied === $resourceConfiguration4->writeAccess);
-        $this->assertSame(3, $resourceConfiguration4->getCacheLifetime());
+        $this->assertSame(3, $resourceConfiguration4->cacheLifetime);
     }
 
     #[Test]
@@ -210,15 +210,15 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         );
 
         $handlerConfiguration1 = $handlerConfigurations['all'];
-        $this->assertSame('all', (string) $handlerConfiguration1->getResourceType());
-        $this->assertSame(CrudHandler::class, $handlerConfiguration1->getHandlerClass());
+        $this->assertSame('all', (string) $handlerConfiguration1->resourceType);
+        $this->assertSame(CrudHandler::class, $handlerConfiguration1->handlerClass);
 
         $handlerConfiguration2 = $handlerConfigurations['my_ext-my_model'];
-        $this->assertSame('my_ext-my_model', (string) $handlerConfiguration2->getResourceType());
-        $this->assertSame('SomeClass2', $handlerConfiguration2->getHandlerClass());
+        $this->assertSame('my_ext-my_model', (string) $handlerConfiguration2->resourceType);
+        $this->assertSame('SomeClass2', $handlerConfiguration2->handlerClass);
 
         $handlerConfiguration3 = $handlerConfigurations['vendor-my_third_ext-model'];
-        $this->assertSame('vendor-my_third_ext-model', (string) $handlerConfiguration3->getResourceType());
-        $this->assertSame('', $handlerConfiguration3->getHandlerClass());
+        $this->assertSame('vendor-my_third_ext-model', (string) $handlerConfiguration3->resourceType);
+        $this->assertSame('', $handlerConfiguration3->handlerClass);
     }
 }
