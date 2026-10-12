@@ -6,17 +6,10 @@ namespace Cundd\Rest\Tests\Functional\Integration;
 
 use Cundd\Rest\Dispatcher;
 use Cundd\Rest\Dispatcher\DispatcherFactory;
-use Cundd\Rest\Dispatcher\ResponseHeaderUpdaterInterface;
 use Cundd\Rest\Http\RestRequestInterface;
-use Cundd\Rest\Log\Logger;
-use Cundd\Rest\ObjectManagerInterface;
-use Cundd\Rest\RequestFactoryInterface;
-use Cundd\Rest\ResponseFactoryInterface;
-use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 
@@ -78,16 +71,6 @@ class AbstractIntegrationCase extends AbstractCase
         ContainerInterface $container,
         RestRequestInterface $request,
     ): ResponseInterface {
-        // $dispatcher = new Dispatcher(
-        //     $container->get(ObjectManagerInterface::class),
-        //     $container->get(RequestFactoryInterface::class),
-        //     $container->get(ResponseFactoryInterface::class),
-        //     new Logger(new StreamLogger()),
-        //     $container->get(RouterInterface::class),
-        //     $container->get(ResponseHeaderUpdaterInterface::class),
-        //     $container->get(EventDispatcherInterface::class),
-        // );
-
         /** @var Dispatcher $dispatcher */
         $dispatcher = $container->get(DispatcherFactory::class)->build();
 
