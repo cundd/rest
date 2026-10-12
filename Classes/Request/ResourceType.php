@@ -9,6 +9,8 @@ use Cundd\Rest\Exception\InvalidArgumentException;
 /**
  * The resource type is an identifier for a model class.
  * It is the first segment of the request path, after alias mapping has been applied.
+ *
+ * TODO: Check if the ResourceType should be normalized at construction time (@see \Cundd\Rest\DataProvider\Utility::normalizeResourceType($resourceType))
  */
 class ResourceType
 {
