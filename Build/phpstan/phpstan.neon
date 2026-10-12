@@ -15,6 +15,3 @@ parameters:
     - ../../Configuration/
 
   tmpDir: ../../.Build/.cache/phpstan/
-
-  excludePaths:
-    - '../../ext_emconf.php'
