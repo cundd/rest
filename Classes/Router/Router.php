@@ -36,7 +36,8 @@ class Router implements RouterInterface
             return NotFoundException::exceptionWithAlternatives(
                 $request->getPath(),
                 $request->getMethod(),
-                $this->getRoutesForMethod($request)
+                $this->getRoutesForMethod($request),
+                $request
             );
         }
 

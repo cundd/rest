@@ -96,7 +96,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
             case 'html':
                 if (is_scalar($data)) {
                     $response->getBody()->write((string) $data);
-                } elseif (DebugUtility::allowDebugInformation()) {
+                } elseif (DebugUtility::allowDebugInformation($request)) {
                     $response->getBody()->write(var_export($data, true));
                 }
 

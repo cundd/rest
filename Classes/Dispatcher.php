@@ -262,12 +262,13 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         RestRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        if (!DebugUtility::allowDebugInformation()) {
+        if (!DebugUtility::allowDebugInformation($request)) {
             return $response;
         }
 
         try {
-            $resourceConfiguration = $this->objectManager->getConfigurationProvider($request)
+            $resourceConfiguration = $this->objectManager
+                ->getConfigurationProvider($request)
                 ->getResourceConfiguration($request->getResourceType());
         } catch (InvalidResourceTypeException $exception) {
             return $response;

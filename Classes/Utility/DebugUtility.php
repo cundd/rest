@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Utility;
 
-use function explode;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function getenv;
-use function in_array;
 use function php_sapi_name;
 
 /**
@@ -45,21 +47,23 @@ final class DebugUtility
     /**
      * Return if the output of debugging information is allowed
      */
-    public static function allowDebugInformation(): bool
-    {
+    public static function allowDebugInformation(
+        ?ServerRequestInterface $request = null,
+    ): bool {
         if ('' !== (string) getenv('TEST_MODE')) {
             return false;
         }
         if ('cli' === php_sapi_name()) {
             return true;
         }
-        $clientAddress = $_SERVER['REMOTE_ADDR'] ?? '';
-        $devIpMask = static::getDevIpMask();
-        if (in_array('*', $devIpMask)) {
-            return true;
-        }
 
-        return in_array($clientAddress, $devIpMask);
+        $normalizedParams = $request?->getAttribute('normalizedParams')
+            ?? NormalizedParams::createFromServerParams($_SERVER);
+
+        return GeneralUtility::cmpIP(
+            $normalizedParams->getRemoteAddress(),
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'] ?? ''
+        );
     }
 
     /**
@@ -99,17 +103,5 @@ final class DebugUtility
         echo PHP_EOL;
         echo PHP_EOL;
         echo PHP_EOL;
-    }
-
-    /**
-     * @return string[]
-     */
-    private static function getDevIpMask(): array
-    {
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
-            return explode(',', $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
-        }
-
-        return [];
     }
 }

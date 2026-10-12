@@ -34,7 +34,7 @@ final class ErrorHandler
      */
     public static function getShowDebugInformation(): bool
     {
-        return DebugUtility::allowDebugInformation();
+        return DebugUtility::allowDebugInformation(null);
     }
 
     /**
@@ -48,7 +48,10 @@ final class ErrorHandler
         if (null !== $error) {
             $type = $error['type'];
             if ($type & E_ERROR) {
-                static::printError(new Exception($error['message'], $error['type']));
+                static::printError(new Exception(
+                    $error['message'],
+                    $error['type']
+                ));
             }
         }
     }

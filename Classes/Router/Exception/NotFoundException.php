@@ -6,6 +6,7 @@ namespace Cundd\Rest\Router\Exception;
 
 use Cundd\Rest\Router\RouteInterface;
 use Cundd\Rest\Utility\DebugUtility;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Throwable;
 
@@ -39,8 +40,9 @@ final class NotFoundException extends RuntimeException
         string $route,
         string $method,
         array $alternativeRoutes,
+        ServerRequestInterface $request,
     ): self {
-        $message = DebugUtility::allowDebugInformation()
+        $message = DebugUtility::allowDebugInformation($request)
             ? sprintf('Route "%s" not found for method "%s"', $route, $method)
             : '';
 

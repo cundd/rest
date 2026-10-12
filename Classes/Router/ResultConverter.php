@@ -132,7 +132,7 @@ class ResultConverter implements RouterInterface
         } catch (Exception $handlerError) {
         }
 
-        if ($this->getShowDebugInformation()) {
+        if ($this->getShowDebugInformation($request)) {
             $exceptionDetails = $this->getDebugDetails($exception);
         } else {
             $exceptionDetails = sprintf(
@@ -197,7 +197,7 @@ class ResultConverter implements RouterInterface
             404,
             $request
         );
-        if (!$this->getShowDebugInformation()) {
+        if (!$this->getShowDebugInformation($request)) {
             return $response;
         }
 
@@ -229,8 +229,9 @@ class ResultConverter implements RouterInterface
         );
     }
 
-    private function getShowDebugInformation(): bool
-    {
-        return DebugUtility::allowDebugInformation();
+    private function getShowDebugInformation(
+        RestRequestInterface $request,
+    ): bool {
+        return DebugUtility::allowDebugInformation($request);
     }
 }
