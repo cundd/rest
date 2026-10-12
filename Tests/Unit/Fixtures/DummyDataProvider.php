@@ -20,7 +20,7 @@ class DummyDataProvider implements DataProviderInterface
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }
 
-    public function fetchModel(RestRequestInterface $request, int|array|string $identifier): object
+    public function fetchModel(RestRequestInterface $request, int|string $identifier): object
     {
         throw new RuntimeException(__METHOD__ . ' not implemented');
     }

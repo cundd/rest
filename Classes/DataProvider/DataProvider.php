@@ -137,16 +137,16 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
 
     public function fetchModel(
         RestRequestInterface $request,
-        int|array|string $identifier,
+        int|string $identifier,
     ): ?object {
-        if ($identifier && is_scalar($identifier)) { // If it is a scalar treat it as identity
-            return $this->getModelWithIdentityForResourceType(
-                $identifier,
-                $request->getResourceType(),
-            );
+        if ('' === $identifier) {
+            return null;
         }
 
-        return null;
+        return $this->getModelWithIdentityForResourceType(
+            $identifier,
+            $request->getResourceType(),
+        );
     }
 
     public function createModel(RestRequestInterface $request, array $data): ?object

@@ -281,7 +281,7 @@ final class DataProviderTest extends AbstractCase
         $this->assertNull($this->fixture->fetchModel(
             self::buildTestRequest(self::getUriRequestBase())
                 ->withResourceType(new ResourceType('MyExt-MyModel')),
-            []
+            ''
         ));
     }
 

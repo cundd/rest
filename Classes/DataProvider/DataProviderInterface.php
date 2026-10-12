@@ -25,22 +25,19 @@ interface DataProviderInterface
     /**
      * Return a Domain Model for the given API resource type and data
      *
-     * This method will load existing models
-     *
-     * @param int|array<string,mixed>|string $identifier Data of the new model or it's UID
-     *
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
     public function fetchModel(
         RestRequestInterface $request,
-        int|array|string $identifier,
+        int|string $identifier,
     ): ?object;
 
     /**
      * Create a new Domain Model with the given data
      *
-     * Implementations are free to decide if identifiers are accepted (e.g. an exception will be thrown for Extbase
-     * Models if the property `uid` or `__identity` is given)
+     * Implementations are free to decide if identifiers are accepted (e.g. an
+     * exception will be thrown for Extbase Models if the property `uid` or
+     * `__identity` is given)
      *
      * @param array<string,mixed> $data Data of the new model
      *
