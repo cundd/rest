@@ -6,6 +6,7 @@ namespace Cundd\Rest\Tests\Functional\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactory;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -79,8 +80,8 @@ final class ConfigurationBasedAccessControllerTest extends AbstractCase
         $request = $this->buildTestRequestWithSite($uri, 'GET');
         $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('my_ext-my_model', (string) $configuration->resourceType);
-        $this->assertTrue(Access::RequireLogin === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
 
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
@@ -95,8 +96,8 @@ final class ConfigurationBasedAccessControllerTest extends AbstractCase
         $request = $this->buildTestRequestWithSite($uri, 'GET');
         $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('my_secondext-*', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Denied === $configuration->readAccess);
-        $this->assertTrue(Access::RequireLogin === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $configuration->writeAccess);
 
         $this->assertTrue($this->fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertFalse($this->fixture->requestNeedsAuthentication($request->withMethod('GET')));
@@ -112,7 +113,7 @@ final class ConfigurationBasedAccessControllerTest extends AbstractCase
         $request = $this->buildTestRequestWithSite($uri, 'GET');
         $configuration = $this->fixture->getConfigurationForRequest($request);
         $this->assertSame('all', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Allowed === $configuration->readAccess);
-        $this->assertTrue(Access::Denied === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->writeAccess);
     }
 }

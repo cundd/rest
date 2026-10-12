@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Configuration;
 
 /**
- * Access requirement configuration and resolved identifier
+ * Resolved access rights for a Resource
  */
 enum Access: string
 {
@@ -18,11 +18,6 @@ enum Access: string
      * Access identifier to signal allowed requests
      */
     case Allowed = 'allow';
-
-    /**
-     * Access identifier to signal requests that require a valid login
-     */
-    case RequireLogin = 'require';
 
     /**
      * Access identifier to signal a successful login

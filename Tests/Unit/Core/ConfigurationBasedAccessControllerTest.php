@@ -6,6 +6,7 @@ namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Access\ConfigurationBasedAccessController;
 use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\StandaloneConfigurationProvider;
@@ -52,8 +53,8 @@ final class ConfigurationBasedAccessControllerTest extends TestCase
         $request = $this->buildTestRequest($uri, 'GET');
         $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('my_ext-my_model', (string) $configuration->resourceType);
-        $this->assertTrue(Access::RequireLogin === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
 
         $this->assertFalse($fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertTrue($fixture->requestNeedsAuthentication($request->withMethod('GET')));
@@ -163,8 +164,8 @@ final class ConfigurationBasedAccessControllerTest extends TestCase
         );
         $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('my_secondext-*', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Denied === $configuration->readAccess);
-        $this->assertTrue(Access::RequireLogin === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $configuration->writeAccess);
 
         $this->assertTrue($fixture->requestNeedsAuthentication($request->withMethod('POST')));
         $this->assertFalse($fixture->requestNeedsAuthentication($request->withMethod('GET')));
@@ -215,7 +216,7 @@ final class ConfigurationBasedAccessControllerTest extends TestCase
         $request = $this->buildTestRequest($uri, 'GET');
         $configuration = $fixture->getConfigurationForRequest($request);
         $this->assertSame('all', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Allowed === $configuration->readAccess);
-        $this->assertTrue(Access::Denied === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->writeAccess);
     }
 }

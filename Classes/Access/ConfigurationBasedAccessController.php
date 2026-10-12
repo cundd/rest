@@ -7,6 +7,7 @@ namespace Cundd\Rest\Access;
 use Cundd\Rest\Access\Exception\InvalidConfigurationException;
 use Cundd\Rest\Authentication\Exception\InvalidConfigurationException as CunddInvalidConfigurationException;
 use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -36,11 +37,14 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     public function getAccess(RestRequestInterface $request): Access
     {
         $access = $this->getAccessConfiguration($request);
-        if (Access::RequireLogin === $access) {
-            return $this->checkAuthentication($request);
-        }
 
-        return $access;
+        return match ($access) {
+            AccessRequirement::Allowed      => Access::Allowed,
+            AccessRequirement::Denied       => Access::Denied,
+            AccessRequirement::RequireLogin => $this->checkAuthentication(
+                $request
+            ),
+        };
     }
 
     /**
@@ -68,7 +72,9 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     public function requestNeedsAuthentication(RestRequestInterface $request): bool
     {
-        return Access::RequireLogin === $this->getAccessConfiguration($request);
+        return AccessRequirement::RequireLogin === $this->getAccessConfiguration(
+            $request
+        );
     }
 
     /**
@@ -76,22 +82,28 @@ class ConfigurationBasedAccessController extends AbstractAccessController
      */
     protected function requiresAuthorization(RestRequestInterface $request): bool
     {
-        return !in_array(strtoupper($request->getMethod()), self::ACCESS_NOT_REQUIRED);
+        return !in_array(
+            strtoupper($request->getMethod()),
+            self::ACCESS_NOT_REQUIRED
+        );
     }
 
-    protected function getAccessConfiguration(RestRequestInterface $request): Access
-    {
+    protected function getAccessConfiguration(
+        RestRequestInterface $request,
+    ): AccessRequirement {
         if (!$this->requiresAuthorization($request)) {
-            return Access::Allowed;
+            return AccessRequirement::Allowed;
         }
 
         $configuration = $this->getConfigurationForRequest($request);
 
         return match (true) {
             $request->isWrite()     => $configuration->writeAccess,
-            $request->isPreflight() => Access::Allowed,
+            $request->isPreflight() => AccessRequirement::Allowed,
             $request->isRead()      => $configuration->readAccess,
-            default                 => throw new OutOfBoundsException('Request is neither write, read, nor a preflight request'),
+            default                 => throw new OutOfBoundsException(
+                'Request is neither write, read, nor a preflight request'
+            ),
         };
     }
 }

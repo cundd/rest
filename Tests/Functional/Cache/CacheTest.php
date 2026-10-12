@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Functional\Cache;
 
 use Cundd\Rest\Cache\Cache;
-use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
@@ -273,8 +273,8 @@ class CacheTest extends AbstractCase
     ): ResourceConfiguration {
         return new ResourceConfiguration(
             $request->getResourceType(),
-            Access::Allowed,
-            Access::Allowed,
+            AccessRequirement::Allowed,
+            AccessRequirement::Allowed,
             $cacheLifetime,
             '',
             '',

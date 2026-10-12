@@ -18,8 +18,8 @@ final class ResourceConfiguration
      */
     public function __construct(
         public readonly ResourceType $resourceType,
-        public readonly Access $readAccess,
-        public readonly Access $writeAccess,
+        public readonly AccessRequirement $readAccess,
+        public readonly AccessRequirement $writeAccess,
         public readonly int $cacheLifetime,
         public readonly string $handlerClass,
         public readonly string $dataProviderClass,

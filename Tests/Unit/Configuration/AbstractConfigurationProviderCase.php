@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Unit\Configuration;
 
 use Cundd\Rest\Configuration\AbstractConfigurationProvider;
-use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Request\ResourceType;
@@ -105,26 +105,26 @@ abstract class AbstractConfigurationProviderCase extends TestCase
 
         $resourceConfiguration1 = $resourceTypeConfigurations['my_protectedext-*'];
         $this->assertSame('my_protectedext-*', (string) $resourceConfiguration1->resourceType);
-        $this->assertTrue(Access::Allowed === $resourceConfiguration1->readAccess);
-        $this->assertTrue(Access::RequireLogin === $resourceConfiguration1->writeAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $resourceConfiguration1->readAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $resourceConfiguration1->writeAccess);
         $this->assertSame(-1, $resourceConfiguration1->cacheLifetime);
 
         $resourceConfiguration2 = $resourceTypeConfigurations['vendor-my_ext-my_model'];
         $this->assertSame('vendor-my_ext-my_model', (string) $resourceConfiguration2->resourceType);
-        $this->assertTrue(Access::RequireLogin === $resourceConfiguration2->readAccess);
-        $this->assertTrue(Access::Denied === $resourceConfiguration2->writeAccess);
+        $this->assertTrue(AccessRequirement::RequireLogin === $resourceConfiguration2->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $resourceConfiguration2->writeAccess);
         $this->assertSame(-1, $resourceConfiguration2->cacheLifetime);
 
         $resourceConfiguration3 = $resourceTypeConfigurations['vendor-my_other_ext-my_model'];
         $this->assertSame('vendor-my_other_ext-my_model', (string) $resourceConfiguration3->resourceType);
-        $this->assertTrue(Access::Denied === $resourceConfiguration3->readAccess);
-        $this->assertTrue(Access::Denied === $resourceConfiguration3->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $resourceConfiguration3->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $resourceConfiguration3->writeAccess);
         $this->assertSame(2, $resourceConfiguration3->cacheLifetime);
 
         $resourceConfiguration4 = $resourceTypeConfigurations['vendor-my_other_ext-my_model2'];
         $this->assertSame('vendor-my_other_ext-my_model2', (string) $resourceConfiguration4->resourceType);
-        $this->assertTrue(Access::Denied === $resourceConfiguration4->readAccess);
-        $this->assertTrue(Access::Denied === $resourceConfiguration4->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $resourceConfiguration4->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $resourceConfiguration4->writeAccess);
         $this->assertSame(3, $resourceConfiguration4->cacheLifetime);
     }
 
@@ -151,8 +151,8 @@ abstract class AbstractConfigurationProviderCase extends TestCase
 
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
         $this->assertSame('all', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Allowed === $configuration->readAccess);
-        $this->assertTrue(Access::Denied === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->writeAccess);
     }
 
     #[Test]
@@ -161,8 +161,8 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_ext-my_model'));
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
         $this->assertSame('my_ext-my_model', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Allowed === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
     }
 
     #[Test]
@@ -171,8 +171,8 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('vendor-my_third_ext-model'));
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
         $this->assertSame('vendor-my_third_ext-model', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Denied === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
     }
 
     #[Test]
@@ -183,8 +183,8 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         );
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
         $this->assertSame('vendor-my_fourth_ext-model', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Denied === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
     }
 
     #[Test]
@@ -193,8 +193,8 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $configuration = $this->fixture->getResourceConfiguration(new ResourceType('my_secondext-my_model'));
         $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
         $this->assertSame('my_secondext-*', (string) $configuration->resourceType);
-        $this->assertTrue(Access::Denied === $configuration->readAccess);
-        $this->assertTrue(Access::Allowed === $configuration->writeAccess);
+        $this->assertTrue(AccessRequirement::Denied === $configuration->readAccess);
+        $this->assertTrue(AccessRequirement::Allowed === $configuration->writeAccess);
     }
 
     #[Test]

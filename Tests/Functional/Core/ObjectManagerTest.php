@@ -8,7 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
-use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -242,8 +242,8 @@ final class ObjectManagerTest extends AbstractCase
     ): void {
         $resourceConfiguration = new ResourceConfiguration(
             resourceType: $this->testResourceType,
-            readAccess: Access::Denied,
-            writeAccess: Access::Denied,
+            readAccess: AccessRequirement::Denied,
+            writeAccess: AccessRequirement::Denied,
             cacheLifetime: 0,
             handlerClass: $handlerClass,
             dataProviderClass: '',

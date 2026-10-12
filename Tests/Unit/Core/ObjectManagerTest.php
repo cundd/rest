@@ -8,7 +8,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderCollection;
 use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
-use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -343,8 +343,8 @@ class ObjectManagerTest extends TestCase
     ): void {
         $resourceConfiguration = new ResourceConfiguration(
             resourceType: $this->getTestResourceType(),
-            readAccess: Access::Denied,
-            writeAccess: Access::Denied,
+            readAccess: AccessRequirement::Denied,
+            writeAccess: AccessRequirement::Denied,
             cacheLifetime: 0,
             handlerClass: $handler,
             dataProviderClass: $dataProvider,
@@ -374,22 +374,25 @@ class ObjectManagerTest extends TestCase
         Container $container,
         ConfigurationProviderInterface $configurationProvider,
     ): void {
-        $container->set(ConfigurationProviderFactoryInterface::class, new class($configurationProvider) implements ConfigurationProviderFactoryInterface {
-            public function __construct(private readonly ConfigurationProviderInterface $configurationProvider)
-            {
-            }
+        $container->set(
+            ConfigurationProviderFactoryInterface::class,
+            new class($configurationProvider) implements ConfigurationProviderFactoryInterface {
+                public function __construct(private readonly ConfigurationProviderInterface $configurationProvider)
+                {
+                }
 
-            public function build(
-                ServerRequestInterface $request,
-            ): ConfigurationProviderInterface {
-                return $this->configurationProvider;
-            }
+                public function build(
+                    ServerRequestInterface $request,
+                ): ConfigurationProviderInterface {
+                    return $this->configurationProvider;
+                }
 
-            public function buildFromSite(Site $site): ConfigurationProviderInterface
-            {
-                return $this->configurationProvider;
+                public function buildFromSite(Site $site): ConfigurationProviderInterface
+                {
+                    return $this->configurationProvider;
+                }
             }
-        });
+        );
     }
 
     private function getTestResourceType(): ResourceType

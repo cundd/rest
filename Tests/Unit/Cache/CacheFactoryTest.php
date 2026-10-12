@@ -6,7 +6,7 @@ namespace Cundd\Rest\Tests\Unit\Cache;
 
 use Cundd\Rest\Cache\Cache;
 use Cundd\Rest\Cache\CacheFactory;
-use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\ObjectManager;
@@ -150,8 +150,8 @@ class CacheFactoryTest extends TestCase
             function () use ($resourceTypeCacheLifetime, $resourceTypeExpiresHeaderLifetime) {
                 return new ResourceConfiguration(
                     new ResourceType(''),
-                    Access::Allowed,
-                    Access::Denied,
+                    AccessRequirement::Allowed,
+                    AccessRequirement::Denied,
                     $resourceTypeCacheLifetime,
                     '',
                     '',

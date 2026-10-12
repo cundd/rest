@@ -133,11 +133,11 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
                 [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
 
                 $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
-                    ? Access::from($configuration[self::ACCESS_METHOD_READ])
-                    : Access::Denied;
+                    ? AccessRequirement::from($configuration[self::ACCESS_METHOD_READ])
+                    : AccessRequirement::Denied;
                 $writeAccess = isset($configuration[self::ACCESS_METHOD_WRITE])
-                    ? Access::from($configuration[self::ACCESS_METHOD_WRITE])
-                    : Access::Denied;
+                    ? AccessRequirement::from($configuration[self::ACCESS_METHOD_WRITE])
+                    : AccessRequirement::Denied;
 
                 if (isset($configuration['className'])) {
                     throw new InvalidConfigurationException('Unsupported configuration key "className"');

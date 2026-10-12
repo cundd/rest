@@ -21,7 +21,6 @@ use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use UnexpectedValueException;
 
 /**
  * Main dispatcher of REST requests
@@ -233,10 +232,6 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
                 ->createErrorResponse('Forbidden', 403, $request),
             Access::Unauthorized => $this->responseFactory
                 ->createErrorResponse('Unauthorized', 401, $request),
-
-            Access::RequireLogin => throw new UnexpectedValueException(
-                'Access::RequireLogin has not been evaluated'
-            ),
         };
     }
 
