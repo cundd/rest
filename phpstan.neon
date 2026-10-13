@@ -10,6 +10,7 @@ parameters:
 			- Classes/Http/ServerRequestProxyTrait.php
 			- Classes/Documentation/Handler/DummyRequest.php
 			- Classes/Documentation/HandlerReport.php
+			- Tests/Documentation/Bootstrap.php
 	treatPhpDocTypesAsCertain: false
 includes:
 	- .Build/vendor/jangregor/phpstan-prophecy/extension.neon
