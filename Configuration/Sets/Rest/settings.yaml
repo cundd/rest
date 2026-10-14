@@ -32,9 +32,9 @@ rest:
     # Define a list of allowed origins:
     # If the request's `Origin`-header matches one of the listed origins, it will be whitelisted in the
     # `Access-Control-Allow-Origin`-header of the response
-    # cors.allowedOrigins:
-    #     0: http://localhost:3000
-    #
+    # cors:
+    #   allowedOrigins:
+    #     - http://localhost:3000
 
     # This is not defined here to allow easy customization in third party extension's setup
     # cacheLifetime: -1
