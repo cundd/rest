@@ -60,4 +60,9 @@ abstract class Header
      * Header to send debug information about allowed aliases
      */
     public const CUNDD_REST_ALIASES = 'X-Cundd-Rest-Router-Aliases';
+
+    /**
+     * Header to send debug information about allowed origins for CORS
+     */
+    public const CUNDD_REST_ALLOWED_ORIGINS = 'X-Cundd-Rest-Allowed-Origins';
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cundd\Rest;
 
 use Cundd\Rest\Configuration\Access;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Dispatcher\ResponseHeaderUpdaterInterface;
@@ -185,13 +186,8 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     ): ResponseInterface {
         $origin = $request->getHeaderLine('origin');
         if ($origin) {
-            $allowedOrigins = $this->objectManager
-                ->getConfigurationProvider($request)
-                ->getSetting('cors.allowedOrigins', []);
-            InvalidArgumentException::assertStringArray(
-                $allowedOrigins,
-                'allowedOrigins'
-            );
+            $allowedOrigins = $this->getAllowedOrigins($this->objectManager
+                ->getConfigurationProvider($request));
 
             foreach ($allowedOrigins as $allowedOrigin) {
                 if ($allowedOrigin === $origin) {
@@ -261,9 +257,10 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             return $response;
         }
 
+        $configurationProvider = $this->objectManager
+            ->getConfigurationProvider($request);
         try {
-            $resourceConfiguration = $this->objectManager
-                ->getConfigurationProvider($request)
+            $resourceConfiguration = $configurationProvider
                 ->getResourceConfiguration($request->getResourceType());
         } catch (InvalidResourceTypeException $exception) {
             return $response;
@@ -289,6 +286,27 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             ->withAddedHeader(
                 Header::CUNDD_REST_ALIASES,
                 $resourceConfiguration->aliases
+            )
+            ->withAddedHeader(
+                Header::CUNDD_REST_ALLOWED_ORIGINS,
+                $this->getAllowedOrigins($configurationProvider)
             );
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getAllowedOrigins(
+        ConfigurationProviderInterface $configurationProvider,
+    ): array {
+        $allowedOrigins = $configurationProvider
+            ->getSetting('cors.allowedOrigins', []);
+
+        InvalidArgumentException::assertStringArray(
+            $allowedOrigins,
+            'allowedOrigins'
+        );
+
+        return $allowedOrigins;
     }
 }
