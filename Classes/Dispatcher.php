@@ -280,11 +280,11 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_HANDLER,
-                $resourceConfiguration->handlerClass
+                $resourceConfiguration->handlerClass ?: 'auto'
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_DATA_PROVIDER,
-                $resourceConfiguration->dataProviderClass
+                $resourceConfiguration->dataProviderClass ?: 'auto'
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_ALIASES,
