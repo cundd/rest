@@ -70,6 +70,8 @@ final class RequestBuilderUtility
 
         $uri = self::buildTestUri($url);
 
+        assert('' !== $format);
+
         return new Request(
             $originalRequest,
             $uri->withPath($path),

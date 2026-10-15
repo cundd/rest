@@ -33,7 +33,7 @@ use function trim;
  *     path:string,
  *     originalPath:string,
  *     resourceType:string,
- *     format:string
+ *     format:non-empty-string
  * }
  */
 final readonly class RequestFactory implements SingletonInterface, RequestFactoryInterface
@@ -183,7 +183,7 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
     /**
      * Split path and format
      *
-     * @return object{path:string,format:string}
+     * @return object{path:string,format:non-empty-string}
      */
     private function splitPathAndFormat(string $path): object
     {
@@ -219,7 +219,7 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
     }
 
     /**
-     * @return object{path:string,format:string}
+     * @return object{path:string,format:non-empty-string}
      */
     private function determinePathAndFormat(ServerRequestInterface $request): object
     {
@@ -245,6 +245,8 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
 
     /**
      * Return if the given format is valid
+     *
+     * @phpstan-assert-if-true non-empty-string $format
      */
     public static function isValidFormat(mixed $format): bool
     {
@@ -252,13 +254,7 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
             return false;
         }
 
-        if (!$format) {
-            return false;
-        }
-
-        $mimeTypes = Format::MIME_TYPES;
-
-        return isset($mimeTypes[$format]);
+        return Format::isValidFormat($format);
     }
 
     private function getRawPath(ServerRequestInterface $request): string

@@ -12,6 +12,9 @@ use PHPUnit\Framework\TestCase;
 
 class FormatTest extends TestCase
 {
+    /**
+     * @param non-empty-string $input
+     */
     #[Test]
     #[DataProvider('validFormatDataProvider')]
     public function validFormatTest(string $input): void
@@ -20,7 +23,7 @@ class FormatTest extends TestCase
     }
 
     /**
-     * @return list<array{0:string}>
+     * @return list<array{0:non-empty-string}>
      */
     public static function validFormatDataProvider(): array
     {
@@ -36,7 +39,7 @@ class FormatTest extends TestCase
     public function invalidFormatTest(string $input): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new Format($input);
+        new Format($input); // @phpstan-ignore argument.type
     }
 
     /**

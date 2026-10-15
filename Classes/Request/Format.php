@@ -38,6 +38,9 @@ final class Format
         'pdf' => 'application/pdf',
     ];
 
+    /**
+     * @param non-empty-string $format
+     */
     public function __construct(private readonly string $format)
     {
         $this->assertValidFormat($format);
@@ -67,6 +70,9 @@ final class Format
         return new static('json');
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function __toString(): string
     {
         return $this->format;
@@ -74,9 +80,12 @@ final class Format
 
     /**
      * Return if the given format is valid
+     *
+     * @phpstan-assert-if-true non-empty-string $format
      */
-    public static function isValidFormat(Format|string|Stringable|null $format): bool
-    {
+    public static function isValidFormat(
+        Format|string|Stringable|null $format,
+    ): bool {
         if (!$format) {
             return false;
         }
