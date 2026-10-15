@@ -224,13 +224,6 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     ): ?object {
         $resourceConfiguration = $this->getConfigurationProvider($request)
             ->getResourceConfiguration($resourceType);
-        if (!$resourceConfiguration) {
-            // This case should not occur in reality, since at least the
-            // `all`-`Resource` should have been configured
-            throw new InvalidConfigurationException(
-                sprintf('Resource "%s" is not configured', (string) $resourceType)
-            );
-        }
 
         $property = lcfirst($type) . 'Class';
         $implementation = $resourceConfiguration->$property;

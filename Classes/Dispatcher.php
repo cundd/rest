@@ -102,7 +102,7 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         $resourceConfiguration = $this->objectManager
             ->getConfigurationProvider($request)
             ->getResourceConfiguration($request->getResourceType());
-        assert(null !== $resourceConfiguration);
+
         $cache->setCachedValueForRequest(
             $request,
             $newResponse,
@@ -280,15 +280,15 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_HANDLER,
-                $resourceConfiguration->handlerClass ?? ''
+                $resourceConfiguration->handlerClass
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_DATA_PROVIDER,
-                $resourceConfiguration->dataProviderClass ?? ''
+                $resourceConfiguration->dataProviderClass
             )
             ->withAddedHeader(
                 Header::CUNDD_REST_ALIASES,
-                $resourceConfiguration->aliases ?? ''
+                $resourceConfiguration->aliases
             );
     }
 }

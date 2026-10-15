@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cundd\Rest\Access;
 
 use Cundd\Rest\Access\Exception\InvalidConfigurationException;
-use Cundd\Rest\Authentication\Exception\InvalidConfigurationException as CunddInvalidConfigurationException;
 use Cundd\Rest\Configuration\Access;
 use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
@@ -53,16 +52,9 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     public function getConfigurationForRequest(
         RestRequestInterface $request,
     ): ResourceConfiguration {
-        $configuration = $this->configurationProviderFactory
+        return $this->configurationProviderFactory
             ->build($request)
             ->getResourceConfiguration($request->getResourceType());
-        if (!$configuration) {
-            throw new CunddInvalidConfigurationException(
-                'Could not find resource configuration'
-            );
-        }
-
-        return $configuration;
     }
 
     /**

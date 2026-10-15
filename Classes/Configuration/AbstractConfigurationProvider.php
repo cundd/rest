@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Configuration;
 
-use Cundd\Rest\Access\Exception\InvalidConfigurationException as InvalidAccessConfigurationException;
 use Cundd\Rest\DataProvider\Utility;
 use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
@@ -87,8 +86,9 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     /**
      * Return the configuration matching the given resource type
      */
-    public function getResourceConfiguration(ResourceType $resourceType): ?ResourceConfiguration
-    {
+    public function getResourceConfiguration(
+        ResourceType $resourceType,
+    ): ResourceConfiguration {
         $configuredPaths = $this->getConfiguredResources();
         $matchingConfiguration = null;
         $resourceTypeString = Utility::normalizeResourceType($resourceType);
@@ -112,7 +112,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         }
 
         if (null === $matchingConfiguration) {
-            throw new InvalidAccessConfigurationException(
+            throw new InvalidConfigurationException(
                 'No matching Resource Configuration found and "all" is not configured'
             );
         }

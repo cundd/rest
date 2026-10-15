@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Configuration;
 
+use Cundd\Rest\Exception\InvalidConfigurationException;
 use Cundd\Rest\Request\ResourceType;
 
 /**
@@ -52,8 +53,10 @@ interface ConfigurationProviderInterface
 
     /**
      * Return the configuration matching the given resource type
+     *
+     * @throws InvalidConfigurationException if no `ResourceConfiguration` could be found
      */
     public function getResourceConfiguration(
         ResourceType $resourceType,
-    ): ?ResourceConfiguration;
+    ): ResourceConfiguration;
 }

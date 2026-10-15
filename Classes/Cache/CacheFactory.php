@@ -50,7 +50,7 @@ class CacheFactory
         $resourceConfiguration = $configurationProvider->getResourceConfiguration(
             $resourceType
         );
-        $cacheLifetime = $resourceConfiguration?->cacheLifetime;
+        $cacheLifetime = $resourceConfiguration->cacheLifetime;
         if ($cacheLifetime > -1) {
             return $cacheLifetime;
         }
@@ -75,8 +75,8 @@ class CacheFactory
         $resourceConfiguration = $configurationProvider->getResourceConfiguration(
             $resourceType
         );
-        $expiresHeaderLifetime = $resourceConfiguration?->expiresHeaderLifetime;
-        if (null !== $expiresHeaderLifetime && $expiresHeaderLifetime > -1) {
+        $expiresHeaderLifetime = $resourceConfiguration->expiresHeaderLifetime;
+        if ($expiresHeaderLifetime > -1) {
             return $expiresHeaderLifetime;
         }
 
