@@ -38,12 +38,9 @@ final class Format
         'pdf' => 'application/pdf',
     ];
 
-    private string $format;
-
-    public function __construct(string $format)
+    public function __construct(private readonly string $format)
     {
         $this->assertValidFormat($format);
-        $this->format = $format;
     }
 
     /**
@@ -92,7 +89,10 @@ final class Format
     private static function assertValidFormat(string $format): void
     {
         if (!static::isValidFormat($format)) {
-            throw new InvalidArgumentException(sprintf('Invalid format "%s"', $format));
+            throw new InvalidArgumentException(sprintf(
+                'Invalid format "%s"',
+                $format
+            ));
         }
     }
 }

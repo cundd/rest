@@ -72,7 +72,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
             $messageKey = 'error';
         }
 
-        switch ($request->getFormat()) {
+        switch ((string) $request->getFormat()) {
             case 'json':
                 $body = match (gettype($data)) {
                     'string' => [
@@ -96,11 +96,30 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
             case 'html':
                 if (is_scalar($data)) {
                     $response->getBody()->write((string) $data);
-                } elseif (DebugUtility::allowDebugInformation($request)) {
-                    $response->getBody()->write(var_export($data, true));
+
+                    return $response;
                 }
 
+                if (!DebugUtility::allowDebugInformation($request)) {
+                    $response->getBody()->write(sprintf(
+                        'Response data could not be formatted for requested format "%s"',
+                        $request->getFormat()
+                    ));
+
+                    return $response->withStatus(500);
+                }
+
+                $content = var_export($data, true);
+
+                $isHtmlRequest = 'html' === (string) $request->getFormat();
+                $response->getBody()->write(
+                    $isHtmlRequest
+                        ? '<pre>' . htmlspecialchars($content) . '</pre>'
+                        : $content
+                );
+
                 return $response;
+
             case 'xml':
                 // TODO: support more response formats
 
@@ -112,7 +131,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
                     )
                 );
 
-                return $response;
+                return $response->withStatus(415); // 415 Unsupported Media Type
         }
     }
 
