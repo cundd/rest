@@ -12,7 +12,7 @@ use Cundd\Rest\Router\RouterInterface;
 /**
  * Example Custom Handler
  */
-class CustHandler implements HandlerInterface, HandlerDescriptionInterface
+class CustomHandler implements HandlerInterface, HandlerDescriptionInterface
 {
     /**
      * Return the description of the handler
