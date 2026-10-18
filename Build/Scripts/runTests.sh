@@ -442,18 +442,6 @@ case ${TEST_SUITE} in
         cp ${ROOT_DIR}/composer.json ${ROOT_DIR}/composer.json.testing
         mv ${ROOT_DIR}/composer.json.orig ${ROOT_DIR}/composer.json
         ;;
-    composerUpdateRector)
-        rm -rf Build/rector/.Build/bin/ Build/rector/.Build/vendor Build/rector/composer.lock
-        cp ${ROOT_DIR}/Build/rector/composer.json ${ROOT_DIR}/Build/rector/composer.json.orig
-        if [ -f "${ROOT_DIR}/Build/rector/composer.json.testing" ]; then
-            cp ${ROOT_DIR}/Build/rector/composer.json ${ROOT_DIR}/Build/rector/composer.json.orig
-        fi
-        COMMAND=(composer require --working-dir=${ROOT_DIR}/Build/rector --no-ansi --no-interaction --no-progress)
-        ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name composer-install-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} "${COMMAND[@]}"
-        SUITE_EXIT_CODE=$?
-        cp ${ROOT_DIR}/Build/rector/composer.json ${ROOT_DIR}/Build/rector/composer.json.testing
-        mv ${ROOT_DIR}/Build/rector/composer.json.orig ${ROOT_DIR}/Build/rector/composer.json
-        ;;
     composerValidate)
         COMMAND=(composer validate "$@")
         ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name composer-command-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} "${COMMAND[@]}"
@@ -501,38 +489,12 @@ case ${TEST_SUITE} in
         SUITE_EXIT_CODE=$?
         ;;
     phpstan)
-        COMMAND="php -dxdebug.mode=off .Build/bin/phpstan --configuration=Build/phpstan/phpstan.neon"
+        COMMAND="php -dxdebug.mode=off .Build/bin/phpstan --configuration=phpstan.neon"
         ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name phpstan-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} /bin/sh -c "${COMMAND}"
-        SUITE_EXIT_CODE=$?
-        ;;
-    phpstanBaseline)
-        COMMAND="php -dxdebug.mode=off .Build/bin/phpstan --configuration=Build/phpstan/phpstan.neon --generate-baseline=Build/phpstan/phpstan-baseline.neon -v"
-        ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name phpstan-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} /bin/sh -c "${COMMAND}"
-        SUITE_EXIT_CODE=$?
-        ;;
-    rector)
-        if [ "${CGLCHECK_DRY_RUN}" -eq 1 ]; then
-            COMMAND=(php -dxdebug.mode=off Build/rector/.Build/bin/rector -n --config=Build/rector/rector.php --clear-cache "$@")
-        else
-            COMMAND=(php -dxdebug.mode=off Build/rector/.Build/bin/rector --config=Build/rector/rector.php --clear-cache "$@")
-        fi
-        ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name rector-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} "${COMMAND[@]}"
-        SUITE_EXIT_CODE=$?
-        ;;
-    renderDocumentation)
-        COMMAND=(--config=Documentation "$@")
-        mkdir -p Documentation-GENERATED-temp
-        ${CONTAINER_BIN} run ${CONTAINER_INTERACTIVE} ${CONTAINER_DOCS_PARAMS} --name render-documentation-${SUFFIX} ${IMAGE_DOCS} "${COMMAND[@]}"
-        SUITE_EXIT_CODE=$?
-        ;;
-    testRenderDocumentation)
-        COMMAND=(--config=Documentation --no-progress --fail-on-log "$@")
-        mkdir -p Documentation-GENERATED-temp
-        ${CONTAINER_BIN} run ${CONTAINER_INTERACTIVE} ${CONTAINER_DOCS_PARAMS} --name render-documentation-test-${SUFFIX} ${IMAGE_DOCS} "${COMMAND[@]}"
         SUITE_EXIT_CODE=$?
         ;;
     unit)
-        COMMAND=(.Build/bin/phpunit -c Build/phpunit/UnitTests.xml ${EXTRA_TEST_OPTIONS} "$@")
+        COMMAND=(.Build/bin/phpunit -c Tests/Unit/phpunit.xml ${EXTRA_TEST_OPTIONS} "$@")
         ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name unit-${SUFFIX} ${XDEBUG_MODE} -e XDEBUG_CONFIG="${XDEBUG_CONFIG}" ${IMAGE_PHP} "${COMMAND[@]}"
         SUITE_EXIT_CODE=$?
         ;;
