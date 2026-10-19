@@ -49,52 +49,64 @@ class DataProviderUtilityTest extends TestCase
     {
         $this->assertEquals(
             'my_ext-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Tx_MyExt_Domain_Model_MyModel')
         );
         $this->assertEquals(
             'my_ext-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('MyExt\\Domain\\Model\\MyModel')
         );
         $this->assertEquals(
             'vendor-my_ext-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\Domain\\Model\\MyModel')
         );
 
         $this->assertEquals(
             'my_ext-my_second_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Tx_MyExt_Domain_Model_MySecondModel')
         );
         $this->assertEquals(
             'my_ext-my_second_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('MyExt\\Domain\\Model\\MySecondModel')
         );
         $this->assertEquals(
             'vendor-my_ext-my_second_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\Domain\\Model\\MySecondModel')
         );
 
         $this->assertEquals(
             'my_ext-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('MyExt\\MyModel')
         );
         $this->assertEquals(
             'vendor-my_ext-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\MyModel')
         );
         $this->assertEquals(
             'vendor-my_ext-group-model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\Group\\Model')
         );
         $this->assertEquals(
             'vendor-my_ext-group-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\Group\\MyModel')
         );
         $this->assertEquals(
             'vendor-my_ext-my_group-my_model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('Vendor\\MyExt\\MyGroup\\MyModel')
         );
         $this->assertEquals(
             'my_vendor-ext-group-model',
+            // @phpstan-ignore argument.type
             Utility::getResourceTypeForClassName('MyVendor\\Ext\\Group\\Model')
         );
     }

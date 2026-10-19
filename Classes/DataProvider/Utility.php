@@ -82,6 +82,10 @@ final class Utility
     /**
      * Tries to generate the API resource type for the given class name
      *
+     * @template T of object|DomainObjectInterface
+     *
+     * @param class-string<T> $className
+     *
      * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
      */
     public static function getResourceTypeForClassName(string $className): ResourceType|bool
