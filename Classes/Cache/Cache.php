@@ -68,7 +68,10 @@ class Cache implements CacheInterface
         }
 
         /** TODO: Send 304 status if appropriate */
-        $response = $this->responseFactory->createResponse($responseData['content'], intval($responseData['status']));
+        $response = $this->responseFactory->createResponse(
+            $responseData['content'],
+            intval($responseData['status'])
+        );
 
         // remove none headers
         unset($responseData['content'], $responseData['status']);
@@ -228,8 +231,10 @@ class Cache implements CacheInterface
      *
      * @internal
      */
-    public function canBeCached(RestRequestInterface $request, ResponseInterface $response): bool
-    {
+    public function canBeCached(
+        RestRequestInterface $request,
+        ResponseInterface $response,
+    ): bool {
         // Don't cache write requests
         if ($request->isWrite()) {
             return false;
@@ -239,9 +244,11 @@ class Cache implements CacheInterface
             return false;
         }
 
-        return !($response->getHeader(Header::CUNDD_REST_NO_CACHE))
+        if ($response->getStatusCode() >= 500) {
+            return false;
+        }
 
-        ;
+        return !$response->getHeader(Header::CUNDD_REST_NO_CACHE);
     }
 
     private function cacheControlPreventsCaching(ResponseInterface $response): bool
