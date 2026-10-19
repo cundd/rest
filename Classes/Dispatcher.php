@@ -75,6 +75,8 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
     {
         $response = $this->dispatchInternal($request);
 
+        // TODO: Set `Vary` header for authenticated requests to prevent proxies
+        // from caching
         $response = $this->addCorsHeaders(
             $request,
             $this->addAdditionalHeaders(
