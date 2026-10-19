@@ -130,6 +130,15 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
         if (empty($this->configurationCollection)) {
             $configurationCollection = [];
             foreach ($this->getRawConfiguredResourceTypes() as $path => $configuration) {
+                if (null === $configuration) {
+                    throw new InvalidConfigurationException(
+                        sprintf(
+                            'Resource Configuration must not be empty (key: "%s"). This may indicate an error in the YAML configuration',
+                            $path
+                        ),
+                        1792392259
+                    );
+                }
                 [$configuration, $normalizeResourceType] = $this->preparePath($configuration, $path);
 
                 $readAccess = isset($configuration[self::ACCESS_METHOD_READ])
