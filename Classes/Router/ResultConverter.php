@@ -24,11 +24,8 @@ use function substr;
  */
 class ResultConverter implements RouterInterface
 {
-    private RouterInterface $router;
-    private ResponseFactoryInterface $responseFactory;
-
     /**
-     * @var callable
+     * @var callable(Exception, RestRequestInterface): void
      */
     private $exceptionHandler;
 
@@ -36,12 +33,10 @@ class ResultConverter implements RouterInterface
      * @param callable(Exception, RestRequestInterface): void $exceptionHandler
      */
     public function __construct(
-        RouterInterface $router,
-        ResponseFactoryInterface $responseFactory,
+        private readonly RouterInterface $router,
+        private readonly ResponseFactoryInterface $responseFactory,
         callable $exceptionHandler,
     ) {
-        $this->router = $router;
-        $this->responseFactory = $responseFactory;
         $this->exceptionHandler = $exceptionHandler;
     }
 
@@ -69,9 +64,6 @@ class ResultConverter implements RouterInterface
         return $this->responseFactory->createSuccessResponse($result, 200, $request);
     }
 
-    /**
-     * Add the given Route
-     */
     public function add(RouteInterface $route): RouterInterface
     {
         $this->router->add($route);
@@ -79,41 +71,37 @@ class ResultConverter implements RouterInterface
         return $this;
     }
 
-    /**
-     * Creates and registers a new Route with the given pattern and callback for the method GET
-     */
-    public function routeGet(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routeGet(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->router->routeGet($pattern, $callback);
 
         return $this;
     }
 
-    /**
-     * Creates and registers a new Route with the given pattern and callback for the method POST
-     */
-    public function routePost(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routePost(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->router->routePost($pattern, $callback);
 
         return $this;
     }
 
-    /**
-     * Creates and registers a new Route with the given pattern and callback for the method PUT
-     */
-    public function routePut(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routePut(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->router->routePut($pattern, $callback);
 
         return $this;
     }
 
-    /**
-     * Creates and registers a new Route with the given pattern and callback for the method DELETE
-     */
-    public function routeDelete(string|ResourceType $pattern, callable $callback): RouterInterface
-    {
+    public function routeDelete(
+        string|ResourceType $pattern,
+        callable $callback,
+    ): RouterInterface {
         $this->router->routeDelete($pattern, $callback);
 
         return $this;
@@ -216,7 +204,10 @@ class ResultConverter implements RouterInterface
         }
 
         if (!$result->getAlternativeRoutes()) {
-            return $response->withHeader(Header::CUNDD_REST_ROUTER_ALTERNATIVE_ROUTES, 'no suggestions');
+            return $response->withHeader(
+                Header::CUNDD_REST_ROUTER_ALTERNATIVE_ROUTES,
+                'no suggestions'
+            );
         }
 
         $alternativePatterns = implode(
@@ -234,7 +225,11 @@ class ResultConverter implements RouterInterface
 
         $maxByteLength = 1024;
         if (strlen($alternativePatterns) > $maxByteLength) {
-            $alternativePatterns = substr($alternativePatterns, 0, $maxByteLength - 3) . '...';
+            $alternativePatterns = substr(
+                $alternativePatterns,
+                0,
+                $maxByteLength - 3
+            ) . '...';
         }
 
         return $response->withHeader(
