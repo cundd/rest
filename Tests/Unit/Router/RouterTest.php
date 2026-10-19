@@ -50,7 +50,7 @@ final class RouterTest extends AbstractRequestBasedCase
         string $pattern,
         string $path,
         array $expectedParameters,
-        bool $noResult = false,
+        bool $noResult,
     ): void {
         $this->fixture->add(Route::get($pattern, $this->cb));
 
@@ -78,12 +78,18 @@ final class RouterTest extends AbstractRequestBasedCase
         string $pattern,
         string $path,
         array $expectedParameters,
-        ?bool $_ = null,
+        bool $_,
     ): void {
         $this->fixture->add(Route::get($pattern, $this->cb));
 
-        $prepareParameters = $this->fixture->getPreparedParameters($this->buildTestRequest($path, 'GET'));
-        $this->assertSame($expectedParameters, $prepareParameters, "Failed with pattern '$pattern' for path '$path'");
+        $prepareParameters = $this->fixture->getPreparedParameters(
+            $this->buildTestRequest($path, 'GET')
+        );
+        $this->assertSame(
+            $expectedParameters,
+            $prepareParameters,
+            "Failed with pattern '$pattern' for path '$path'"
+        );
     }
 
     #[Test]
@@ -98,18 +104,35 @@ final class RouterTest extends AbstractRequestBasedCase
     }
 
     /**
-     * @return array<int,array<int,mixed>>
+     * @return array<int,array{0:string,1:string,2:list<mixed>,3:bool}>
      */
     public static function getPreparedParametersDataProvider(): array
     {
         return [
-            ['{slug}/{float}/{bool}/{int}/?', '/slug/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/{float}/{bool}/{int}/?', '/path/slug/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/{float}/{bool}/{int}/?', '/path/slug/79.1/no/901', ['slug', 79.1, false, 901]],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/path/slug/sub-path/1.0/no/9', ['slug', 1.0, false, 9]],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/slug/sub-path/1.0/no/9', [], true],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '/', [], true],
-            ['path/{slug}/sub-path/{float}/{bool}/{int}/?', '', [], true],
+            [
+                'path/{slug}/{float}/{bool}/{int}/?',
+                '/path/slug/1.0/no/9',
+                ['slug', 1.0, false, 9],
+                false,
+            ],
+            [
+                'path/{slug}/{float}/{bool}/{int}/?',
+                '/path/slug/79.1/no/901',
+                ['slug', 79.1, false, 901],
+                false,
+            ],
+            [
+                'path/{slug}/sub-path/{float}/{bool}/{int}/?',
+                '/path/slug/sub-path/1.0/no/9',
+                ['slug', 1.0, false, 9],
+                false,
+            ],
+            [
+                'path/{slug}/sub-path/{float}/{bool}/{int}/?',
+                '/slug/sub-path/1.0/no/9',
+                [],
+                true,
+            ],
             [
                 'path/{raw}/?',
                 '/path/here could be änything but a slash',

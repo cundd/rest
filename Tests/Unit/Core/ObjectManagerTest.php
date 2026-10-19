@@ -111,7 +111,9 @@ class ObjectManagerTest extends TestCase
             new StandaloneConfigurationProvider([])
         );
 
-        $object = $this->fixture->getConfigurationProvider($this->buildTestRequest(''));
+        $object = $this->fixture->getConfigurationProvider(
+            $this->buildTestRequest('some-resource-type')
+        );
         $this->assertInstanceOf(ConfigurationProviderInterface::class, $object);
     }
 
@@ -200,10 +202,6 @@ class ObjectManagerTest extends TestCase
         return [
             // URL,
             // Expected result class,
-            [
-                '',
-                DataProvider::class,
-            ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
                 DataProvider::class,

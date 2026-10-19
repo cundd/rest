@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Request;
 
-use Cundd\Rest\Exception\InvalidArgumentException;
+use Cundd\Rest\Exception\EmptyResourceTypeException;
+use Cundd\Rest\Exception\InvalidResourceTypeException;
 
 /**
  * The resource type is an identifier for a model class.
@@ -32,13 +33,16 @@ class ResourceType
     ): void {
         $resourceTypeString = trim((string) $resourceType);
         if ('' === $resourceTypeString) {
-            // TODO: Check if this should be prevented
-            return;
+            throw new EmptyResourceTypeException(
+                'Resource Type must not be empty',
+                1792395322
+            );
         }
 
         if (str_contains($resourceTypeString, '/')) {
-            throw new InvalidArgumentException(
-                'Resource Type must not contain a slash'
+            throw new InvalidResourceTypeException(
+                'Resource Type must not contain a slash',
+                1792395324
             );
         }
 
@@ -48,12 +52,13 @@ class ResourceType
             '',
             $resourceTypeString
         ))) {
-            throw new InvalidArgumentException(
+            throw new InvalidResourceTypeException(
                 sprintf(
                     'Resource Type must contain only `a-zA-Z0-9%s`. String `%s` given',
                     implode($allowedSpecialCharacters),
                     $resourceTypeString
-                )
+                ),
+                1792395329
             );
         }
     }

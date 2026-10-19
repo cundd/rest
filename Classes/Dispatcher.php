@@ -9,12 +9,12 @@ use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Dispatcher\AfterRequestDispatchedEvent;
 use Cundd\Rest\Dispatcher\DispatcherInterface;
 use Cundd\Rest\Dispatcher\ResponseHeaderUpdaterInterface;
+use Cundd\Rest\Exception\EmptyResourceTypeException;
 use Cundd\Rest\Exception\InvalidArgumentException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Log\LoggerInterface;
-use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Utility\DebugUtility;
@@ -52,9 +52,20 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
      *
      * @throws Exception
      */
-    public function processRequest(ServerRequestInterface $request): ResponseInterface
-    {
-        return $this->dispatch($this->requestFactory->buildRequest($request));
+    public function processRequest(
+        ServerRequestInterface $request,
+    ): ResponseInterface {
+        try {
+            $restRequest = $this->requestFactory->buildRequest($request);
+        } catch (EmptyResourceTypeException $_) {
+            $uri = $request->getUri();
+            $fallbackUri = $uri->withPath($uri->getPath() . 'greeting');
+            $restRequest = $this->requestFactory->buildRequest(
+                $request->withUri($fallbackUri)
+            );
+        }
+
+        return $this->dispatch($restRequest);
     }
 
     /**
@@ -199,13 +210,9 @@ class Dispatcher implements SingletonInterface, DispatcherInterface
         return $response;
     }
 
-    private function dispatchInternal(RestRequestInterface $request): ResponseInterface
-    {
-        $requestPath = $request->getPath();
-        if (!$requestPath || '/' === $requestPath) {
-            $request = $request->withResourceType(new ResourceType('greeting'));
-        }
-
+    private function dispatchInternal(
+        RestRequestInterface $request,
+    ): ResponseInterface {
         // Checks if the request needs authentication
         $access = $this->objectManager->getAccessController($request)
             ->getAccess($request);

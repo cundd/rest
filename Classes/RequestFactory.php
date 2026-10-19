@@ -140,15 +140,17 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
         string $path,
     ): string {
         $pathPrefix = getenv('TYPO3_REST_REQUEST_BASE_PATH') ?: getenv('REDIRECT_TYPO3_REST_REQUEST_BASE_PATH');
+        $configurationProvider = $this->configurationProviderFactory
+            ->build($request);
+
         if (false === $pathPrefix) {
-            $pathPrefix = $this->configurationProviderFactory
-                ->build($request)
-                ->getSetting('TYPO3_REST_REQUEST_BASE_PATH', false);
+            $pathPrefix = $configurationProvider->getSetting(
+                'TYPO3_REST_REQUEST_BASE_PATH',
+                false
+            );
         }
         if (false === $pathPrefix) {
-            $pathPrefix = $this->configurationProviderFactory
-                ->build($request)
-                ->getSetting('absRefPrefix', '');
+            $pathPrefix = $configurationProvider->getSetting('absRefPrefix', '');
         }
 
         $path = $this->removePathPrefix($path, '/' . trim((string) $pathPrefix, '/'));
@@ -177,7 +179,7 @@ final readonly class RequestFactory implements SingletonInterface, RequestFactor
 
     private function stringHasPrefix(string $input, string $prefix): bool
     {
-        return $input && $prefix && substr($input, 0, strlen($prefix)) === $prefix;
+        return $input && $prefix && str_starts_with($input, $prefix);
     }
 
     /**

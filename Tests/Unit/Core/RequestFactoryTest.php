@@ -6,6 +6,7 @@ namespace Cundd\Rest\Tests\Unit\Core;
 
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
+use Cundd\Rest\Exception\EmptyResourceTypeException;
 use Cundd\Rest\Request;
 use Cundd\Rest\Request\Format;
 use Cundd\Rest\Request\ResourceType;
@@ -166,14 +167,14 @@ final class RequestFactoryTest extends TestCase
     }
 
     #[Test]
-    public function getFormatWithoutPathTest(): void
+    public function getFormatWithoutPathShouldFailTest(): void
     {
-        $request = $this->fixture->buildRequest(
+        $this->expectException(EmptyResourceTypeException::class);
+        $this->fixture->buildRequest(
             $this->buildServerRequest(
                 '.json'
             )
         );
-        $this->assertEquals('json', $request->getFormat());
     }
 
     #[Test]
@@ -187,8 +188,9 @@ final class RequestFactoryTest extends TestCase
     #[Test]
     public function getFormatWithDecimalSegmentJsonFormatTest(): void
     {
-        $request = $this->fixture
-            ->buildRequest($this->buildServerRequest('MyExt-MyModel/1.0.json'));
+        $request = $this->fixture->buildRequest(
+            $this->buildServerRequest('MyExt-MyModel/1.0.json')
+        );
         $this->assertEquals('json', $request->getFormat());
     }
 

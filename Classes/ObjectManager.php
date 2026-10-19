@@ -204,7 +204,9 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
     public function getConfigurationProvider(
         ServerRequestInterface $request,
     ): ConfigurationProviderInterface {
-        $configurationProviderFactory = $this->get(ConfigurationProviderFactoryInterface::class);
+        $configurationProviderFactory = $this->get(
+            ConfigurationProviderFactoryInterface::class
+        );
 
         return $configurationProviderFactory->build($request);
     }

@@ -49,8 +49,14 @@ class GreetingHandler implements HandlerInterface, HandlerDescriptionInterface
         RouterInterface $router,
         RestRequestInterface $request,
     ): void {
-        $router->add(Route::get('/?', $this->show(...)));
-        $router->add(Route::options('/?', $this->options(...)));
+        $router->add(Route::get(
+            $request->getResourceType() . '/?',
+            $this->show(...)
+        ));
+        $router->add(Route::options(
+            $request->getResourceType() . '/?',
+            $this->options(...)
+        ));
     }
 
     protected function showTYPO3Greeting(

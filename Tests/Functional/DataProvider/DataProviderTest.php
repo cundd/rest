@@ -148,7 +148,7 @@ final class DataProviderTest extends AbstractCase
         );
 
         $resourceType = new ResourceType('a_vendor-another_ext-my_model' . $uniqueTestId);
-        $request = self::buildTestRequest(self::getUriRequestBase())
+        $request = self::buildTestRequest(self::buildDummyUri())
             ->withResourceType($resourceType);
 
         $this->fixture->createModel(
@@ -225,14 +225,14 @@ final class DataProviderTest extends AbstractCase
     public function createNewModelForPathTest(): void
     {
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('MyExt-MyModel')),
             []
         );
         $this->assertInstanceOf(MyModel::class, $model);
 
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('my_ext-my_model')),
             []
         );
@@ -243,14 +243,14 @@ final class DataProviderTest extends AbstractCase
     public function createNamespacedModelForPathTest(): void
     {
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('MyExt-MySecondModel')),
             []
         );
         $this->assertInstanceOf(MyModel::class, $model);
 
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('my_ext-my_second_model')),
             []
         );
@@ -261,14 +261,14 @@ final class DataProviderTest extends AbstractCase
     public function createNamespacedModelForPathWithVendorTest(): void
     {
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('Vendor-MyExt-MyModel')),
             []
         );
         $this->assertInstanceOf('\\Vendor\\MyExt\\Domain\\Model\\MyModel', $model);
 
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('vendor-my_ext-my_model')),
             []
         );
@@ -279,7 +279,7 @@ final class DataProviderTest extends AbstractCase
     public function fetchModelWithEmptyDataTest(): void
     {
         $this->assertNull($this->fixture->fetchModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType('MyExt-MyModel')),
             ''
         ));
@@ -293,7 +293,7 @@ final class DataProviderTest extends AbstractCase
 
         /** @var MyModel $model */
         $model = $this->fixture->createModel(
-            self::buildTestRequest(self::getUriRequestBase())
+            self::buildTestRequest(self::buildDummyUri())
                 ->withResourceType(new ResourceType($resourceType)),
             $data
         );
@@ -305,7 +305,7 @@ final class DataProviderTest extends AbstractCase
     {
         $model = new MyModel();
         $properties = $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         );
         $this->assertEquals(
@@ -349,13 +349,13 @@ final class DataProviderTest extends AbstractCase
         ];
 
         $this->assertEquals($expectedOutput, $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         ));
 
         // Make sure the same result is returned if getModelData() is invoked again
         $this->assertEquals($expectedOutput, $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         ));
     }
@@ -407,13 +407,13 @@ final class DataProviderTest extends AbstractCase
         ];
 
         $this->assertEquals($expectedOutput, $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         ));
 
         // Make sure the same result is returned if getModelData() is invoked again
         $this->assertEquals($expectedOutput, $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         ));
     }
@@ -426,7 +426,7 @@ final class DataProviderTest extends AbstractCase
         $model->setDate($testDate);
 
         $properties = $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         );
         $this->assertEquals(
@@ -450,7 +450,7 @@ final class DataProviderTest extends AbstractCase
     {
         $model = new MyNestedJsonSerializeModel();
         $properties = $this->fixture->getModelData(
-            self::buildTestRequest(self::getUriRequestBase()),
+            self::buildTestRequest(self::buildDummyUri()),
             $model
         );
         $this->assertEquals(
@@ -464,6 +464,11 @@ final class DataProviderTest extends AbstractCase
             ],
             $properties
         );
+    }
+
+    private static function buildDummyUri(): string
+    {
+        return self::getUriRequestBase() . 'rest/some-resource-type';
     }
 
     private static function getUriRequestBase(): string

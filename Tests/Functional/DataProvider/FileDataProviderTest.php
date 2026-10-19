@@ -39,7 +39,7 @@ final class FileDataProviderTest extends AbstractCase
         $testModel = $this->createFileMock();
 
         $result = $this->fixture->getModelData(
-            RequestBuilderUtility::buildTestRequest('/'),
+            RequestBuilderUtility::buildTestRequest('/some-resource-type'),
             $testModel
         );
         $this->assertNotEmpty($result);
@@ -65,7 +65,7 @@ final class FileDataProviderTest extends AbstractCase
         );
 
         $result = $this->fixture->getModelData(
-            RequestBuilderUtility::buildTestRequest('/'),
+            RequestBuilderUtility::buildTestRequest('/some-resource-type'),
             $testModel
         );
         $this->assertNotEmpty($result);

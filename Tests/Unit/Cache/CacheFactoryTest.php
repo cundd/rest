@@ -52,7 +52,7 @@ class CacheFactoryTest extends TestCase
         int $expectedExpiresHeaderLifetime,
     ): void {
         $cache = $this->fixture->buildCache(
-            new ResourceType(''),
+            new ResourceType('some-resource-type'),
             $this->getConfigurationProvider(
                 $cacheLifetime,
                 $expiresHeaderLifetime,
@@ -75,7 +75,7 @@ class CacheFactoryTest extends TestCase
         mixed $_2,
     ): void {
         $cache = $this->fixture->buildCache(
-            new ResourceType(''),
+            new ResourceType('some-resource-type'),
             $this->getConfigurationProvider(
                 $cacheLifetime,
                 $expiresHeaderLifetime,
@@ -149,7 +149,7 @@ class CacheFactoryTest extends TestCase
         $methodProphecy->will(
             function () use ($resourceTypeCacheLifetime, $resourceTypeExpiresHeaderLifetime) {
                 return new ResourceConfiguration(
-                    new ResourceType(''),
+                    new ResourceType('some-resource-type'),
                     AccessRequirement::Allowed,
                     AccessRequirement::Denied,
                     $resourceTypeCacheLifetime,

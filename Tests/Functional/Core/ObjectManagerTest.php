@@ -25,6 +25,7 @@ use Cundd\Rest\RequestFactoryInterface;
 use Cundd\Rest\ResponseFactory;
 use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
+use Cundd\Rest\Tests\RequestBuilderUtility;
 use PHPUnit\Framework\Attributes\DataProvider as PHPUnitDataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Prophecy\Argument;
@@ -32,6 +33,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * Functional tests for the ObjectManager
@@ -85,9 +87,13 @@ final class ObjectManagerTest extends AbstractCase
     #[Test]
     public function getConfigurationProviderTest(): void
     {
+        /** @var Site $site */
+        $site = $this->get(SiteFinder::class)->getSiteByIdentifier('test-site');
+        $request = RequestBuilderUtility::buildTestServerRequest('/')
+            ->withAttribute('site', $site);
         $this->fixture = new ObjectManager();
         $object = $this->fixture->getConfigurationProvider(
-            $this->buildTestRequestWithSite('/')
+            $request
         );
         $this->assertInstanceOf(SiteSettingsConfigurationProvider::class, $object);
     }
@@ -101,7 +107,9 @@ final class ObjectManagerTest extends AbstractCase
             $container,
             ['authenticationProvider' => []]
         );
-        $object = $this->fixture->getAuthenticationProvider($this->buildTestRequest('/something'));
+        $object = $this->fixture->getAuthenticationProvider(
+            $this->buildTestRequest('/something')
+        );
         $this->assertInstanceOf(AuthenticationProviderInterface::class, $object);
     }
 
@@ -153,10 +161,6 @@ final class ObjectManagerTest extends AbstractCase
         return [
             // URL,
             // Expected result class,
-            [
-                '',
-                DataProvider::class,
-            ],
             [
                 'Vendor-NotExistingExt-MyModel/1',
                 DataProvider::class,

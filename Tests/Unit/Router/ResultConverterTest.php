@@ -58,7 +58,7 @@ final class ResultConverterTest extends TestCase
             $this->exceptionHandler
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(200, $result->getStatusCode());
         $this->assertSame('{"message":"some result"}', (string) $result->getBody());
@@ -74,7 +74,7 @@ final class ResultConverterTest extends TestCase
             $this->exceptionHandler
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertSame('{"error":"Not Found"}', (string) $result->getBody());
@@ -91,7 +91,7 @@ final class ResultConverterTest extends TestCase
             }
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(200, $result->getStatusCode());
         $this->assertSame('{"some":"data","key":"hello"}', (string) $result->getBody());
@@ -100,7 +100,7 @@ final class ResultConverterTest extends TestCase
     #[Test]
     public function dispatchWillForwardResultToResponseFactoryTest(): void
     {
-        $request = $this->buildTestRequest('');
+        $request = $this->buildTestRequest('some-resource-type');
 
         $responseFactoryProphecy = $this->prophesize(ResponseFactoryInterface::class);
         /** @var MethodProphecy $methodProphecy */
@@ -133,7 +133,7 @@ final class ResultConverterTest extends TestCase
             $this->exceptionHandler
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
 
         $this->assertSame($response, $result);
     }
@@ -151,7 +151,7 @@ final class ResultConverterTest extends TestCase
             $this->exceptionHandler
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(501, $result->getStatusCode());
@@ -170,7 +170,7 @@ final class ResultConverterTest extends TestCase
             $this->exceptionHandler
         );
 
-        $result = $this->fixture->dispatch($this->buildTestRequest(''));
+        $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertSame(501, $result->getStatusCode());
