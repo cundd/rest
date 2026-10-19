@@ -132,7 +132,8 @@ class ResultConverter implements RouterInterface
         } catch (Exception $handlerError) {
         }
 
-        if ($this->getShowDebugInformation($request)) {
+        $showDebugInformation = $this->getShowDebugInformation($request);
+        if ($showDebugInformation) {
             $exceptionDetails = $this->getDebugDetails($exception);
         } else {
             $exceptionDetails = sprintf(
@@ -140,8 +141,21 @@ class ResultConverter implements RouterInterface
                 $exception->getCode()
             );
         }
+        $errorResponse = $this->responseFactory->createErrorResponse(
+            $exceptionDetails,
+            501,
+            $request
+        );
 
-        return $this->responseFactory->createErrorResponse($exceptionDetails, 501, $request);
+        return $errorResponse
+            ->withHeader(
+                Header::CACHE_CONTROL,
+                'no-cache, private, no-store, max-age=0'
+            )
+            ->withHeader(
+                Header::EXPIRES,
+                '0'
+            );
     }
 
     /**
