@@ -59,7 +59,7 @@ Build/Scripts/runTests.sh -s functional       # Functional tests
 ### 1. Define path pattern in site settings YAML
 
 ```yaml
-# config/sites/my-site/settings.yaml OR {EXT:your-ext}/Configuration/Sets/{site}/settings.yaml
+# config/sites/my-site/settings.yaml OR {EXT:my_ext}/Configuration/Sets/{site}/settings.yaml
 rest:
     settings:
         paths:
