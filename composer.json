@@ -28,7 +28,7 @@
     "require-dev": {
         "ext-curl": "*",
         "ext-simplexml": "*",
-        "cundd/test-flight": "^0.1.5",
+        "cundd/test-flight": "^0.5.0",
         "jangregor/phpstan-prophecy": "^2.2.0",
         "laminas/laminas-diactoros": "^3.8.0",
         "phpspec/prophecy": "*",
