@@ -431,7 +431,7 @@ case ${TEST_SUITE} in
         SUITE_EXIT_CODE=$?
         ;;
     composerUpdate)
-        rm -rf .Build/bin/ .Build/typo3 .Build/vendor .Build/Web ./composer.lock
+        rm -rf .Build/bin/ .Build/typo3 .Build/vendor .Build/web ./composer.lock
         cp ${ROOT_DIR}/composer.json ${ROOT_DIR}/composer.json.orig
         if [ -f "${ROOT_DIR}/composer.json.testing" ]; then
             cp ${ROOT_DIR}/composer.json ${ROOT_DIR}/composer.json.orig

@@ -57,7 +57,7 @@
     "extra": {
         "typo3/cms": {
             "app-dir": ".Build",
-            "web-dir": ".Build/Web",
+            "web-dir": ".Build/web",
             "extension-key": "rest"
         }
     },
