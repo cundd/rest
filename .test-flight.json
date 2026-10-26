@@ -1,4 +1,4 @@
 {
-    "path": "Documentation/Customize.md",
+    "path": "Documentation/",
     "bootstrap": "Tests/Documentation/Bootstrap.php"
 }
