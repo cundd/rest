@@ -38,6 +38,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
+use Psr\Http\Message\ResponseFactoryInterface as PsrResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -97,10 +98,13 @@ class ObjectManagerTest extends TestCase
     #[Test]
     public function getResponseFactoryTest(): void
     {
-        $this->container->set(ResponseFactoryInterface::class, new ResponseFactory());
-        $object = $this->fixture->getResponseFactory();
-        $this->assertInstanceOf(ResponseFactoryInterface::class, $object);
-        $this->assertInstanceOf(ResponseFactory::class, $object);
+        $instance = new ResponseFactory(
+            $this->prophesize(PsrResponseFactoryInterface::class)->reveal()
+        );
+        $this->container->set(ResponseFactoryInterface::class, $instance);
+        $result = $this->fixture->getResponseFactory();
+        $this->assertInstanceOf(ResponseFactoryInterface::class, $result);
+        $this->assertInstanceOf(ResponseFactory::class, $result);
     }
 
     #[Test]

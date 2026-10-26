@@ -32,8 +32,10 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Container;
+use TYPO3\CMS\Core\Http\ResponseFactory as TYPO3ResponseFactory;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Functional tests for the ObjectManager
@@ -214,6 +216,9 @@ final class ObjectManagerTest extends AbstractCase
         /** @var class-string<HandlerInterface> $expectedHandler */
         $expectedHandler = 'Vendor\\Ext' . time() . '\\Rest\\Handler';
         $this->buildClass($expectedHandler, '', CrudHandler::class);
+        $responseFactory = new ResponseFactory(GeneralUtility::makeInstance(
+            TYPO3ResponseFactory::class
+        ));
 
         $container = $this->getContainer();
         assert($container instanceof Container);
@@ -221,7 +226,7 @@ final class ObjectManagerTest extends AbstractCase
             $expectedHandler,
             new $expectedHandler(
                 $this->fixture,
-                new ResponseFactory(),
+                $responseFactory,
                 $this->getContainer()->get(LoggerInterface::class)
             )
         );

@@ -10,6 +10,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
+use TYPO3\CMS\Core\Http\ResponseFactory as TYPO3ResponseFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class CustomHandlerTest extends AbstractIntegrationCase
 {
@@ -283,11 +285,14 @@ final class CustomHandlerTest extends AbstractIntegrationCase
     protected function configureHandlerPath(
         ContainerInterface $objectManager,
     ): void {
+        $typo3ResponseFactory = GeneralUtility::makeInstance(
+            TYPO3ResponseFactory::class
+        );
         assert($objectManager instanceof Container);
-        $responseFactory = new ResponseFactory();
+        $responseFactory = new ResponseFactory($typo3ResponseFactory);
         $objectManager->set(
             CustomHandler::class,
-            new CustomHandler(new ResponseFactory())
+            new CustomHandler(new ResponseFactory($typo3ResponseFactory))
         );
         $this->configurePath(
             $objectManager,

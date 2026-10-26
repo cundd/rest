@@ -7,10 +7,8 @@ namespace Cundd\Rest;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\Utility\DebugUtility;
-use Laminas\Diactoros\Response as LaminasResponse;
-use LogicException;
+use Psr\Http\Message\ResponseFactoryInterface as PsrResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Http\Response as TYPO3Response;
 
 use function is_scalar;
 use function var_export;
@@ -20,14 +18,16 @@ use function var_export;
  */
 final class ResponseFactory implements SingletonInterface, ResponseFactoryInterface
 {
+    public function __construct(
+        private readonly PsrResponseFactoryInterface $responseFactory,
+    ) {
+    }
+
     public function createResponse(
         string $data,
         int $status,
     ): ResponseInterface {
-        $responseClass = $this->getResponseImplementationClass();
-        /** @var ResponseInterface $response */
-        $response = new $responseClass();
-        $response = $response->withStatus($status);
+        $response = $this->responseFactory->createResponse($status);
         $response->getBody()->write($data);
 
         return $response;
@@ -62,10 +62,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
         bool $forceError,
         RestRequestInterface $request,
     ): ResponseInterface {
-        $responseClass = $this->getResponseImplementationClass();
-        /** @var ResponseInterface $response */
-        $response = new $responseClass();
-        $response = $response->withStatus($status);
+        $response = $this->responseFactory->createResponse($status);
 
         $messageKey = 'message';
         if ($forceError || $status >= 400) {
@@ -133,16 +130,5 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
 
                 return $response->withStatus(415); // 415 Unsupported Media Type
         }
-    }
-
-    private function getResponseImplementationClass(): string
-    {
-        if (class_exists(TYPO3Response::class)) {
-            return TYPO3Response::class;
-        }
-        if (class_exists(LaminasResponse::class)) {
-            return LaminasResponse::class;
-        }
-        throw new LogicException('No response implementation found');
     }
 }

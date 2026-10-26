@@ -12,6 +12,7 @@ use Cundd\Rest\Router\Exception\NotFoundException;
 use Cundd\Rest\Router\ResultConverter;
 use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\RequestBuilderTrait;
+use Cundd\Rest\Tests\ResponseBuilderUtility;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ResponseFactoryInterface as PsrResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
 final class ResultConverterTest extends TestCase
@@ -36,7 +38,15 @@ final class ResultConverterTest extends TestCase
     {
         parent::setUp();
         putenv('TEST_MODE=yes');
-        $this->responseFactory = new ResponseFactory();
+
+        $this->responseFactory = new ResponseFactory(new class implements PsrResponseFactoryInterface {
+            public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+            {
+                assert($code >= 100 && $code <= 599);
+
+                return ResponseBuilderUtility::buildTestResponse($code);
+            }
+        });
         $this->exceptionHandler = function () {
         };
     }
