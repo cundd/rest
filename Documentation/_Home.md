@@ -9,10 +9,6 @@ A [REST API (Representational State Transfer)](http://en.wikipedia.org/wiki/Repr
 - JSON formatted output
 - Support for TYPO3 13 and 14
 
-## Initiatives
-
-{Cundd\RestWebsite\InitiativesWidget}
-
 ## Get in touch!
 
 If you found a bug please create an issue at [GitHub](https://github.com/cundd/rest/issues).
