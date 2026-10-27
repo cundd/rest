@@ -7,7 +7,7 @@ All of the methods are built around the `fe_users` table: The `BasicAuthenticati
 
 ## Limitations
 
-- Currently it isn't possible to force the usage of a specific Authentication Provider.
+- Currently it isn't possible to enforce the usage of a specific Authentication Provider.
 - No ACL. Different users can not be limited to specific resources.
 
 ## Configuring a frontend user

@@ -31,6 +31,35 @@ final class CustomHandler implements HandlerInterface, HandlerDescriptionInterfa
         return 'Example Custom Handler';
     }
 
+    public function configureRoutes(
+        RouterInterface $router,
+        RestRequestInterface $request,
+    ): void {
+        $router->routeGet($request->getResourceType() . '/?', $this->index(...));
+        $router->routeGet($request->getResourceType() . '/foo/?', $this->foo(...));
+        $router->routePost($request->getResourceType() . '/bar/?', $this->bar(...));
+
+        $router->routeGet(
+            $request->getResourceType() . '/string-route/{string}/?',
+            $this->stringRoute(...)
+        );
+
+        $router->routeGet(
+            $request->getResourceType() . '/int-route/{int}/?',
+            $this->intRoute(...)
+        );
+
+        $router->routeGet(
+            $request->getResourceType() . '/float-route/{float}/?',
+            $this->floatRoute(...)
+        );
+
+        $router->routeGet(
+            $request->getResourceType() . '/boolean-route/{boolean}/?',
+            $this->booleanRoute(...)
+        );
+    }
+
     public function index(RestRequestInterface $request): ResponseInterface
     {
         return $this->responseFactory->createSuccessResponse(
@@ -40,7 +69,7 @@ final class CustomHandler implements HandlerInterface, HandlerDescriptionInterfa
         );
     }
 
-    public function getFoo(RestRequestInterface $request): ResponseInterface
+    public function foo(RestRequestInterface $request): ResponseInterface
     {
         return $this->responseFactory->createSuccessResponse(
             $request->getMethod() . ' Foo',
@@ -49,7 +78,7 @@ final class CustomHandler implements HandlerInterface, HandlerDescriptionInterfa
         );
     }
 
-    public function postBar(RestRequestInterface $request): ResponseInterface
+    public function bar(RestRequestInterface $request): ResponseInterface
     {
         return $this->responseFactory->createSuccessResponse(
             $request->getMethod() . ' Bar',
@@ -111,35 +140,6 @@ final class CustomHandler implements HandlerInterface, HandlerDescriptionInterfa
             ],
             200,
             $request
-        );
-    }
-
-    public function configureRoutes(
-        RouterInterface $router,
-        RestRequestInterface $request,
-    ): void {
-        $router->routeGet($request->getResourceType() . '/?', $this->index(...));
-        $router->routeGet($request->getResourceType() . '/foo/?', $this->getFoo(...));
-        $router->routePost($request->getResourceType() . '/bar/?', $this->postBar(...));
-
-        $router->routeGet(
-            $request->getResourceType() . '/string-route/{string}/?',
-            $this->stringRoute(...)
-        );
-
-        $router->routeGet(
-            $request->getResourceType() . '/int-route/{int}/?',
-            $this->intRoute(...)
-        );
-
-        $router->routeGet(
-            $request->getResourceType() . '/float-route/{float}/?',
-            $this->floatRoute(...)
-        );
-
-        $router->routeGet(
-            $request->getResourceType() . '/boolean-route/{boolean}/?',
-            $this->booleanRoute(...)
         );
     }
 }

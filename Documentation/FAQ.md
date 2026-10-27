@@ -44,7 +44,8 @@ curl -X POST \
 "http://your-domain.com/rest/..."
 ```
 
-In a custom handler the sent data can be retrieved through the request's `getSentData()` method.
+In a custom `Handler` implementation the sent data can be retrieved through the
+request's `getSentData()` method.
 
 ## Customize the output of a model
 
@@ -55,14 +56,14 @@ The easiest way to customize the properties exported by your models is through i
 
 declare(strict_types=1);
 
-class Person extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class Person extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     implements JsonSerializable {
-        public function jsonSerialize()
-        {
-            return [
-                'companyName' => 'the company name'
-            ];
-        }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'companyName' => 'the company name'
+        ];
     }
 }
 ```
@@ -94,11 +95,9 @@ declare(strict_types=1);
 namespace Foo\Bar\Rest;
 
 class DataProvider extends \Cundd\Rest\DataProvider\DataProvider {
-	/**
-	 * @param $data
-	 * @return array
-	 */
-	protected function prepareModelData($data) {
+    #[\Override]
+    protected function prepareModelData(array $data): array
+    {
 		// Work with the data
 		return $data;
 	}

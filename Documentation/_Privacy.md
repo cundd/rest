@@ -40,14 +40,6 @@ And also:
 
 The processing of personal data with Matomo is based on legitimate interests.
 
-### 1.2 - Webfonts (fonts.com)
-
-Some of the fonts used on our websites are provided by fonts.com. As your browser
-displays those fonts, it will download the font-files from fonts.com servers.
-
-Please see [Monotype Privacy Policy Statement](https://www.monotype.com/legal/privacy-policy)
-for more information on how your data is handled by fonts.com.
-
 ## 2 – The legitimate interests
 
 Processing your personal data such as cookies is helping us identify what is working
@@ -86,7 +78,7 @@ following rights:
 - Right to object: you can object to the tracking of your personal data by using the
   following opt-out feature:
 
-<iframe style="border: 0; height: 200px; width: 600px;" src="https://piwik.cundd.net/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=&fontColor=666666&fontSize=14px&fontFamily=%22Lucida%20Sans%22%2C%20%22Lucida%20Grande%22%2C%20Verdana%2C%20Arial%2C%20sans-serif"></iframe>
+<iframe style="border: 0; height: 200px; width: 600px;" src="https://matomo.corn.rest/index.php?module=CoreAdminHome&action=optOut&language=en&backgroundColor=&fontColor=666666&fontSize=14px&fontFamily=%22Lucida%20Sans%22%2C%20%22Lucida%20Grande%22%2C%20Verdana%2C%20Arial%2C%20sans-serif"></iframe>
 
 If you wish us to not process any personal data with Matomo, you can opt-out from it at
 any time. There will be no consequences at all regarding the use of our website.
