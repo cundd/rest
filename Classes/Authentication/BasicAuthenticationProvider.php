@@ -48,9 +48,9 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     }
 
     /**
-     * @return array{0:string,1:string}
+     * @return array{0:string,1:string}|null
      */
-    private function checkServerData(string $key): array
+    private function checkServerData(string $key): ?array
     {
         if (isset($_SERVER[$key])) {
             $value = $_SERVER[$key];
@@ -62,6 +62,6 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
             }
         }
 
-        return ['', ''];
+        return null;
     }
 }
