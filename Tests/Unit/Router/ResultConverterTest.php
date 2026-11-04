@@ -14,6 +14,7 @@ use Cundd\Rest\Router\RouterInterface;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use Cundd\Rest\Tests\ResponseBuilderUtility;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -107,15 +108,34 @@ final class ResultConverterTest extends TestCase
         $this->assertSame('{"some":"data","key":"hello"}', (string) $result->getBody());
     }
 
-    #[Test]
-    public function dispatchWillForwardResultToResponseFactoryTest(): void
+    /**
+     * @return list<array{0:mixed}>
+     */
+    public static function responseDataProvider(): array
     {
+        return [
+            ['some result'],
+            [2734892743],
+            [1.9],
+            [null],
+            [true],
+            [false],
+            [[1, 'a']],
+            [['some' => 'data', 'key' => 'hello']],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('responseDataProvider')]
+    public function dispatchWillForwardResultToResponseFactoryTest(
+        mixed $responseData,
+    ): void {
         $request = $this->buildTestRequest('some-resource-type');
 
         $responseFactoryProphecy = $this->prophesize(ResponseFactoryInterface::class);
         /** @var MethodProphecy $methodProphecy */
         $methodProphecy = $responseFactoryProphecy->createSuccessResponse(
-            'some result',
+            $responseData,
             200,
             $request
         );
@@ -125,7 +145,7 @@ final class ResultConverterTest extends TestCase
 
         /* @var ResponseInterface|ObjectProphecy $response */
         $this->fixture = new ResultConverter(
-            $this->buildRouter('some result'),
+            $this->buildRouter($responseData),
             $this->responseFactory,
             $this->exceptionHandler
         );

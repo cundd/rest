@@ -28,10 +28,10 @@ interface ResponseFactoryInterface
      *
      * Some data (e.g. the format) will be read from the request.
      *
-     * @param string|int|array<mixed>|null $data
+     * @param string|int|float|bool|array<mixed>|null $data
      */
     public function createErrorResponse(
-        string|int|array|null $data,
+        string|int|float|bool|array|null $data,
         int $status,
         RestRequestInterface $request,
     ): ResponseInterface;
@@ -41,10 +41,10 @@ interface ResponseFactoryInterface
      *
      * Some data (e.g. the format) will be read from the request.
      *
-     * @param string|int|array<mixed>|null $data
+     * @param string|int|float|bool|array<mixed>|null $data
      */
     public function createSuccessResponse(
-        string|int|array|null $data,
+        string|int|float|bool|array|null $data,
         int $status,
         RestRequestInterface $request,
     ): ResponseInterface;

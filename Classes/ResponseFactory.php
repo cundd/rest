@@ -34,7 +34,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
     }
 
     public function createErrorResponse(
-        string|int|array|null $data,
+        string|int|float|bool|array|null $data,
         int $status,
         RestRequestInterface $request,
     ): ResponseInterface {
@@ -42,7 +42,7 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
     }
 
     public function createSuccessResponse(
-        string|int|array|null $data,
+        string|int|float|bool|array|null $data,
         int $status,
         RestRequestInterface $request,
     ): ResponseInterface {
@@ -52,12 +52,12 @@ final class ResponseFactory implements SingletonInterface, ResponseFactoryInterf
     /**
      * Return a response with the given message and status code
      *
-     * @param string|int|array<mixed>|null $data       Data to send
-     * @param int                          $status     Status code of the response
-     * @param bool                         $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
+     * @param string|int|float|bool|array<mixed>|null $data       Data to send
+     * @param int                                     $status     Status code of the response
+     * @param bool                                    $forceError If TRUE the response will be treated as an error, otherwise any status below 400 will be a normal response
      */
     private function createFormattedResponse(
-        string|int|array|null $data,
+        string|int|float|bool|array|null $data,
         int $status,
         bool $forceError,
         RestRequestInterface $request,
