@@ -81,7 +81,7 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $data = $request->getSentData();
         $this->logger->logRequest('create request', ['body' => $data]);
 
-        if (null === $data) {
+        if (!is_array($data)) {
             return $this->responseFactory->createErrorResponse(
                 'Invalid or missing payload',
                 400,
