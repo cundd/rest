@@ -20,6 +20,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Cache implements CacheInterface
 {
+    private const CACHE_ENTRY_KEY_CONTENT = 'content';
+    private const CACHE_ENTRY_KEY_STATUS = 'status';
+    private const CACHE_ENTRY_KEY_HEADERS = 'headers';
+
     /**
      * Concrete cache instance
      */
@@ -35,15 +39,14 @@ class Cache implements CacheInterface
      */
     private int $expiresHeaderLifetime;
 
-    private ResponseFactoryInterface $responseFactory;
-
-    public function __construct(ResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
+    public function __construct(
+        private readonly ResponseFactoryInterface $responseFactory,
+    ) {
     }
 
-    public function getCachedValueForRequest(RestRequestInterface $request): ?ResponseInterface
-    {
+    public function getCachedValueForRequest(
+        RestRequestInterface $request,
+    ): ?ResponseInterface {
         $cacheLifetime = $this->getCacheLifetime();
 
         /*
@@ -65,29 +68,38 @@ class Cache implements CacheInterface
             return null;
         }
 
+        $key = $this->getCacheKeyForRequest($request);
+
         $cacheInstance = $this->getCacheInstance();
-        $responseData = $cacheInstance->get($this->getCacheKeyForRequest($request));
-        if (!$responseData) {
+        if (!$cacheInstance->has($key)) {
+            return null;
+        }
+        $responseData = $cacheInstance->get($key);
+        if (!is_array($responseData)) {
             return null;
         }
 
         /** TODO: Send 304 status if appropriate */
         $response = $this->responseFactory->createResponse(
-            $responseData['content'],
-            intval($responseData['status'])
+            $responseData[self::CACHE_ENTRY_KEY_CONTENT],
+            intval($responseData[self::CACHE_ENTRY_KEY_STATUS])
         );
 
-        // remove none headers
-        unset($responseData['content'], $responseData['status']);
-
-        // set all cached headers again
-        foreach ($responseData as $header => $value) {
+        // Restore all cached headers
+        $headers = $responseData[self::CACHE_ENTRY_KEY_HEADERS];
+        foreach ($headers as $header => $value) {
             $response = $response->withHeader($header, $value);
         }
 
         return $response
-            ->withHeader(Header::EXPIRES, $this->getHttpDate(time() + $this->getExpiresHeaderLifetime()))
-            ->withHeader(Header::CUNDD_REST_CACHED, 'true');
+            ->withHeader(
+                Header::EXPIRES,
+                $this->getHttpDate(time() + $this->getExpiresHeaderLifetime())
+            )
+            ->withHeader(
+                Header::CUNDD_REST_CACHED,
+                'true'
+            );
     }
 
     public function setCachedValueForRequest(
@@ -112,16 +124,18 @@ class Cache implements CacheInterface
 
         /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $this->getCacheInstance();
+
+        $headers = array_merge(
+            $response->getHeaders(),
+            [Header::LAST_MODIFIED => $this->getHttpDate(time())]
+        );
         $cacheInstance->set(
             $this->getCacheKeyForRequest($request),
-            array_merge(
-                $response->getHeaders(),
-                [
-                    'content'             => (string) $response->getBody(),
-                    'status'              => $response->getStatusCode(),
-                    Header::LAST_MODIFIED => $this->getHttpDate(time()),
-                ]
-            ),
+            [
+                self::CACHE_ENTRY_KEY_CONTENT => (string) $response->getBody(),
+                self::CACHE_ENTRY_KEY_STATUS  => $response->getStatusCode(),
+                self::CACHE_ENTRY_KEY_HEADERS => $headers,
+            ],
             $this->getTags($request),
             $cacheLifetime
         );
@@ -129,9 +143,13 @@ class Cache implements CacheInterface
 
     public function getCacheKeyForRequest(RestRequestInterface $request): string
     {
-        $cacheKey = sha1($request->getUri() . '_' . $request->getFormat() . '_' . $request->getMethod());
+        $cacheKey = sha1(
+            $request->getUri()
+                . '_' . $request->getFormat()
+                . '_' . $request->getMethod()
+        );
         $params = $request->getQueryParams();
-        if ('GET' === $request->getMethod() && count($params)) {
+        if ('GET' === $request->getMethod() && !empty($params)) {
             $cacheKey = sha1($cacheKey . serialize($params));
         }
 
@@ -150,8 +168,9 @@ class Cache implements CacheInterface
         return $this->cacheLifetime;
     }
 
-    public function setExpiresHeaderLifetime(int $expiresHeaderLifetime): CacheInterface
-    {
+    public function setExpiresHeaderLifetime(
+        int $expiresHeaderLifetime,
+    ): CacheInterface {
         $this->expiresHeaderLifetime = $expiresHeaderLifetime;
 
         return $this;
@@ -252,8 +271,9 @@ class Cache implements CacheInterface
         return !$response->getHeader(Header::CUNDD_REST_NO_CACHE);
     }
 
-    private function cacheControlPreventsCaching(ResponseInterface $response): bool
-    {
+    private function cacheControlPreventsCaching(
+        ResponseInterface $response,
+    ): bool {
         $cacheControlHeaders = $response->getHeader(Header::CACHE_CONTROL);
         $noCacheValues = [
             'private',

@@ -18,6 +18,7 @@ use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
 /**
@@ -85,7 +86,8 @@ class CacheTest extends AbstractCase
     public function getCacheKeyForGetRequestWithParameterTest(): void
     {
         $uri = 'MyExt-MyModel/1';
-        $request = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
+        $request = $this->buildTestRequestWithUri($uri)
+            ->withQueryParams(['q' => 'queryTestParameter']);
         $cacheKey = $this->fixture->getCacheKeyForRequest($request);
         $this->assertEquals(
             '8f0f35de918d2e1494849827b2b453792c54d030',
@@ -98,8 +100,10 @@ class CacheTest extends AbstractCase
     public function getCacheKeyForGetRequestWithDifferentParametersShouldNotMatchTest(): void
     {
         $uri = 'MyExt-MyModel/1';
-        $request = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter']);
-        $request2 = $this->buildTestRequestWithUri($uri)->withQueryParams(['q' => 'queryTestParameter2']);
+        $request = $this->buildTestRequestWithUri($uri)
+            ->withQueryParams(['q' => 'queryTestParameter']);
+        $request2 = $this->buildTestRequestWithUri($uri)
+            ->withQueryParams(['q' => 'queryTestParameter2']);
         $requestWithoutParameters = $this->buildTestRequestWithUri($uri);
 
         $this->assertNotEquals(
@@ -120,14 +124,18 @@ class CacheTest extends AbstractCase
     }
 
     #[Test]
-    public function getCachedInitialValueForRequestTest(): void
+    public function getValueForFreshCacheTest(): void
     {
         $uri = 'MyAliasedModel' . time();
         $request = $this->buildTestRequestWithUri($uri);
 
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $this->getFrontendCacheProphecy()->reveal();
-        $this->fixture->setCacheInstance($cacheInstance);
+        $cacheProphecy = $this->getFrontendCacheProphecy();
+
+        $methodProphecy = $cacheProphecy->has(Argument::type('string'));
+        $methodProphecy->shouldBeCalled();
+        $methodProphecy->willReturn(false);
+
+        $this->fixture->setCacheInstance($cacheProphecy->reveal());
         $cachedValue = $this->fixture->getCachedValueForRequest($request);
         $this->assertNull($cachedValue);
     }
@@ -137,10 +145,12 @@ class CacheTest extends AbstractCase
     {
         $uri = 'MyAliasedModel' . time();
         $responseArray = [
-            'content'             => 'the content',
-            'status'              => 200,
-            Header::CONTENT_TYPE  => 'application/json',
-            Header::LAST_MODIFIED => gmdate('D, d M Y H:i:s \G\M\T'),
+            'content' => 'the content',
+            'status'  => 200,
+            'headers' => [
+                Header::CONTENT_TYPE  => 'application/json',
+                Header::LAST_MODIFIED => gmdate('D, d M Y H:i:s \G\M\T'),
+            ],
         ];
 
         $request = $this->buildTestRequestWithUri($uri);
@@ -151,6 +161,10 @@ class CacheTest extends AbstractCase
         $methodProphecy = $cacheProphecy->get(Argument::type('string'));
         $methodProphecy->shouldBeCalled();
         $methodProphecy->willReturn($responseArray);
+
+        $methodProphecy = $cacheProphecy->has(Argument::type('string'));
+        $methodProphecy->shouldBeCalled();
+        $methodProphecy->willReturn(true);
 
         /** @var VariableFrontend $cacheInstance */
         $cacheInstance = $cacheProphecy->reveal();
@@ -232,7 +246,10 @@ class CacheTest extends AbstractCase
         $request = $this->buildTestRequestWithUri('MyAliasedModel');
         $response = $this->buildTestResponse(200, $header, 'Test content');
 
-        $this->assertSame($expected, $this->fixture->canBeCached($request, $response));
+        $this->assertSame(
+            $expected,
+            $this->fixture->canBeCached($request, $response)
+        );
     }
 
     #[Test]
@@ -260,7 +277,7 @@ class CacheTest extends AbstractCase
     }
 
     /**
-     * @return ObjectProphecy<AbstractFrontend>
+     * @return ObjectProphecy<FrontendInterface>
      */
     private function getFrontendCacheProphecy(): ObjectProphecy
     {
