@@ -141,6 +141,7 @@ Options:
             - composerUpdate: "composer update", handy if host has no PHP
             - composerUpdateRector: "composer update", for rector subdirectory
             - composerValidate: "composer validate"
+            - documentationTest: Documentation tests
             - functional: PHP functional tests
             - lint: PHP linting
             - phpstan: PHPStan static analysis
@@ -445,6 +446,11 @@ case ${TEST_SUITE} in
     composerValidate)
         COMMAND=(composer validate "$@")
         ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name composer-command-${SUFFIX} -e COMPOSER_CACHE_DIR=.Build/.cache/composer -e COMPOSER_ROOT_VERSION=${COMPOSER_ROOT_VERSION} ${IMAGE_PHP} "${COMMAND[@]}"
+        SUITE_EXIT_CODE=$?
+        ;;
+    documentationTest)
+        COMMAND=(/usr/bin/env php -d "zend.assertions=1" .Build/bin/test-flight ${EXTRA_TEST_OPTIONS} "$@")
+        ${CONTAINER_BIN} run ${CONTAINER_COMMON_PARAMS} --name unit-${SUFFIX} ${XDEBUG_MODE} -e XDEBUG_CONFIG="${XDEBUG_CONFIG}" ${IMAGE_PHP} "${COMMAND[@]}"
         SUITE_EXIT_CODE=$?
         ;;
     functional)
