@@ -55,6 +55,12 @@ class Cache implements CacheInterface
             return null;
         }
 
+        if ($request->isWrite()) {
+            $this->clearCache($request);
+
+            return null;
+        }
+
         $cacheInstance = $this->getCacheInstance();
         $responseData = $cacheInstance->get($this->getCacheKeyForRequest($request));
         if (!$responseData) {
@@ -62,8 +68,6 @@ class Cache implements CacheInterface
         }
 
         if (!$request->isRead()) {
-            $this->clearCache($request);
-
             return null;
         }
 
@@ -196,8 +200,7 @@ class Cache implements CacheInterface
     private function clearCache(RestRequestInterface $request): void
     {
         $allTags = $this->getTags($request);
-        $firstTag = $allTags[0];
-        $this->getCacheInstance()->flushByTag($firstTag);
+        $this->getCacheInstance()->flushByTags($allTags);
     }
 
     /**
@@ -213,9 +216,7 @@ class Cache implements CacheInterface
 
         return array_filter(
             array_map(
-                function ($tag) {
-                    return preg_replace('/[^a-zA-Z0-9_%\\-&]/', '', $tag);
-                },
+                fn ($tag) => preg_replace('/[^a-zA-Z0-9_%\\-&]/', '', $tag),
                 [
                     $vendor . '_' . $extension . '_' . $model,
                     $extension . '_' . $model,
