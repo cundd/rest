@@ -61,13 +61,13 @@ class Cache implements CacheInterface
             return null;
         }
 
-        $cacheInstance = $this->getCacheInstance();
-        $responseData = $cacheInstance->get($this->getCacheKeyForRequest($request));
-        if (!$responseData) {
+        if (!$request->isRead()) {
             return null;
         }
 
-        if (!$request->isRead()) {
+        $cacheInstance = $this->getCacheInstance();
+        $responseData = $cacheInstance->get($this->getCacheKeyForRequest($request));
+        if (!$responseData) {
             return null;
         }
 
