@@ -184,7 +184,7 @@ final class ResultConverterTest extends TestCase
         $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertSame(501, $result->getStatusCode());
+        $this->assertSame(500, $result->getStatusCode());
         $this->assertSame(
             '{"error":"Sorry! Something is wrong. Exception code #1483531241"}',
             (string) $result->getBody()
@@ -203,7 +203,7 @@ final class ResultConverterTest extends TestCase
         $result = $this->fixture->dispatch($this->buildTestRequest('some-resource-type'));
 
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertSame(501, $result->getStatusCode());
+        $this->assertSame(500, $result->getStatusCode());
         $this->assertSame(
             '{"error":"Sorry! Something is wrong. Exception code #1483531241"}',
             (string) $result->getBody()

@@ -131,7 +131,7 @@ class ResultConverter implements RouterInterface
         }
         $errorResponse = $this->responseFactory->createErrorResponse(
             $exceptionDetails,
-            501,
+            500,
             $request
         );
 
