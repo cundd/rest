@@ -47,7 +47,8 @@ final class ErrorHandler
         $error = error_get_last();
         if (null !== $error) {
             $type = $error['type'];
-            if ($type & E_ERROR) {
+            if (($type & E_ERROR) === E_ERROR
+                || ($type & E_USER_ERROR) === E_USER_ERROR) {
                 static::printError(new Exception(
                     $error['message'],
                     $error['type']
