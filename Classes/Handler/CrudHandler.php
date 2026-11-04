@@ -120,6 +120,14 @@ class CrudHandler implements CrudHandlerInterface, HandlerDescriptionInterface
         $dataProvider = $this->getDataProvider($request);
 
         $data = $request->getSentData();
+        if (!is_array($data)) {
+            return $this->responseFactory->createErrorResponse(
+                'Could not decode request body into an array',
+                400,
+                $request
+            );
+        }
+
         $data['__identity'] = $identifier;
         $this->logger->logRequest('update request', ['body' => $data]);
 
