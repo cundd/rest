@@ -20,7 +20,8 @@ use function str_replace;
 use function substr;
 
 /**
- * Class to convert simple Router results into Response instances and handle exceptions
+ * Class to convert simple Router results into Response instances and handle
+ * exceptions
  */
 class ResultConverter implements RouterInterface
 {
@@ -61,7 +62,11 @@ class ResultConverter implements RouterInterface
             return $this->exceptionToResponse($result, $request);
         }
 
-        return $this->responseFactory->createSuccessResponse($result, 200, $request);
+        return $this->responseFactory->createSuccessResponse(
+            $result,
+            200,
+            $request
+        );
     }
 
     public function add(RouteInterface $route): RouterInterface
@@ -158,7 +163,10 @@ class ResultConverter implements RouterInterface
                     : '()';
 
                 if (isset($step['class'])) {
-                    return $step['class'] . ($step['type'] ?? '') . $step['function'] . $arguments;
+                    return $step['class']
+                        . ($step['type'] ?? '')
+                        . $step['function']
+                        . $arguments;
                 }
 
                 return $step['function'] . $arguments;
@@ -220,8 +228,16 @@ class ResultConverter implements RouterInterface
             )
         );
 
-        $alternativePatterns = str_replace(["\r", "\n"], '', $alternativePatterns);
-        $alternativePatterns = (string) preg_replace('/[^\x20-\x7e]/', '', $alternativePatterns);
+        $alternativePatterns = str_replace(
+            ["\r", "\n"],
+            '',
+            $alternativePatterns
+        );
+        $alternativePatterns = (string) preg_replace(
+            '/[^\x20-\x7e]/',
+            '',
+            $alternativePatterns
+        );
 
         $maxByteLength = 1024;
         if (strlen($alternativePatterns) > $maxByteLength) {
