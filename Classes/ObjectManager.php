@@ -109,10 +109,9 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $resourceType = $request->getResourceType();
         [$vendor, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        // Check if an extension provides a Authentication Provider
         $authenticationProviderClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AuthenticationProvider';
 
-        // Use the found Authentication Provider
+        // Check if the extension provides an Authentication Provider
         if (class_exists($authenticationProviderClass)) {
             $authenticationProvider = $this->get($authenticationProviderClass);
             assert($authenticationProvider instanceof AuthenticationProviderInterface);
@@ -120,7 +119,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
             return $authenticationProvider;
         }
 
-        // Use the Authentication Providers defined in TypoScript
+        // Use the configured Authentication Providers
         $providerInstances = [];
         $configuredProviders = $this->getConfigurationProvider($request)
             ->getSetting('authenticationProvider') ?? [];
@@ -142,7 +141,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         $resourceType = $request->getResourceType();
         [$vendor, $extension] = Utility::getClassNamePartsForResourceType($resourceType);
 
-        // Check if an extension provides an Authentication Provider
+        // Check if the extension provides an Access Controller
         $accessControllerClass = ($vendor ? $vendor . '\\' : '') . $extension . '\\Rest\\AccessController';
         if (class_exists($accessControllerClass)) {
             $accessController = $this->get($accessControllerClass);
