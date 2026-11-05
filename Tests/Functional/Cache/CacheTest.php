@@ -9,6 +9,7 @@ use Cundd\Rest\Configuration\AccessRequirement;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
+use Cundd\Rest\ResponseFactoryInterface;
 use Cundd\Rest\Tests\Functional\AbstractCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -19,7 +20,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Cache\Frontend\AbstractFrontend;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
 /**
  * Tests for the Caching interface
@@ -135,8 +135,13 @@ class CacheTest extends AbstractCase
         $methodProphecy->shouldBeCalled();
         $methodProphecy->willReturn(false);
 
-        $this->fixture->setCacheInstance($cacheProphecy->reveal());
-        $cachedValue = $this->fixture->getCachedValueForRequest($request);
+        $fixture = new Cache(
+            $this->getContainer()->get(ResponseFactoryInterface::class),
+            $cacheProphecy->reveal()
+        );
+        $fixture->setCacheLifetime(10);
+        $fixture->setExpiresHeaderLifetime(5);
+        $cachedValue = $fixture->getCachedValueForRequest($request);
         $this->assertNull($cachedValue);
     }
 
@@ -166,10 +171,14 @@ class CacheTest extends AbstractCase
         $methodProphecy->shouldBeCalled();
         $methodProphecy->willReturn(true);
 
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $cacheProphecy->reveal();
-        $this->fixture->setCacheInstance($cacheInstance);
-        $response = $this->fixture->getCachedValueForRequest($request);
+        $fixture = new Cache(
+            $this->getContainer()->get(ResponseFactoryInterface::class),
+            $cacheProphecy->reveal()
+        );
+        $fixture->setCacheLifetime(10);
+        $fixture->setExpiresHeaderLifetime(5);
+
+        $response = $fixture->getCachedValueForRequest($request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame($responseArray['content'], (string) $response->getBody());
         $this->assertSame($responseArray['status'], $response->getStatusCode());
@@ -194,10 +203,13 @@ class CacheTest extends AbstractCase
         );
         $methodProphecy->shouldBeCalled();
 
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $cacheProphecy->reveal();
-        $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest(
+        $fixture = new Cache(
+            $this->getContainer()->get(ResponseFactoryInterface::class),
+            $cacheProphecy->reveal()
+        );
+        $fixture->setCacheLifetime(10);
+        $fixture->setExpiresHeaderLifetime(5);
+        $fixture->setCachedValueForRequest(
             $request,
             $response,
             $this->buildResourceConfiguration($request)
@@ -226,10 +238,13 @@ class CacheTest extends AbstractCase
         );
         $methodProphecy->shouldNotBeCalled();
 
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $cacheProphecy->reveal();
-        $this->fixture->setCacheInstance($cacheInstance);
-        $this->fixture->setCachedValueForRequest(
+        $fixture = new Cache(
+            $this->getContainer()->get(ResponseFactoryInterface::class),
+            $cacheProphecy->reveal()
+        );
+        $fixture->setCacheLifetime(10);
+        $fixture->setExpiresHeaderLifetime(5);
+        $fixture->setCachedValueForRequest(
             $request,
             $response,
             $this->buildResourceConfiguration($request)

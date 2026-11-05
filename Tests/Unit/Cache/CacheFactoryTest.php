@@ -21,8 +21,9 @@ use Prophecy\Argument;
 use Prophecy\Argument\Token\TypeToken;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\MethodProphecy;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
-class CacheFactoryTest extends TestCase
+final class CacheFactoryTest extends TestCase
 {
     use ProphecyTrait;
     use RequestBuilderTrait;
@@ -61,7 +62,10 @@ class CacheFactoryTest extends TestCase
             ),
             $this->getObjectManager()
         );
-        $this->assertEquals($expectedExpiresHeaderLifetime, $cache->getExpiresHeaderLifetime());
+        $this->assertEquals(
+            $expectedExpiresHeaderLifetime,
+            $cache->getExpiresHeaderLifetime()
+        );
     }
 
     #[Test]
@@ -106,12 +110,17 @@ class CacheFactoryTest extends TestCase
 
     private function getObjectManager(): ObjectManagerInterface
     {
-        $responseFactory = $this->prophesize(ResponseFactoryInterface::class)->reveal();
+        $responseFactory = $this->prophesize(ResponseFactoryInterface::class)
+            ->reveal();
+        $cacheFrontend = $this->prophesize(FrontendInterface::class)->reveal();
 
         $objectManager = $this->prophesize(ObjectManager::class);
         /** @var string $argumentType */
         $argumentType = Argument::type('string');
-        $objectManager->get($argumentType)->willReturn(new Cache($responseFactory));
+        $objectManager->get($argumentType)->willReturn(new Cache(
+            $responseFactory,
+            $cacheFrontend
+        ));
 
         return $objectManager->reveal();
     }
@@ -122,7 +131,9 @@ class CacheFactoryTest extends TestCase
         int $resourceTypeCacheLifetime,
         ?int $resourceTypeExpiresHeaderLifetime,
     ): ConfigurationProviderInterface {
-        $configurationProvider = $this->prophesize(ConfigurationProviderInterface::class);
+        $configurationProvider = $this->prophesize(
+            ConfigurationProviderInterface::class
+        );
 
         /** @var string $typeToken */
         $typeToken = Argument::type('string');
@@ -145,21 +156,18 @@ class CacheFactoryTest extends TestCase
         /** @var ResourceType|TypeToken $resourceType */
         $resourceType = Argument::type(ResourceType::class);
         /** @var MethodProphecy $methodProphecy */
-        $methodProphecy = $configurationProvider->getResourceConfiguration($resourceType);
-        $methodProphecy->will(
-            function () use ($resourceTypeCacheLifetime, $resourceTypeExpiresHeaderLifetime) {
-                return new ResourceConfiguration(
-                    new ResourceType('some-resource-type'),
-                    AccessRequirement::Allowed,
-                    AccessRequirement::Denied,
-                    $resourceTypeCacheLifetime,
-                    '',
-                    '',
-                    [],
-                    $resourceTypeExpiresHeaderLifetime ?? -1
-                );
-            }
-        );
+        $methodProphecy = $configurationProvider
+            ->getResourceConfiguration($resourceType);
+        $methodProphecy->will(fn () => new ResourceConfiguration(
+            new ResourceType('some-resource-type'),
+            AccessRequirement::Allowed,
+            AccessRequirement::Denied,
+            $resourceTypeCacheLifetime,
+            '',
+            '',
+            [],
+            $resourceTypeExpiresHeaderLifetime ?? -1
+        ));
 
         return $configurationProvider->reveal();
     }

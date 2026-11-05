@@ -10,10 +10,7 @@ use Cundd\Rest\Http\Header;
 use Cundd\Rest\Http\RestRequestInterface;
 use Cundd\Rest\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The class caches responses of requests
@@ -23,11 +20,6 @@ class Cache implements CacheInterface
     private const CACHE_ENTRY_KEY_CONTENT = 'content';
     private const CACHE_ENTRY_KEY_STATUS = 'status';
     private const CACHE_ENTRY_KEY_HEADERS = 'headers';
-
-    /**
-     * Concrete cache instance
-     */
-    private FrontendInterface $cacheInstance;
 
     /**
      * Cache lifetime
@@ -41,6 +33,7 @@ class Cache implements CacheInterface
 
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
+        private readonly FrontendInterface $cache,
     ) {
     }
 
@@ -70,11 +63,10 @@ class Cache implements CacheInterface
 
         $key = $this->getCacheKeyForRequest($request);
 
-        $cacheInstance = $this->getCacheInstance();
-        if (!$cacheInstance->has($key)) {
+        if (!$this->cache->has($key)) {
             return null;
         }
-        $responseData = $cacheInstance->get($key);
+        $responseData = $this->cache->get($key);
         if (!is_array($responseData)) {
             return null;
         }
@@ -114,22 +106,19 @@ class Cache implements CacheInterface
         $cacheLifetime = $this->getCacheLifetime();
 
         /*
-         * Use caching if the cache lifetime configuration is not -1, an API
-         * path is given and the request is a read request
+         * Use caching if the cache lifetime configuration is not -1 and an API
+         * path
          */
         $useCaching = (-1 !== $cacheLifetime) && $request->getPath();
         if (!$useCaching) {
             return;
         }
 
-        /** @var VariableFrontend $cacheInstance */
-        $cacheInstance = $this->getCacheInstance();
-
         $headers = array_merge(
             $response->getHeaders(),
             [Header::LAST_MODIFIED => $this->getHttpDate(time())]
         );
-        $cacheInstance->set(
+        $this->cache->set(
             $this->getCacheKeyForRequest($request),
             [
                 self::CACHE_ENTRY_KEY_CONTENT => (string) $response->getBody(),
@@ -182,16 +171,6 @@ class Cache implements CacheInterface
     }
 
     /**
-     * Set the concrete Cache instance
-     *
-     * @internal
-     */
-    public function setCacheInstance(FrontendInterface $cacheInstance): void
-    {
-        $this->cacheInstance = $cacheInstance;
-    }
-
-    /**
      * Return a date in the format for a HTTP header
      */
     private function getHttpDate(int $date): string
@@ -200,26 +179,12 @@ class Cache implements CacheInterface
     }
 
     /**
-     * Return the cache instance
-     */
-    private function getCacheInstance(): FrontendInterface
-    {
-        if (!isset($this->cacheInstance)) {
-            /** @var CacheManager $cacheManager */
-            $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-            $this->cacheInstance = $cacheManager->getCache('cundd_rest_cache');
-        }
-
-        return $this->cacheInstance;
-    }
-
-    /**
      * Clear the cache for the current request
      */
     private function clearCache(RestRequestInterface $request): void
     {
         $allTags = $this->getTags($request);
-        $this->getCacheInstance()->flushByTags($allTags);
+        $this->cache->flushByTags($allTags);
     }
 
     /**

@@ -13,6 +13,11 @@ services:
         "../Classes/Configuration/SiteSettingsConfigurationProvider.php",
       ]
 
+  cache.cundd_rest_cache:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', "getCache"]
+    arguments: ["cundd_rest_cache"]
+
   Cundd\Rest\Access\ConfigurationBasedAccessController:
     public: true
   Cundd\Rest\Authentication\UserProviderInterface:
@@ -28,6 +33,9 @@ services:
 
   Cundd\Rest\Cache\Cache:
     public: true
+    arguments:
+      $cache: "@cache.cundd_rest_cache"
+
   Cundd\Rest\Cache\CacheFactory:
     public: true
 
