@@ -25,20 +25,9 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
      */
     public function authenticate(RestRequestInterface $request): bool
     {
-        $username = null;
-        $password = null;
-
         // TODO: Rate limit failed attempts
-        if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $username = $_SERVER['PHP_AUTH_USER'];
-            $password = $_SERVER['PHP_AUTH_PW'];
-        } elseif ($tuple = $this->checkServerData('HTTP_AUTHENTICATION')) {
-            [$username, $password] = $tuple;
-        } elseif ($tuple = $this->checkServerData('HTTP_AUTHORIZATION')) {
-            [$username, $password] = $tuple;
-        } elseif ($tuple = $this->checkServerData('REDIRECT_HTTP_AUTHORIZATION')) {
-            [$username, $password] = $tuple;
-        }
+        $authorization = $request->getHeaderLine('authorization');
+        [$username, $password] = $this->decodeBasicAuthHeader($authorization);
 
         if (!is_string($username) || !is_string($password)) {
             return false;
@@ -48,20 +37,20 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     }
 
     /**
-     * @return array{0:string,1:string}|null
+     * @return array{0:string|null,1:string|null}
      */
-    private function checkServerData(string $key): ?array
+    private function decodeBasicAuthHeader(string $value): array
     {
-        if (isset($_SERVER[$key])) {
-            $value = $_SERVER[$key];
-            if (0 === strpos(strtolower($value), 'basic')) {
-                $parts = explode(':', base64_decode(substr($value, 6)), 2);
+        if (0 === strpos(strtolower($value), 'basic')) {
+            $decoded = base64_decode(substr($value, 6), true);
+            if (false !== $decoded) {
+                $parts = explode(':', $decoded, 2);
                 if (2 === count($parts)) {
                     return $parts;
                 }
             }
         }
 
-        return null;
+        return [null, null];
     }
 }
