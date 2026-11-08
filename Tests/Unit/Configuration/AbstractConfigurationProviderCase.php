@@ -6,14 +6,20 @@ namespace Cundd\Rest\Tests\Unit\Configuration;
 
 use Cundd\Rest\Configuration\AbstractConfigurationProvider;
 use Cundd\Rest\Configuration\AccessRequirement;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
 use Cundd\Rest\Handler\CrudHandler;
 use Cundd\Rest\Request\ResourceType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use ValueError;
 
+/**
+ * @phpstan-import-type RawConfiguration from ConfigurationProviderInterface
+ * @phpstan-import-type Settings from ConfigurationProviderInterface
+ */
 abstract class AbstractConfigurationProviderCase extends TestCase
 {
     use ProphecyTrait;
@@ -60,16 +66,20 @@ abstract class AbstractConfigurationProviderCase extends TestCase
                 ],
             ],
         ];
-        $this->fixture = $this->getConfigurationProviderToTest();
-        $this->fixture->setSettings($settings);
+        $this->fixture = $this->getConfigurationProviderToTest($settings);
     }
 
-    abstract public function getConfigurationProviderToTest(): AbstractConfigurationProvider;
+    /**
+     * @param Settings $settings
+     */
+    abstract public function getConfigurationProviderToTest(
+        array $settings,
+    ): AbstractConfigurationProvider;
 
     #[Test]
     public function getConfiguredResourceTypesTest(): void
     {
-        $this->fixture->setSettings(
+        $fixture = $this->getConfigurationProviderToTest(
             [
                 'paths' => [
                     'my_protectedext' => [
@@ -94,7 +104,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
             ]
         );
 
-        $resourceTypeConfigurations = $this->fixture->getConfiguredResources();
+        $resourceTypeConfigurations = $fixture->getConfiguredResources();
         $this->assertCount(4, $resourceTypeConfigurations);
         array_map(
             function ($c) {
@@ -132,16 +142,23 @@ abstract class AbstractConfigurationProviderCase extends TestCase
     public function getConfiguredResourceTypesInvalidReadTest(): void
     {
         $this->expectException(ValueError::class);
-        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['read' => 'invalid']]]); // @phpstan-ignore argument.type
-        $this->fixture->getConfiguredResources();
+        $fixture = $this->getConfigurationProviderToTest(
+            // @phpstan-ignore argument.type
+            ['paths' => ['my_protectedext' => ['read' => 'invalid']]]
+        );
+        $fixture->getConfiguredResources();
     }
 
     #[Test]
     public function getConfiguredResourceTypesInvalidWriteTest(): void
     {
         $this->expectException(ValueError::class);
-        $this->fixture->setSettings(['paths' => ['my_protectedext' => ['write' => 'invalid']]]); // @phpstan-ignore argument.type
-        $this->fixture->getConfiguredResources();
+
+        $fixture = $this->getConfigurationProviderToTest(
+            // @phpstan-ignore argument.type
+            ['paths' => ['my_protectedext' => ['write' => 'invalid']]]
+        );
+        $fixture->getConfiguredResources();
     }
 
     #[Test]
@@ -203,9 +220,7 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $handlerConfigurations = $this->fixture->getConfiguredResources();
         $this->assertCount(5, $handlerConfigurations);
         array_map(
-            function ($c) {
-                $this->assertInstanceOf(ResourceConfiguration::class, $c);
-            },
+            fn ($c) => $this->assertInstanceOf(ResourceConfiguration::class, $c),
             $handlerConfigurations
         );
 
@@ -220,5 +235,70 @@ abstract class AbstractConfigurationProviderCase extends TestCase
         $handlerConfiguration3 = $handlerConfigurations['vendor-my_third_ext-model'];
         $this->assertSame('vendor-my_third_ext-model', (string) $handlerConfiguration3->resourceType);
         $this->assertSame('', $handlerConfiguration3->handlerClass);
+    }
+
+    /**
+     * @param Settings $settings
+     */
+    #[Test]
+    #[DataProvider('cacheConfigurationFromResourceConfigurationProvider')]
+    public function getCacheConfigurationFromResourceConfigurationTest(
+        array $settings,
+        int $cacheLifetime,
+        int $expiresHeaderLifetime,
+    ): void {
+        $fixture = $this->getConfigurationProviderToTest($settings);
+        $configuration = $fixture->getResourceConfiguration(
+            new ResourceType('foo-bar')
+        );
+
+        $this->assertInstanceOf(ResourceConfiguration::class, $configuration);
+        $this->assertSame($cacheLifetime, $configuration->cacheLifetime);
+        $this->assertSame(
+            $expiresHeaderLifetime,
+            $configuration->expiresHeaderLifetime
+        );
+    }
+
+    /**
+     * @return array<non-empty-string,array{0:Settings,1:int,2:int}>
+     */
+    public static function cacheConfigurationFromResourceConfigurationProvider(): array
+    {
+        return [
+            'no cache configuration' => [
+                [
+                    'paths' => [
+                        'foo-bar' => [],
+                    ],
+                ],
+                -1,
+                -1,
+            ],
+
+            'cache lifetime configuration for Resource Type' => [
+                [
+                    'paths' => [
+                        'foo-bar' => [
+                            'cacheLifetime' => 200,
+                        ],
+                    ],
+                ],
+                200,
+                -1,
+            ],
+
+            'expires header lifetime configuration for Resource Type' => [
+                [
+                    'paths' => [
+                        'foo-bar' => [
+                            'expiresHeaderLifetime' => 60 * 60 * 24 * 30,
+                        ],
+                    ],
+                ],
+                -1,
+                60 * 60 * 24 * 30,
+            ],
+        ];
     }
 }

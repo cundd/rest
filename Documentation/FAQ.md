@@ -184,25 +184,8 @@ rest:
 
 ## Caching
 
-To enable caching for all resource types set the cache lifetime inside `settings`:
-
-```yaml
-# config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
-rest:
-    settings:
-        cacheLifetime: 3600
-```
-
-Additionally, a separate lifetime for the expires header can be defined:
-
-```yaml
-# config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
-rest:
-    settings:
-        expiresHeaderLifetime: 300
-```
-
-Furthermore, it is possible to define a lifetime for a resource type separately:
+The extension can be configured to cache responses to `GET` requests. The
+behaviour is configured for each Resource Type individually:
 
 ```yaml
 # config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
@@ -210,13 +193,28 @@ rest:
     settings:
         paths:
             cundd-daa-bar:
-                path: Cundd-Daa-Bar
+                path: cundd-daa-bar
                 read: allow
                 write: allow
                 cacheLifetime: 3600
 ```
 
-> If `cacheLifetime` is set to `0` TYPO3 will cache the response forever
+> If `cacheLifetime` is set to `0`, TYPO3's caching framework will cache the response forever.
+
+Additionally, the `Expires` header can be configured. The resulting value will be the current time + the number of seconds in `expiresHeaderLifetime`:
+
+```yaml
+# config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
+rest:
+    settings:
+        paths:
+            cundd-daa-bar:
+                path: cundd-daa-bar
+                read: allow
+                write: allow
+                cacheLifetime: 3600
+                expiresHeaderLifetime: 3600
+```
 
 ## Install TYPO3 and REST in a subdirectory
 
@@ -229,3 +227,7 @@ E.g.: TYPO3 is installed in `$DOC_ROOT/dev_install/` and accessed through `http:
 > The start page of your site should be translated. The extension will use it as the context for handling the request.
 
 - Since version `3.6.0` TYPO3's site handling is supported
+
+```
+
+```
