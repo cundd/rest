@@ -13,7 +13,7 @@ use InvalidArgumentException;
 final class Utility
 {
     /**
-     * Separator between vendor, extension and model in the API resource type
+     * Separator between vendor, extension and model in the API Resource Type
      */
     private const API_RESOURCE_TYPE_PART_SEPARATOR = '-';
 
@@ -54,7 +54,7 @@ final class Utility
     }
 
     /**
-     * Return the Domain Model class or interface name for the given API resource type
+     * Return the Domain Model class or interface name for the given API Resource Type
      *
      * @return class-string|interface-string
      */
@@ -80,13 +80,13 @@ final class Utility
     }
 
     /**
-     * Tries to generate the API resource type for the given class name
+     * Tries to generate the API Resource Type for the given class name
      *
      * @template T of object|DomainObjectInterface
      *
      * @param class-string<T> $className
      *
-     * @return ResourceType|bool Returns the resource type or FALSE if it couldn't be determined
+     * @return ResourceType|bool Returns the Resource Type or FALSE if it couldn't be determined
      */
     public static function getResourceTypeForClassName(string $className): ResourceType|bool
     {

@@ -24,9 +24,9 @@ interface RestRequestInterface extends ServerRequestInterface
     public function getPath(): string;
 
     /**
-     * Return the requested resource type
+     * Return the requested Resource Type
      *
-     * The resource type is the first part of the request path, after mapping aliases
+     * The Resource Type is the first part of the request path, after mapping aliases
      */
     public function getResourceType(): ResourceType;
 

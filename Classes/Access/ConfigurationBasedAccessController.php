@@ -47,7 +47,7 @@ class ConfigurationBasedAccessController extends AbstractAccessController
     }
 
     /**
-     * Return the configuration matching the given resource type
+     * Return the configuration matching the given Resource Type
      */
     public function getConfigurationForRequest(
         RestRequestInterface $request,

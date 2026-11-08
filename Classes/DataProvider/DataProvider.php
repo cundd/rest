@@ -85,7 +85,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
             );
             if ($exception) {
                 $message = sprintf(
-                    'Repository for resource type "%s" could not be created: %s %s',
+                    'Repository for Resource Type "%s" could not be created: %s %s',
                     $resourceType,
                     $exception->getMessage(),
                     $triedClasses
@@ -93,7 +93,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
                 throw new ClassLoadingException($message, 1542116783, $exception);
             }
             $message = sprintf(
-                'Repository for resource type "%s" could not be found. %s',
+                'Repository for Resource Type "%s" could not be found. %s',
                 $resourceType,
                 $triedClasses
             );
@@ -284,7 +284,7 @@ class DataProvider implements DataProviderInterface, ClassLoadingInterface, Sing
      * Return the UID of the model with the given identifier
      *
      * @param mixed        $identifier   The identifier
-     * @param ResourceType $resourceType The resource type
+     * @param ResourceType $resourceType The Resource Type
      *
      * @return int|string|null Returns the UID or NULL if the object couldn't be found
      */

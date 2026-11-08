@@ -84,7 +84,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Return the configuration matching the given resource type
+     * Return the configuration matching the given Resource Type
      */
     public function getResourceConfiguration(
         ResourceType $resourceType,
@@ -175,7 +175,7 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
     }
 
     /**
-     * Check if the given pattern matches the resource type
+     * Check if the given pattern matches the Resource Type
      */
     private function checkIfPatternMatchesResourceType(
         string $pattern,

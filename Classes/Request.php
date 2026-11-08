@@ -22,9 +22,9 @@ final class Request implements ServerRequestInterface, RestRequestInterface
     private mixed $sentData;
 
     /**
-     * Constructor for a new request with the given Server Request, resource type and format
+     * Constructor for a new request with the given Server Request, Resource Type and format
      *
-     * @param ResourceType $resourceType Resource type - The first part of the request after mapping aliases
+     * @param ResourceType $resourceType Resource Type - The first part of the request after mapping aliases
      */
     public function __construct(
         private ServerRequestInterface $originalRequest,

@@ -11,19 +11,19 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 interface DataProviderInterface
 {
     /**
-     * Return all Domain Models for the given API resource type
+     * Return all Domain Models for the given API Resource Type
      *
      * @return object[]|DomainObjectInterface[]|QueryResultInterface<int,DomainObjectInterface>
      */
     public function fetchAllModels(RestRequestInterface $request): iterable;
 
     /**
-     * Return the number of all Domain Models for the given API resource type
+     * Return the number of all Domain Models for the given API Resource Type
      */
     public function countAllModels(RestRequestInterface $request): int;
 
     /**
-     * Return a Domain Model for the given API resource type and data
+     * Return a Domain Model for the given API Resource Type and data
      *
      * @return object|DomainObjectInterface|null Returns the Domain Model or NULL if it was not found
      */
@@ -93,7 +93,7 @@ interface DataProviderInterface
     ): void;
 
     /**
-     * Remove the given model from the repository for the given API resource type
+     * Remove the given model from the repository for the given API Resource Type
      *
      * @param object|DomainObjectInterface $model
      */

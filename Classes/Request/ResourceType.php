@@ -8,7 +8,7 @@ use Cundd\Rest\Exception\EmptyResourceTypeException;
 use Cundd\Rest\Exception\InvalidResourceTypeException;
 
 /**
- * The resource type is an identifier for a model class.
+ * The Resource Type is an identifier for a model class.
  * It is the first segment of the request path, after alias mapping has been applied.
  *
  * TODO: Check if the ResourceType should be normalized at construction time (@see \Cundd\Rest\DataProvider\Utility::normalizeResourceType($resourceType))

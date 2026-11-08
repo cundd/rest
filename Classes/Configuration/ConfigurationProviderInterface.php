@@ -52,7 +52,7 @@ interface ConfigurationProviderInterface
     public function getConfiguredResources(): array;
 
     /**
-     * Return the configuration matching the given resource type
+     * Return the configuration matching the given Resource Type
      *
      * @throws InvalidConfigurationException if no `ResourceConfiguration` could be found
      */

@@ -1,6 +1,6 @@
 ## Resource Type
 
-The resource type is an identifier for a model class. It is the first segment of the request path, after alias mapping has been applied.
+The Resource Type is an identifier for a model class. It is the first segment of the request path, after alias mapping has been applied.
 
 ## Sending data
 
@@ -106,7 +106,7 @@ class DataProvider extends \Cundd\Rest\DataProvider\DataProvider {
 
 ## How do paths and classes work together?
 
-### Paths, resource types and the associated classes
+### Paths, Resource Types and the associated classes
 
 Below you find examples of the URL paths (the part after `rest/`) and the matching class names that will be used:
 
