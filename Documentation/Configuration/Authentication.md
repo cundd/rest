@@ -10,6 +10,9 @@ All of the methods are built around the `fe_users` table: The `BasicAuthenticati
 - Currently it isn't possible to enforce the usage of a specific Authentication Provider.
 - No ACL. Different users can not be limited to specific resources.
 
+> ⚠︎ NEVER cache user-specific or personally identifiable information!
+> The cache is shared between requests - even for authenticated requests.
+
 ## Configuring a frontend user
 
 Frontend users are Webservice users. To allow a user to authenticate through the `BasicAuthenticationProvider` method, specify the users API key inside the User record in the TYPO3 Backend.

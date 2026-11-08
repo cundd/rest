@@ -184,6 +184,9 @@ rest:
 
 ## Caching
 
+> ⚠︎ NEVER cache user-specific or personally identifiable information!
+> The cache is shared between requests - even for authenticated requests.
+
 The extension can be configured to cache responses to `GET` requests. The
 behaviour is configured for each Resource Type individually:
 
