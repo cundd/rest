@@ -245,10 +245,6 @@ abstract class AbstractConfigurationProvider implements SingletonInterface, Conf
             return (int) $configuration['cacheLifetime'];
         }
 
-        if (isset($configuration['cacheLifeTime']) && is_numeric($configuration['cacheLifeTime'])) {
-            return (int) $configuration['cacheLifeTime'];
-        }
-
         return -1;
     }
 

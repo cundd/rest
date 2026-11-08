@@ -92,7 +92,14 @@ final class CacheFactoryTest extends TestCase
     }
 
     /**
-     * @return array<int,list<int|null>>
+     * @return list<array{
+     *     0:int|null,
+     *     1:int|null,
+     *     2:int|null,
+     *     3:int,
+     *     4:int,
+     *     5:int
+     * }>
      */
     public static function buildCacheDataProvider(): array
     {

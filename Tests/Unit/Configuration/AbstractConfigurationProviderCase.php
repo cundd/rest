@@ -93,12 +93,11 @@ abstract class AbstractConfigurationProviderCase extends TestCase
                     ],
                     'vendor-my_other_ext-my_model' => [
                         'path'          => 'vendor-my_other_ext-my_model',
-                        'cacheLifeTime' => 2,
+                        'cacheLifetime' => 2,
                     ],
                     'vendor-my_other_ext-my_model2' => [
                         'path'          => 'vendor-my_other_ext-my_model2',
                         'cacheLifetime' => 3,
-                        'cacheLifeTime' => 200, // the key "cacheLifetime" must have precedence
                     ],
                 ],
             ]

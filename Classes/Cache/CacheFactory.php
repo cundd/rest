@@ -60,11 +60,6 @@ class CacheFactory
             return (int) $cacheLifetime;
         }
 
-        $cacheLifetime = $configurationProvider->getSetting('cacheLifeTime');
-        if (null !== $cacheLifetime && is_numeric($cacheLifetime) && $cacheLifetime > -1) {
-            return (int) $cacheLifetime;
-        }
-
         return -1;
     }
 
@@ -81,11 +76,6 @@ class CacheFactory
         }
 
         $expiresHeaderLifetime = $configurationProvider->getSetting('expiresHeaderLifetime');
-        if (null !== $expiresHeaderLifetime) {
-            return (int) $expiresHeaderLifetime;
-        }
-
-        $expiresHeaderLifetime = $configurationProvider->getSetting('expiresHeaderLifeTime');
         if (null !== $expiresHeaderLifetime) {
             return (int) $expiresHeaderLifetime;
         }
