@@ -24,7 +24,7 @@ final class ResourceConfiguration
         public readonly string $handlerClass,
         public readonly string $dataProviderClass,
         public readonly array $aliases,
-        public readonly int $expiresHeaderLifetime = -1,
+        public readonly int $expiresHeaderLifetime,
     ) {
         $this->assertStringArray($aliases);
     }
