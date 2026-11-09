@@ -13,6 +13,7 @@ use Cundd\Rest\ObjectManager;
 use Cundd\Rest\ObjectManagerInterface;
 use Cundd\Rest\Request\ResourceType;
 use Cundd\Rest\ResponseFactoryInterface;
+use Cundd\Rest\Tests\Fixtures\CacheTestConfiguration;
 use Cundd\Rest\Tests\RequestBuilderTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -45,25 +46,20 @@ final class CacheFactoryTest extends TestCase
     #[Test]
     #[DataProvider('buildCacheDataProvider')]
     public function buildCacheCheckExpiresHeaderLifetime(
-        ?int $cacheLifetime,
-        ?int $expiresHeaderLifetime,
-        ?int $resourceTypeExpiresHeaderLifetime,
-        int $resourceTypeCacheLifetime,
-        int $_,
-        int $expectedExpiresHeaderLifetime,
+        CacheTestConfiguration $configuration,
     ): void {
         $cache = $this->fixture->buildCache(
             new ResourceType('some-resource-type'),
             $this->getConfigurationProvider(
-                $cacheLifetime,
-                $expiresHeaderLifetime,
-                $resourceTypeCacheLifetime,
-                $resourceTypeExpiresHeaderLifetime
+                $configuration->globalCacheLifetime,
+                $configuration->globalExpiresHeaderLifetime,
+                $configuration->resourceTypeCacheLifetime,
+                $configuration->resourceTypeExpiresHeaderLifetime
             ),
             $this->getObjectManager()
         );
         $this->assertEquals(
-            $expectedExpiresHeaderLifetime,
+            $configuration->expectedExpiresHeaderLifetime,
             $cache->getExpiresHeaderLifetime()
         );
     }
@@ -71,47 +67,94 @@ final class CacheFactoryTest extends TestCase
     #[Test]
     #[DataProvider('buildCacheDataProvider')]
     public function buildCacheCheckLifetime(
-        ?int $cacheLifetime,
-        ?int $expiresHeaderLifetime,
-        ?int $_,
-        int $resourceTypeCacheLifetime,
-        int $expectedCacheLifetime,
-        mixed $_2,
+        CacheTestConfiguration $configuration,
     ): void {
         $cache = $this->fixture->buildCache(
             new ResourceType('some-resource-type'),
             $this->getConfigurationProvider(
-                $cacheLifetime,
-                $expiresHeaderLifetime,
-                $resourceTypeCacheLifetime,
-                $expiresHeaderLifetime
+                $configuration->globalCacheLifetime,
+                $configuration->globalExpiresHeaderLifetime,
+                $configuration->resourceTypeCacheLifetime,
+                $configuration->resourceTypeExpiresHeaderLifetime
             ),
             $this->getObjectManager()
         );
-        $this->assertEquals($expectedCacheLifetime, $cache->getCacheLifetime());
+        $this->assertEquals(
+            $configuration->expectedCacheLifetime,
+            $cache->getCacheLifetime()
+        );
     }
 
     /**
-     * @return list<array{
-     *     0:int|null,
-     *     1:int|null,
-     *     2:int|null,
-     *     3:int,
-     *     4:int,
-     *     5:int
-     * }>
+     * @return list<array{CacheTestConfiguration}>
      */
     public static function buildCacheDataProvider(): array
     {
         return [
-            [10, 20, null, -1, 10, 20],
-            [10, null, null, -1, 10, 10],
-            [20, null, null, -1, 20, 20],
-            [10, 20, null, 30, 30, 20],
-            [null, null, null, 30, 30, 30],
-            [null, null, null, -1, -1, -1],
-            [10, 20, 30, -1, 10, 30],
-            [10, null, 30, -1, 10, 30],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: 10,
+                globalExpiresHeaderLifetime: 20,
+                expectedCacheLifetime: 10,
+                expectedExpiresHeaderLifetime: 20,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: 10,
+                globalExpiresHeaderLifetime: null,
+                expectedCacheLifetime: 10,
+                expectedExpiresHeaderLifetime: 10,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: 20,
+                globalExpiresHeaderLifetime: null,
+                expectedCacheLifetime: 20,
+                expectedExpiresHeaderLifetime: 20,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: 30,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: 10,
+                globalExpiresHeaderLifetime: 20,
+                expectedCacheLifetime: 30,
+                expectedExpiresHeaderLifetime: 20,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: 30,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: null,
+                globalExpiresHeaderLifetime: null,
+                expectedCacheLifetime: 30,
+                expectedExpiresHeaderLifetime: 30,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: null,
+                globalCacheLifetime: null,
+                globalExpiresHeaderLifetime: null,
+                expectedCacheLifetime: -1,
+                expectedExpiresHeaderLifetime: -1,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: 30,
+                globalCacheLifetime: 10,
+                globalExpiresHeaderLifetime: 20,
+                expectedCacheLifetime: 10,
+                expectedExpiresHeaderLifetime: 30,
+            )],
+            [new CacheTestConfiguration(
+                resourceTypeCacheLifetime: -1,
+                resourceTypeExpiresHeaderLifetime: 30,
+                globalCacheLifetime: 10,
+                globalExpiresHeaderLifetime: null,
+                expectedCacheLifetime: 10,
+                expectedExpiresHeaderLifetime: 30,
+            )],
         ];
     }
 
