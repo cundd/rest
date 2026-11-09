@@ -219,6 +219,17 @@ rest:
                 expiresHeaderLifetime: 3600
 ```
 
+To apply the same cache configuration for all requests a global fallback can be
+specified:
+
+```yaml
+# config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
+rest:
+    settings:
+        cacheLifetime: 3600
+        expiresHeaderLifetime: 300
+```
+
 ## Install TYPO3 and REST in a subdirectory
 
 If the TYPO3 installation is inside a subdirectory the environment variable `TYPO3_REST_REQUEST_BASE_PATH` has to be set to the subdirectories name.
