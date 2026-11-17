@@ -1,7 +1,9 @@
 "fe_users"
 ,pid,tstamp,username,password,usergroup,disable,starttime,endtime,name,first_name,middle_name,last_name,address,telephone,fax,email,crdate,deleted,uc,title,zip,city,country,www,company,image,lastlogin,is_online,tx_extbase_type,tx_rest_apikey,
-,0,1320344719,test,password,1,0,0,0,Max Mustermann,Max,"",Mustermann,"","","","",1320060686,0,"\NULL",,,,,,,0,1321968097,1321968097,0,"\NULL"
-,0,1393354523,dan,password,1,0,0,0,Daniel Corn,Daniel,"",Corn,"","","","",1393354416,0,"\NULL",,,,,,,0,1394886395,1394891237,0,"api-key"
-,0,1439302303,deleted_user,password,1,0,0,0,Dr. Evil,Dr.,"",Evil,"","","","",1439302187,1,"\NULL","","","","","","",0,1439302329,1439302329,0,api-key,
-,0,1439302466,disabled_user,password,1,1,0,0,Cruella De Vil,Cruella,"",De Vil,"","","","",1439302466,0,"\NULL","","","","","","",0,1439302466,1439302466,0,api-key,
-,0,1439302466,expired_user,password,1,0,842630500,842630580,Tupac Shakur,Tupac,"",Shakur,"","","","",1439302466,0,"\NULL","","","","","","",0,1439302466,1439302466,0,api-key,
+,100,1320344719,test,password,1,0,0,0,Max Mustermann,Max,"",Mustermann,"","","","",1320060686,0,"\NULL",,,,,,,0,1321968097,1321968097,0,"\NULL"
+,100,1393354523,dan,password,1,0,0,0,Daniel Corn,Daniel,"",Corn,"","","","",1393354416,0,"\NULL",,,,,,,0,1394886395,1394891237,0,"$argon2i$v=19$m=65536,t=16,p=1$LkhvbE5nSGlnNHBzQU9lTQ$gh2Qz1uKsCnjXRvTsvneA4ivCidCJwtjaqPqilBcFRg",
+,100,1439302303,deleted_user,password,1,0,0,0,Dr. Evil,Dr.,"",Evil,"","","","",1439302187,1,"\NULL","","","","","","",0,1439302329,1439302329,0,"$argon2i$v=19$m=65536,t=16,p=1$V3pUZFNnSDNGQW9BeUtnVw$n9gMD79jR61SW7NJioirB9JS2+8eGPGtlFiY/lwpik4",
+,100,1439302466,disabled_user,password,1,1,0,0,Cruella De Vil,Cruella,"",De Vil,"","","","",1439302466,0,"\NULL","","","","","","",0,1439302466,1439302466,0,"$argon2i$v=19$m=65536,t=16,p=1$V3pUZFNnSDNGQW9BeUtnVw$n9gMD79jR61SW7NJioirB9JS2+8eGPGtlFiY/lwpik4",
+,100,1439302466,expired_user,password,1,0,842630500,842630580,Tupac Shakur,Tupac,"",Shakur,"","","","",1439302466,0,"\NULL","","","","","","",0,1439302466,1439302466,0,"$argon2i$v=19$m=65536,t=16,p=1$V3pUZFNnSDNGQW9BeUtnVw$n9gMD79jR61SW7NJioirB9JS2+8eGPGtlFiY/lwpik4",
+,102,1794749937,duplicate-username,password,1,0,0,0,User with duplicate name on site A,"","","","","","","",1794749928,0,"\NULL","","","","","","",0,1439302466,1439302466,0,"$argon2i$v=19$m=65536,t=16,p=1$bThyT2U3RDhHZ0Ywcno5Yw$7HqODT6CMF+OgYZnt96ENv9dOLMGsQ9idsxpkJp6m8M",
+,104,1794749939,duplicate-username,password,1,0,0,0,User with duplicate name on site B,"","","","","","","",1794749931,0,"\NULL","","","","","","",0,1439302467,1439302467,0,"$argon2i$v=19$m=65536,t=16,p=1$RTIvckx5M1YzM1NSUWtmWQ$iRSp7Z7joyWKFuJvvTmLkPDtI/TsUwEl7IHWSCRVgqo",

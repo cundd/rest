@@ -43,3 +43,7 @@ rest:
     authenticationProvider:
       10: Cundd\Rest\Authentication\BasicAuthenticationProvider
       # 30: Cundd\Rest\Authentication\RequestAuthenticationProvider
+
+    authentication:
+      feUserProvider:
+        storagePageId:

@@ -1,17 +1,25 @@
 <?php
 
+use Cundd\Rest\Authentication\UserProvider\FeUserProvider;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 defined('TYPO3') or die();
 
 $tempColumns = [
-    'tx_rest_apikey' => [
+    FeUserProvider::PASSWORD_COLUMN_NAME => [
         'exclude' => 1,
         'label'   => 'API Key',
         'config'  => [
-            'type' => 'input',
-            'size' => '30',
-            'eval' => 'nospace',
+            'type'           => 'password',
+            'passwordPolicy' => 'default',
+            'fieldControl'   => [
+                'passwordGenerator' => [
+                    'renderType' => 'passwordGenerator',
+                    'options'    => [
+                        'passwordPolicy' => 'default',
+                    ],
+                ],
+            ],
         ],
     ],
 ];
@@ -22,7 +30,7 @@ ExtensionManagementUtility::addTCAcolumns(
 );
 ExtensionManagementUtility::addToAllTCAtypes(
     'fe_users',
-    'tx_rest_apikey;;;;1-1-1',
+    FeUserProvider::PASSWORD_COLUMN_NAME . ';;;;1-1-1',
     '',
     'after:password'
 );

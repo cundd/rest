@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cundd\Rest\Authentication;
 
+use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Http\RestRequestInterface;
 
 /**
@@ -14,8 +15,10 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * @param UserProviderInterface $userProvider Provider that will check the user credentials
      */
-    public function __construct(private readonly UserProviderInterface $userProvider)
-    {
+    public function __construct(
+        private readonly UserProviderInterface $userProvider,
+        private readonly ConfigurationProviderFactoryInterface $configurationProviderFactory,
+    ) {
     }
 
     /**
@@ -33,7 +36,11 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
             return false;
         }
 
-        return $this->userProvider->checkCredentials($username, $password);
+        return $this->userProvider->checkCredentials(
+            $this->configurationProviderFactory->build($request),
+            $username,
+            $password
+        );
     }
 
     /**
@@ -42,7 +49,7 @@ class BasicAuthenticationProvider extends AbstractAuthenticationProvider
     private function decodeBasicAuthHeader(string $value): array
     {
         if (0 === strpos(strtolower($value), 'basic')) {
-            $decoded = base64_decode(substr($value, 6), true);
+            $decoded = base64_decode(trim(substr($value, 6)), true);
             if (false !== $decoded) {
                 $parts = explode(':', $decoded, 2);
                 if (2 === count($parts)) {

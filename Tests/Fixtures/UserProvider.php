@@ -5,30 +5,31 @@ declare(strict_types=1);
 namespace Cundd\Rest\Tests\Fixtures;
 
 use Cundd\Rest\Authentication\UserProviderInterface;
+use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 
 class UserProvider implements UserProviderInterface
 {
-    public function checkCredentials(string $username, string $password): bool
-    {
-        return $username === $this->getApiUser() && $password === $this->getApiKey();
+    public function checkCredentials(
+        ConfigurationProviderInterface $configurationProvider,
+        string $username,
+        string $password,
+    ): bool {
+        return $username === $this->getApiUser()
+            && $password === $this->getApiKey();
     }
 
     /**
      * Correct user for the API
-     *
-     * @return string
      */
-    public static function getApiUser()
+    public static function getApiUser(): string
     {
         return 'daniel';
     }
 
     /**
      * Correct API key
-     *
-     * @return string
      */
-    public static function getApiKey()
+    public static function getApiKey(): string
     {
         return 'api-key';
     }

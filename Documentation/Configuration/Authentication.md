@@ -34,13 +34,30 @@ rest:
 
 ## Basic Auth
 
-A popular way of authentication with Webservices is through [Basic Access Authentication](http://en.wikipedia.org/wiki/Basic_access_authentication). Use the user's API key as password when making a request.
+A simple way of authentication with web services is through [Basic Access Authentication](http://en.wikipedia.org/wiki/Basic_access_authentication).
 
-If this method should be used without the Apache PHP module (`mod_php`; e.g. with `CGI` or `FastCGI`) the server must be configured to pass the sent header to the PHP script. This may be done in the `.htaccess` file.
+> Note: If this method should be used without the Apache PHP module (`mod_php`;
+> e.g. with `CGI` or `FastCGI`) the server must be configured to forward the
+> header to PHP. This may be done in the `.htaccess` file.
+>
+> ```htaccess
+> RewriteEngine on
+> RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+> ```
 
-```htaccess
-RewriteEngine on
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+The extension allows [Basic Access Authentication](http://en.wikipedia.org/wiki/Basic_access_authentication)
+through an API key stored per user in TYPO3's frontend-user database table
+(`fe_users`). To enable this feature and to specify where allowed users are
+stored, the page ID must be configured.
+
+```yaml
+# config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
+
+rest:
+    settings:
+        authentication:
+            feUserProvider:
+                storagePageId: 1000
 ```
 
 ## Authentication via User Session

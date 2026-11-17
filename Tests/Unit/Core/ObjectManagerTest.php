@@ -9,6 +9,7 @@ use Cundd\Rest\Authentication\AuthenticationProviderInterface;
 use Cundd\Rest\Authentication\BasicAuthenticationProvider;
 use Cundd\Rest\Authentication\RequestAuthenticationProvider;
 use Cundd\Rest\Configuration\AccessRequirement;
+use Cundd\Rest\Configuration\ConfigurationProviderFactory;
 use Cundd\Rest\Configuration\ConfigurationProviderFactoryInterface;
 use Cundd\Rest\Configuration\ConfigurationProviderInterface;
 use Cundd\Rest\Configuration\ResourceConfiguration;
@@ -143,9 +144,13 @@ class ObjectManagerTest extends TestCase
     public function getAuthenticationProviderFromConfigurationTest(): void
     {
         $userProvider = new UserProvider();
+        $configurationProviderFactory = new ConfigurationProviderFactory();
         $this->container->set(
             BasicAuthenticationProvider::class,
-            new BasicAuthenticationProvider($userProvider)
+            new BasicAuthenticationProvider(
+                $userProvider,
+                $configurationProviderFactory
+            )
         );
         $this->container->set(
             RequestAuthenticationProvider::class,
