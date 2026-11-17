@@ -36,9 +36,9 @@ rest:
 
 A simple way of authentication with web services is through [Basic Access Authentication](http://en.wikipedia.org/wiki/Basic_access_authentication).
 
-> Note: If this method should be used without the Apache PHP module (`mod_php`;
-> e.g. with `CGI` or `FastCGI`) the server must be configured to forward the
-> header to PHP. This may be done in the `.htaccess` file.
+> Note: Depending on your setup the server has to be configured to forward the
+> header to PHP.
+> For Apache the following can be added to the `.htaccess` file:
 >
 > ```htaccess
 > RewriteEngine on
