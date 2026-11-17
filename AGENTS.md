@@ -37,6 +37,8 @@ Build/Scripts/runTests.sh -s unit             # Unit tests
 Build/Scripts/runTests.sh -s functional       # Functional tests
 ```
 
+Unit tests can also be run without Docker/Podman: `.Build/bin/phpunit`
+
 ### Run single test file
 
 ```bash
@@ -269,8 +271,9 @@ Enable in settings.yaml:
 ```yaml
 rest:
     settings:
-        authenticationProvider:
-            30: Cundd\Rest\Authentication\RequestAuthenticationProvider
+        authentication:
+            provider:
+                30: Cundd\Rest\Authentication\RequestAuthenticationProvider
 ```
 
 ## CI/CD Notes
