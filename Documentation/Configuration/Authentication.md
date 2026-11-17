@@ -69,6 +69,7 @@ to be manually enabled:
 # config/sites/{your-site}/settings.yaml or {EXT:my-site-package}/Configuration/Sets/{MySitePackage}/settings.yaml
 rest:
     settings:
-        authenticationProvider:
-            30: Cundd\Rest\Authentication\RequestAuthenticationProvider
+        authentication:
+            provider:
+                30: Cundd\Rest\Authentication\RequestAuthenticationProvider
 ```

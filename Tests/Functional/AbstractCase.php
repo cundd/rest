@@ -79,8 +79,10 @@ class AbstractCase extends FunctionalTestCase
                     'press'       => 'press',
                     'sms'         => 'sms',
                 ],
-                'authenticationProvider' => [
-                    '10' => BasicAuthenticationProvider::class,
+                'authentication' => [
+                    'provider' => [
+                        '10' => BasicAuthenticationProvider::class,
+                    ],
                 ],
             ],
         ],

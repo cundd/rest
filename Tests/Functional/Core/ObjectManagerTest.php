@@ -36,6 +36,7 @@ use TYPO3\CMS\Core\Http\ResponseFactory as TYPO3ResponseFactory;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  * Functional tests for the ObjectManager
@@ -107,7 +108,7 @@ final class ObjectManagerTest extends AbstractCase
         assert($container instanceof Container);
         $this->injectConfigurationProvider(
             $container,
-            ['authenticationProvider' => []]
+            ['authentication' => ['provider' => []]]
         );
         $object = $this->fixture->getAuthenticationProvider(
             $this->buildTestRequest('/something')
@@ -123,9 +124,11 @@ final class ObjectManagerTest extends AbstractCase
         $this->injectConfigurationProvider(
             $container,
             [
-                'authenticationProvider' => [
-                    30 => RequestAuthenticationProvider::class,
-                    10 => BasicAuthenticationProvider::class,
+                'authentication' => [
+                    'provider' => [
+                        30 => RequestAuthenticationProvider::class,
+                        10 => BasicAuthenticationProvider::class,
+                    ],
                 ],
             ]
         );
@@ -272,7 +275,9 @@ final class ObjectManagerTest extends AbstractCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(fn ($args) => $settings[$args[0]] ?? null);
+        $getSettingsProphecy->will(
+            fn ($args) => ObjectAccess::getPropertyPath($settings, $args[0])
+        );
 
         $container->set(
             ConfigurationProviderFactoryInterface::class,

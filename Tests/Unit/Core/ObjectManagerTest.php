@@ -43,6 +43,7 @@ use Psr\Http\Message\ResponseFactoryInterface as PsrResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
  * Unit tests for the ObjectManager
@@ -132,7 +133,7 @@ class ObjectManagerTest extends TestCase
 
         $this->injectConfigurationProvider(
             $this->container,
-            ['authenticationProvider' => []],
+            ['authentication' => ['provider' => []]],
             '',
             ''
         );
@@ -167,9 +168,11 @@ class ObjectManagerTest extends TestCase
         $this->injectConfigurationProvider(
             $this->container,
             [
-                'authenticationProvider' => [
-                    30 => RequestAuthenticationProvider::class,
-                    10 => BasicAuthenticationProvider::class,
+                'authentication' => [
+                    'provider' => [
+                        30 => RequestAuthenticationProvider::class,
+                        10 => BasicAuthenticationProvider::class,
+                    ],
                 ],
             ],
             '',
@@ -370,7 +373,9 @@ class ObjectManagerTest extends TestCase
         $typeToken = Argument::type('string');
         /** @var MethodProphecy $getSettingsProphecy */
         $getSettingsProphecy = $configurationProvider->getSetting($typeToken);
-        $getSettingsProphecy->will(fn ($args) => $settings[$args[0]] ?? null);
+        $getSettingsProphecy->will(
+            fn ($args) => ObjectAccess::getPropertyPath($settings, $args[0])
+        );
 
         $configurationProvider = $configurationProvider->reveal();
 

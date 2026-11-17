@@ -122,7 +122,7 @@ class ObjectManager implements ObjectManagerInterface, SingletonInterface
         // Use the configured Authentication Providers
         $providerInstances = [];
         $configuredProviders = $this->getConfigurationProvider($request)
-            ->getSetting('authenticationProvider') ?? [];
+            ->getSetting('authentication.provider') ?? [];
 
         ksort($configuredProviders);
         foreach ($configuredProviders as $providerClass) {

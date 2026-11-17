@@ -40,10 +40,10 @@ rest:
     # cacheLifetime: -1
     # expiresHeaderLifetime:
 
-    authenticationProvider:
-      10: Cundd\Rest\Authentication\BasicAuthenticationProvider
-      # 30: Cundd\Rest\Authentication\RequestAuthenticationProvider
-
     authentication:
+      provider:
+        10: Cundd\Rest\Authentication\BasicAuthenticationProvider
+        # 30: Cundd\Rest\Authentication\RequestAuthenticationProvider
+
       feUserProvider:
         storagePageId:
